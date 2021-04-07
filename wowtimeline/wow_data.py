@@ -43,7 +43,7 @@ ENCOUNTERS = [
 # DEATHKNIGHT_UNHOLY = DEATHKNIGHT.add_spec(spec_id=3, name="Unholy")
 
 DRUID = m.WoWClass(class_id=2, name="Druid")
-DRUID_BALANCE = DRUID.add_spec(spec_id=1, name="Balance")
+# DRUID_BALANCE = DRUID.add_spec(spec_id=1, name="Balance")
 # DRUID_FERAL = DRUID.add_spec(spec_id=2, name="Feral")
 # DRUID_GUARDIAN = DRUID.add_spec(spec_id=3, name="Guardian")
 DRUID_RESTORATION = DRUID.add_spec(spec_id=4, name="Restoration", role=HEAL)
@@ -176,5 +176,11 @@ DRUID_RESTORATION.add_spell(spell_id=33891, cooldown=180, duration=30) # Tree of
 # (these are dicts.. so they will be filled later)
 #
 CLASSES = m.WoWClass._all
-SPECS = m.WowSpec._all
 SPELLS = {spell_id: spell for spell_id, spell in m.WoWSpell._all.items() if spell_id > 0}
+
+
+# SPECS = {}
+# for i, wow_class in CLASSES.items():
+#     for j, spec in specs.items():
+#         SPECS[(i,j)] = spec
+

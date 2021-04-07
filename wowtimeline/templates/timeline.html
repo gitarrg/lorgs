@@ -66,7 +66,8 @@ Timeline
     <div class="col-12">
         {% for player in fight.players %}
         {% if player.casts %}
-        <div class="player_timeline shadow mb-1" style="width: {{fight.duration / 250}}px">
+        <div class="player_timeline shadow mb-1">
+
 
             <div class="player_spec_icon">
                 <img src="static/images/specs/{{player.spec.name_slug}}.jpg">
@@ -76,25 +77,39 @@ Timeline
                 <a href="{{fight.url}}" target="_blank">{{player.name}}</a>
             </div>
 
-            <div class="cast_container position-relative">
-            {% for cast in player.casts %}
-                <div class="cast" data-spell_id="{{cast.spell_id}}" style="left: {{cast.time / 250}}px;">
+            <div>
+                <div class="cast_container" style="width: {{(fight.duration / 250)}}px">
+                {% for cast in player.casts %}
+                    <div class="cast" data-spell_id="{{cast.spell_id}}" style="left: {{cast.time / 250}}px;">
 
-                {% if cast.spell.cooldown %}
-                    <div class="cast_cooldown wow-class-bg-{{player.class_slug}}"  style="width: {{cast.spell.cooldown * 4}}px"></div>
-                {% endif %}
+                    {% if cast.spell.cooldown %}
+                        <div class="cast_cooldown wow-class-bg-{{player.class_slug}}"  style="width: {{cast.spell.cooldown * 4}}px"></div>
+                    {% endif %}
 
-                {% if cast.spell.duration %}
-                    <div class="cast_duration wow-class-bg-{{player.class_slug}}" style="width: {{cast.spell.duration * 4}}px"></div>
-                {% endif %}
+                    {% if cast.spell.duration %}
+                        <div class="cast_duration wow-class-bg-{{player.class_slug}}" style="width: {{cast.spell.duration * 4}}px"></div>
+                    {% endif %}
 
-                    <div class="cast_icon"><a href="#" data-wowhead="spell={{cast.spell_id}}"></a></div>
-                    <div class="cast_text">{{cast.time_fmt}}</div>
+                        <div class="cast_icon"><a href="#" data-wowhead="spell={{cast.spell_id}}"></a></div>
+                        <div class="cast_text">{{cast.time_fmt}}</div>
+                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
+
+                <div class="fight_killtime">
+                    <i class="fas fa-skull-crossbones"></i> {{fight.duration_fmt}}
+                </div>
             </div>
+
         </div>
+
+
+
         {% endif %}
+
+
+
+
         {% endfor %}
     </div>
     {% endfor %}

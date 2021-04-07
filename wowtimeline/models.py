@@ -175,6 +175,10 @@ class Fight:
         return self.end_time - self.start_time
 
     @property
+    def duration_fmt(self):
+        return utils.format_time(self.duration)
+
+    @property
     def url(self):
         return f"https://www.warcraftlogs.com/reports/{self.report_id}#fight={self.fight_id}"
 

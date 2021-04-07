@@ -31,7 +31,7 @@ TEMPLATE_ENV = jinja2.Environment(loader=TEMPLATE_LOADER)
 OUTPUT_FOLDER = os.path.join(PWD, "../_build")
 
 
-async def render(path, data):
+async def render(template_name, path, data):
     print("[RENDER]", path)
 
 
@@ -40,7 +40,7 @@ async def render(path, data):
         print("[RENDER] creating folder:", dirpath)
         os.makedirs(dirpath)
 
-    template = TEMPLATE_ENV.get_template("timeline.html")
+    template = TEMPLATE_ENV.get_template(template_name)
 
     template.trim_blocks = True
     template.lstrip_blocks = True
@@ -75,7 +75,7 @@ async def generate_ranking_report(boss, spec):
 
     fights = await WCL_CLIENT.get_top_ranks(boss["id"], spec)
     await WCL_CLIENT.cache.save()
-    fights = fights[:5]
+    fights = fights[:25]
 
     await WCL_CLIENT.fetch_multiple_fights(fights)
     await WCL_CLIENT.cache.save()
@@ -85,61 +85,39 @@ async def generate_ranking_report(boss, spec):
     data["boss"] = boss
     data["spec"] = spec
     data["fights"] = fights
-    path = f"{OUTPUT_FOLDER}/rankings/{boss['name_slug']}_{spec.name_slug}.html"
-    await render(path, data)
+    path = f"{OUTPUT_FOLDER}/ranking_{spec.name_slug}_{boss['name_slug']}.html"
+    await render("timeline.html", path, data)
 
 
-async def generate_rankings(bosses, specs):
-    for boss in bosses:
-        for spec in specs:
-            print("Boss:", boss["name"], "Spec:", spec.full_name)
-            await generate_ranking_report(boss, spec)
+async def generate_rankings():
 
+    bosses = wow_data.ENCOUNTERS
 
-async def main2():
-
-
-    """
     for wow_class in wow_data.CLASSES.values():
-        for i, spec in wow_class.specs.items():
-            print(i, spec)
-    """
-
-    bosses = [wow_data.ENCOUNTERS[7], wow_data.ENCOUNTERS[9]]
-    specs = [
-        wow_data.MAGE_FIRE,
-        wow_data.WARLOCK_AFFLICTION,
-        wow_data.PALADIN_HOLY
-    ]
-    await generate_rankings(bosses, specs)
-
-    #####
-    # Copy static folder
-    # static_src = os.path.join(PWD, "static")
-    # static_tar = os.path.join(OUTPUT_FOLDER, "static")
-    # if os.path.exists(static_tar):
-    #     shutil.rmtree(static_tar)
-    # shutil.copytree(static_src, static_tar)
+        print("GENERATE_RANKINGS", wow_class)
+        for boss in bosses:
+            for spec in wow_class.specs.values():
+                print("GENERATE_RANKINGS", "Spec:", spec.full_name, "Boss:", boss["name"])
+                await generate_ranking_report(boss, spec)
+        return
 
 
+async def render_index():
 
-    return
+    data = {}
+    data["wow_data"] = wow_data
 
-    boss = wow_data.ENCOUNTERS[7]
-    spec = wow_data.DRUID_RESTORATION
+    # we need smth to make the links work
+    data["spec"] = wow_data.WARLOCK_AFFLICTION
+    data["boss"] = wow_data.ENCOUNTERS[0]
 
+    path = f"{OUTPUT_FOLDER}/index.html"
+    await render("index.html", path, data)
 
-
-    return
-    """
-    for toplog in rankings:
-        # fight = models.Fight(fight_data["reportID"], fight_data["fightID"])
-        print(toplog["reportID"], toplog["fightID"], toplog["name"])
-    """
 
 
 if __name__ == '__main__':
-    # print(PWD)
-    asyncio.run(main2())
+    asyncio.run(render_index())
+    asyncio.run(generate_rankings())
 
 

@@ -96,12 +96,15 @@ class WarcraftlogsClient:
         async with ClientSession() as session:
             async with session.get(url=self.URL_API, json={"query": query}, headers=self.headers) as resp:
 
-                result = await resp.json()
+                try:
+                    result = await resp.json()
+                except Exception as e:
+                    print(result)
+                    raise(e)
 
                 if result.get("errors"):
                     msg = "\n".join(error.get("message") for error in result.get("errors"))
                     raise ValueError(msg)
-
 
                 self.cache[query] = result.get("data", {})
                 return self.cache[query]
@@ -183,7 +186,6 @@ class WarcraftlogsClient:
                         specName: "{spec.name}",
                         metric: {metric},
                         includeCombatantInfo: false,
-                        serverRegion: "EU"
                     )
                 }}
             }}

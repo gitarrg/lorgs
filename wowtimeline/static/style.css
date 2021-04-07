@@ -30,9 +30,10 @@ a, a:hover {
 
 
 .player_timeline {
-    background: #222;
     height: 30px;
-    overflow-x: hidden;
+
+    line-height: 28px;
+    vertical-align: middle;
 }
 
 .player_spec_icon img {
@@ -47,8 +48,6 @@ a, a:hover {
     background: hsl(0, 0%, 30%);
 
     padding-left: 5px;
-    padding-top: 5px;
-    vertical-align: middle;
 
     width: 150px;
     height: 28px;
@@ -58,8 +57,11 @@ a, a:hover {
 .cast_container {
     position: relative;
     float: left;
-}
+    height: 30px;
 
+    background: #222;
+    overflow-x: hidden;
+}
 
 
 .cast {
@@ -80,16 +82,13 @@ a, a:hover {
     position: absolute;
     left: 28px;
     height: 28px;
-    line-height: 28px;
-    vertical-align: middle;
 
 }
 
 .cast_cooldown {
     position: absolute;
 
-    top: 1px;
-    height: 26px;
+    height: 30px;
 
     background: grey;
     border-radius: 3px;
@@ -99,14 +98,20 @@ a, a:hover {
 
 .cast_duration {
     position: absolute;
-
-    top: 1px;
-    height: 26px;
-
+    height: 30px;
     border: 1px solid #444;
     border-radius: 3px;
     opacity: 0.5;
 }
+
+.fight_killtime {
+    border-left: 2px solid yellow;
+    padding-left: 10px;
+    float: left;
+    color: #888;
+    height: 30px;
+}
+
 
 
 
