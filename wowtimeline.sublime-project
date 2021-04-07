@@ -1,0 +1,20 @@
+{
+	"build_systems":
+	[
+		{
+			"name": "virtualenv-python",
+			"selector": "source.python",
+			"shell_cmd": "/usr/people/vincent-u/.envs/$project_base_name/bin/python $file",
+			"windows":
+			{
+				"shell_cmd": "bash -c \"wslpath '$file' | xargs env PYTHONPATH=/mnt/d/dev/$project_base_name /home/vincent-u/.envs/$project_base_name/bin/python -u\""
+			}
+		}
+	],
+	"folders":
+	[
+		{
+			"path": "."
+		}
+	]
+}

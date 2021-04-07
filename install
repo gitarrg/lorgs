@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+
+############
+# Settings
+
+project_name=wowtimeline
+
+
+# vars
+venv_root=~/.envs
+venv_dir=$venv_root/$project_name
+
+
+################################################################################
+
+# create and source virtualenv
+if [ ! -d "$venv_dir" ]
+then
+    echo "creating virtualenv: ${venv_dir}"
+    virtualenv --python=/usr/bin/python3.8 $venv_dir
+fi
+source $venv_dir/bin/activate
+
+# install requirements
+pip install -U -r wowtimeline/requirements.txt
+
+
+
+# cd /mnt/d/dev/wowtimeline

@@ -1,0 +1,33 @@
+
+
+
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+
+    <a class="navbar-brand" href="/">
+        <span class="mx-2">Lorrgs</span>
+    </a>
+
+    <ul class="navbar-nav mr-auto">
+
+        <span class="navbar-text">Specs:</span>
+        {% for wow_class in wow_data.CLASSES.values() %}
+            {% for spec2 in wow_class.specs.values() %}
+            <li class="nav-item {{'active' if spec2 == spec else ''}}">
+                <a class="nav-link" href="{{boss.name_slug}}_{{spec2.name_slug}}.html">
+                    <img class="nav-img" src="static/images/specs/{{spec2.name_slug}}.jpg" alt="{{spec2.full_name}}" title="{{spec2.name}}">
+                </a>
+            </li>
+            {% endfor %}
+        {% endfor %}
+
+        <span class="navbar-text">Bosses:</span>
+        {% for boss2 in wow_data.ENCOUNTERS %}
+        <li class="nav-item {{'active' if boss2 == boss else ''}}">
+            <a class="nav-link" href="{{boss2.name_slug}}_{{spec.name_slug}}.html">
+                <img class="nav-img" src="static/images/bosses/castle-nathria/{{boss2.name_slug}}.jpg" alt="{{boss2.name}}" title="{{boss2.name}}">
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</nav>
+

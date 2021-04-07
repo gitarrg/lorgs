@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}
+Timeline
+{% endblock %}
+
+
+{% block content %}
+
+<div class="row bg-primary mb-3 rounded border">
+    <div class="col">
+
+        <h1>
+            <img class="icon-big rounded shadow border" src="static/images/specs/{{spec.name_slug}}.jpg">
+            <span class="wow-class-{{spec.class_.name|lower}}">{{spec.full_name}}'s</span>
+            vs
+            <img class="icon-big rounded shadow border" src="static/images/bosses/castle-nathria/{{boss.name_slug}}.jpg" alt="{{boss.name}}">
+            {{boss.name}}
+        </h1>
+    </div>
+</div>
+
+
+<div class="row bg-secondary mb-3 rounded border">
+    <div class="col-12">
+        <h2><i class="fas fa-sliders-h fa-xs"></i> Settings:</h2>
+    </div>
+
+    <div class="col-4">
+        <h4>Display:</h4>
+
+        <div class="col">
+            <div class="form-check form-check-inline spell-checkbox-group">
+                <input class="form-check-input" type="checkbox" id="show-spell-duration" checked>
+                <label class="form-check-label" for="show-spell-duration">show duration</label>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="form-check form-check-inline spell-checkbox-group">
+                <input class="form-check-input" type="checkbox" id="show-spell-cooldown" checked>
+                <label class="form-check-label" for="show-spell-cooldown">show cooldown</label>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col-4">
+        <div class="row">
+            <div class="col-12"><h4>Spells:</h4></div>
+            {% for spell in spec.all_spells.values() %}
+            <div class="col-3">
+                <div class="form-check form-check-inline spell-checkbox-group">
+                    <input class="form-check-input" type="checkbox" value="1" id="show-spell-{{spell.spell_id}}" checked data-spell_id={{spell.spell_id}}>
+                    <label class="form-check-label"><a href="#" data-wowhead="spell={{spell.spell_id}}" data-wh-rename-link="true"></a></label>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+<div class="row" id=timeline>
+    {% for fight in fights %}
+    <div class="col-12">
+        {% for player in fight.players %}
+        {% if player.casts %}
+        <div class="player_timeline shadow mb-1" style="width: {{fight.duration / 250}}px">
+
+            <div class="player_spec_icon">
+                <img src="static/images/specs/{{player.spec.name_slug}}.jpg">
+            </div>
+
+            <div class="player_name wow-class-{{player.class_slug}}">
+                <a href="{{fight.url}}" target="_blank">{{player.name}}</a>
+            </div>
+
+            <div class="cast_container position-relative">
+            {% for cast in player.casts %}
+                <div class="cast" data-spell_id="{{cast.spell_id}}" style="left: {{cast.time / 250}}px;">
+
+                {% if cast.spell.cooldown %}
+                    <div class="cast_cooldown wow-class-bg-{{player.class_slug}}"  style="width: {{cast.spell.cooldown * 4}}px"></div>
+                {% endif %}
+
+                {% if cast.spell.duration %}
+                    <div class="cast_duration wow-class-bg-{{player.class_slug}}" style="width: {{cast.spell.duration * 4}}px"></div>
+                {% endif %}
+
+                    <div class="cast_icon"><a href="#" data-wowhead="spell={{cast.spell_id}}"></a></div>
+                    <div class="cast_text">{{cast.time_fmt}}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+
+<!-- Content Scripts -->
+{% block scripts %}
+
+
+<script type="text/javascript">
+
+
+
+$(".spell-checkbox-group input").click(function() {
+    let checked = !$(this).is(':checked');
+    let spell_id = $(this).attr("data-spell_id");
+    // console.log("clicked", spell_id, checked)
+    $(`.cast[data-spell_id=${spell_id}]`).toggle(!checked)
+});
+
+
+// show/hide all spell durtion bars
+$("#show-spell-duration").click(function() {
+    let checked = !$(this).is(':checked');
+    $(".cast_duration").toggle(!checked)
+
+});
+
+
+// show/hide all spell cooldown bars
+$("#show-spell-cooldown").click(function() {
+    let checked = !$(this).is(':checked');
+    $(".cast_cooldown").toggle(!checked)
+});
+
+
+
+
+
+</script>
+
+
+{% endblock %}

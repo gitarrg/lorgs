@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+
+<style>
+#box1 {
+    width: 300px;
+    height: 100px;
+    color: white;
+    text-align: center;
+    line-height: 100px;
+    background: green;
+    position: relative;
+}
+
+#inner1, #inner2 {
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+
+    top: 0;
+    position: absolute;
+
+    background: black;
+    opacity: 1;
+    color: white;
+    text-align: center;
+    line-height: 50px;
+}
+
+
+.icon {
+    position: absolute;
+    left: 0px;
+    width: 50px;
+    height: 50px;
+    background: red;
+
+}
+
+.text {
+    position: absolute;
+    left: 50px;
+    background: blue;
+}
+
+.line {
+    position: absolute;
+    left: 0px;
+    height: 50px;
+    background: yellow;
+}
+
+
+
+</style>
+
+</head>
+<body>
+
+</body>
+</html>
+
+<h1>Some Random text</h1>
+
+<div id="box1">
+    1
+    <div id="inner1" style="left: 20px">
+        <div class="line" style="width: 100px"></div>
+        <div class="icon">A</div>
+        <div class="text">20px</div>
+    </div>
+
+    <div id="inner2" style="left: 150px">
+        <div class="icon">B</div>
+        <div class="text">150px</div>
+    </div>
+</div>
