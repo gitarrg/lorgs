@@ -6,3 +6,5 @@ __pycache__/
 *.zip
 *.sublime-workspace
 
+_build
+

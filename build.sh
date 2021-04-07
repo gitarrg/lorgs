@@ -6,11 +6,11 @@ build_dir=_build
 
 
 
-if [ -d "$build_dir/rankings/static" ]
+if [ -d "$build_dir/static" ]
 then
-    rm -r "$build_dir/rankings/static"
+    rm -r "$build_dir/static"
 fi
-cp -r wowtimeline/static $build_dir/rankings/static
+cp -r wowtimeline/static $build_dir/static
 
 
 source ~/.envs/wowtimeline/bin/activate
