@@ -15,11 +15,13 @@ class WoWSpell:
     """Container to define a spell."""
     _all = {}
 
-    def __init__(self, spell_id, duration=0, cooldown=0):
+    def __init__(self, spell_id, duration=0, cooldown=0, show=True):
         super().__init__()
         self.spell_id = spell_id
         self.duration = duration
         self.cooldown = cooldown
+
+        self.show = show
 
         self._all[spell_id] = self
 
@@ -59,6 +61,14 @@ class WowSpec(spell_mixin):
     @property
     def full_name(self):
         return f"{self.name} {self.class_.name}"
+
+    @property
+    def name_slug_cap(self):
+        """Spec Name without spaces, but still capCase..
+
+        eg.: "BeastMastery"
+        """
+        return self.name.replace(" ", "")
 
     @property
     def name_slug(self):

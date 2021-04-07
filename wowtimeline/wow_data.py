@@ -116,10 +116,10 @@ PALADIN_HOLY.add_spell(spell_id=31821, cooldown=180, duration=8) # Aura Mastery
 
 HUNTER.add_spell(spell_id=328231, cooldown=120, duration=15) # Covenant: Wild Spirits
 HUNTER_BEASTMASTERY.add_spell(spell_id=193530, cooldown=180, duration=20) # Aspect of the Wild
-HUNTER_BEASTMASTERY.add_spell(spell_id=19574, cooldown=90, duration=15) # Bestial Wrath
-HUNTER_BEASTMASTERY.add_spell(spell_id=201430, cooldown=120, duration=12) # Stampede
+HUNTER_BEASTMASTERY.add_spell(spell_id=19574, cooldown=90, duration=15, show=False) # Bestial Wrath
+HUNTER_BEASTMASTERY.add_spell(spell_id=201430, cooldown=120, duration=12, show=False) # Stampede
 # HUNTER_SURVIVAL.add_spell(spell_id=266779, cooldown=120, duration=20) # Coordinated Assault
-HUNTER_MARKSMANSHIP.add_spell(spell_id=288613, cooldown=120, duration=15) # Trueshot
+HUNTER_MARKSMANSHIP.add_spell(spell_id=288613, cooldown=120, duration=15, show=False) # Trueshot
 
 # Rogue
 
@@ -141,15 +141,14 @@ PRIEST_HOLY.add_spell(spell_id=200183, cooldown=120, duration=20) # Apotheosis
 # Shamans
 SHAMAN_RESTORATION.add_spell(spell_id=108280, cooldown=180, duration=10) # Healing Tide
 SHAMAN_RESTORATION.add_spell(spell_id=98008,  cooldown=180, duration=6)  # Spirit Link
-SHAMAN_RESTORATION.add_spell(spell_id=16191,  cooldown=180, duration=8)  # Mana Tide
+SHAMAN_RESTORATION.add_spell(spell_id=16191,  cooldown=180, duration=8, show=False)  # Mana Tide
 SHAMAN_RESTORATION.add_spell(spell_id=207399,  cooldown=300, duration=30)  # Ahnk totem
 SHAMAN_RESTORATION.add_spell(spell_id=114052,  cooldown=180, duration=15)  # Ascendance
 
-MAGE.add_spell(spell_id=314791, cooldown=60, duration=3.1) # Shifting Power
-MAGE_FIRE.add_spell(spell_id=190319, cooldown=120, duration=10) # Combustion
+MAGE.add_spell(spell_id=314791, cooldown=60, duration=3.1, show=False) # Shifting Power
+MAGE_FIRE.add_spell(spell_id=190319, cooldown=60, duration=10) # Combustion
 
 WARLOCK.add_spell(spell_id=325640, cooldown=60, duration=8) # Soulrot
-# WARLOCK_AFFLICTION.add_spell(spell_id=325640, cooldown=60, duration=8) # Soulrot
 WARLOCK_AFFLICTION.add_spell(spell_id=205180, cooldown=180, duration=8) # Darkglare
 WARLOCK_AFFLICTION.add_spell(spell_id=113860, cooldown=120, duration=20) # Dark Soul: Misery
 # WARLOCK_DEMONOLOGY.add_spell(spell_id=265187, cooldown=180, duration=15) # Tyrant
@@ -162,7 +161,7 @@ WARLOCK_DESTRUCTION.add_spell(spell_id=113858, cooldown=120, duration=20) # Dark
 # Druid
 DRUID.add_spell(spell_id=323764, cooldown=120)  # Convoke
 DRUID_RESTORATION.add_spell(spell_id=197721, cooldown=90, duration=8) # Flourish
-DRUID_RESTORATION.add_spell(spell_id=29166, cooldown=180, duration=10) # Innervate
+DRUID_RESTORATION.add_spell(spell_id=29166, cooldown=180, duration=10, show=False) # Innervate
 DRUID_RESTORATION.add_spell(spell_id=740, cooldown=180, duration=6) # Tranquility
 DRUID_RESTORATION.add_spell(spell_id=33891, cooldown=180, duration=30) # Tree of Life
 

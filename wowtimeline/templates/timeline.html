@@ -51,7 +51,7 @@ Timeline
             {% for spell in spec.all_spells.values() %}
             <div class="col-3">
                 <div class="form-check form-check-inline spell-checkbox-group">
-                    <input class="form-check-input" type="checkbox" value="1" id="show-spell-{{spell.spell_id}}" checked data-spell_id={{spell.spell_id}}>
+                    <input class="form-check-input" type="checkbox" value="1" id="show-spell-{{spell.spell_id}}" {{"checked" if spell.show else ""}} data-spell_id={{spell.spell_id}}>
                     <label class="form-check-label"><a href="#" data-wowhead="spell={{spell.spell_id}}" data-wh-rename-link="true"></a></label>
                 </div>
             </div>
@@ -66,7 +66,7 @@ Timeline
     <div class="col-12">
         {% for player in fight.players %}
         {% if player.casts %}
-        <div class="player_timeline shadow mb-1">
+        <div class="player_timeline shadow mb-1" style="width: {{ 350 + (fight.duration / 250) }}px">
 
 
             <div class="player_spec_icon">
@@ -124,13 +124,26 @@ Timeline
 <script type="text/javascript">
 
 
+function _update_spell_display(checkbox) {
+    let checked = checkbox.is(':checked');
+    let spell_id = checkbox.attr("data-spell_id");
+    console.log("clicked", spell_id, checked)
+    $(`.cast[data-spell_id=${spell_id}]`).toggle(checked)
+}
 
 $(".spell-checkbox-group input").click(function() {
-    let checked = !$(this).is(':checked');
-    let spell_id = $(this).attr("data-spell_id");
-    // console.log("clicked", spell_id, checked)
-    $(`.cast[data-spell_id=${spell_id}]`).toggle(!checked)
+    _update_spell_display($(this))
+
 });
+
+// initial refresh on page load
+$( document ).ready(function() {
+    $(".spell-checkbox-group input").each(function(index) {
+        _update_spell_display($(this));
+    });
+});
+
+
 
 
 // show/hide all spell durtion bars

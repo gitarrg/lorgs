@@ -99,25 +99,22 @@ class WarcraftlogsClient:
                 try:
                     result = await resp.json()
                 except Exception as e:
-                    print(result)
+                    print(resp)
                     raise(e)
 
+                # some reports are private.. but still show up in rankings..
+                # lets just see what happens
+                """
                 if result.get("errors"):
-                    msg = "\n".join(error.get("message") for error in result.get("errors"))
+                    msg = ""
+                    for error in result.get("errors"):
+                        msg += "\n" + error.get("message") + " path:" + "/".join(error.get("path"))
+                        print(query)
                     raise ValueError(msg)
+                """
 
                 self.cache[query] = result.get("data", {})
                 return self.cache[query]
-
-    ##############################
-
-    async def v1query(self, url, params):
-
-        params = params or {}
-        params["api_key"] = "5eda972b6e39c19a1efb46bfe64fa674"
-        async with ClientSession() as session:
-            async with session.get(url=url, params=params) as resp:
-                return await resp.json()
 
     ##############################
 
@@ -157,6 +154,10 @@ class WarcraftlogsClient:
         for i, fight in enumerate(fights):
             report_data = data.get(f"report{i}", {})
 
+            # skip if smth went wrong with this report
+            if not report_data:
+                continue
+
             player = fight.players[0] # fixme
             casts_data = report_data.get("casts", {}).get("data", {})
             for cast_data in casts_data:
@@ -183,7 +184,7 @@ class WarcraftlogsClient:
                 {{
                     characterRankings(
                         className: "{spec.class_.name}",
-                        specName: "{spec.name}",
+                        specName: "{spec.name_slug_cap}",
                         metric: {metric},
                         includeCombatantInfo: false,
                     )
@@ -200,6 +201,10 @@ class WarcraftlogsClient:
         fights = []
         for ranking_data in rankings:
             report_data = ranking_data.get("report", {})
+
+            # skip hidden reports
+            if ranking_data.get("hidden"):
+                continue
 
             fight_start_time = ranking_data.get("startTime", 0) - report_data.get("startTime", 0)
             fight_end_time = fight_start_time + ranking_data.get("duration", 0)
