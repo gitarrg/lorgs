@@ -76,7 +76,12 @@ class WarcraftlogsClient:
         }
         async with ClientSession() as session:
             async with session.post(url=self.URL_AUTH, data=data) as resp:
-                data = await resp.json()
+
+                try:
+                    data = await resp.json()
+                except Exception as e:
+                    print(resp)
+                    raise e
 
         token = data.get("access_token", "")
         self.headers["Authorization"] = "Bearer " + token
@@ -229,6 +234,11 @@ class WarcraftlogsClient:
 
             # skip hidden reports
             if ranking_data.get("hidden"):
+                continue
+
+            # skip asian reports (sorry)
+            server_region = ranking_data.get("server", {}).get("region", "")
+            if server_region not in ("EU", "US"):
                 continue
 
             fight_start_time = ranking_data.get("startTime", 0) - report_data.get("startTime", 0)

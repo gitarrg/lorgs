@@ -79,12 +79,11 @@ WCL_CLIENT = client.WarcraftlogsClient(client_id=WCL_CLIENT_ID, client_secret=WC
 async def generate_ranking_report(boss, spec):
 
     fights = []
-    """
-    """
     fights = await WCL_CLIENT.get_top_ranks(boss["id"], spec)
     fights = fights[:50]
 
     await WCL_CLIENT.fetch_multiple_fights(fights)
+    print(f"[GENERATED REPORT] {spec.full_name} vs {boss['name']}")
 
     data = {}
     data["boss"] = boss
@@ -97,6 +96,7 @@ async def generate_ranking_report(boss, spec):
 async def generate_rankings():
     bosses = wow_data.ENCOUNTERS
     # bosses = wow_data.ENCOUNTERS[0:3]
+
     specs = [
         # healers
         # wow_data.DRUID_RESTORATION,
@@ -105,29 +105,26 @@ async def generate_rankings():
         # wow_data.PRIEST_HOLY,
         # wow_data.SHAMAN_RESTORATION,
 
+        # mps
+        wow_data.PALADIN_RETRIBUTION,
+
         # rdps
-        wow_data.HUNTER_BEASTMASTERY,
-        wow_data.HUNTER_MARKSMANSHIP,
-        wow_data.MAGE_FIRE,
-        wow_data.WARLOCK_AFFLICTION,
-        wow_data.WARLOCK_DESTRUCTION,
+        # wow_data.HUNTER_BEASTMASTERY,
+        # wow_data.HUNTER_MARKSMANSHIP,
+        # wow_data.MAGE_FIRE,
+        # wow_data.WARLOCK_AFFLICTION,
+        # wow_data.WARLOCK_DESTRUCTION,
     ]
+    specs = wow_data.SPECS_SUPPORTED
 
+    tasks = []
     for spec in specs:
-        print(f"[GENERATE_RANKINGS] {spec}")
         for boss in bosses:
+            tasks += [generate_ranking_report(boss, spec)]
 
-
-            # check for points
-            points_left = await WCL_CLIENT.get_points_left()
-            if points_left < 150:
-                print("WARNING!!! out of points.")
-                print(f"WARNING!!! points left: {points_left}")
-                print(f"WARNING!!! reset in: {WCL_CLIENT.rate_limit_data['pointsResetIn']}")
-                return
-
-            print(f"[GENERATE_RANKINGS] <{points_left:.0f}> Spec: {spec.full_name} Boss: {boss['name']}")
-            await generate_ranking_report(boss, spec)
+    # process in chunks of n
+    for tasklist in utils.chunks(tasks, 16):
+        await asyncio.gather(*tasklist)
 
 
 async def render_index():
