@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-Timeline
+Lorgs: {{spec.full_name}} vs. {{boss.name}}
 {% endblock %}
 
 
@@ -9,10 +9,9 @@ Timeline
 <!-- HEADER -->
 <div class="row bg-dark mx-3 mb-3 p-2 rounded border">
     <div class="col">
-
         <h1>
             <img class="icon-big rounded shadow border" src="static/images/specs/{{spec.name_slug}}.jpg">
-            <span class="wow-class-{{spec.class_.name|lower}}">{{spec.full_name}}'s</span>
+            <span class="wow-class-{{spec.class_.name|lower}}">{{spec.full_name}}s</span>
             vs
             <img class="icon-big rounded shadow border" src="static/images/bosses/castle-nathria/{{boss.name_slug}}.jpg" alt="{{boss.name}}">
             {{boss.name}}
