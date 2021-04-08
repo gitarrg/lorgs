@@ -19,6 +19,8 @@ from wowtimeline import wow_data
 WCL_CLIENT_ID = "91c26642-e3e9-4090-945d-e65cf4720b5c"          # TODO: save as env vars
 WCL_CLIENT_SECRET = "noOXQooD0qPXsXSPcnmluUElzT3tn2FR3GDviQbF"
 
+GOOGLE_ANALYTICS_ID = "G-Y92VPCY6QW"
+
 
 PWD = os.path.dirname(__file__)
 
@@ -33,6 +35,10 @@ OUTPUT_FOLDER = os.path.join(PWD, "../_build")
 
 async def render(template_name, path, data):
     print("[RENDER]", path)
+
+    # include some global args
+    data["wow_data"] = wow_data
+    data["GOOGLE_ANALYTICS_ID"] = GOOGLE_ANALYTICS_ID
 
 
     dirpath = os.path.dirname(path)
@@ -84,7 +90,6 @@ async def generate_ranking_report(boss, spec):
     await WCL_CLIENT.cache.save()
 
     data = {}
-    data["wow_data"] = wow_data
     data["boss"] = boss
     data["spec"] = spec
     data["fights"] = fights
@@ -122,11 +127,9 @@ async def generate_rankings():
 
 async def render_index():
     data = {}
-    data["wow_data"] = wow_data
-
     # we need smth to make the links work
     data["spec"] = wow_data.WARLOCK_AFFLICTION
-    data["boss"] = wow_data.ENCOUNTERS[0]
+    data["boss"] = wow_data.ENCOUNTERS[-1]
 
     path = f"{OUTPUT_FOLDER}/index.html"
     await render("index.html", path, data)
