@@ -23,24 +23,53 @@ a, a:hover {
     text-decoration: none;
 }
 
+
+/*   BOOTSTRAP EDITS   */
+
+.border {
+    border: 1px solid #424242 !important;
+}
+
+
+.bg-dark-2 {
+    background-color: #484848 !important;
+}
+
+.bg-dark-3 {
+    background-color: #303030 !important;
+}
+
+
+.inner_shadow-sm {
+   -moz-box-shadow:    0 0 6px #00000080;
+   -webkit-box-shadow: 0 0 6px #00000080;
+   box-shadow:         0 0 6px #00000080;
+}
+
+
 .icon-big {
     width: 56px;
     height: 56px;
+    margin-top: -12px;   /*to align it with the h1 properly*/
 }
 
 
 .player_timeline {
-    height: 30px;
+    height: 32px;
 
-    line-height: 28px;
+    line-height: 30px;
     vertical-align: middle;
 }
 
 .player_spec_icon img {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     border: 1px solid black;
+    border-right: none;
     float: left;
+
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
 }
 
 
@@ -48,11 +77,26 @@ a, a:hover {
     background: hsl(0, 0%, 30%);
 
     padding-left: 5px;
+    padding-right: 5px;
+
+    border: 1px solid black;
+    border-left: none;
 
     width: 150px;
-    height: 28px;
+    height: 30px;
     float: left;
 }
+
+
+.player_total {
+    float: right;
+}
+
+.player_name a:hover {
+    text-decoration: underline;
+}
+
+
 
 .cast_container {
     position: relative;
@@ -61,12 +105,15 @@ a, a:hover {
 
     background: #222;
     overflow-x: hidden;
+
+    border: 1px solid black;
+    border-left: none;
 }
 
 
 .cast {
     position: absolute;
-    background: green;
+    height: 28px;
 }
 
 .cast_icon {
@@ -75,7 +122,9 @@ a, a:hover {
     width: 28px;
     height: 28px;
     padding: 1px; /*for 26px icon*/
+    padding-top: 0;
     left: 0px;
+    top: -3px;
 }
 
 .cast_text {
@@ -87,9 +136,7 @@ a, a:hover {
 
 .cast_cooldown {
     position: absolute;
-
-    height: 30px;
-
+    height: 28px;
     background: grey;
     border-radius: 3px;
     opacity: 0.2;
@@ -98,7 +145,7 @@ a, a:hover {
 
 .cast_duration {
     position: absolute;
-    height: 30px;
+    height: 28px;
     border: 1px solid #444;
     border-radius: 3px;
     opacity: 0.5;
@@ -108,28 +155,37 @@ a, a:hover {
     border-left: 2px solid yellow;
     padding-left: 10px;
     float: left;
-    color: #888;
-    height: 30px;
+    color: #ffffff75;
+    height: 28px;
+    margin-top: 1px;
 }
-
-
-
 
 .nav-img {
     height: 30px;
     width: 30px;
-    border-radius: 3px;
+    border-radius: 2px;
     border: 1px solid black;
 }
 
 .nav-img:hover {
-    border: 1px solid #ccc;
+    border: 1px solid;
+    transform: scale(1.2);
 }
 
 
 .active .nav-img {
-    border: 2px solid white;
+    border-width: 2px;
+    border-color: white;
 }
+
+
+.disabled .nav-img {
+    border: none !important;
+    filter: saturate(0%) blur(1px);
+    opacity: 30%;
+    cursor: default;
+}
+
 
 
 .navbar-expand-sm .navbar-nav .nav-link {

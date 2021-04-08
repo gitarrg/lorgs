@@ -45,15 +45,12 @@ class spell_mixin:
 
 class WowSpec(spell_mixin):
     """docstring for Spec"""
-    _all = {}
 
-    def __init__(self, spec_id, name, role="dps"):
+    def __init__(self, name, role="dps"):
         super().__init__()
-        self.spec_id = spec_id
         self.name = name
         self.role = role
         self.class_ = None
-        self._all[spec_id] = self
 
     def __repr__(self):
         return f"<WoWSpec({self.full_name})>"
@@ -88,23 +85,23 @@ class WowSpec(spell_mixin):
 
 class WoWClass(spell_mixin):
     """docstring for WoWClass"""
-    _all = {}
 
-    def __init__(self, class_id, name):
+    def __init__(self, name):
         super().__init__()
-        self.class_id = class_id
         self.name = name
-        self.specs = {}
-
-        self._all[class_id] = self
+        self.specs = []
 
     def __repr__(self):
         return f"<WoWClass(name='{self.name}')>"
 
-    def add_spec(self, spec_id, **kwargs):
-        spec = WowSpec(spec_id, **kwargs)
+    @property
+    def name_slug(self):
+        return self.name.replace(" ", "").lower()
+
+    def add_spec(self, **kwargs):
+        spec = WowSpec(**kwargs)
         spec.class_ = self
-        self.specs[spec_id] = spec
+        self.specs.append(spec)
         return spec
 
 
@@ -138,7 +135,7 @@ class Cast:
 
 class Player:
     """docstring for Player"""
-    def __init__(self, name="", spec=None):
+    def __init__(self, name="", spec=None, total=0):
         super(Player, self).__init__()
         self.id = 0
         self.name = name
@@ -146,14 +143,19 @@ class Player:
         # self.type = ""  # aka class
         self.spec = spec # WowSpec
 
-        self.damage_done = 0
-        self.healing_done = 0
+        # self.damage_done = 0
+        # self.healing_done = 0
+        self.total = total
 
         self.casts = []
 
     @property
     def class_slug(self):
         return self.spec.class_.name.lower().replace(" ", "")  # fixme
+
+    @property
+    def total_fmt(self):
+        return utils.format_big_number(self.total)
 
 
 class Fight:

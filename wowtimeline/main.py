@@ -73,9 +73,12 @@ WCL_CLIENT = client.WarcraftlogsClient(client_id=WCL_CLIENT_ID, client_secret=WC
 
 async def generate_ranking_report(boss, spec):
 
+    fights = []
+    """
+    """
     fights = await WCL_CLIENT.get_top_ranks(boss["id"], spec)
     await WCL_CLIENT.cache.save()
-    fights = fights[:25]
+    fights = fights[:50]
 
     await WCL_CLIENT.fetch_multiple_fights(fights)
     await WCL_CLIENT.cache.save()
@@ -92,18 +95,32 @@ async def generate_ranking_report(boss, spec):
 async def generate_rankings():
 
     bosses = wow_data.ENCOUNTERS
+    # bosses = wow_data.ENCOUNTERS[0:3]
+    specs = [
 
-    for wow_class in wow_data.CLASSES.values():
-        print("GENERATE_RANKINGS", wow_class)
+        # healers
+        wow_data.DRUID_RESTORATION,
+        wow_data.PALADIN_HOLY,
+        wow_data.PRIEST_DISCIPLINE,
+        wow_data.PRIEST_HOLY,
+        wow_data.SHAMAN_RESTORATION,
+
+        # rdps
+        wow_data.HUNTER_BEASTMASTERY,
+        wow_data.HUNTER_MARKSMANSHIP,
+        wow_data.MAGE_FIRE,
+        wow_data.WARLOCK_AFFLICTION,
+        wow_data.WARLOCK_DESTRUCTION,
+    ]
+
+    for spec in specs:
+        print("GENERATE_RANKINGS", spec)
         for boss in bosses:
-            for spec in wow_class.specs.values():
-                print("GENERATE_RANKINGS", "Spec:", spec.full_name, "Boss:", boss["name"])
-                await generate_ranking_report(boss, spec)
-        return
+            print("GENERATE_RANKINGS", "Spec:", spec.full_name, "Boss:", boss["name"])
+            await generate_ranking_report(boss, spec)
 
 
 async def render_index():
-
     data = {}
     data["wow_data"] = wow_data
 
@@ -115,9 +132,7 @@ async def render_index():
     await render("index.html", path, data)
 
 
-
 if __name__ == '__main__':
     asyncio.run(render_index())
     asyncio.run(generate_rankings())
-
 

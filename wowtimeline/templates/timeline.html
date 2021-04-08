@@ -6,8 +6,8 @@ Timeline
 
 
 {% block content %}
-
-<div class="row bg-primary mb-3 rounded border">
+<!-- HEADER -->
+<div class="row bg-dark mx-3 mb-3 p-2 rounded border">
     <div class="col">
 
         <h1>
@@ -20,39 +20,40 @@ Timeline
     </div>
 </div>
 
-
-<div class="row bg-secondary mb-3 rounded border">
-    <div class="col-12">
+<!-- SETTINGS -->
+<div class="row bg-dark mx-3 mb-3 p-1 rounded border">
+    <div class="col-2">
         <h2><i class="fas fa-sliders-h fa-xs"></i> Settings:</h2>
     </div>
 
-    <div class="col-4">
-        <h4>Display:</h4>
+    <div class="col-2">
+        <div class="row">
+            <div class="col-12"><h4>Display:</h4></div>
 
-        <div class="col">
-            <div class="form-check form-check-inline spell-checkbox-group">
-                <input class="form-check-input" type="checkbox" id="show-spell-duration" checked>
-                <label class="form-check-label" for="show-spell-duration">show duration</label>
+            <div class="col-12">
+                <div class="form-check form-check-inline spell-checkbox-group">
+                    <input class="form-check-input" type="checkbox" id="show-spell-duration" checked>
+                    <label class="form-check-label" for="show-spell-duration">show duration</label>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="form-check form-check-inline spell-checkbox-group">
+                    <input class="form-check-input" type="checkbox" id="show-spell-cooldown" checked>
+                    <label class="form-check-label" for="show-spell-cooldown">show cooldown</label>
+                </div>
             </div>
         </div>
-
-        <div class="col">
-            <div class="form-check form-check-inline spell-checkbox-group">
-                <input class="form-check-input" type="checkbox" id="show-spell-cooldown" checked>
-                <label class="form-check-label" for="show-spell-cooldown">show cooldown</label>
-            </div>
-        </div>
-
     </div>
 
-    <div class="col-4">
+    <div class="col-8">
         <div class="row">
             <div class="col-12"><h4>Spells:</h4></div>
             {% for spell in spec.all_spells.values() %}
-            <div class="col-3">
+            <div class="col-2">
                 <div class="form-check form-check-inline spell-checkbox-group">
                     <input class="form-check-input" type="checkbox" value="1" id="show-spell-{{spell.spell_id}}" {{"checked" if spell.show else ""}} data-spell_id={{spell.spell_id}}>
-                    <label class="form-check-label"><a href="#" data-wowhead="spell={{spell.spell_id}}" data-wh-rename-link="true"></a></label>
+                    <label class="form-check-label" for="show-spell-{{spell.spell_id}}"><a href="#" data-wowhead="spell={{spell.spell_id}}" data-wh-rename-link="true"></a></label>
                 </div>
             </div>
             {% endfor %}
@@ -60,25 +61,29 @@ Timeline
     </div>
 </div>
 
-
-<div class="row" id=timeline>
+<!-- TIMELINES -->
+<div class="row bg-dark mx-3 mb-3 pt-2 rounded border" id=timeline>
     {% for fight in fights %}
-    <div class="col-12">
+    <div class="col-12 px-2">
         {% for player in fight.players %}
         {% if player.casts %}
-        <div class="player_timeline shadow mb-1" style="width: {{ 350 + (fight.duration / 250) }}px">
 
-
+        <div class="player_timeline mb-1" style="width: {{ 350 + (fight.duration / 250) }}px">
             <div class="player_spec_icon">
                 <img src="static/images/specs/{{player.spec.name_slug}}.jpg">
             </div>
 
             <div class="player_name wow-class-{{player.class_slug}}">
-                <a href="{{fight.url}}" target="_blank">{{player.name}}</a>
+                <a href="{{fight.url}}" target="_blank"><span>{{player.name}}</span>
+                {% if player.total %}
+                    <span class="player_total">{{player.total_fmt}}</span>
+                {% endif %}
+                </a>
+
             </div>
 
             <div>
-                <div class="cast_container" style="width: {{(fight.duration / 250)}}px">
+                <div class="cast_container inner_shadow" style="width: {{(fight.duration / 250)}}px">
                 {% for cast in player.casts %}
                     <div class="cast" data-spell_id="{{cast.spell_id}}" style="left: {{cast.time / 250}}px;">
 
@@ -102,14 +107,7 @@ Timeline
             </div>
 
         </div>
-
-
-
         {% endif %}
-
-
-
-
         {% endfor %}
     </div>
     {% endfor %}
@@ -127,14 +125,21 @@ Timeline
 function _update_spell_display(checkbox) {
     let checked = checkbox.is(':checked');
     let spell_id = checkbox.attr("data-spell_id");
-    console.log("clicked", spell_id, checked)
     $(`.cast[data-spell_id=${spell_id}]`).toggle(checked)
 }
 
 $(".spell-checkbox-group input").click(function() {
     _update_spell_display($(this))
-
 });
+
+
+// re-connect label click to checkbox for spells
+$(".spell-checkbox-group label").click(function() {
+    let input_name = $(this).attr("for");
+    let input = $("#"+input_name);
+    input.click();
+});
+
 
 // initial refresh on page load
 $( document ).ready(function() {

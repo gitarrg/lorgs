@@ -32,70 +32,66 @@ ENCOUNTERS = [
 ################################################################################
 
 # Define all classes and specs
-#
-# ids are based of:
-# https://www.warcraftlogs.com/v1/classes
-#
 
-# DEATHKNIGHT = m.WoWClass(class_id=1, name="Death Knight")
-# DEATHKNIGHT_BLOOD = DEATHKNIGHT.add_spec(spec_id=1, name="Blood")
-# DEATHKNIGHT_FROST = DEATHKNIGHT.add_spec(spec_id=2, name="Frost")
-# DEATHKNIGHT_UNHOLY = DEATHKNIGHT.add_spec(spec_id=3, name="Unholy")
+WARRIOR = m.WoWClass(name="Warrior")
+WARRIOR_ARMS = WARRIOR.add_spec(name="Arms")
+WARRIOR_FURY = WARRIOR.add_spec(name="Fury")
+WARRIOR_PROTECTION = WARRIOR.add_spec(name="Protection")
 
-DRUID = m.WoWClass(class_id=2, name="Druid")
-# DRUID_BALANCE = DRUID.add_spec(spec_id=1, name="Balance")
-# DRUID_FERAL = DRUID.add_spec(spec_id=2, name="Feral")
-# DRUID_GUARDIAN = DRUID.add_spec(spec_id=3, name="Guardian")
-DRUID_RESTORATION = DRUID.add_spec(spec_id=4, name="Restoration", role=HEAL)
+PALADIN = m.WoWClass(name="Paladin")
+PALADIN_HOLY = PALADIN.add_spec(name="Holy", role=HEAL)
+PALADIN_PROTECTION = PALADIN.add_spec(name="Protection")
+PALADIN_RETRIBUTION = PALADIN.add_spec(name="Retribution")
 
-HUNTER = m.WoWClass(class_id=3, name="Hunter")
-HUNTER_BEASTMASTERY = HUNTER.add_spec(spec_id=1, name="Beast Mastery")
-HUNTER_MARKSMANSHIP = HUNTER.add_spec(spec_id=2, name="Marksmanship")
-# HUNTER_SURVIVAL = HUNTER.add_spec(spec_id=3, name="Survival")
+HUNTER = m.WoWClass(name="Hunter")
+HUNTER_BEASTMASTERY = HUNTER.add_spec(name="Beast Mastery")
+HUNTER_MARKSMANSHIP = HUNTER.add_spec(name="Marksmanship")
+HUNTER_SURVIVAL = HUNTER.add_spec(name="Survival")
 
-MAGE = m.WoWClass(class_id=4, name="Mage")
-# MAGE_ARCANE = MAGE.add_spec(spec_id=1, name="Arcane")
-MAGE_FIRE = MAGE.add_spec(spec_id=2, name="Fire")
-# MAGE_FROST = MAGE.add_spec(spec_id=3, name="Frost")
+ROGUE = m.WoWClass(name="Rogue")
+ROGUE_ASSASSINATION = ROGUE.add_spec(name="Assassination")
+ROGUE_SUBTLETY = ROGUE.add_spec(name="Subtlety")
+ROGUE_OUTLAW = ROGUE.add_spec(name="Outlaw")
 
-# MONK = m.WoWClass(class_id=5, name="Monk")
-# MONK_BREWMASTER = MONK.add_spec(spec_id=1, name="Brewmaster")
-# MONK_MISTWEAVER = MONK.add_spec(spec_id=2, name="Mistweaver", role=HEAL)
-# MONK_WINDWALKER = MONK.add_spec(spec_id=3, name="Windwalker")
+PRIEST = m.WoWClass(name="Priest")
+PRIEST_DISCIPLINE = PRIEST.add_spec(name="Discipline", role=HEAL)
+PRIEST_HOLY = PRIEST.add_spec(name="Holy", role=HEAL)
+PRIEST_SHADOW = PRIEST.add_spec(name="Shadow")
 
-PALADIN = m.WoWClass(class_id=6, name="Paladin")
-PALADIN_HOLY = PALADIN.add_spec(spec_id=1, name="Holy", role=HEAL)
-# PALADIN_PROTECTION = PALADIN.add_spec(spec_id=2, name="Protection")
-# PALADIN_RETRIBUTION = PALADIN.add_spec(spec_id=3, name="Retribution")
+DEATHKNIGHT = m.WoWClass(name="Death Knight")
+DEATHKNIGHT_BLOOD = DEATHKNIGHT.add_spec(name="Blood")
+DEATHKNIGHT_FROST = DEATHKNIGHT.add_spec(name="Frost")
+DEATHKNIGHT_UNHOLY = DEATHKNIGHT.add_spec(name="Unholy")
 
-PRIEST = m.WoWClass(class_id=7, name="Priest")
-PRIEST_DISCIPLINE = PRIEST.add_spec(spec_id=1, name="Discipline", role=HEAL)
-PRIEST_HOLY = PRIEST.add_spec(spec_id=2, name="Holy", role=HEAL)
-# PRIEST_SHADOW = PRIEST.add_spec(spec_id=3, name="Shadow")
+SHAMAN = m.WoWClass(name="Shaman")
+SHAMAN_ELEMENTAL = SHAMAN.add_spec(name="Elemental")
+SHAMAN_ENHANCEMENT = SHAMAN.add_spec(name="Enhancement")
+SHAMAN_RESTORATION = SHAMAN.add_spec(name="Restoration", role=HEAL)
 
-# ROGUE = m.WoWClass(class_id=8, name="Rogue")
-# ROGUE_ASSASSINATION = ROGUE.add_spec(spec_id=1, name="Assassination")
-# ROGUE_SUBTLETY = ROGUE.add_spec(spec_id=3, name="Subtlety")
-# ROGUE_OUTLAW = ROGUE.add_spec(spec_id=4, name="Outlaw")
+MAGE = m.WoWClass(name="Mage")
+MAGE_ARCANE = MAGE.add_spec(name="Arcane")
+MAGE_FIRE = MAGE.add_spec(name="Fire")
+MAGE_FROST = MAGE.add_spec(name="Frost")
 
-SHAMAN = m.WoWClass(class_id=9, name="Shaman")
-# SHAMAN_ELEMENTAL = SHAMAN.add_spec(spec_id=1, name="Elemental")
-# SHAMAN_ENHANCEMENT = SHAMAN.add_spec(spec_id=2, name="Enhancement")
-SHAMAN_RESTORATION = SHAMAN.add_spec(spec_id=3, name="Restoration", role=HEAL)
+WARLOCK = m.WoWClass(name="Warlock")
+WARLOCK_AFFLICTION = WARLOCK.add_spec(name="Affliction")
+WARLOCK_DEMONOLOGY = WARLOCK.add_spec(name="Demonology")
+WARLOCK_DESTRUCTION = WARLOCK.add_spec(name="Destruction")
 
-WARLOCK = m.WoWClass(class_id=10, name="Warlock")
-WARLOCK_AFFLICTION = WARLOCK.add_spec(spec_id=1, name="Affliction")
-# WARLOCK_DEMONOLOGY = WARLOCK.add_spec(spec_id=2, name="Demonology")
-WARLOCK_DESTRUCTION = WARLOCK.add_spec(spec_id=3, name="Destruction")
+MONK = m.WoWClass(name="Monk")
+MONK_BREWMASTER = MONK.add_spec(name="Brewmaster")
+MONK_MISTWEAVER = MONK.add_spec(name="Mistweaver", role=HEAL)
+MONK_WINDWALKER = MONK.add_spec(name="Windwalker")
 
-# WARRIOR = m.WoWClass(class_id=11, name="Warrior")
-# WARRIOR_ARMS = WARRIOR.add_spec(spec_id=1, name="Arms")
-# WARRIOR_FURY = WARRIOR.add_spec(spec_id=2, name="Fury")
-# WARRIOR_PROTECTION = WARRIOR.add_spec(spec_id=3, name="Protection")
+DRUID = m.WoWClass(name="Druid")
+DRUID_BALANCE = DRUID.add_spec(name="Balance")
+DRUID_FERAL = DRUID.add_spec(name="Feral")
+DRUID_GUARDIAN = DRUID.add_spec(name="Guardian")
+DRUID_RESTORATION = DRUID.add_spec(name="Restoration", role=HEAL)
 
-# DEMONHUNTER = m.WoWClass(class_id=12, name="Demon Hunter")
-# DEMONHUNTER_HAVOC = DEMONHUNTER.add_spec(spec_id=1, name="Havoc")
-# DEMONHUNTER_VENGEANCE = DEMONHUNTER.add_spec(spec_id=2, name="Vengeance")
+DEMONHUNTER = m.WoWClass(name="Demon Hunter")
+DEMONHUNTER_HAVOC = DEMONHUNTER.add_spec(name="Havoc")
+DEMONHUNTER_VENGEANCE = DEMONHUNTER.add_spec(name="Vengeance")
 
 
 ################################################################################
@@ -125,14 +121,14 @@ HUNTER_MARKSMANSHIP.add_spell(spell_id=288613, cooldown=120, duration=15, show=F
 
 # PRIEST_SHADOW.add_spell(spell_id=34433, cooldown=180, duration=15) # Shadowfiend
 # PRIEST_SHADOW.add_spell(spell_id=228260, cooldown=90) # Void Erruption
-PRIEST_DISCIPLINE.add_spell(spell_id=34433, cooldown=180, duration=15) # Shadowfiend
+PRIEST_DISCIPLINE.add_spell(spell_id=34433, cooldown=180, duration=15, show=False) # Shadowfiend
 PRIEST_DISCIPLINE.add_spell(spell_id=62618,  cooldown=180, duration=10)  #Power Word: Cuddle
 PRIEST_DISCIPLINE.add_spell(spell_id=109964,  cooldown=60, duration=10)  # Spirit Shell
-PRIEST_DISCIPLINE.add_spell(spell_id=47536,  cooldown=90, duration=8)  # Rapture
-PRIEST_DISCIPLINE.add_spell(spell_id=246287,  cooldown=90)  # Evengelism
+PRIEST_DISCIPLINE.add_spell(spell_id=47536,  cooldown=90, duration=8, show=False)  # Rapture
+PRIEST_DISCIPLINE.add_spell(spell_id=246287,  cooldown=90, show=False)  # Evengelism
 PRIEST_HOLY.add_spell(spell_id=64843, cooldown=180, duration=8) # Hymn
-PRIEST_HOLY.add_spell(spell_id=265202) # Savl (not showing CD, because dynamic)
-PRIEST_HOLY.add_spell(spell_id=200183, cooldown=120, duration=20) # Apotheosis
+PRIEST_HOLY.add_spell(spell_id=265202, cooldown=240) # Savl (not showing CD, because dynamic)
+PRIEST_HOLY.add_spell(spell_id=200183, cooldown=120, duration=20, show=False) # Apotheosis
 
 
 # DK
@@ -148,9 +144,10 @@ SHAMAN_RESTORATION.add_spell(spell_id=114052,  cooldown=180, duration=15)  # Asc
 MAGE.add_spell(spell_id=314791, cooldown=60, duration=3.1, show=False) # Shifting Power
 MAGE_FIRE.add_spell(spell_id=190319, cooldown=60, duration=10) # Combustion
 
-WARLOCK.add_spell(spell_id=325640, cooldown=60, duration=8) # Soulrot
+WARLOCK.add_spell(spell_id=325640, cooldown=60, duration=8, show=False) # Soulrot
 WARLOCK_AFFLICTION.add_spell(spell_id=205180, cooldown=180, duration=8) # Darkglare
 WARLOCK_AFFLICTION.add_spell(spell_id=113860, cooldown=120, duration=20) # Dark Soul: Misery
+WARLOCK_AFFLICTION.add_spell(spell_id=205179, cooldown=45, duration=16) # PS
 # WARLOCK_DEMONOLOGY.add_spell(spell_id=265187, cooldown=180, duration=15) # Tyrant
 WARLOCK_DESTRUCTION.add_spell(spell_id=1122, cooldown=180, duration=30) # Infernal
 WARLOCK_DESTRUCTION.add_spell(spell_id=113858, cooldown=120, duration=20) # Dark Soul: Instability
@@ -159,8 +156,8 @@ WARLOCK_DESTRUCTION.add_spell(spell_id=113858, cooldown=120, duration=20) # Dark
 # MONK_MISTWEAVER.add_spell(spell_id=115310,  cooldown=300) # Revival
 
 # Druid
-DRUID.add_spell(spell_id=323764, cooldown=120)  # Convoke
-DRUID_RESTORATION.add_spell(spell_id=197721, cooldown=90, duration=8) # Flourish
+DRUID.add_spell(spell_id=323764, cooldown=120, duration=4)  # Convoke
+DRUID_RESTORATION.add_spell(spell_id=197721, cooldown=90, duration=8, show=False) # Flourish
 DRUID_RESTORATION.add_spell(spell_id=29166, cooldown=180, duration=10, show=False) # Innervate
 DRUID_RESTORATION.add_spell(spell_id=740, cooldown=180, duration=6) # Tranquility
 DRUID_RESTORATION.add_spell(spell_id=33891, cooldown=180, duration=30) # Tree of Life
@@ -169,12 +166,28 @@ DRUID_RESTORATION.add_spell(spell_id=33891, cooldown=180, duration=30) # Tree of
 # DH
 # DEMONHUNTER_HAVOC.add_spell(spell_id=196718, cooldown=180, duration=8) # Darkness
 
-
 ################################################################################
 # Alias to some full lists
-# (these are dicts.. so they will be filled later)
 #
-CLASSES = m.WoWClass._all
+#
+CLASSES = [
+    WARRIOR,
+    PALADIN,
+    HUNTER,
+    ROGUE,
+    PRIEST,
+    DEATHKNIGHT,
+    SHAMAN,
+    MAGE,
+    WARLOCK,
+    MONK,
+    DRUID,
+    DEMONHUNTER
+]
+
+
+
+
 SPELLS = {spell_id: spell for spell_id, spell in m.WoWSpell._all.items() if spell_id > 0}
 
 

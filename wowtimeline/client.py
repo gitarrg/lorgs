@@ -224,6 +224,7 @@ class WarcraftlogsClient:
             player = models.Player(
                 name=player_name,
                 spec=spec,
+                total=ranking_data.get("amount", 0)
             )
             fight.players = [player]
             fights.append(fight)
