@@ -103,8 +103,8 @@ DEMONHUNTER_VENGEANCE = DEMONHUNTER.add_spec(name="Vengeance")
 # WARRIOR.add_spell(spell_id=107574, cooldown=90, duration=20) # Avatar
 # WARRIOR.add_spell(spell_id=1719, cooldown=90, duration=10) # Recklessness
 
-PALADIN.add_spell(spell_id=105809, cooldown=180, duration=20) # Holy Avenger
-PALADIN.add_spell(spell_id=304971, cooldown=60) # Covenant: Divine Toll
+# PALADIN.add_spell(spell_id=105809, cooldown=180, duration=20, show=False) # Holy Avenger
+PALADIN.add_spell(spell_id=304971, cooldown=60, show=False) # Covenant: Divine Toll
 PALADIN.add_spell(spell_id=316958, cooldown=240, duration=30) # Covenant: Ashen Hallow
 PALADIN.add_spell(spell_id=31884, cooldown=120, duration=20) # Wings
 PALADIN_HOLY.add_spell(spell_id=31821, cooldown=180, duration=8) # Aura Mastery
@@ -121,7 +121,8 @@ HUNTER_MARKSMANSHIP.add_spell(spell_id=288613, cooldown=120, duration=15, show=F
 
 # PRIEST_SHADOW.add_spell(spell_id=34433, cooldown=180, duration=15) # Shadowfiend
 # PRIEST_SHADOW.add_spell(spell_id=228260, cooldown=90) # Void Erruption
-PRIEST_DISCIPLINE.add_spell(spell_id=34433, cooldown=180, duration=15, show=False) # Shadowfiend
+# PRIEST_DISCIPLINE.add_spell(spell_id=34433, cooldown=180, duration=15, show=False) # Shadowfiend
+#TODO: add mindbender?
 PRIEST_DISCIPLINE.add_spell(spell_id=62618,  cooldown=180, duration=10)  #Power Word: Cuddle
 PRIEST_DISCIPLINE.add_spell(spell_id=109964,  cooldown=60, duration=10)  # Spirit Shell
 PRIEST_DISCIPLINE.add_spell(spell_id=47536,  cooldown=90, duration=8, show=False)  # Rapture

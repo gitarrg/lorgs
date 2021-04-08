@@ -34,12 +34,11 @@ OUTPUT_FOLDER = os.path.join(PWD, "../_build")
 
 
 async def render(template_name, path, data):
-    print("[RENDER]", path)
+    # print("[RENDER]", path)
 
     # include some global args
     data["wow_data"] = wow_data
     data["GOOGLE_ANALYTICS_ID"] = GOOGLE_ANALYTICS_ID
-
 
     dirpath = os.path.dirname(path)
     if not os.path.exists(dirpath):
@@ -83,11 +82,9 @@ async def generate_ranking_report(boss, spec):
     """
     """
     fights = await WCL_CLIENT.get_top_ranks(boss["id"], spec)
-    await WCL_CLIENT.cache.save()
     fights = fights[:50]
 
     await WCL_CLIENT.fetch_multiple_fights(fights)
-    await WCL_CLIENT.cache.save()
 
     data = {}
     data["boss"] = boss
@@ -98,17 +95,15 @@ async def generate_ranking_report(boss, spec):
 
 
 async def generate_rankings():
-
     bosses = wow_data.ENCOUNTERS
     # bosses = wow_data.ENCOUNTERS[0:3]
     specs = [
-
         # healers
-        wow_data.DRUID_RESTORATION,
-        wow_data.PALADIN_HOLY,
-        wow_data.PRIEST_DISCIPLINE,
-        wow_data.PRIEST_HOLY,
-        wow_data.SHAMAN_RESTORATION,
+        # wow_data.DRUID_RESTORATION,
+        # wow_data.PALADIN_HOLY,
+        # wow_data.PRIEST_DISCIPLINE,
+        # wow_data.PRIEST_HOLY,
+        # wow_data.SHAMAN_RESTORATION,
 
         # rdps
         wow_data.HUNTER_BEASTMASTERY,
@@ -119,9 +114,19 @@ async def generate_rankings():
     ]
 
     for spec in specs:
-        print("GENERATE_RANKINGS", spec)
+        print(f"[GENERATE_RANKINGS] {spec}")
         for boss in bosses:
-            print("GENERATE_RANKINGS", "Spec:", spec.full_name, "Boss:", boss["name"])
+
+
+            # check for points
+            points_left = await WCL_CLIENT.get_points_left()
+            if points_left < 150:
+                print("WARNING!!! out of points.")
+                print(f"WARNING!!! points left: {points_left}")
+                print(f"WARNING!!! reset in: {WCL_CLIENT.rate_limit_data['pointsResetIn']}")
+                return
+
+            print(f"[GENERATE_RANKINGS] <{points_left:.0f}> Spec: {spec.full_name} Boss: {boss['name']}")
             await generate_ranking_report(boss, spec)
 
 
@@ -136,6 +141,14 @@ async def render_index():
 
 
 if __name__ == '__main__':
-    asyncio.run(render_index())
-    asyncio.run(generate_rankings())
 
+    try:
+        asyncio.run(render_index())
+        asyncio.run(generate_rankings())
+
+    except KeyboardInterrupt:
+        print("closing...")
+
+    finally:
+        print("SAVING Cache!!!")
+        asyncio.run(WCL_CLIENT.cache.save())

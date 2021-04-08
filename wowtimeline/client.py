@@ -48,7 +48,7 @@ class JsonCache:
     async def save(self):
         async with aiofiles.open(self.filename, "w") as f:
             await f.write(json.dumps(self.data, indent=4, sort_keys=True))
-
+        print("cache saved")
 
 
 class WarcraftlogsClient:
@@ -65,6 +65,7 @@ class WarcraftlogsClient:
         self.headers = {}
 
         self.cache = JsonCache()
+        self.rate_limit_data = {}
 
     async def update_auth_token(self):
         """Request a new Auth Token from Warcraftlogs."""
@@ -80,14 +81,15 @@ class WarcraftlogsClient:
         token = data.get("access_token", "")
         self.headers["Authorization"] = "Bearer " + token
 
-    async def query(self, query):
+    async def query(self, query, usecache=True):
 
         # caching
-        await self.cache.load()
-        cached_result = self.cache.data.get(query)
-        if cached_result:
-            print("using cached result")
-            return cached_result
+        if usecache:
+            await self.cache.load()
+            cached_result = self.cache.data.get(query)
+            if cached_result:
+                print("using cached result")
+                return cached_result
 
         # auth
         if not self.headers:
@@ -112,9 +114,32 @@ class WarcraftlogsClient:
                         print(query)
                     raise ValueError(msg)
                 """
+                data = result.get("data", {})
 
-                self.cache[query] = result.get("data", {})
-                return self.cache[query]
+                if usecache:
+                    self.cache[query] = data
+
+                return data
+
+    async def _update_rate_limit_data(self):
+        query = """
+        {
+            rateLimitData {
+                pointsSpentThisHour
+                limitPerHour
+                pointsResetIn
+            }
+        }
+        """
+        result = await self.query(query, usecache=False)
+        info = result.get("rateLimitData", {})
+        info["points_left"] = info.get("limitPerHour", 0) - info.get("pointsSpentThisHour", 0)
+        self.rate_limit_data = info
+
+    async def get_points_left(self):
+        await self._update_rate_limit_data()
+        return self.rate_limit_data.get("points_left", 0)
+
 
     ##############################
 
