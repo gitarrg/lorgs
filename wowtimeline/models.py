@@ -52,6 +52,9 @@ class WowSpec(spell_mixin):
         self.role = role
         self.class_ = None
 
+        # bool: is this spec is currently supported
+        self.supported = True
+
     def __repr__(self):
         return f"<WoWSpec({self.full_name})>"
 

@@ -13,7 +13,7 @@
         {% for wow_class in wow_data.CLASSES %}
             {% for spec2 in wow_class.specs %}
             <li class="nav-item {{'active' if spec2 == spec else ''}}">
-                <a class="nav-link {{'' if spec2.spells else 'disabled'}}" href="ranking_{{spec2.name_slug}}_{{boss.name_slug}}.html">
+                <a class="nav-link {{'' if spec2.supported else 'disabled'}}" href="ranking_{{spec2.name_slug}}_{{boss.name_slug}}.html">
                     <img class="nav-img wow-class-border-{{wow_class.name_slug}}" src="static/images/specs/{{spec2.name_slug}}.jpg" alt="{{spec2.full_name}}" title="{{spec2.name}}">
                 </a>
             </li>

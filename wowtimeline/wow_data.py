@@ -94,6 +94,46 @@ DEMONHUNTER_HAVOC = DEMONHUNTER.add_spec(name="Havoc")
 DEMONHUNTER_VENGEANCE = DEMONHUNTER.add_spec(name="Vengeance")
 
 
+# sorry guys...
+WARRIOR_ARMS.supported = False
+WARRIOR_FURY.supported = False
+WARRIOR_PROTECTION.supported = False
+# PALADIN_HOLY.supported = False
+PALADIN_PROTECTION.supported = False
+# PALADIN_RETRIBUTION.supported = False
+# HUNTER_BEASTMASTERY.supported = False
+# HUNTER_MARKSMANSHIP.supported = False
+HUNTER_SURVIVAL.supported = False
+ROGUE_ASSASSINATION.supported = False
+ROGUE_SUBTLETY.supported = False
+ROGUE_OUTLAW.supported = False
+# PRIEST_DISCIPLINE.supported = False
+# PRIEST_HOLY.supported = False
+PRIEST_SHADOW.supported = False
+DEATHKNIGHT_BLOOD.supported = False
+DEATHKNIGHT_FROST.supported = False
+DEATHKNIGHT_UNHOLY.supported = False
+SHAMAN_ELEMENTAL.supported = False
+SHAMAN_ENHANCEMENT.supported = False
+# SHAMAN_RESTORATION.supported = False
+MAGE_ARCANE.supported = False
+# MAGE_FIRE.supported = False
+MAGE_FROST.supported = False
+# WARLOCK_AFFLICTION.supported = False
+WARLOCK_DEMONOLOGY.supported = False
+# WARLOCK_DESTRUCTION.supported = False
+MONK_BREWMASTER.supported = False
+MONK_MISTWEAVER.supported = False
+MONK_WINDWALKER.supported = False
+DRUID_BALANCE.supported = False
+DRUID_FERAL.supported = False
+DRUID_GUARDIAN.supported = False
+# DRUID_RESTORATION.supported = False
+DEMONHUNTER_HAVOC.supported = False
+DEMONHUNTER_VENGEANCE.supported = False
+
+
+
 ################################################################################
 # Define all the spells we care about
 #
@@ -108,7 +148,7 @@ PALADIN.add_spell(spell_id=304971, cooldown=60, show=False) # Covenant: Divine T
 PALADIN.add_spell(spell_id=316958, cooldown=240, duration=30) # Covenant: Ashen Hallow
 PALADIN.add_spell(spell_id=31884, cooldown=120, duration=20) # Wings
 PALADIN_HOLY.add_spell(spell_id=31821, cooldown=180, duration=8) # Aura Mastery
-# PALADIN_RETRIBUTION.add_spell(spell_id=231895, cooldown=120, duration=25) # Crusade
+
 
 HUNTER.add_spell(spell_id=328231, cooldown=120, duration=15) # Covenant: Wild Spirits
 HUNTER_BEASTMASTERY.add_spell(spell_id=193530, cooldown=180, duration=20) # Aspect of the Wild
@@ -186,14 +226,10 @@ CLASSES = [
     DEMONHUNTER
 ]
 
-
+SPECS = [spec for wow_class in CLASSES for spec in wow_class.specs]
+SPECS_SUPPORTED = [spec for spec in SPECS if spec.supported]
 
 
 SPELLS = {spell_id: spell for spell_id, spell in m.WoWSpell._all.items() if spell_id > 0}
 
-
-# SPECS = {}
-# for i, wow_class in CLASSES.items():
-#     for j, spec in specs.items():
-#         SPECS[(i,j)] = spec
 
