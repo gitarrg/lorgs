@@ -281,7 +281,7 @@ for spec in [HUNTER, ROGUE, SHAMAN_ENHANCEMENT, MONK_WINDWALKER, DRUID_FERAL, DE
     spec.add_spell(spell_id=307159, cooldown=300, duration=25, show=False) # Agility Pot
 
 for spec in [WARRIOR, PALADIN_RETRIBUTION, DEATHKNIGHT]:
-    spec.add_spell(spell_id=307159, cooldown=300, duration=25, show=False) # Agility Pot
+    spec.add_spell(spell_id=307164, cooldown=300, duration=25, show=False) # Strength Pot
 
 
 ################################################################################

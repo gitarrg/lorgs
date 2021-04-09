@@ -107,7 +107,7 @@ async def generate_ranking_report(boss, spec):
 
 async def generate_rankings():
     bosses = wow_data.ENCOUNTERS
-    bosses = [wow_data.ENCOUNTERS[-1]]
+    # bosses = [wow_data.ENCOUNTERS[-1]]
     specs = [
         # healers
         wow_data.DRUID_RESTORATION,
@@ -127,7 +127,7 @@ async def generate_rankings():
         # wow_data.WARLOCK_AFFLICTION,
         # wow_data.WARLOCK_DESTRUCTION,
     ]
-    # specs = wow_data.SPECS_SUPPORTED
+    specs = wow_data.SPECS_SUPPORTED
 
     tasks = []
     for spec in specs:
