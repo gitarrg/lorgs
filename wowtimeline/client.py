@@ -7,8 +7,8 @@ import json
 from aiohttp import ClientSession
 import aiofiles
 
-import models
-
+from wowtimeline import models
+from wowtimeline.logger import logger
 
 
 class JsonCache:
@@ -48,7 +48,7 @@ class JsonCache:
     async def save(self):
         async with aiofiles.open(self.filename, "w") as f:
             await f.write(json.dumps(self.data, indent=4, sort_keys=True))
-        print("cache saved")
+        logger.info(f"saved cache to disc: {self.filename}")
 
 
 class WarcraftlogsClient:
@@ -80,7 +80,7 @@ class WarcraftlogsClient:
                 try:
                     data = await resp.json()
                 except Exception as e:
-                    print(resp)
+                    logger.error(resp)
                     raise e
 
         token = data.get("access_token", "")
@@ -89,12 +89,12 @@ class WarcraftlogsClient:
     async def query(self, query, usecache=True):
 
         # caching
-        if usecache:
-            await self.cache.load()
-            cached_result = self.cache.data.get(query)
-            if cached_result:
-                print("using cached result")
-                return cached_result
+        # if usecache:
+        # await self.cache.load()
+        cached_result = usecache and self.cache.data.get(query)
+        if cached_result:
+            logger.debug("using cached result")
+            return cached_result
 
         # auth
         if not self.headers:
@@ -106,7 +106,7 @@ class WarcraftlogsClient:
                 try:
                     result = await resp.json()
                 except Exception as e:
-                    print(resp)
+                    logger.error(resp)
                     raise(e)
 
                 # some reports are private.. but still show up in rankings..
@@ -145,23 +145,9 @@ class WarcraftlogsClient:
         await self._update_rate_limit_data()
         return self.rate_limit_data.get("points_left", 0)
 
-
     ##############################
 
-    async def load_report(self, report_id):
-        report = Report(report_id)
-        report.client = self
-        await report.fetch()
-        return report
-
-    async def load_fight(self, report_id, fight_id):
-        fight = Fight(report_id, fight_id)
-        fight.client = self
-        await fight.fetch()
-        return fight
-
     async def fetch_multiple_fights(self, fights):
-
         #############
         # Query
         query = ""
@@ -200,6 +186,7 @@ class WarcraftlogsClient:
                 cast.spell = player.spec.all_spells.get(cast.spell_id) or models.DUMMY_SPELL  # fixme
                 cast.fight = fight
                 player.casts.append(cast)
+                player.source_id = cast.sourceid
 
         return fights
 
@@ -213,10 +200,11 @@ class WarcraftlogsClient:
                 encounter(id: {encounter})
                 {{
                     characterRankings(
-                        className: "{spec.class_.name}",
+                        className: "{spec.class_.name_slug_cap}",
                         specName: "{spec.name_slug_cap}",
                         metric: {metric},
                         includeCombatantInfo: false,
+                        serverRegion: "EU",
                     )
                 }}
             }}
@@ -238,8 +226,8 @@ class WarcraftlogsClient:
 
             # skip asian reports (sorry)
             server_region = ranking_data.get("server", {}).get("region", "")
-            if server_region not in ("EU", "US"):
-                continue
+            # if server_region not in ("EU", "US"):
+            #     continue
 
             fight_start_time = ranking_data.get("startTime", 0) - report_data.get("startTime", 0)
             fight_end_time = fight_start_time + ranking_data.get("duration", 0)
@@ -256,11 +244,10 @@ class WarcraftlogsClient:
                 filter_expression=filter_expression
             )
 
-            player = models.Player(
-                name=player_name,
-                spec=spec,
-                total=ranking_data.get("amount", 0)
-            )
+            player = models.Player(name=player_name, spec=spec)
+            player.total = ranking_data.get("amount", 0)
+            player.fight = fight
+
             fight.players = [player]
             fights.append(fight)
         return fights

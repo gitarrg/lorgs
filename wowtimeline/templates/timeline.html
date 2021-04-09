@@ -10,14 +10,19 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
 <div class="row bg-dark mx-3 mb-3 p-2 rounded border">
     <div class="col">
         <h1>
-            <img class="icon-big rounded shadow border" src="static/images/specs/{{spec.name_slug}}.jpg">
-            <span class="wow-class-{{spec.class_.name|lower}}">{{spec.full_name}}s</span>
+            <a href="https://www.warcraftlogs.com/zone/rankings/26#boss={{boss.id}}&class={{spec.class_.name_slug_cap}}&spec={{spec.name_slug_cap}}&metric={{spec.metric}}&region=2" target="_blank">
+                <img class="icon-big rounded shadow border" src="static/images/specs/{{spec.name_slug}}.jpg">
+                <span class="wow-class-{{spec.class_name_slug}}">{{spec.full_name}}s</span>
+            </a>
             vs
-            <img class="icon-big rounded shadow border" src="static/images/bosses/castle-nathria/{{boss.name_slug}}.jpg" alt="{{boss.name}}">
-            {{boss.name}}
+            <a href="https://www.warcraftlogs.com/zone/rankings/26#boss={{boss.id}}&metric={{spec.metric}}">
+                <img class="icon-big rounded shadow border" src="static/images/bosses/castle-nathria/{{boss.name_slug}}.jpg" alt="{{boss.name}}" target="_blank">
+                {{boss.name}}
+            </a>
         </h1>
     </div>
 </div>
+
 
 <!-- SETTINGS -->
 <div class="row bg-dark mx-3 mb-3 p-1 rounded border">
@@ -48,12 +53,14 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
             {% for spell in spec.all_spells.values() %}
             <div class="col-2">
                 <div class="form-check form-check-inline spell-checkbox-group">
-                    <input class="form-check-input" type="checkbox" value="1" id="show-spell-{{spell.spell_id}}" {{"checked" if spell.show else ""}} data-spell_id={{spell.spell_id}}>
+                    <input class="form-check-input" type="checkbox" value="1" id="show-spell-{{spell.spell_id}}" {{"checked" if spell.show else ""}} data-spell_id={{spell.spell_id}} style="display:none">
                     <label class="form-check-label" for="show-spell-{{spell.spell_id}}"><a href="#" data-wowhead="spell={{spell.spell_id}}" data-wh-rename-link="true"></a></label>
                 </div>
             </div>
             {% endfor %}
+
         </div>
+        <div class="position-absolute text-white-50" style="right: 0px; bottom: 0px"><i class="fas fa-info-circle"></i> click on spells to show/hide them.</div>
     </div>
 </div>
 
@@ -63,19 +70,18 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
     <div class="col-12 px-2">
         {% for player in fight.players %}
         {% if player.casts %}
-
         <div class="player_timeline mb-1" style="width: {{ 350 + (fight.duration / 250) }}px">
             <div class="player_spec_icon">
                 <img src="static/images/specs/{{player.spec.name_slug}}.jpg">
             </div>
 
-            <div class="player_name wow-class-{{player.class_slug}}">
-                <a href="{{fight.url}}" target="_blank"><span>{{player.name}}</span>
-                {% if player.total %}
-                    <span class="player_total">{{player.total_fmt}}</span>
-                {% endif %}
+            <div class="player_name wow-class-{{player.spec.class_name_slug}}">
+                <a href="{{player.report_url}}" target="_blank">
+                    <span>{{player.name}}</span>
+                    {% if player.total %}
+                        <span class="player_total">{{player.total_fmt}}</span>
+                    {% endif %}
                 </a>
-
             </div>
 
             <div>
@@ -84,11 +90,11 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
                     <div class="cast" data-spell_id="{{cast.spell_id}}" style="left: {{cast.time / 250}}px;">
 
                     {% if cast.spell.cooldown %}
-                        <div class="cast_cooldown wow-class-bg-{{player.class_slug}}"  style="width: {{cast.spell.cooldown * 4}}px"></div>
+                        <div class="cast_cooldown wow-class-bg-{{player.spec.class_name_slug}}"  style="width: {{cast.spell.cooldown * 4}}px"></div>
                     {% endif %}
 
                     {% if cast.spell.duration %}
-                        <div class="cast_duration wow-class-bg-{{player.class_slug}}" style="width: {{cast.spell.duration * 4}}px"></div>
+                        <div class="cast_duration wow-class-bg-{{player.spec.class_name_slug}}" style="width: {{cast.spell.duration * 4}}px"></div>
                     {% endif %}
 
                         <div class="cast_icon"><a href="#" data-wowhead="spell={{cast.spell_id}}"></a></div>

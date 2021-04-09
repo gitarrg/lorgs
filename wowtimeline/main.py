@@ -14,6 +14,7 @@ from wowtimeline import client
 from wowtimeline import models
 from wowtimeline import utils
 from wowtimeline import wow_data
+from wowtimeline.logger import logger
 
 
 WCL_CLIENT_ID = "91c26642-e3e9-4090-945d-e65cf4720b5c"          # TODO: save as env vars
@@ -33,6 +34,9 @@ TEMPLATE_ENV = jinja2.Environment(loader=TEMPLATE_LOADER)
 OUTPUT_FOLDER = os.path.join(PWD, "../_build")
 
 
+WCL_CLIENT = client.WarcraftlogsClient(client_id=WCL_CLIENT_ID, client_secret=WCL_CLIENT_SECRET)
+
+
 async def render(template_name, path, data):
     # print("[RENDER]", path)
 
@@ -42,7 +46,7 @@ async def render(template_name, path, data):
 
     dirpath = os.path.dirname(path)
     if not os.path.exists(dirpath):
-        print("[RENDER] creating folder:", dirpath)
+        logger.info("creating folder:", dirpath)
         os.makedirs(dirpath)
 
     template = TEMPLATE_ENV.get_template(template_name)
@@ -54,7 +58,7 @@ async def render(template_name, path, data):
     async with aiofiles.open(path, 'w', encoding="utf-8") as f:
         await f.write(html)
 
-
+"""
 async def main1():
 
     wcl_client = client.WarcraftlogsClient(client_id=WCL_CLIENT_ID, client_secret=WCL_CLIENT_SECRET)
@@ -70,61 +74,7 @@ async def main1():
     html = template.render(fight=fight)
     async with aiofiles.open("./test.html", 'w') as f:
         await f.write(html, encoding="utf-8")
-
-
-
-WCL_CLIENT = client.WarcraftlogsClient(client_id=WCL_CLIENT_ID, client_secret=WCL_CLIENT_SECRET)
-
-
-async def generate_ranking_report(boss, spec):
-
-    fights = []
-    fights = await WCL_CLIENT.get_top_ranks(boss["id"], spec)
-    fights = fights[:50]
-
-    await WCL_CLIENT.fetch_multiple_fights(fights)
-    print(f"[GENERATED REPORT] {spec.full_name} vs {boss['name']}")
-
-    data = {}
-    data["boss"] = boss
-    data["spec"] = spec
-    data["fights"] = fights
-    path = f"{OUTPUT_FOLDER}/ranking_{spec.name_slug}_{boss['name_slug']}.html"
-    await render("timeline.html", path, data)
-
-
-async def generate_rankings():
-    bosses = wow_data.ENCOUNTERS
-    # bosses = wow_data.ENCOUNTERS[0:3]
-
-    specs = [
-        # healers
-        # wow_data.DRUID_RESTORATION,
-        # wow_data.PALADIN_HOLY,
-        # wow_data.PRIEST_DISCIPLINE,
-        # wow_data.PRIEST_HOLY,
-        # wow_data.SHAMAN_RESTORATION,
-
-        # mps
-        wow_data.PALADIN_RETRIBUTION,
-
-        # rdps
-        # wow_data.HUNTER_BEASTMASTERY,
-        # wow_data.HUNTER_MARKSMANSHIP,
-        # wow_data.MAGE_FIRE,
-        # wow_data.WARLOCK_AFFLICTION,
-        # wow_data.WARLOCK_DESTRUCTION,
-    ]
-    specs = wow_data.SPECS_SUPPORTED
-
-    tasks = []
-    for spec in specs:
-        for boss in bosses:
-            tasks += [generate_ranking_report(boss, spec)]
-
-    # process in chunks of n
-    for tasklist in utils.chunks(tasks, 16):
-        await asyncio.gather(*tasklist)
+"""
 
 
 async def render_index():
@@ -137,6 +87,59 @@ async def render_index():
     await render("index.html", path, data)
 
 
+async def generate_ranking_report(boss, spec):
+
+    fights = []
+    fights = await WCL_CLIENT.get_top_ranks(boss["id"], spec)
+    fights = fights[:50]
+
+    await WCL_CLIENT.fetch_multiple_fights(fights)
+    logger.info(f"[GENERATED REPORT] {spec.full_name} vs {boss['name']}")
+
+
+    data = {}
+    data["boss"] = boss
+    data["spec"] = spec
+    data["fights"] = fights
+    path = f"{OUTPUT_FOLDER}/ranking_{spec.name_slug}_{boss['name_slug']}.html"
+    await render("timeline.html", path, data)
+
+
+async def generate_rankings():
+    bosses = wow_data.ENCOUNTERS
+    bosses = [wow_data.ENCOUNTERS[-1]]
+    specs = [
+        # healers
+        wow_data.DRUID_RESTORATION,
+        # wow_data.PALADIN_HOLY,
+        # wow_data.PRIEST_DISCIPLINE,
+        # wow_data.PRIEST_HOLY,
+        # wow_data.SHAMAN_RESTORATION,
+
+        # mps
+        # wow_data.PALADIN_RETRIBUTION,
+        wow_data.DEATHKNIGHT_UNHOLY,
+
+        # rdps
+        # wow_data.HUNTER_BEASTMASTERY,
+        # wow_data.HUNTER_MARKSMANSHIP,
+        # wow_data.MAGE_FIRE,
+        # wow_data.WARLOCK_AFFLICTION,
+        # wow_data.WARLOCK_DESTRUCTION,
+    ]
+    # specs = wow_data.SPECS_SUPPORTED
+
+    tasks = []
+    for spec in specs:
+        for boss in bosses:
+            tasks += [generate_ranking_report(boss, spec)]
+
+    # process in chunks of n
+    await WCL_CLIENT.cache.load()
+    for tasklist in utils.chunks(tasks, 16):
+        await asyncio.gather(*tasklist)
+
+
 if __name__ == '__main__':
 
     try:
@@ -144,8 +147,8 @@ if __name__ == '__main__':
         asyncio.run(generate_rankings())
 
     except KeyboardInterrupt:
-        print("closing...")
+        logger.info("closing...")
 
     finally:
-        print("SAVING Cache!!!")
+        logger.info("SAVING Cache!")
         asyncio.run(WCL_CLIENT.cache.save())

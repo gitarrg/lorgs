@@ -63,6 +63,10 @@ class WowSpec(spell_mixin):
         return f"{self.name} {self.class_.name}"
 
     @property
+    def class_name_slug(self):
+        return self.class_.name_slug  # fixme
+
+    @property
     def name_slug_cap(self):
         """Spec Name without spaces, but still capCase..
 
@@ -98,8 +102,12 @@ class WoWClass(spell_mixin):
         return f"<WoWClass(name='{self.name}')>"
 
     @property
+    def name_slug_cap(self):
+        return self.name.replace(" ", "")
+
+    @property
     def name_slug(self):
-        return self.name.replace(" ", "").lower()
+        return self.name.replace(" ", "-").lower()
 
     def add_spec(self, **kwargs):
         spec = WowSpec(**kwargs)
@@ -140,25 +148,21 @@ class Player:
     """docstring for Player"""
     def __init__(self, name="", spec=None, total=0):
         super(Player, self).__init__()
-        self.id = 0
         self.name = name
-
-        # self.type = ""  # aka class
         self.spec = spec # WowSpec
-
-        # self.damage_done = 0
-        # self.healing_done = 0
         self.total = total
-
         self.casts = []
 
-    @property
-    def class_slug(self):
-        return self.spec.class_.name.lower().replace(" ", "")  # fixme
+        self.fight = None # <Fight>
+        self.source_id = 0  # the in the report/fight
 
     @property
     def total_fmt(self):
         return utils.format_big_number(self.total)
+
+    @property
+    def report_url(self):
+        return f"{self.fight.report_url}&source={self.source_id}"
 
 
 class Fight:
@@ -194,7 +198,7 @@ class Fight:
         return utils.format_time(self.duration)
 
     @property
-    def url(self):
+    def report_url(self):
         return f"https://www.warcraftlogs.com/reports/{self.report_id}#fight={self.fight_id}"
 
     def get_casts_query(self):
@@ -213,7 +217,8 @@ class Fight:
         """
 
     async def fetch_fight_data(self):
-
+        pass
+        '''
         query = f"""
         {{
             reportData {{
@@ -236,9 +241,11 @@ class Fight:
         self.startTime = data_fight.get("startTime") or self.startTime
         self.endTime = data_fight.get("endTime") or self.endTime
         self.encounterID = data_fight.get("encounterID") or self.encounterID
+        '''
 
     async def fetch(self, spells=()):
-
+        pass
+        '''
         # we need to fetch the fight itself
         if self.startTime <= 0:
             await self.fetch_fight_data()
@@ -303,6 +310,7 @@ class Fight:
             cast.fight = self
             self.casts.append(cast)
             cast.player.casts.append(cast)
+        '''
 
 
 class Report:
@@ -318,6 +326,7 @@ class Report:
         self.fights = []
 
     async def fetch(self):
+        '''
         # format the query
         query = f"""
         {{
@@ -344,3 +353,4 @@ class Report:
             self.fights += [Fight(**data)]
 
         return self.data
+        '''
