@@ -46,6 +46,10 @@ class JsonCache:
             return self.data
 
     async def save(self):
+        if not self.data:
+            logger.info(f"nothing to be saved..")
+            return
+
         async with aiofiles.open(self.filename, "w") as f:
             await f.write(json.dumps(self.data, indent=4, sort_keys=True))
         logger.info(f"saved cache to disc: {self.filename}")
@@ -66,6 +70,8 @@ class WarcraftlogsClient:
 
         self.cache = JsonCache()
         self.rate_limit_data = {}
+
+    ##############################
 
     async def update_auth_token(self):
         """Request a new Auth Token from Warcraftlogs."""
@@ -89,8 +95,8 @@ class WarcraftlogsClient:
     async def query(self, query, usecache=True):
 
         # caching
-        # if usecache:
-        # await self.cache.load()
+        if usecache:
+            await self.cache.load()
         cached_result = usecache and self.cache.data.get(query)
         if cached_result:
             logger.debug("using cached result")
@@ -144,6 +150,42 @@ class WarcraftlogsClient:
     async def get_points_left(self):
         await self._update_rate_limit_data()
         return self.rate_limit_data.get("points_left", 0)
+
+    ##############################
+
+    async def fetch_classids(self, wow_classes):
+
+        classes_by_name = {c.name: c for c in wow_classes}
+
+        # Classes and Specs
+        query = """
+        {
+            gameData
+            {
+                classes
+                {
+                    id
+                    name
+                    specs
+                    {
+                        id
+                        name
+                    }
+                }
+            }
+        }
+        """
+        result = await self.query(query)
+        for class_data in result.get("gameData", {}).get("classes", []):
+            class_name = class_data.get("name")
+            wow_class = classes_by_name.get(class_name)
+            if wow_class:
+                wow_class.id = class_data.get("id", -1)
+                for spec_data in class_data.get("specs", []):
+                    spec = wow_class.get_spec(spec_data.get("name"))
+                    if spec:
+                        spec.id = spec_data.get("id", -1)
+
 
     ##############################
 
@@ -225,7 +267,7 @@ class WarcraftlogsClient:
                 continue
 
             # skip asian reports (sorry)
-            server_region = ranking_data.get("server", {}).get("region", "")
+            # server_region = ranking_data.get("server", {}).get("region", "")
             # if server_region not in ("EU", "US"):
             #     continue
 
@@ -252,7 +294,80 @@ class WarcraftlogsClient:
             fights.append(fight)
         return fights
 
+    async def find_reports(self, encounter, search="", metric="execution"):
+        """Get Top Fights for a given encounter."""
+
+        rankings = []
+
+        for i in range(3):
+            query = f"""
+            {{
+                worldData
+                {{
+                    encounter(id: {encounter})
+                    {{
+                        fightRankings(
+                            metric: {metric},
+                            filter: "{search}",
+                            page: {i+1}
+                        )
+                    }}
+                }}
+            }}
+            """
+            data = await self.query(query)
+            data = data.get("worldData", {}).get("encounter", {}).get("fightRankings", {})
+            rankings += data.get("rankings", [])
+
+        fights = []
+        for ranking_data in rankings:
+            report_data = ranking_data.get("report", {})
+
+            # skip hidden reports
+            if ranking_data.get("hidden"):
+                continue
+
+            # skip asian reports (sorry)
+            # server_region = ranking_data.get("server", {}).get("region", "")
+            # if server_region not in ("EU", "US"):
+            #     continue
+
+            fight_start_time = ranking_data.get("startTime", 0) - report_data.get("startTime", 0)
+            fight_end_time = fight_start_time + ranking_data.get("duration", 0)
+
+            # TODO: get FightSummary and load players dynamic
+            # from wowtimeline import wow_data
+            # spell_ids = [spell for wow_class in wow_data.HEALS for spell in wow_class.all_spells]
+            # spell_ids = set(spell_ids)
+            # filter_expression = f"ability.id in ({spell_ids})"
+
+            fight = models.Fight(
+                report_id=report_data.get("code"),
+                fight_id=report_data.get("fightID"),
+                start_time=fight_start_time,
+                end_time=fight_end_time,
+                # filter_expression=filter_expression
+            )
+            fight.report.guild = ranking_data.get("guild", {}).get("name", "")
+            fight.report.realm = ranking_data.get("server", {}).get("name", "")
+            fight.report.region = ranking_data.get("server", {}).get("region", "")
+
+            # player = models.Player(name=player_name, spec=</a>spec)
+            # player.total = ranking_data.get("amount", 0)
+            # player.fight = fight
+
+            # fight.players = [player]
+            fights.append(fight)
+        return fights
+
+
+
 
 if __name__ == '__main__':
     import asyncio
-    asyncio.run(test())
+    from wowtimeline.main import WCL_CLIENT
+
+    search = "2.4.1,6.1.1,7.1.1,9.3.1|abilities.316958"
+    asyncio.run(WCL_CLIENT.find_reports(encounter=2407, search=search))
+
+

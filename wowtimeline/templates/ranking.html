@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}
+Lorgs: {{spec.full_name}} vs. {{boss.name}}
+{% endblock %}
+
+
+{% block content %}
+
+
+<!-- HEADER -->
+<div class="row mb-1">
+    <div class="col pl-0">
+        <a href="https://www.warcraftlogs.com/zone/rankings/26#boss={{boss.id}}&class={{spec.class_.name_slug_cap}}&spec={{spec.name_slug_cap}}&metric={{spec.metric}}&region=2" target="_blank">
+            <h1>
+                <img class="icon-big rounded shadow wow-class-border-{{spec.class_name_slug}}" src="static/images/specs/{{spec.full_name_slug}}.jpg">
+                <span class="wow-class-{{spec.class_name_slug}}">{{spec.full_name}}s</span>
+                vs
+                <img class="icon-big rounded shadow border" src="static/images/bosses/castle-nathria/{{boss.name_slug}}.jpg" alt="{{boss.name}}" target="_blank">
+                {{boss.name}}
+            </h1>
+        </a>
+    </div>
+</div>
+
+
+<!-- SETTINGS -->
+{% include "elements/display_settings.html" %}
+
+<!-- TIMELINES -->
+<div class="row bg-dark mt-3 py-2 rounded border" id=timeline>
+    {% for fight in fights %}
+    <div class="col-12 px-2">
+        {% set inline_killtime=True %}
+        <div class="timeline_cursor_container">
+            {% for player in fight.players if player.casts %}
+            {% include "elements/player_timeline.html" %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+    <div class="timeline_cursor"></div>
+</div>
+{% endblock %}
+
+
+<!-- Content Scripts -->
+{% block scripts %}
+{{ super() }}
+{% include "elements/player_timeline_script.html" %}
+{% endblock %}

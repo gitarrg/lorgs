@@ -1,0 +1,149 @@
+
+
+<div class="row">
+    <div class="col-12 pl-1">
+        <input type="checkbox" id="show_settings">
+        <label for="show_settings">
+            <h4 class="mb-0"><i class="fas fa-sliders-h fa-xs"></i> Settings</h4>
+        </label>
+    </div>
+</div>
+
+<div id="settings_container">
+    <div class="row bg-dark mb-3 p-1 rounded border d-flex flex-row" >
+
+        <!-- DISPLAY -->
+        <div class="ml-1">
+            <h5><u>Display</u></h5>
+
+            <div>
+                <input class="" type="checkbox" id="show-spell-duration" checked>
+                <label class="m-0" for="show-spell-duration">show duration</label>
+            </div>
+
+            <div>
+                <input class="" type="checkbox" id="show-spell-cooldown" checked>
+                <label class="m-0" for="show-spell-cooldown">show cooldown</label>
+            </div>
+
+            <div>
+                <input class="" type="checkbox" id="show-spell-timeline-handle">
+                <label class="m-0" for="show-spell-timeline-handle">show timeline handle</label>
+            </div>
+
+        </div>
+
+        <!-- SPELLS -->
+        {% for group, spells in spells|groupby("group") %}
+        {% set spec = wow_data.spec_by_full_name[group] %}
+        {% set group_slug = group.replace(" ", "") %}
+        <div class="ml-3">
+            <!-- Group Header -->
+            <div class="spell-checkbox-group-header wow-class-{{spec.class_name_slug}}">
+                <input type="checkbox" id="show-spells-group-{{group_slug}}" checked data-spell-group={{group_slug}}>
+                <label class="form-check-label" for="show-spells-group-{{group_slug}}">
+                    <img class="icon-m rounded wow-class-border-{{spec.class_name_slug}}" src="static/images/specs/{{spec.full_name_slug}}.jpg" alt="{{group}}">
+                    {{ group.split("_")[-1] }}
+                </label>
+            </div>
+
+            <!-- Spells -->
+            {% for spell in spells %}
+            <div class="ml-2">
+                <div class="spell-checkbox-group wow-class-{{spec.class_name_slug}}">
+                    <input type="checkbox" value="1" id="show-spell-{{spell.spell_id}}" {{"checked" if spell.show else ""}} data-spell-group={{group_slug}} data-spell_id={{spell.spell_id}}>
+                    <label class="form-check-label" for="show-spell-{{spell.spell_id}}">
+                        <a href="#" data-wowhead="spell={{spell.spell_id}}" data-wh-rename-link="true"></a>
+                    </label>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% block scripts %}
+
+<script type="text/javascript">
+
+
+$("#show_settings").click(function() {
+    let checked = !$(this).is(':checked');
+    $("#settings_container").toggle(!checked)
+});
+
+
+// show/hide all spell durtion bars
+$("#show-spell-duration").click(function() {
+    let checked = !$(this).is(':checked');
+    $(".cast_duration").toggle(!checked)
+
+});
+
+// show/hide all spell cooldown bars
+$("#show-spell-cooldown").click(function() {
+    let checked = !$(this).is(':checked');
+    $(".cast_cooldown").toggle(!checked)
+});
+
+// show/hide timeline handles
+$("#show-spell-timeline-handle").click(function() {
+    let checked = !$(this).is(':checked');
+    $(".timeline_cursor").toggle(!checked)
+});
+
+
+
+function _update_spell_display(checkbox) {
+    let checked = checkbox.is(':checked');
+    let spell_id = checkbox.attr("data-spell_id");
+    $(`.cast[data-spell_id=${spell_id}]`).toggle(checked)
+}
+
+$(".spell-checkbox-group input").click(function() {
+    _update_spell_display($(this))
+});
+
+
+// re-connect label click to checkbox for spells
+$(".spell-checkbox-group label").click(function() {
+    let input_name = $(this).attr("for");
+    let input = $("#"+input_name);
+    input.click();
+});
+
+
+function _update_all_spells() {
+    $(".spell-checkbox-group input").each(function(index) {
+        _update_spell_display($(this));
+    });
+};
+
+// initial refresh on page load
+$( document ).ready(_update_all_spells);
+
+
+
+$(".spell-checkbox-group-header input").click(function() {
+
+    // Label --> Checkbox
+    let input_name = $(this).attr("for");
+    let checkbox = $("#"+input_name);
+
+    let checked = $(this).is(':checked');
+    let group_name = $(this).attr("data-spell-group");
+
+    let inputs = $(`.spell-checkbox-group input[data-spell-group=${group_name}]`);
+    inputs.prop("checked", checked);
+    _update_all_spells();
+
+
+
+
+    // $(".spell-checkbox-group input").each(function(index) {
+
+});
+
+</script>
+{% endblock %}

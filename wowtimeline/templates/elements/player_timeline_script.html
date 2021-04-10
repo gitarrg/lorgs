@@ -1,0 +1,47 @@
+{% block scripts %}
+<script type="text/javascript">
+
+
+$( document ).ready(function(){
+
+
+    var lines = document.querySelectorAll('.timeline_cursor');
+
+
+    document.querySelectorAll(".timeline_cursor_container").forEach(item => {
+        item.addEventListener("mousemove", event => {
+
+            // var x = event.pageX - item.offset().left;
+            var rect = item.getBoundingClientRect()
+            var x = event.clientX - rect.left; //x position within the element.
+            // var y = evt.pageY - $(this).offset().top;
+            lines.forEach(function(line) {
+                line.style.left = (x+10) + "px";
+            }) // for each line
+        }) // addEventListener
+    }) // for each
+})
+
+        // var rect = event.target.getBoundingClientRect();
+        // console.log("R", event.clientX - rect.left)
+
+/*        eventDoc = (event.target && event.target.ownerDocument) || document;
+        doc = eventDoc.documentElement;
+        body = eventDoc.body;
+
+        event.pageX = event.clientX +
+            (doc && doc.scrollLeft || body && body.scrollLeft || 0) -
+            (doc && doc.clientLeft || body && body.clientLeft || 0);
+        console.log("mousemove", event.pageX)
+
+
+
+        }*/
+
+    //  event.pageY = event.clientY +
+    //      (doc && doc.scrollTop  || body && body.scrollTop  || 0) -
+    //      (doc && doc.clientTop  || body && body.clientTop  || 0 );
+    // console.log(event.pageX);
+
+</script>
+{% endblock %}

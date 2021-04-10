@@ -28,7 +28,7 @@ PWD = os.path.dirname(__file__)
 TEMPLATE_FOLDER = os.path.join(PWD, "templates")
 TEMPLATE_LOADER = jinja2.FileSystemLoader(searchpath=TEMPLATE_FOLDER)
 TEMPLATE_ENV = jinja2.Environment(loader=TEMPLATE_LOADER)
-
+TEMPLATE_ENV.filters["slug"] = utils.slug
 
 # str: folder where the generated html files will be saved
 OUTPUT_FOLDER = os.path.join(PWD, "../_build")
@@ -50,9 +50,9 @@ async def render(template_name, path, data):
         os.makedirs(dirpath)
 
     template = TEMPLATE_ENV.get_template(template_name)
-
     template.trim_blocks = True
     template.lstrip_blocks = True
+
 
     html = template.render(**data)
     async with aiofiles.open(path, 'w', encoding="utf-8") as f:
@@ -77,6 +77,21 @@ async def main1():
 """
 
 
+async def fetch_gamedata():
+
+    await WCL_CLIENT.fetch_classids(wow_data.CLASSES)
+
+    for spec in wow_data.SPECS:
+        print(f"{spec.class_.name}_{spec.name} = {spec.id}")
+
+
+async def fetch_spell_info():
+    # TODO: laters
+    spells = wow_data.DRUID_RESTORATION.spells
+    await WCL_CLIENT.fetch_spell_info(spells)
+    # https://wow.zamimg.com/images/wow/icons/large/spell_shaman_spiritlink.jpg
+
+
 async def render_index():
     data = {}
     # we need smth to make the links work
@@ -91,7 +106,7 @@ async def generate_ranking_report(boss, spec):
 
     fights = []
     fights = await WCL_CLIENT.get_top_ranks(boss["id"], spec)
-    fights = fights[:50]
+    fights = fights[:5]
 
     await WCL_CLIENT.fetch_multiple_fights(fights)
     logger.info(f"[GENERATED REPORT] {spec.full_name} vs {boss['name']}")
@@ -100,14 +115,15 @@ async def generate_ranking_report(boss, spec):
     data = {}
     data["boss"] = boss
     data["spec"] = spec
+    data["spells"] = spec.spells.values()
     data["fights"] = fights
-    path = f"{OUTPUT_FOLDER}/ranking_{spec.name_slug}_{boss['name_slug']}.html"
-    await render("timeline.html", path, data)
+    path = f"{OUTPUT_FOLDER}/rankings_{spec.full_name_slug}_{boss['name_slug']}.html"
+    await render("ranking.html", path, data)
 
 
 async def generate_rankings():
-    bosses = wow_data.ENCOUNTERS
-    # bosses = [wow_data.ENCOUNTERS[-1]]
+    # bosses = wow_data.ENCOUNTERS
+    bosses = [wow_data.ENCOUNTERS[-1]]
     specs = [
         # healers
         wow_data.DRUID_RESTORATION,
@@ -118,7 +134,7 @@ async def generate_rankings():
 
         # mps
         # wow_data.PALADIN_RETRIBUTION,
-        wow_data.DEATHKNIGHT_UNHOLY,
+        # wow_data.DEATHKNIGHT_UNHOLY,
 
         # rdps
         # wow_data.HUNTER_BEASTMASTERY,
@@ -127,7 +143,7 @@ async def generate_rankings():
         # wow_data.WARLOCK_AFFLICTION,
         # wow_data.WARLOCK_DESTRUCTION,
     ]
-    specs = wow_data.SPECS_SUPPORTED
+    # specs = wow_data.SPECS_SUPPORTED
 
     tasks = []
     for spec in specs:
@@ -140,11 +156,73 @@ async def generate_rankings():
         await asyncio.gather(*tasklist)
 
 
+async def _generate_reports_index(heal_comps):
+
+
+    data = {}
+    data["boss"] = wow_data.ENCOUNTERS[-1] # Sire
+    data["heal_comps"] = heal_comps
+    path = f"{OUTPUT_FOLDER}/reports_index.html"
+    await render("reports_index.html", path, data)
+
+
+async def _generate_comp_report(comp):
+    boss = wow_data.ENCOUNTERS[-1] # Sire
+
+    search = comp.get("search")
+    logger.info("[COMP REPORT] find reports: %s", comp.get("name"))
+    fights = await WCL_CLIENT.find_reports(encounter=boss["id"], search=search)
+
+    fights = fights[:5]
+
+    # Get Spells and avoid duplicates
+    spells = {spell_id: spell for spec in comp.get("specs") for spell_id, spell in spec.all_spells.items()}
+    spells = spells.values()
+
+
+    for fight in fights:
+        logger.info("[COMP REPORT] fetch fight: %s", comp.get("name"))
+        await fight.fetch(WCL_CLIENT, spells=spells)
+        fight.players.sort(key=lambda p: p.spec.full_name)
+
+    # get a list of all used spells
+    used_spells = [p.spells_used for f in fights for p in f.players]
+    used_spells = utils.flatten(used_spells)
+    used_spells = list(set(used_spells))
+
+    # assamble data and render
+    data = {}
+    data["comp"] = comp
+    data["boss"] = boss
+    data["fights"] = fights
+    data["spells"] = used_spells
+    path = f"{OUTPUT_FOLDER}/comps_heal_{comp['name'].lower()}.html"
+    await render("report.html", path, data)
+
+
+async def generate_reports():
+
+    # for comp in wow_data.HEAL_COMPS:
+    #     specs = comp.get("specs", [])
+    #     name =  comp.get("name", "")
+    #     print(name)
+
+    await _generate_reports_index(wow_data.HEAL_COMPS)
+    for comp in wow_data.HEAL_COMPS:
+        await _generate_comp_report(comp)
+        return
+
+
 if __name__ == '__main__':
 
     try:
+        pass
+        # asyncio.run(fetch_gamedata())
         asyncio.run(render_index())
+        # asyncio.run(fetch_spell_info())
         asyncio.run(generate_rankings())
+        asyncio.run(generate_reports())
+
 
     except KeyboardInterrupt:
         logger.info("closing...")

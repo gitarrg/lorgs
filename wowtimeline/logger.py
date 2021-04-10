@@ -13,11 +13,11 @@ LOG_FORMAT = "[%(reltime)s][%(name)s] %(levelname)s: %(message)s"
 class DeltaTimeFormatter(logging.Formatter):
     def format(self, record):
         duration = datetime.datetime.utcfromtimestamp(record.relativeCreated / 1000)
-        record.reltime = duration.strftime("%M:%S.%f")[:9]
+        record.reltime = duration.strftime("%M:%S.%f")[:7]
         return super().format(record)
 
 
-logger  = logging.getLogger("Lorrgs")
+logger  = logging.getLogger("Lorgs")
 """The logger to log logging related log messages."""
 
 formatter = DeltaTimeFormatter(LOG_FORMAT)
@@ -29,6 +29,7 @@ logger.addHandler(handler)
 
 
 logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 """
 if os.getenv("DEBUG"):
     logger.setLevel(logging.DEBUG)

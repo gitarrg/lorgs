@@ -1,6 +1,6 @@
 
-.wow-class-death-knight {color: #C41E3A}
-.wow-class-demon-hunter {color: #A330C9}
+.wow-class-deathknight {color: #C41E3A}
+.wow-class-demonhunter {color: #A330C9}
 .wow-class-druid {color: #FF7C0A}
 .wow-class-hunter {color: #AAD372}
 .wow-class-mage {color: #3FC7EB}
@@ -13,8 +13,8 @@
 .wow-class-warrior {color: #C69B6D}
 
 
-.wow-class-bg-death-knight {background-color: #C41E3A}
-.wow-class-bg-demon-hunter {background-color: #A330C9}
+.wow-class-bg-deathknight {background-color: #C41E3A}
+.wow-class-bg-demonhunter {background-color: #A330C9}
 .wow-class-bg-druid {background-color: #FF7C0A}
 .wow-class-bg-hunter {background-color: #AAD372}
 .wow-class-bg-mage {background-color: #3FC7EB}
@@ -27,16 +27,18 @@
 .wow-class-bg-warrior {background-color: #C69B6D}
 
 
-.wow-class-border-death-knight {border-color: #C41E3A}
-.wow-class-border-demon-hunter {border-color: #A330C9}
-.wow-class-border-druid {border-color: #FF7C0A}
-.wow-class-border-hunter {border-color: #AAD372}
-.wow-class-border-mage {border-color: #3FC7EB}
-.wow-class-border-monk {border-color: #00FF98}
-.wow-class-border-paladin {border-color: #F48CBA}
-.wow-class-border-priest {border-color: #FFFFFF}
-.wow-class-border-rogue {border-color: #FFF468}
-.wow-class-border-shaman {border-color: #0070DD}
-.wow-class-border-warlock {border-color: #8788EE}
-.wow-class-border-warrior {border-color: #C69B6D}
+.wow-class-border-deathknight {border: 1px solid #C41E3A}
+.wow-class-border-demonhunter {border: 1px solid #A330C9}
+.wow-class-border-druid {border: 1px solid #FF7C0A}
+.wow-class-border-hunter {border: 1px solid #AAD372}
+.wow-class-border-mage {border: 1px solid #3FC7EB}
+.wow-class-border-monk {border: 1px solid #00FF98}
+.wow-class-border-paladin {border: 1px solid #F48CBA}
+.wow-class-border-priest {border: 1px solid #FFFFFF}
+.wow-class-border-rogue {border: 1px solid #FFF468}
+.wow-class-border-shaman {border: 1px solid #0070DD}
+.wow-class-border-warlock {border: 1px solid #8788EE}
+.wow-class-border-warrior {border: 1px solid #C69B6D}
+
+.wow-class-border-other {border: 1px solid black}
 

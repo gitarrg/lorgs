@@ -10,7 +10,6 @@ HEAL = "heal"
 MDPS = "mdps"
 RDPS = "rdps"
 
-
 ################################################################################
 
 ENCOUNTERS = [
@@ -37,11 +36,14 @@ WARRIOR = m.WoWClass(name="Warrior")
 WARRIOR_ARMS = WARRIOR.add_spec(name="Arms", role=MDPS)
 WARRIOR_FURY = WARRIOR.add_spec(name="Fury", role=MDPS)
 WARRIOR_PROTECTION = WARRIOR.add_spec(name="Protection", role=TANK)
+WARRIOR_PROTECTION.short_name = "Prot"
 
 PALADIN = m.WoWClass(name="Paladin")
 PALADIN_HOLY = PALADIN.add_spec(name="Holy", role=HEAL)
 PALADIN_PROTECTION = PALADIN.add_spec(name="Protection", role=TANK)
+PALADIN_PROTECTION.short_name = "Prot"
 PALADIN_RETRIBUTION = PALADIN.add_spec(name="Retribution", role=MDPS)
+PALADIN_RETRIBUTION.short_name = "Ret"
 
 HUNTER = m.WoWClass(name="Hunter")
 HUNTER_BEASTMASTERY = HUNTER.add_spec(name="Beast Mastery", role=RDPS)
@@ -55,6 +57,7 @@ ROGUE_OUTLAW = ROGUE.add_spec(name="Outlaw", role=MDPS)
 
 PRIEST = m.WoWClass(name="Priest")
 PRIEST_DISCIPLINE = PRIEST.add_spec(name="Discipline", role=HEAL)
+PRIEST_DISCIPLINE.short_name = "Disc"
 PRIEST_HOLY = PRIEST.add_spec(name="Holy", role=HEAL)
 PRIEST_SHADOW = PRIEST.add_spec(name="Shadow", role=RDPS)
 
@@ -67,6 +70,7 @@ SHAMAN = m.WoWClass(name="Shaman")
 SHAMAN_ELEMENTAL = SHAMAN.add_spec(name="Elemental", role=RDPS)
 SHAMAN_ENHANCEMENT = SHAMAN.add_spec(name="Enhancement", role=MDPS)
 SHAMAN_RESTORATION = SHAMAN.add_spec(name="Restoration", role=HEAL)
+SHAMAN_RESTORATION.short_name = "Resto"
 
 MAGE = m.WoWClass(name="Mage")
 MAGE_ARCANE = MAGE.add_spec(name="Arcane", role=RDPS)
@@ -75,7 +79,9 @@ MAGE_FROST = MAGE.add_spec(name="Frost", role=RDPS)
 
 WARLOCK = m.WoWClass(name="Warlock")
 WARLOCK_AFFLICTION = WARLOCK.add_spec(name="Affliction", role=RDPS)
+WARLOCK_AFFLICTION.short_name = "Aff"
 WARLOCK_DEMONOLOGY = WARLOCK.add_spec(name="Demonology", role=RDPS)
+WARLOCK_DEMONOLOGY.short_name = "Demo"
 WARLOCK_DESTRUCTION = WARLOCK.add_spec(name="Destruction", role=RDPS)
 
 MONK = m.WoWClass(name="Monk")
@@ -88,10 +94,15 @@ DRUID_BALANCE = DRUID.add_spec(name="Balance", role=RDPS)
 DRUID_FERAL = DRUID.add_spec(name="Feral", role=MDPS)
 DRUID_GUARDIAN = DRUID.add_spec(name="Guardian", role=TANK)
 DRUID_RESTORATION = DRUID.add_spec(name="Restoration", role=HEAL)
+DRUID_RESTORATION.short_name = "Resto"
 
 DEMONHUNTER = m.WoWClass(name="Demon Hunter")
 DEMONHUNTER_HAVOC = DEMONHUNTER.add_spec(name="Havoc", role=MDPS)
 DEMONHUNTER_VENGEANCE = DEMONHUNTER.add_spec(name="Vengeance", role=TANK)
+
+
+OTHER = m.WoWClass(name="Other")
+OTHER_POTION = OTHER.add_spec(name="Potion", role="other")
 
 
 # sorry guys...
@@ -133,6 +144,58 @@ DRUID_GUARDIAN.supported = False
 DEMONHUNTER_VENGEANCE.supported = False
 
 
+# Warcraft Logs: Class IDs
+DEATHKNIGHT.id = 1
+DRUID.id = 2
+HUNTER.id = 3
+MAGE.id = 4
+MONK.id = 5
+PALADIN.id = 6
+PRIEST.id = 7
+ROGUE.id = 8
+SHAMAN.id = 9
+WARLOCK.id = 10
+WARRIOR.id = 11
+DEMONHUNTER.id = 12
+
+# Warcraft Logs: Spec IDs
+DEATHKNIGHT_BLOOD.id = 1
+DEATHKNIGHT_FROST.id = 2
+DEATHKNIGHT_UNHOLY.id = 3
+DRUID_BALANCE.id  = 1
+DRUID_FERAL.id = 2
+DRUID_GUARDIAN.id = 3
+DRUID_RESTORATION.id = 4
+HUNTER_BEASTMASTERY.id = 1
+HUNTER_MARKSMANSHIP.id = 2
+HUNTER_SURVIVAL.id = 3
+MAGE_ARCANE.id = 1
+MAGE_FIRE.id = 2
+MAGE_FROST.id = 3
+MONK_BREWMASTER.id = 1
+MONK_MISTWEAVER.id = 2
+MONK_WINDWALKER.id = 3
+PALADIN_HOLY.id = 1
+PALADIN_PROTECTION.id = 2
+PALADIN_RETRIBUTION.id = 3
+PRIEST_DISCIPLINE.id = 1
+PRIEST_HOLY.id = 2
+PRIEST_SHADOW.id = 3
+ROGUE_ASSASSINATION.id = 1
+ROGUE_OUTLAW.id = 4
+ROGUE_SUBTLETY.id = 3
+SHAMAN_ELEMENTAL.id = 1
+SHAMAN_ENHANCEMENT.id = 2
+SHAMAN_RESTORATION.id = 3
+WARLOCK_AFFLICTION.id = 1
+WARLOCK_DEMONOLOGY.id = 2
+WARLOCK_DESTRUCTION.id = 3
+WARRIOR_ARMS.id = 1
+WARRIOR_FURY.id = 2
+WARRIOR_PROTECTION.id = 3
+DEMONHUNTER_HAVOC.id = 1
+DEMONHUNTER_VENGEANCE.id = 2
+
 ################################################################################
 # Alias to some full lists
 #
@@ -161,6 +224,47 @@ HEALS = [spec for spec in SPECS if spec.role == HEAL]
 MELEE = [spec for spec in SPECS if spec.role == MDPS]
 RANGE = [spec for spec in SPECS if spec.role == RDPS]
 
+
+ROLES = [
+    {"slug": TANK, "name": "Tank"},
+    {"slug": HEAL, "name": "Healer"},
+    {"slug": RDPS, "name": "Range"},
+    {"slug": MDPS, "name": "Melee"},
+]
+for role in ROLES:
+    role["specs"] = [spec for spec in SPECS if spec.role == role["slug"]]
+
+
+class_by_name = {c.name: c for c in CLASSES}
+spec_by_full_name = {s.full_name: s for s in SPECS}
+
+
+# OTHER
+spec_by_full_name["90_Potion"] = OTHER_POTION
+
+
+# common heal Comps to check
+HEAL_COMPS = [
+    {
+        "specs": [PALADIN_HOLY, PRIEST_DISCIPLINE, SHAMAN_RESTORATION, DRUID_RESTORATION],
+    },
+
+    {
+        "specs": [PALADIN_HOLY, PRIEST_DISCIPLINE, SHAMAN_RESTORATION, SHAMAN_RESTORATION],
+    },
+
+    {
+        "specs": [PALADIN_HOLY, PRIEST_HOLY, PRIEST_DISCIPLINE, SHAMAN_RESTORATION, SHAMAN_RESTORATION],
+    }
+]
+
+for comp in HEAL_COMPS:
+    specs = comp.get("specs", [])
+    comp["search"] = ",".join(f"{s.class_.id}.{s.id}.{specs.count(s)}" for s in SPECS if s in specs)
+    comp["name"] = "_".join(spec.full_name_slug for spec in specs)
+
+# todo: filter for ventyr/kryan pala
+# "abilities.316958", # Ventyr Pala (WARNING! Could be a ret)
 
 
 ################################################################################
@@ -241,7 +345,7 @@ MONK_MISTWEAVER.add_spell(spell_id=115310,  cooldown=180) # Revival
 MONK_MISTWEAVER.add_spell(spell_id=325197,  cooldown=180) # Chiji
 
 # Druid
-DRUID.add_spell(spell_id=323764, cooldown=120, duration=4)  # Convoke
+DRUID.add_spell(spell_id=323764, cooldown=120, duration=4, show=False)  # Convoke
 DRUID_RESTORATION.add_spell(spell_id=197721, cooldown=90, duration=8, show=False) # Flourish
 DRUID_RESTORATION.add_spell(spell_id=29166, cooldown=180, duration=10, show=False) # Innervate
 DRUID_RESTORATION.add_spell(spell_id=740, cooldown=180, duration=6) # Tranquility
@@ -269,19 +373,22 @@ DEMONHUNTER_HAVOC.add_spell(spell_id=196555, cooldown=180, duration=5, show=Fals
 # 307164 # Str
 
 for spec in HEALS:
-    spec.add_spell(spell_id=307161, cooldown=300, duration=10, show=False) # Mana Channel Pot
+    spec.add_spell(group="90_Potion", spell_id=307161, cooldown=300, duration=10, show=False) # Mana Channel Pot
+    spec.add_spell(group="90_Potion", spell_id=307193, cooldown=300, show=False)              # Mana Pot
+    spec.add_spell(group="90_Potion", spell_id=307162, cooldown=300, duration=25, show=False) # Intellect Pot
+    spec.add_spell(group="90_Potion", spell_id=307495, cooldown=300, duration=25, show=False) # Phantom Fire
 
 for spec in MELEE+RANGE:
-    spec.add_spell(spell_id=307495, cooldown=300, duration=25, show=False) # Phantom Fire
+    spec.add_spell(group="90_Potion", spell_id=307495, cooldown=300, duration=25, show=False) # Phantom Fire
 
 for spec in [PRIEST_SHADOW, SHAMAN_ELEMENTAL, MAGE, WARLOCK, DRUID_BALANCE]:
-    spec.add_spell(spell_id=307162, cooldown=300, duration=25, show=False) # Intellect Pot
+    spec.add_spell(group="90_Potion", spell_id=307162, cooldown=300, duration=25, show=False) # Intellect Pot
 
 for spec in [HUNTER, ROGUE, SHAMAN_ENHANCEMENT, MONK_WINDWALKER, DRUID_FERAL, DEMONHUNTER]:
-    spec.add_spell(spell_id=307159, cooldown=300, duration=25, show=False) # Agility Pot
+    spec.add_spell(group="90_Potion", spell_id=307159, cooldown=300, duration=25, show=False) # Agility Pot
 
 for spec in [WARRIOR, PALADIN_RETRIBUTION, DEATHKNIGHT]:
-    spec.add_spell(spell_id=307164, cooldown=300, duration=25, show=False) # Strength Pot
+    spec.add_spell(group="90_Potion", spell_id=307164, cooldown=300, duration=25, show=False) # Strength Pot
 
 
 ################################################################################
@@ -290,4 +397,6 @@ for spec in [WARRIOR, PALADIN_RETRIBUTION, DEATHKNIGHT]:
 # 330323 # IQC
 # 345539 # Ordnance
 SPELLS = {spell_id: spell for spell_id, spell in m.WoWSpell._all.items() if spell_id > 0}
+
+
 
