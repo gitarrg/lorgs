@@ -112,7 +112,8 @@ async def generate_ranking_report(boss, spec):
     if DEBUG:
         fights = fights[:5]
 
-    await WCL_CLIENT.fetch_multiple_fights(fights)
+    for fights_sub in utils.chunks(fights, 10):
+        await WCL_CLIENT.fetch_multiple_fights(fights_sub)
     logger.info(f"[GENERATED REPORT] {spec.full_name} vs {boss['name']}")
 
 
@@ -160,7 +161,7 @@ async def generate_rankings():
 
     # process in chunks of n
     await WCL_CLIENT.cache.load()
-    for tasklist in utils.chunks(tasks, 16):
+    for tasklist in utils.chunks(tasks, 8):
         await asyncio.gather(*tasklist)
 
 
