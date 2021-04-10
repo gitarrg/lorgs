@@ -12,7 +12,7 @@
     {% for role in [wow_data.TANKS, wow_data.HEALS, wow_data.MELEE, wow_data.RANGE] %}
         {% for spec2 in role %}
         <li class="nav-item {{'active' if spec2 == spec}}">
-            <a class="nav-link {{'disabled' if not spec2.supported}}" href="ranking_{{spec2.name_slug}}_{{boss.name_slug}}.html">
+            <a class="nav-link {{'disabled' if not spec2.supported}}" href="rankings_{{spec2.full_name_slug}}_{{boss.name_slug}}.html">
                 <img class="icon-spec icon-m wow-class-border-{{spec2.class_name_slug}}" src="static/images/specs/{{spec2.full_name_slug}}.jpg" alt="{{spec2.full_name}}" title="{{spec2.full_name}}">
             </a>
         </li>
@@ -22,7 +22,7 @@
 
     {% for boss2 in wow_data.ENCOUNTERS %}
     <li class="nav-item {{'active' if boss2 == boss}}">
-        <a class="nav-link" href="ranking_{{spec.name_slug}}_{{boss2.name_slug}}.html">
+        <a class="nav-link" href="rankings_{{spec.full_name_slug}}_{{boss2.name_slug}}.html">
             <img class="icon-spec icon-m border-black" src="static/images/bosses/castle-nathria/{{boss2.name_slug}}.jpg" alt="{{boss2.name_slug}}" title="{{boss2.name_slug}}">
         </a>
     </li>
