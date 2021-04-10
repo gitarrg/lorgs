@@ -17,36 +17,50 @@
     <!-- font-awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" />
 
+    <!-- local -->
     <link rel="stylesheet" type="text/css" href="./static/style.css">
     <link rel="stylesheet" type="text/css" href="./static/style_wow.css">
 
+    <!-- wowhead -->
     <script>const whTooltips = {colorLinks: true, iconizeLinks: true, renameLinks: false, iconSize: 'small'};</script>
     <script src="https://wow.zamimg.com/widgets/power.js"></script>
 
+    <!-- Google -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{GOOGLE_ANALYTICS_ID}}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag("js", new Date());
+        gtag("config", "{{GOOGLE_ANALYTICS_ID}}");
+    </script>
+
     {% block head %}{% endblock %}
-
-    {% include "elements/google_analytics.html" %}
-
 </head>
 
-
 <body>
-
 <!-- Navbar -->
-{% include "elements/main_nav.html" %}
+{# {% include "elements/main_nav.html" %} #}
 
-<!-- Navbar -->
+<!-- Main -->
 <div class="container-fluid">
-    <div class="row mt-3 mx-4">
+    <div class="row mt-2 mx-4">
         <div class="col p-3">
             {% block content %}{% endblock %}
         </div>
     </div>
 </div>
 
-<!-- Content Scripts -->
+<!-- Scripts -->
 {% block scripts %}
+<script>
+$("document").ready(function() {
+    // enable tooltips
+    $('[data-toggle="tooltip"]').tooltip();
+});
+</script>
 {% endblock %}
+
+
 
 </body>
 </html>

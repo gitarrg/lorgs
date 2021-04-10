@@ -1,15 +1,13 @@
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark p-1">
 
-    <a class="navbar-brand mx-2 pr-3" href="/lorgs">
-        <i class="fas fa-stream fa-1x"></i> Lorgs
-    </a>
-
-    <ul class="navbar-nav mr-auto">
+    <!-- Home -->
+    <a class="navbar-brand mx-2 pr-3" href="/lorgs"><i class="fas fa-stream fa-1x"></i> Lorgs</a>
 
     {% if TMP %}
+    <ul class="navbar-nav mr-auto">
 
-    <!-- by role -->
-    {% for role in [wow_data.TANKS, wow_data.HEALS, wow_data.MELEE, wow_data.RANGE] %}
+        <!-- specs by role -->
+        {% for role in [wow_data.TANKS, wow_data.HEALS, wow_data.MELEE, wow_data.RANGE] %}
         {% for spec2 in role %}
         <li class="nav-item {{'active' if spec2 == spec}}">
             <a class="nav-link {{'disabled' if not spec2.supported}}" href="rankings_{{spec2.full_name_slug}}_{{boss.name_slug}}.html">
@@ -17,20 +15,19 @@
             </a>
         </li>
         {% endfor %}
+
+        <!-- next role -->
         <div style="width: 15px"></div>
-    {% endfor %}
+        {% endfor %}
 
-    {% for boss2 in wow_data.ENCOUNTERS %}
-    <li class="nav-item {{'active' if boss2 == boss}}">
-        <a class="nav-link" href="rankings_{{spec.full_name_slug}}_{{boss2.name_slug}}.html">
-            <img class="icon-spec icon-m border-black" src="static/images/bosses/castle-nathria/{{boss2.name_slug}}.jpg" alt="{{boss2.name_slug}}" title="{{boss2.name_slug}}">
-        </a>
-    </li>
-    {% endfor %}
-
-
-    {% endif %}
-
+        <!-- Bosses -->
+        {% for boss2 in wow_data.ENCOUNTERS %}
+        <li class="nav-item {{'active' if boss2 == boss}}">
+            <a class="nav-link" href="rankings_{{spec.full_name_slug}}_{{boss2.name_slug}}.html">
+                <img class="icon-spec icon-m border-black" src="static/images/bosses/castle-nathria/{{boss2.name_slug}}.jpg" alt="{{boss2.name_slug}}" title="{{boss2.name_slug}}">
+            </a>
+        </li>
+        {% endfor %}
+        {% endif %}
     </ul>
 </nav>
-

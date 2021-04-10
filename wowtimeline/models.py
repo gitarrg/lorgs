@@ -6,7 +6,7 @@ import pprint
 
 # IMPORT LOCAL LIBRARIES
 from wowtimeline import utils
-
+from wowtimeline.logger import logger
 
 ###############################
 # Constant Data
@@ -23,7 +23,7 @@ class WoWSpell:
     #         cls._all[spell_id] = instance
     #     return cls._all[spell_id]
 
-    def __init__(self, spell_id, duration=0, cooldown=0, show=True, group=""):
+    def __init__(self, spell_id, duration=0, cooldown=0, show=True, group=None):
         super().__init__()
 
         # game info
@@ -52,22 +52,7 @@ DUMMY_SPELL = WoWSpell(spell_id=0)
 # SPELL_B = WoWSpell(spell_id=1)
 # print(SPELL_A, SPELL_B, SPELL_A == SPELL_B)
 
-
-
-
-class spell_mixin:
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.spells = {}
-
-    def add_spell(self, spell_id, **kwargs):
-        kwargs["group"] = kwargs.get("group") or self.name
-        spell = WoWSpell(spell_id=spell_id, **kwargs)
-        self.spells[spell_id] = spell
-        return spell
-
-
-class WowSpec(spell_mixin):
+class WowSpec:
     """docstring for Spec"""
 
     def __init__(self, class_, name, role="dps"):
@@ -76,6 +61,7 @@ class WowSpec(spell_mixin):
         self.name = name
         self.role = role
         self.class_ = class_
+        self.spells = {}
 
         # bool: is this spec is currently supported
         self.supported = True
@@ -96,13 +82,19 @@ class WowSpec(spell_mixin):
     def __repr__(self):
         return f"<Spec({self.full_name})>"
 
+    def __lt__(self, other):
+        return self.full_name_slug < other.full_name_slug
+
     def add_spell(self, **kwargs):
-        kwargs["group"] = kwargs.get("group") or self.full_name
-        return super().add_spell(**kwargs)
+        kwargs["group"] = kwargs.get("group") or self
+        spell = WoWSpell(**kwargs)
+        self.spells[spell.spell_id] = spell
+        return spell
 
     @property
     def all_spells(self):
-        return {**self.spells, **self.class_.spells}
+        return self.spells
+        # return {**self.spells, **self.class_.spells}
 
     @property
     def metric(self):
@@ -112,7 +104,7 @@ class WowSpec(spell_mixin):
         return "dps"
 
 
-class WoWClass(spell_mixin):
+class WoWClass:
     """docstring for WoWClass"""
 
     _all = {}
@@ -292,59 +284,35 @@ class Fight:
         self.encounterID = data_fight.get("encounterID") or self.encounterID
         '''
 
-    async def fetch(self, client, spells=()):
-        # we need to fetch the fight itself
-        if self.start_time <= 0:
-            await self.fetch_fight_data()
+    def _process_player_data(self, players_data):
 
-        table_query_args = f"fightIDs: {self.fight_id}, startTime: {self.start_time}, endTime: {self.end_time}"
-        spells = ",".join(str(s.spell_id) for s in spells)
-        query = f"""
-        {{
-            reportData {{
-                report(code: "{self.report_id}") {{
-                    players: table({table_query_args}, dataType: Summary)
+        if not players_data:
+            return
 
-                    casts: events(
-                        {table_query_args},
-                        dataType: Casts,
-                        filterExpression: "ability.id in ({spells})"
-                    ) {{data}}
-                }}
-            }}
-        }}
-        """
-        self.data = await client.query(query)
-        report_data = self.data.get("reportData", {}).get("report", {})
-
-        ################
-        # Players
-        players_data = report_data.get("players", {}).get("data", {})
-
-        player_by_id = {}  # TODO: add to FightClass
+        # player_by_id = {}  # TODO: add to FightClass
         for composition_data in players_data.get("composition", []):
             player = Player()
             player.fight = self
             player.source_id = composition_data.get("id")
             player.name = composition_data.get("name")
-            # player.type = composition_data.get("type")
 
             class_name = composition_data.get("type")
-            spec_data = composition_data.get("specs", [])[0]
-            spec_role = spec_data.get("role")
-            spec_name = spec_data.get("spec")
-
-            if spec_role != "healer":
-                continue
-
             wow_class = WoWClass.get_by_name(class_name)
             if not wow_class:
                 log.warning("Unknown Class: %s", class_name)
 
+            spec_data = composition_data.get("specs", [])[0]
+            spec_name = spec_data.get("spec")
             player.spec = wow_class.get_spec(spec_name)
+
+            yield player
+            # self.players.append(player)
+
+            # spec_role = spec_data.get("role")
+            # if spec_role != "healer":
+            #     continue
             # player.role = player_spec.get("role")
-            self.players.append(player)
-            player_by_id[player.source_id] = player
+            # player_by_id[player.source_id] = player
 
         """
         # who asked?
@@ -360,25 +328,103 @@ class Fight:
             if player:
                 player.healing_done = damage_data.get("total", 0)
         """
+
+    async def fetch(self, client, spells=(), extra_filter=""):
+        # we need to fetch the fight itself
+        if self.start_time <= 0:
+            await self.fetch_fight_data()
+
+        table_query_args = f"fightIDs: {self.fight_id}, startTime: {self.start_time}, endTime: {self.end_time}"
+
+        # Build Casts Filter
+        if self.players:
+            casts_filters = []
+            for player in self.players:
+                spells = tuple(player.spec.all_spells.keys())
+                casts_filter = f"(source.name='{player.name}' and ability.id in {spells})"
+                casts_filters.append(casts_filter)
+            casts_filter = " or ".join(casts_filters)
+
+        else:
+            spells = spells or (spell for spell in WoWSpell._all.keys() if spell > 0)
+            spells = ",".join(str(s.spell_id) for s in spells)
+            casts_filter = f"ability.id in ({spells})"
+
+        if extra_filter:
+            casts_filter = f"({casts_filter}) and ({extra_filter})"
+
+        # see if we need to request player details
+        # request_player_data = len(self.players) == 0
+        # if request_player_data:
+        #     pass
+        # else:
+        #     player_query = ""
+        player_query = f"players: table({table_query_args}, dataType: Summary)"
+        if len(self.players) == 1:
+            # if its only 1 player, then our casts-filter should be enough to get all the info we need
+            player_query = ""
+
+        query = f"""
+        {{
+            reportData {{
+                report(code: "{self.report_id}") {{
+                    {player_query}
+
+                    casts: events(
+                        {table_query_args},
+                        dataType: Casts,
+                        filterExpression: "{casts_filter}"
+                    ) {{data}}
+                }}
+            }}
+        }}
+        """
+        self.data = await client.query(query)
+        report_data = self.data.get("reportData", {}).get("report", {})
+        logger.debug(f"fetched fights: {self.report_id}")
+
+        casts_data = report_data.get("casts", {}).get("data", {})
+        casts_data = [c for c in casts_data if c.get("type") == "cast"] # skip additional events like "begincast"
+        # TODO: at some point i should check for "begincast" instead.. for non instant casts
+
+        ################
+        # Players
+        if len(self.players) == 1:
+            player = self.players[0]
+            for cast_data in casts_data:
+                source_id = cast_data.get("sourceID")
+                if source_id:
+                    player.source_id = source_id
+                    break
+
+        elif self.players:
+            # fill in data from query
+            raise(NotImplemented)
+
+        else:
+            # read player info's from query
+            players_data = report_data.get("players", {}).get("data", {})
+            players = self._process_player_data(players_data)
+            self.players = list(players)
+
         ################
         # Casts
         ################
-        casts_data = report_data.get("casts", {}).get("data", {})
+        player_by_id = {p.source_id: p for p in self.players}
         for cast_data in casts_data:
-
-            # skip additional events like "begincast"
-            if cast_data["type"] != "cast":
-                continue
-
             cast = Cast(**cast_data)
-
             player = player_by_id.get(cast.sourceid)
             if not player:
                 continue
 
+            cast.spell = player.spec.spells.get(cast.spell_id)
+            if not cast.spell:
+                continue
             cast.fight = self
-            cast.spell = player.spec.all_spells.get(cast.spell_id) or DUMMY_SPELL  # fixme
             player.casts.append(cast)
+
+        # remove players with no casts
+        self.players = [p for p in self.players if p.casts]
 
 
 class Report:
@@ -386,11 +432,6 @@ class Report:
     def __init__(self, report_id):
         super().__init__()
         self.report_id = report_id
-
-        # self.data = {}
-        # self.title = ""
-        # self.fights = []
-
         self.guild = ""
         self.realm = ""
         self.region = ""
@@ -398,33 +439,3 @@ class Report:
     @property
     def report_url(self):
         return f"https://www.warcraftlogs.com/reports/{self.report_id}"
-
-    async def fetch(self):
-        '''
-        # format the query
-        query = f"""
-        {{
-            reportData {{
-                report(code: "{self.report_id}") {{
-                    title
-                    fights {{
-                        id
-                        startTime
-                        endTime
-                    }}
-                }}
-            }}
-        }}
-        """
-        self.data = await self.client.query(query)
-
-        # Unpack the data
-        report_data = self.data.get("reportData", {}).get("report", {})
-        self.title = report_data.get("title", "")
-
-        for data in report_data.get("fights", []):
-            data["report_id"] = self.report_id
-            self.fights += [Fight(**data)]
-
-        return self.data
-        '''

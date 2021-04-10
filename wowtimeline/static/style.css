@@ -43,6 +43,15 @@ label {
     border: 1px solid black;
 }
 
+.rounded-sm {
+    border-radius: 0.125rem;
+}
+
+.tooltip {
+    font-size: 1rem;
+}
+
+
 
 .bg-dark-2 {
     background-color: #484848 !important;
@@ -83,7 +92,6 @@ h2 img.icon {
 }
 
 
-
 .parse_spec_link {
     display: inline-block;
 }
@@ -93,7 +101,9 @@ h2 img.icon {
     border: 1px solid black;
 }
 
-a:not(.disabled) .icon-spec:hover {
+a:not(.disabled) .icon-spec:hover,
+.ranking-nav a:not(.disabled):hover .icon-spec
+{
     transform: scale(1.2);
 }
 
@@ -117,8 +127,8 @@ a:not(.disabled) .icon-spec:hover {
 
 #settings_container {
     display: none;
-    transition: max-height 0.5s ease-out;
-    transition: max-height 0.5s ease-in;
+    transition: max-height 2s ease-out;
+    transition: max-height 2s ease-in;
 }
 
 .spell-checkbox-group-header {
@@ -152,6 +162,51 @@ a:not(.disabled) .icon-spec:hover {
     border: none !important;
 }
 
+
+.ranking-nav {
+    display: inline-block;
+    position: relative;
+}
+
+
+.ranking-nav-role-icon {
+}
+
+.ranking-nav-role-specs {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    left: -0.75rem;
+
+    padding: 0.75rem;
+    padding-top: 0.5rem;
+
+}
+
+
+.ranking-nav:hover .ranking-nav-role-specs {
+    display: block;
+}
+
+
+.ranking-nav .disabled,
+.ranking-nav .disabled span,
+.ranking-nav a.disabled,
+.ranking-nav .disabled:hover
+{
+    color: grey;
+    text-decoration: none;
+    cursor: default;
+}
+
+
+.ranking-nav a:not(.disabled):hover
+{
+    font-weight: bold;
+}
+
+
+
 input[type="checkbox"]:not(:checked) {
 }
 
@@ -166,15 +221,21 @@ input[type="checkbox"]:not(:checked)+label {
 }
 
  input#show_settings:not(:checked)+label {
-    opacity: 75%;
+    opacity: 100%;
+    color: white;
 }
 
 
 input#show_settings:not(:checked)+label:hover,
 input[type="checkbox"]:not(:checked)+label:hover {
-    color: white;
     opacity: 100%;
     filter: saturate(0%) blur(0);
+
+}
+
+
+input#show_settings:checked+label {
+    color: rgb(0 200 255);
 }
 
 
@@ -206,6 +267,9 @@ input[type="checkbox"]:not(:checked)+label:hover {
 
     border: 1px solid black;
     border-left: none;
+
+    position: sticky;
+    left: 0;
 
     width: 150px;
     height: 30px;

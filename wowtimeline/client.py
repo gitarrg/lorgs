@@ -4,11 +4,24 @@
 # IMPORT STANDARD LIBRARIES
 import os
 import json
-from aiohttp import ClientSession
+import asyncio
+import aiohttp
 import aiofiles
 
 from wowtimeline import models
 from wowtimeline.logger import logger
+
+
+
+def with_semaphore(limit=25):
+    sem = asyncio.Semaphore(limit)
+
+    def decorator(func):
+        async def wrapped(*args, **kwargs):
+            async with sem:
+                return await func(*args, **kwargs)
+        return wrapped
+    return decorator
 
 
 class JsonCache:
@@ -70,6 +83,7 @@ class WarcraftlogsClient:
 
         self.cache = JsonCache()
         self.rate_limit_data = {}
+        # self.connector = aiohttp.TCPConnector(limit_per_host=9999999)
 
     ##############################
 
@@ -80,7 +94,7 @@ class WarcraftlogsClient:
             "client_id": self.client_id,
             "client_secret": self.client_secret,
         }
-        async with ClientSession() as session:
+        async with aiohttp.ClientSession() as session:
             async with session.post(url=self.URL_AUTH, data=data) as resp:
 
                 try:
@@ -92,21 +106,21 @@ class WarcraftlogsClient:
         token = data.get("access_token", "")
         self.headers["Authorization"] = "Bearer " + token
 
+    @with_semaphore(50)
     async def query(self, query, usecache=True):
 
         # caching
         if usecache:
-            await self.cache.load()
-        cached_result = usecache and self.cache.data.get(query)
-        if cached_result:
-            logger.debug("using cached result")
-            return cached_result
+            cached_result = usecache and self.cache.data.get(query)
+            if cached_result:
+                logger.debug("using cached result")
+                return cached_result
 
         # auth
         if not self.headers:
             await self.update_auth_token()
 
-        async with ClientSession() as session:
+        async with aiohttp.ClientSession() as session:
             async with session.get(url=self.URL_API, json={"query": query}, headers=self.headers) as resp:
 
                 try:
@@ -186,51 +200,7 @@ class WarcraftlogsClient:
                     if spec:
                         spec.id = spec_data.get("id", -1)
 
-
     ##############################
-
-    async def fetch_multiple_fights(self, fights):
-        #############
-        # Query
-        query = ""
-        for i, fight in enumerate(fights):
-            query += f"report{i}: {fight.get_casts_query()}"
-
-        query = f"""
-        {{
-            reportData
-            {{
-                {query}
-            }}
-        }}
-        """
-        data = await self.query(query)
-        data = data.get("reportData", {})
-
-        #############
-        # process data
-        for i, fight in enumerate(fights):
-            report_data = data.get(f"report{i}", {})
-
-            # skip if smth went wrong with this report
-            if not report_data:
-                continue
-
-            player = fight.players[0] # fixme
-            casts_data = report_data.get("casts", {}).get("data", {})
-            for cast_data in casts_data:
-
-                # skip additional events like "begincast"
-                if cast_data["type"] != "cast":
-                    continue
-
-                cast = models.Cast(**cast_data)
-                cast.spell = player.spec.all_spells.get(cast.spell_id) or models.DUMMY_SPELL  # fixme
-                cast.fight = fight
-                player.casts.append(cast)
-                player.source_id = cast.sourceid
-
-        return fights
 
     async def get_top_ranks(self, encounter, spec, metric="", difficulty=5):
         """Get Top Ranks for a given encounter and spec."""
@@ -367,7 +337,7 @@ if __name__ == '__main__':
     import asyncio
     from wowtimeline.main import WCL_CLIENT
 
-    search = "2.4.1,6.1.1,7.1.1,9.3.1|abilities.316958"
-    asyncio.run(WCL_CLIENT.find_reports(encounter=2407, search=search))
+    # search = "2.4.1,6.1.1,7.1.1,9.3.1|abilities.316958"
+    # asyncio.run(WCL_CLIENT.find_reports(encounter=2407, search=search))
 
 

@@ -1,6 +1,4 @@
 
-
-
 from wowtimeline import models as m
 
 
@@ -103,6 +101,8 @@ DEMONHUNTER_VENGEANCE = DEMONHUNTER.add_spec(name="Vengeance", role=TANK)
 
 OTHER = m.WoWClass(name="Other")
 OTHER_POTION = OTHER.add_spec(name="Potion", role="other")
+OTHER_TRINKET = OTHER.add_spec(name="Trinkets", role="other")
+
 
 
 # sorry guys...
@@ -124,8 +124,8 @@ PRIEST_SHADOW.supported = False
 DEATHKNIGHT_BLOOD.supported = False
 DEATHKNIGHT_FROST.supported = False
 # DEATHKNIGHT_UNHOLY.supported = False
-SHAMAN_ELEMENTAL.supported = False
-SHAMAN_ENHANCEMENT.supported = False
+# SHAMAN_ELEMENTAL.supported = False
+# SHAMAN_ENHANCEMENT.supported = False
 # SHAMAN_RESTORATION.supported = False
 MAGE_ARCANE.supported = False
 # MAGE_FIRE.supported = False
@@ -135,7 +135,7 @@ MAGE_FROST.supported = False
 # WARLOCK_DESTRUCTION.supported = False
 MONK_BREWMASTER.supported = False
 # MONK_MISTWEAVER.supported = False
-MONK_WINDWALKER.supported = False
+# MONK_WINDWALKER.supported = False
 # DRUID_BALANCE.supported = False
 DRUID_FERAL.supported = False
 DRUID_GUARDIAN.supported = False
@@ -240,21 +240,27 @@ spec_by_full_name = {s.full_name: s for s in SPECS}
 
 
 # OTHER
-spec_by_full_name["90_Potion"] = OTHER_POTION
+POTIONS_GRP = "90_Potion"
+spec_by_full_name[POTIONS_GRP] = OTHER_POTION
+TRINKET_GRP = "80_Trinket"
+spec_by_full_name[TRINKET_GRP] = OTHER_TRINKET
 
 
 # common heal Comps to check
 HEAL_COMPS = [
     {
         "specs": [PALADIN_HOLY, PRIEST_DISCIPLINE, SHAMAN_RESTORATION, DRUID_RESTORATION],
+        "extra_filter": "source.role='healer'",
     },
 
     {
         "specs": [PALADIN_HOLY, PRIEST_DISCIPLINE, SHAMAN_RESTORATION, SHAMAN_RESTORATION],
+        "extra_filter": "source.role='healer'",
     },
 
     {
         "specs": [PALADIN_HOLY, PRIEST_HOLY, PRIEST_DISCIPLINE, SHAMAN_RESTORATION, SHAMAN_RESTORATION],
+        "extra_filter": "source.role='healer'",
     }
 ]
 
@@ -270,6 +276,11 @@ for comp in HEAL_COMPS:
 ################################################################################
 # Define all the spells we care about
 #
+CD1min = 1 * 60 # 60
+CD2min = 2 * 60 # 120
+CD3min = 3 * 60 # 180
+CD4min = 4 * 60 # 240
+CD5min = 5 * 60 # 300
 
 # DPS CDs
 # WARRIOR.add_spell(spell_id=97462, cooldown=180, duration=10) # Rally Cry
@@ -277,11 +288,10 @@ for comp in HEAL_COMPS:
 # WARRIOR.add_spell(spell_id=1719, cooldown=90, duration=10) # Recklessness
 
 # PALADIN.add_spell(spell_id=105809, cooldown=180, duration=20, show=False) # Holy Avenger
-PALADIN.add_spell(spell_id=304971, cooldown=60, show=False) # Covenant: Divine Toll
-PALADIN.add_spell(spell_id=316958, cooldown=240, duration=30) # Covenant: Ashen Hallow
-PALADIN.add_spell(spell_id=31884, cooldown=120, duration=20) # Wings
-PALADIN_HOLY.add_spell(spell_id=31821, cooldown=180, duration=8) # Aura Mastery
-
+PALADIN.add_spell(spell_id=304971, cooldown=CD1min, show=False) # Covenant: Divine Toll
+PALADIN.add_spell(spell_id=316958, cooldown=CD4min, duration=30) # Covenant: Ashen Hallow
+PALADIN.add_spell(spell_id=31884, cooldown=CD2min, duration=20) # Wings
+PALADIN_HOLY.add_spell(spell_id=31821, cooldown=CD3min, duration=8) # Aura Mastery
 
 HUNTER.add_spell(spell_id=328231, cooldown=120, duration=15) # Covenant: Wild Spirits
 HUNTER_BEASTMASTERY.add_spell(spell_id=193530, cooldown=180, duration=20) # Aspect of the Wild
@@ -293,6 +303,7 @@ HUNTER_MARKSMANSHIP.add_spell(spell_id=288613, cooldown=120, duration=15, show=F
 # Rogue
 
 # Priest
+PRIEST.add_spell(spell_id=10060, cooldown=CD2min, duration=20) # Power Infusion
 # PRIEST_SHADOW.add_spell(spell_id=34433, cooldown=180, duration=15) # Shadowfiend
 # PRIEST_SHADOW.add_spell(spell_id=228260, cooldown=90) # Void Erruption
 # PRIEST_DISCIPLINE.add_spell(spell_id=34433, cooldown=180, duration=15, show=False) # Shadowfiend
@@ -305,6 +316,7 @@ PRIEST_HOLY.add_spell(spell_id=64843, cooldown=180, duration=8) # Hymn
 PRIEST_HOLY.add_spell(spell_id=265202, cooldown=240) # Savl (not showing CD, because dynamic)
 PRIEST_HOLY.add_spell(spell_id=200183, cooldown=120, duration=20, show=False) # Apotheosis
 
+
 # DK
 DEATHKNIGHT.add_spell(spell_id=51052, cooldown=120, duration=10, show=False)  # Anti-Magic Zone
 DEATHKNIGHT_UNHOLY.add_spell(spell_id=42650, cooldown=4*60, duration=30)  # Army (usually 4min with talent)
@@ -312,6 +324,14 @@ DEATHKNIGHT_UNHOLY.add_spell(spell_id=275699, cooldown=60, duration=15, show=Fal
 
 
 # Shamans
+SHAMAN.add_spell(spell_id=326059, cooldown=45, show=False)  # Necro: Primordial Wave
+SHAMAN.add_spell(spell_id=320674, cooldown=90, show=False)  # Ventyr: Chain Harvest
+SHAMAN_ELEMENTAL.add_spell(spell_id=191634, cooldown=60, show=True)  # Stormkeeper
+SHAMAN_ELEMENTAL.add_spell(spell_id=198067, cooldown=150, show=True)  # Fire Elemental
+
+SHAMAN_ENHANCEMENT.add_spell(spell_id=114051, cooldown=CD3min, show=True)  # Ascendance
+SHAMAN_ENHANCEMENT.add_spell(spell_id=51533, cooldown=CD2min, show=True)  # Feral Spirit
+
 SHAMAN_RESTORATION.add_spell(spell_id=108280, cooldown=180, duration=10) # Healing Tide
 SHAMAN_RESTORATION.add_spell(spell_id=98008,  cooldown=180, duration=6)  # Spirit Link
 SHAMAN_RESTORATION.add_spell(spell_id=16191,  cooldown=180, duration=8, show=False)  # Mana Tide
@@ -338,11 +358,17 @@ WARLOCK_DESTRUCTION.add_spell(spell_id=1122, cooldown=180, duration=30) # Infern
 WARLOCK_DESTRUCTION.add_spell(spell_id=113858, cooldown=120, duration=20) # Dark Soul: Instability
 
 # Monk
-MONK.add_spell(spell_id=115203,  cooldown=360, duration=15, show=False) # Fort Brew
-MONK.add_spell(spell_id=310454,  cooldown=120, duration=30, show=False) # Weapons of Order
-MONK_MISTWEAVER.add_spell(spell_id=322118,  cooldown=180, duration=3.5) # Yulon
-MONK_MISTWEAVER.add_spell(spell_id=115310,  cooldown=180) # Revival
-MONK_MISTWEAVER.add_spell(spell_id=325197,  cooldown=180) # Chiji
+MONK.add_spell(spell_id=322109, cooldown=180) # Touch of Death
+MONK.add_spell(spell_id=115203, cooldown=360, duration=15, show=False) # Fort Brew
+MONK.add_spell(spell_id=310454, cooldown=120, duration=30, show=False) # Weapons of Order
+
+MONK_MISTWEAVER.add_spell(spell_id=322118, cooldown=180, duration=3.5) # Yulon
+MONK_MISTWEAVER.add_spell(spell_id=115310, cooldown=180) # Revival
+MONK_MISTWEAVER.add_spell(spell_id=325197, cooldown=180) # Chiji
+
+MONK_WINDWALKER.add_spell(spell_id=123904, cooldown=120, duration=24) # Xuen
+MONK_WINDWALKER.add_spell(spell_id=137639, cooldown=90, duration=15) # Storm, Earth and Fire
+
 
 # Druid
 DRUID.add_spell(spell_id=323764, cooldown=120, duration=4, show=False)  # Convoke
@@ -361,41 +387,59 @@ DEMONHUNTER.add_spell(spell_id=306830, cooldown=60) # Elysian Decree
 DEMONHUNTER.add_spell(spell_id=323639, cooldown=90) # The Hunt
 DEMONHUNTER.add_spell(spell_id=317009, cooldown=60) # Sinful Brand
 
-DEMONHUNTER_HAVOC.add_spell(spell_id=200166, cooldown=300, duration=30) # Meta
+DEMONHUNTER_HAVOC.add_spell(spell_id=200166, cooldown=CD4min, duration=30) # Meta
 DEMONHUNTER_HAVOC.add_spell(spell_id=196718, cooldown=180, duration=8, show=False) # Darkness
 DEMONHUNTER_HAVOC.add_spell(spell_id=196555, cooldown=180, duration=5, show=False) # Netherwalk
 
 ################################################################################
 # Potions (figure out how to best include them later)
 
-# 307162 # Int
-# 307159 # Agi
-# 307164 # Str
 
 for spec in HEALS:
-    spec.add_spell(group="90_Potion", spell_id=307161, cooldown=300, duration=10, show=False) # Mana Channel Pot
-    spec.add_spell(group="90_Potion", spell_id=307193, cooldown=300, show=False)              # Mana Pot
-    spec.add_spell(group="90_Potion", spell_id=307162, cooldown=300, duration=25, show=False) # Intellect Pot
-    spec.add_spell(group="90_Potion", spell_id=307495, cooldown=300, duration=25, show=False) # Phantom Fire
+    spec.add_spell(group=OTHER_POTION, spell_id=307161, cooldown=300, duration=10, show=False) # Mana Channel Pot
+    spec.add_spell(group=OTHER_POTION, spell_id=307193, cooldown=300, show=False)              # Mana Pot
+    spec.add_spell(group=OTHER_POTION, spell_id=307162, cooldown=300, duration=25, show=False) # Intellect Pot
+    spec.add_spell(group=OTHER_POTION, spell_id=307495, cooldown=300, duration=25, show=False) # Phantom Fire
 
 for spec in MELEE+RANGE:
-    spec.add_spell(group="90_Potion", spell_id=307495, cooldown=300, duration=25, show=False) # Phantom Fire
+    spec.add_spell(group=OTHER_POTION, spell_id=307495, cooldown=300, duration=25, show=False) # Phantom Fire
 
 for spec in [PRIEST_SHADOW, SHAMAN_ELEMENTAL, MAGE, WARLOCK, DRUID_BALANCE]:
-    spec.add_spell(group="90_Potion", spell_id=307162, cooldown=300, duration=25, show=False) # Intellect Pot
+    spec.add_spell(group=OTHER_POTION, spell_id=307162, cooldown=300, duration=25, show=False) # Intellect Pot
 
 for spec in [HUNTER, ROGUE, SHAMAN_ENHANCEMENT, MONK_WINDWALKER, DRUID_FERAL, DEMONHUNTER]:
-    spec.add_spell(group="90_Potion", spell_id=307159, cooldown=300, duration=25, show=False) # Agility Pot
+    spec.add_spell(group=OTHER_POTION, spell_id=307159, cooldown=300, duration=25, show=False) # Agility Pot
 
 for spec in [WARRIOR, PALADIN_RETRIBUTION, DEATHKNIGHT]:
-    spec.add_spell(group="90_Potion", spell_id=307164, cooldown=300, duration=25, show=False) # Strength Pot
+    spec.add_spell(group=OTHER_POTION, spell_id=307164, cooldown=300, duration=25, show=False) # Strength Pot
 
 
 ################################################################################
-# Trinkets
+# All Classes
+for spec in SPECS:
 
-# 330323 # IQC
+    spec.add_spell(group=OTHER_POTION, spell_id=6262, show=False) # Healthstone
+    spec.add_spell(group=OTHER_POTION, spell_id=307192, cooldown=CD5min, show=False) # Healthpot
+
+    # Raid Trinkets
+    spec.add_spell(group=OTHER_TRINKET, spell_id=349857, cooldown=90, show=False) # Dreadfire Vessel
+    spec.add_spell(group=OTHER_TRINKET, spell_id=345019, cooldown=90, show=False) # Skulking Predator
+    spec.add_spell(group=OTHER_TRINKET, spell_id=345251, cooldown=60, duration=15, show=False) # Soul Igniter
+
+    # Dungeon Trinkets
+    spec.add_spell(group=OTHER_TRINKET, spell_id=330323, cooldown=CD3min, show=False) # Quantum Device
+    spec.add_spell(group=OTHER_TRINKET, spell_id=345539, cooldown=CD3min, duration=35, show=False) # Ordnance (estimated duration)
+    spec.add_spell(group=OTHER_TRINKET, spell_id=345530, cooldown=90, duration=6, show=False) # Overcharged Anima Battery
+    spec.add_spell(group=OTHER_TRINKET, spell_id=345801, cooldown=CD2min, duration=15, show=False) # Soulletting Ruby
+
+    # Other Trinkets
+    spec.add_spell(group=OTHER_TRINKET, spell_id=348139, cooldown=90, duration=9, show=False) # Divine Bell
+    spec.add_spell(group=OTHER_TRINKET, spell_id=345228, cooldown=CD1min, duration=15, show=False) # Badge
+
 # 345539 # Ordnance
+
+
+
 SPELLS = {spell_id: spell for spell_id, spell in m.WoWSpell._all.items() if spell_id > 0}
 
 

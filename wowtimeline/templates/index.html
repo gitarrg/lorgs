@@ -1,12 +1,8 @@
 {% extends "base.html" %}
 
-{% block title %}
-Timeline
-{% endblock %}
-
+{% block title %}Lorgs: Index{% endblock %}
 
 {% block content %}
-
 <!-- Parses -->
 <div class="row p-2">
     <div class="col-12 pl-0">
@@ -23,8 +19,8 @@ Timeline
                 <td>
                     {% for spec in role.specs %}
                     <div class="parse_spec_link">
-                        <a class="{{'disabled' if not spec.supported}}" href="rankings_{{spec.full_name_slug}}_{{boss.name_slug}}.html">
-                            <img class="icon-spec icon-m rounded wow-class-border-{{spec.class_name_slug}}" src="static/images/specs/{{spec.full_name_slug}}.jpg" alt="{{spec.full_name}}" title="{{spec.full_name}}">
+                        <a class="{{'disabled' if not spec.supported}}" href="rankings_{{spec.full_name_slug}}_{{boss.name_slug}}.html" data-toggle="tooltip" title="{{spec.full_name}}">
+                            <img class="icon-spec icon-m rounded wow-class-border-{{spec.class_name_slug}}" src="static/images/specs/{{spec.full_name_slug}}.jpg" alt="{{spec.full_name}}">
                         </a>
                     </div>
                     {% endfor %}
@@ -76,6 +72,3 @@ Timeline
     </div>
 </div>
 {% endblock %}
-
-<!-- Content Scripts -->
-{% block scripts %}{% endblock %}

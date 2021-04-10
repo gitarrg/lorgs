@@ -26,10 +26,8 @@ handler = logging.StreamHandler()
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-
-
 logger.setLevel(logging.INFO)
-logger.setLevel(logging.DEBUG)
+# logger.setLevel(logging.DEBUG)
 """
 if os.getenv("DEBUG"):
     logger.setLevel(logging.DEBUG)

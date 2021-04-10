@@ -1,56 +1,45 @@
-
-
-<div class="row">
-    <div class="col-12 pl-1">
-        <input type="checkbox" id="show_settings">
-        <label for="show_settings">
-            <h4 class="mb-0"><i class="fas fa-sliders-h fa-xs"></i> Settings</h4>
-        </label>
-    </div>
-</div>
-
 <div id="settings_container">
-    <div class="row bg-dark mb-3 p-1 rounded border d-flex flex-row" >
+    <div class="row bg-dark p-1 mr-0 rounded border d-flex flex-row" >
 
         <!-- DISPLAY -->
         <div class="ml-1">
             <h5><u>Display</u></h5>
 
             <div>
-                <input class="" type="checkbox" id="show-spell-duration" checked>
+                <input type="checkbox" id="show-spell-duration" checked>
                 <label class="m-0" for="show-spell-duration">show duration</label>
             </div>
 
             <div>
-                <input class="" type="checkbox" id="show-spell-cooldown" checked>
+                <input type="checkbox" id="show-spell-cooldown" checked>
                 <label class="m-0" for="show-spell-cooldown">show cooldown</label>
             </div>
 
-            <div>
-                <input class="" type="checkbox" id="show-spell-timeline-handle">
+<!--             <div>
+                <input type="checkbox" id="show-spell-timeline-handle">
                 <label class="m-0" for="show-spell-timeline-handle">show timeline handle</label>
-            </div>
+            </div> -->
 
         </div>
 
         <!-- SPELLS -->
-        {% for group, spells in spells|groupby("group") %}
-        {% set spec = wow_data.spec_by_full_name[group] %}
-        {% set group_slug = group.replace(" ", "") %}
+        {% for spec, group_spells in all_spells|groupby("group") %}
+        {% set group_name = spec.full_name_slug %}
+        {% set group_checked = spec.class_name_slug != "other" %}  <!-- FIXME -->
         <div class="ml-3">
             <!-- Group Header -->
             <div class="spell-checkbox-group-header wow-class-{{spec.class_name_slug}}">
-                <input type="checkbox" id="show-spells-group-{{group_slug}}" checked data-spell-group={{group_slug}}>
-                <label class="form-check-label" for="show-spells-group-{{group_slug}}">
-                    <img class="icon-m rounded wow-class-border-{{spec.class_name_slug}}" src="static/images/specs/{{spec.full_name_slug}}.jpg" alt="{{group}}">
-                    {{ group.split("_")[-1] }}
+                <input type="checkbox" id="show-spells-group-{{spec.fi}}" {{"checked" if group_checked}} data-spell-group={{spec.fi}}>
+                <label class="form-check-label" for="show-spells-group-{{group_name}}">
+                    <img class="icon-m rounded wow-class-border-{{spec.class_name_slug}}" src="static/images/specs/{{spec.full_name_slug}}.jpg">
+                    {{ spec.name }}
                 </label>
             </div>
 
             <!-- Spells -->
-            {% for spell in spells %}
+            {% for spell in group_spells %}
             <div class="ml-2">
-                <div class="spell-checkbox-group wow-class-{{spec.class_name_slug}}">
+                <div class="spell-checkbox-group wow-class-{{group_slug}}">
                     <input type="checkbox" value="1" id="show-spell-{{spell.spell_id}}" {{"checked" if spell.show else ""}} data-spell-group={{group_slug}} data-spell_id={{spell.spell_id}}>
                     <label class="form-check-label" for="show-spell-{{spell.spell_id}}">
                         <a href="#" data-wowhead="spell={{spell.spell_id}}" data-wh-rename-link="true"></a>
@@ -63,10 +52,8 @@
     </div>
 </div>
 
-{% block scripts %}
 
 <script type="text/javascript">
-
 
 $("#show_settings").click(function() {
     let checked = !$(this).is(':checked');
@@ -92,7 +79,6 @@ $("#show-spell-timeline-handle").click(function() {
     let checked = !$(this).is(':checked');
     $(".timeline_cursor").toggle(!checked)
 });
-
 
 
 function _update_spell_display(checkbox) {
@@ -124,7 +110,6 @@ function _update_all_spells() {
 $( document ).ready(_update_all_spells);
 
 
-
 $(".spell-checkbox-group-header input").click(function() {
 
     // Label --> Checkbox
@@ -137,13 +122,6 @@ $(".spell-checkbox-group-header input").click(function() {
     let inputs = $(`.spell-checkbox-group input[data-spell-group=${group_name}]`);
     inputs.prop("checked", checked);
     _update_all_spells();
-
-
-
-
-    // $(".spell-checkbox-group input").each(function(index) {
-
 });
 
 </script>
-{% endblock %}

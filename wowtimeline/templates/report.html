@@ -6,25 +6,61 @@ Lorgs: {{boss.name}}
 
 
 {% block content %}
-<!-- HEADER -->
 <div class="row mb-1">
+    <!-- HEADER -->
     <div class="col pl-0">
-        <a href="#" target="_blank">
-            <h1>
-                <img class="icon-big rounded shadow border" src="static/images/bosses/castle-nathria/{{boss.name_slug}}.jpg" alt="{{boss.name}}" target="_blank">
-                {{boss.name}}
-                vs
-                {% for spec in comp.specs %}
-                    <img class="icon-big rounded shadow wow-class-border-{{spec.class_name_slug}}" src="static/images/specs/{{spec.full_name_slug}}.jpg" alt="{{group }}">
-                    <span class="wow-class-{{spec.class_name_slug}}">{{spec.short_name}}</span>
-                    {% if not loop.last %}
-                        <span> </span>
-                    {% endif %}
-                {% endfor %}
-            </h1>
-        </a>
+        <h1>
+            <img class="icon-big rounded shadow border" src="static/images/bosses/castle-nathria/{{boss.name_slug}}.jpg" alt="{{boss.name}}" target="_blank">
+            {{boss.name}}
+            vs
+            {% for spec in comp.specs %}
+                <img class="icon-big rounded shadow wow-class-border-{{spec.class_name_slug}}" src="static/images/specs/{{spec.full_name_slug}}.jpg" alt="{{group }}">
+                <span class="wow-class-{{spec.class_name_slug}}">{{spec.short_name}}</span>
+                {% if not loop.last %}
+                    <span> </span>
+                {% endif %}
+            {% endfor %}
+        </h1>
+    </div>
+
+    <div class="col pr-0 d-flex flex-column align-items-end">
+        <div>
+            <div class="flex-row d-flex mb-1">
+                <!-- Settings -->
+                <div class="ml-auto">
+                    <div class="p-1 bg-dark border ml-auto rounded">
+                        <input type="checkbox" id="show_settings">
+                        <label for="show_settings" data-toggle="tooltip" title="open settings" class="m-0">
+                            <i class="fas fa-tools fa-2x"></i>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Home -->
+                <div class="ml-2">
+                    <div class="p-1 bg-dark border ml-auto rounded">
+                        <a href="./" class="ranking-nav-home-icon" data-toggle="tooltip" title="home">
+                            <i class="fas fa-home fa-2x"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                {% include "elements/display_settings.html" %}
+            </div>
+        </div>
     </div>
 </div>
+
+
+
+
+
+
+
+
+
 
 
 <!-- SETTINGS -->
@@ -56,16 +92,16 @@ Lorgs: {{boss.name}}
             </div>
         </div>
 
-        <div class="timeline_cursor_container">
+        <!-- <div class="timeline_cursor_container"> -->
             {% for player in fight.players if player.casts %}
             <div class="row">
                 <div class="col-12">
                     {% include "elements/player_timeline.html" %}
                 </div>
             </div>
-            <div class="timeline_cursor"></div>
+            <!-- <div class="timeline_cursor"></div> -->
             {% endfor %}
-        </div>
+        <!-- </div> -->
     </div>
 
     {% endfor %}
