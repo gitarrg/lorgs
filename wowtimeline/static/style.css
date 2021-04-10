@@ -105,6 +105,15 @@ a:not(.disabled) .icon-spec:hover {
     cursor: default;
 }
 
+.active .icon-spec {
+    border-width: 2px;
+    border-color: white;
+}
+
+.nav-link {
+    padding: 2px !important;
+}
+
 
 #settings_container {
     display: none;

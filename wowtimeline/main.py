@@ -33,6 +33,8 @@ TEMPLATE_ENV.filters["slug"] = utils.slug
 # str: folder where the generated html files will be saved
 OUTPUT_FOLDER = os.path.join(PWD, "../_build")
 
+DEBUG = False
+
 
 WCL_CLIENT = client.WarcraftlogsClient(client_id=WCL_CLIENT_ID, client_secret=WCL_CLIENT_SECRET)
 
@@ -106,7 +108,9 @@ async def generate_ranking_report(boss, spec):
 
     fights = []
     fights = await WCL_CLIENT.get_top_ranks(boss["id"], spec)
-    fights = fights[:5]
+
+    if DEBUG:
+        fights = fights[:5]
 
     await WCL_CLIENT.fetch_multiple_fights(fights)
     logger.info(f"[GENERATED REPORT] {spec.full_name} vs {boss['name']}")
@@ -117,33 +121,37 @@ async def generate_ranking_report(boss, spec):
     data["spec"] = spec
     data["spells"] = spec.spells.values()
     data["fights"] = fights
+    data["TMP"] = True
     path = f"{OUTPUT_FOLDER}/rankings_{spec.full_name_slug}_{boss['name_slug']}.html"
     await render("ranking.html", path, data)
 
 
 async def generate_rankings():
-    # bosses = wow_data.ENCOUNTERS
-    bosses = [wow_data.ENCOUNTERS[-1]]
-    specs = [
-        # healers
-        wow_data.DRUID_RESTORATION,
-        # wow_data.PALADIN_HOLY,
-        # wow_data.PRIEST_DISCIPLINE,
-        # wow_data.PRIEST_HOLY,
-        # wow_data.SHAMAN_RESTORATION,
+    bosses = wow_data.ENCOUNTERS
+    specs = wow_data.SPECS_SUPPORTED
 
-        # mps
-        # wow_data.PALADIN_RETRIBUTION,
-        # wow_data.DEATHKNIGHT_UNHOLY,
+    if DEBUG:
+        bosses = [wow_data.ENCOUNTERS[-1]]
+        specs = [
+            # healers
+            wow_data.DRUID_RESTORATION,
+            # wow_data.PALADIN_HOLY,
+            # wow_data.PRIEST_DISCIPLINE,
+            # wow_data.PRIEST_HOLY,
+            # wow_data.SHAMAN_RESTORATION,
 
-        # rdps
-        # wow_data.HUNTER_BEASTMASTERY,
-        # wow_data.HUNTER_MARKSMANSHIP,
-        # wow_data.MAGE_FIRE,
-        # wow_data.WARLOCK_AFFLICTION,
-        # wow_data.WARLOCK_DESTRUCTION,
-    ]
-    # specs = wow_data.SPECS_SUPPORTED
+            # mps
+            # wow_data.PALADIN_RETRIBUTION,
+            # wow_data.DEATHKNIGHT_UNHOLY,
+
+            # rdps
+            # wow_data.HUNTER_BEASTMASTERY,
+            # wow_data.HUNTER_MARKSMANSHIP,
+            # wow_data.MAGE_FIRE,
+            # wow_data.WARLOCK_AFFLICTION,
+            # wow_data.WARLOCK_DESTRUCTION,
+        ]
+
 
     tasks = []
     for spec in specs:
@@ -173,7 +181,8 @@ async def _generate_comp_report(comp):
     logger.info("[COMP REPORT] find reports: %s", comp.get("name"))
     fights = await WCL_CLIENT.find_reports(encounter=boss["id"], search=search)
 
-    fights = fights[:5]
+    if DEBUG:
+        fights = fights[:5]
 
     # Get Spells and avoid duplicates
     spells = {spell_id: spell for spec in comp.get("specs") for spell_id, spell in spec.all_spells.items()}
@@ -210,7 +219,9 @@ async def generate_reports():
     await _generate_reports_index(wow_data.HEAL_COMPS)
     for comp in wow_data.HEAL_COMPS:
         await _generate_comp_report(comp)
-        return
+
+        if DEBUG:
+            return
 
 
 if __name__ == '__main__':
