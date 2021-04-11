@@ -107,42 +107,28 @@ OTHER_TRINKET = OTHER.add_spec(name="Trinkets", role="other")
 
 
 # sorry guys...
-WARRIOR_ARMS.supported = False
-WARRIOR_FURY.supported = False
+
+# tanks
 WARRIOR_PROTECTION.supported = False
-# PALADIN_HOLY.supported = False
 PALADIN_PROTECTION.supported = False
-# PALADIN_RETRIBUTION.supported = False
-# HUNTER_BEASTMASTERY.supported = False
-# HUNTER_MARKSMANSHIP.supported = False
+DEATHKNIGHT_BLOOD.supported = False
+MONK_BREWMASTER.supported = False
+DRUID_GUARDIAN.supported = False
+DEMONHUNTER_VENGEANCE.supported = False
+
+# mdps
+WARRIOR_ARMS.supported = False
 HUNTER_SURVIVAL.supported = False
 ROGUE_ASSASSINATION.supported = False
 ROGUE_SUBTLETY.supported = False
 ROGUE_OUTLAW.supported = False
-# PRIEST_DISCIPLINE.supported = False
-# PRIEST_HOLY.supported = False
-PRIEST_SHADOW.supported = False
-DEATHKNIGHT_BLOOD.supported = False
 DEATHKNIGHT_FROST.supported = False
-# DEATHKNIGHT_UNHOLY.supported = False
-# SHAMAN_ELEMENTAL.supported = False
-# SHAMAN_ENHANCEMENT.supported = False
-# SHAMAN_RESTORATION.supported = False
-MAGE_ARCANE.supported = False
-# MAGE_FIRE.supported = False
-MAGE_FROST.supported = False
-# WARLOCK_AFFLICTION.supported = False
-# WARLOCK_DEMONOLOGY.supported = False
-# WARLOCK_DESTRUCTION.supported = False
-MONK_BREWMASTER.supported = False
-# MONK_MISTWEAVER.supported = False
-# MONK_WINDWALKER.supported = False
-# DRUID_BALANCE.supported = False
 DRUID_FERAL.supported = False
-DRUID_GUARDIAN.supported = False
-# DRUID_RESTORATION.supported = False
-# DEMONHUNTER_HAVOC.supported = False
-DEMONHUNTER_VENGEANCE.supported = False
+
+# rdps
+PRIEST_SHADOW.supported = False
+MAGE_ARCANE.supported = False
+MAGE_FROST.supported = False
 
 
 # Warcraft Logs: Class IDs
@@ -284,9 +270,11 @@ CD4min = 4 * 60 # 240
 CD5min = 5 * 60 # 300
 
 # DPS CDs
-# WARRIOR.add_spell(spell_id=97462, cooldown=180, duration=10) # Rally Cry
-# WARRIOR.add_spell(spell_id=107574, cooldown=90, duration=20) # Avatar
-# WARRIOR.add_spell(spell_id=1719, cooldown=90, duration=10) # Recklessness
+WARRIOR.add_spell(spell_id=325886, cooldown=90, duration=12) # Nightfae: Ancient Aftershock
+WARRIOR.add_spell(spell_id=97462, cooldown=180, duration=10, show=False) # Rally Cry
+# WARRIOR_FURY.add_spell(spell_id=107574, cooldown=90, duration=20) # Avatar
+WARRIOR_FURY.add_spell(spell_id=1719, cooldown=90, duration=10) # Recklessness
+WARRIOR_FURY.add_spell(spell_id=46924, cooldown=60, duration=4) # Bladestorm
 
 # PALADIN.add_spell(spell_id=105809, cooldown=180, duration=20, show=False) # Holy Avenger
 PALADIN.add_spell(spell_id=304971, cooldown=CD1min, show=False) # Covenant: Divine Toll
