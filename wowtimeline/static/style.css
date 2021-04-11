@@ -43,6 +43,8 @@ label {
     border: 1px solid black;
 }
 
+
+
 .rounded-sm {
     border-radius: 0.125rem;
 }
@@ -236,6 +238,13 @@ input[type="checkbox"]:not(:checked)+label:hover {
 
 input#show_settings:checked+label {
     color: rgb(0 200 255);
+}
+
+#settings_hint {
+    position: absolute;
+    z-index: 5000;
+    right: 3.2rem;
+    cursor: pointer;
 }
 
 

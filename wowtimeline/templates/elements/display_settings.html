@@ -1,5 +1,5 @@
 <div id="settings_container">
-    <div class="row bg-dark p-1 mr-0 rounded border d-flex flex-row" >
+    <div class="row bg-dark p-1 mr-0 mt-2 rounded border d-flex flex-row" >
 
         <!-- DISPLAY -->
         <div class="ml-1">
@@ -52,12 +52,22 @@
     </div>
 </div>
 
-
 <script type="text/javascript">
+
+
+function hide_hint() {
+    $("#settings_hint").hide();
+}
+
+$("#settings_hint").click(hide_hint); // hide on click
+setTimeout(hide_hint, 10000);  // auto hide after 10sec
+
 
 $("#show_settings").click(function() {
     let checked = !$(this).is(':checked');
     $("#settings_container").toggle(!checked)
+
+    hide_hint();
 });
 
 
@@ -108,6 +118,7 @@ function _update_all_spells() {
 
 // initial refresh on page load
 $( document ).ready(_update_all_spells);
+
 
 
 $(".spell-checkbox-group-header input").click(function() {

@@ -31,7 +31,7 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
                     <div class="p-1 bg-dark border rounded">
                     {% for role in wow_data.ROLES %}
                         <div class="ranking-nav">
-                            <img class="ranking-nav-role-icon icon-m rounded border border-black" src="static/images/roles/{{role.name}}.jpg">
+                            <img class="ranking-nav-role-icon icon-m rounded border border-black" src="static/images/roles/{{role.name|lower}}.jpg">
 
                             <div class="ranking-nav-role-specs bg-dark border rounded">
                                 {% for spec in role.specs %}
@@ -73,6 +73,10 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
                             <i class="fas fa-tools fa-2x"></i>
                         </label>
                     </div>
+                    <div style="text-align: end;" class="mt-2 bg-info rounded border p-2 shadow" id=settings_hint>
+                        <h5>click here to show/hide spells <i class="fas fa-hand-point-up mx-1"></i></h5>
+                    </div>
+
                 </div>
 
                 <!-- Home -->
