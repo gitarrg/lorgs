@@ -82,8 +82,8 @@ async def generate_ranking_report(boss, spec):
     fights = []
     fights = await WCL_CLIENT.get_top_ranks(boss["id"], spec)
     fights = fights[:50] # limit a bit for now
-    if DEBUG:
-        fights = fights[:2]
+    # if DEBUG:
+    #     fights = fights[:10]
 
     await WCL_CLIENT.fetch_multiple_fights(fights)
 
@@ -104,7 +104,7 @@ async def generate_rankings():
     specs = wow_data.SPECS_SUPPORTED
 
     if DEBUG:
-        bosses = [wow_data.ENCOUNTERS[-1]]
+        # bosses = [wow_data.ENCOUNTERS[-1]]
         specs = [
             # healers
             # wow_data.DRUID_RESTORATION,
@@ -121,7 +121,8 @@ async def generate_rankings():
 
             # rdps
             # wow_data.SHAMAN_ELEMENTAL,
-            wow_data.MONK_WINDWALKER,
+            wow_data.WARRIOR_FURY,
+            # wow_data.MONK_WINDWALKER,
             # wow_data.HUNTER_BEASTMASTERY,
             # wow_data.HUNTER_MARKSMANSHIP,
             # wow_data.MAGE_FIRE,
@@ -131,10 +132,11 @@ async def generate_rankings():
 
     # tasks = []
     for spec in specs:
-        for boss in bosses:
-            await generate_ranking_report(boss, spec)
+        # for boss in bosses:
+        #     await generate_ranking_report(boss, spec)
+        tasks = [generate_ranking_report(boss, spec) for boss in bosses]
+        await asyncio.gather(*tasks)
 
-            # tasks += [asyncio.create_task(f)]
 
     # await asyncio.gather(*tasks)
     # if DEBUG:
@@ -214,8 +216,8 @@ async def main():
 
         # generate
         await render_index()
-        await generate_rankings()
         await generate_reports()
+        await generate_rankings()
 
     except KeyboardInterrupt:
         logger.info("closing...")

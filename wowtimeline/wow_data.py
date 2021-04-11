@@ -273,7 +273,7 @@ CD5min = 5 * 60 # 300
 WARRIOR.add_spell(spell_id=325886, cooldown=90, duration=12) # Nightfae: Ancient Aftershock
 WARRIOR.add_spell(spell_id=97462, cooldown=180, duration=10, show=False) # Rally Cry
 # WARRIOR_FURY.add_spell(spell_id=107574, cooldown=90, duration=20) # Avatar
-WARRIOR_FURY.add_spell(spell_id=1719, cooldown=90, duration=10) # Recklessness
+WARRIOR_FURY.add_spell(spell_id=1719, cooldown=60, duration=10) # Recklessness # reduced by Anger Management
 WARRIOR_FURY.add_spell(spell_id=46924, cooldown=60, duration=4) # Bladestorm
 
 # PALADIN.add_spell(spell_id=105809, cooldown=180, duration=20, show=False) # Holy Avenger

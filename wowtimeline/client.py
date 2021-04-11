@@ -139,7 +139,7 @@ class WarcraftlogsClient:
                 if result.get("errors"):
                     msg = ""
                     for error in result.get("errors"):
-                        msg += "\n" + error.get("message") + " path:" + "/".join(error.get("path"))
+                        msg += "\n" + error.get("message") + " path:" + "/".join(error.get("path", []))
                         print(query)
                     raise ValueError(msg)
                 """
@@ -208,11 +208,24 @@ class WarcraftlogsClient:
 
     async def fetch_multiple_fights(self, fights, **kwargs):
 
-        query = "\n".join(f._build_query(**kwargs) for f in fights)
+        if not fights:  # might happen in debugging
+            logger.warning("No fights passed")
+            return
+
+        # alias and combine all queries
+        query = ""
+        for i, fight in enumerate(fights):
+            fight_name = f"report_{i}"
+            fight_query = fight._build_query(**kwargs)
+            query += f"\n{fight_name}: {fight_query}"
+
+        # run
         data = await self.query(query)
 
-        for fight in fights:
-            fight_data = data.get(fight.query_name)
+        # split and process
+        for i, fight in enumerate(fights):
+            fight_name = f"report_{i}"
+            fight_data = data.get(fight_name)
             fight._process_query_data(fight_data)
 
 

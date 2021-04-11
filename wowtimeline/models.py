@@ -369,8 +369,8 @@ class Fight:
             # if its only 1 player, then our casts-filter should be enough to get all the info we need
             player_query = ""
 
-        query = f"""
-        {self.query_name}: reportData {{
+        query = textwrap.dedent(f"""\
+        reportData {{
             report(code: "{self.report_id}") {{
                 {player_query}
 
@@ -381,7 +381,7 @@ class Fight:
                 ) {{data}}
             }}
         }}
-        """
+        """)
         return query
 
     def _process_query_data(self, data):

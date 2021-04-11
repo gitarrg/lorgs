@@ -13,7 +13,7 @@
         <table>
             {% for role in wow_data.ROLES %}
             <tr>
-                <td><img class="icon-m rounded border border-black" src="static/images/roles/{{role.name}}.jpg"></td>
+                <td><img class="icon-m rounded border border-black" src="static/images/roles/{{role.name|lower}}.jpg"></td>
                 <td style="width: 8rem;margin-right: 2rem"><span>{{role.name}}:</span></td>
 
                 <td>
