@@ -63,6 +63,10 @@ class WowSpec:
         self.class_ = class_
         self.spells = {}
 
+        # used for sorting
+        role_order = {"tank": 0, "heal": 1, "rdps": 2, "mdps": 3, "other": 4}
+        self.role_index = role_order.get(self.role, 99)
+
         # bool: is this spec is currently supported
         self.supported = True
 
@@ -82,8 +86,12 @@ class WowSpec:
     def __repr__(self):
         return f"<Spec({self.full_name})>"
 
+    @property
+    def _sort_tuple(self):
+        return (self.role_index, self.name, self.full_name_slug)
+
     def __lt__(self, other):
-        return self.full_name_slug < other.full_name_slug
+        return self._sort_tuple < other._sort_tuple
 
     def add_spell(self, **kwargs):
         kwargs["group"] = kwargs.get("group") or self
@@ -227,6 +235,8 @@ class Fight:
         # str: extra filter for the query
         self.filter_expression = kwargs.get("filter_expression", "")
 
+        self.query_name = f"fight_{self.report_id}_{self.fight_id}"
+
     def __repr__(self):
         return f"Fight({self.report_id}, {self.fight_id})"
 
@@ -328,12 +338,7 @@ class Fight:
             if player:
                 player.healing_done = damage_data.get("total", 0)
         """
-
-    async def fetch(self, client, spells=(), extra_filter=""):
-        # we need to fetch the fight itself
-        if self.start_time <= 0:
-            await self.fetch_fight_data()
-
+    def _build_query(self, spells=(), extra_filter=""):
         table_query_args = f"fightIDs: {self.fight_id}, startTime: {self.start_time}, endTime: {self.end_time}"
 
         # Build Casts Filter
@@ -365,22 +370,23 @@ class Fight:
             player_query = ""
 
         query = f"""
-        {{
-            reportData {{
-                report(code: "{self.report_id}") {{
-                    {player_query}
+        {self.query_name}: reportData {{
+            report(code: "{self.report_id}") {{
+                {player_query}
 
-                    casts: events(
-                        {table_query_args},
-                        dataType: Casts,
-                        filterExpression: "{casts_filter}"
-                    ) {{data}}
-                }}
+                casts: events(
+                    {table_query_args},
+                    dataType: Casts,
+                    filterExpression: "{casts_filter}"
+                ) {{data}}
             }}
         }}
         """
-        self.data = await client.query(query)
-        report_data = self.data.get("reportData", {}).get("report", {})
+        return query
+
+    def _process_query_data(self, data):
+
+        report_data = data.get("report", {})
         logger.debug(f"fetched fights: {self.report_id}")
 
         casts_data = report_data.get("casts", {}).get("data", {})
@@ -425,6 +431,21 @@ class Fight:
 
         # remove players with no casts
         self.players = [p for p in self.players if p.casts]
+
+    async def fetch(self, client, spells=(), extra_filter=""):
+        # we need to fetch the fight itself
+        if self.start_time <= 0:
+            await self.fetch_fight_data()
+
+        query = self._build_query(spells=spells, extra_filter=extra_filter)
+        data = await client.query(query)
+        self._process_query_data(data)
+
+
+
+
+
+
 
 
 class Report:

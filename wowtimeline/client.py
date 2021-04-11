@@ -106,8 +106,13 @@ class WarcraftlogsClient:
         token = data.get("access_token", "")
         self.headers["Authorization"] = "Bearer " + token
 
-    @with_semaphore(50)
+    # @with_semaphore(25)
     async def query(self, query, usecache=True):
+
+        query = f"""
+        query {{
+            {query}
+        }}"""
 
         # caching
         if usecache:
@@ -131,13 +136,13 @@ class WarcraftlogsClient:
 
                 # some reports are private.. but still show up in rankings..
                 # lets just see what happens
-                """
                 if result.get("errors"):
                     msg = ""
                     for error in result.get("errors"):
                         msg += "\n" + error.get("message") + " path:" + "/".join(error.get("path"))
                         print(query)
                     raise ValueError(msg)
+                """
                 """
                 data = result.get("data", {})
 
@@ -148,12 +153,11 @@ class WarcraftlogsClient:
 
     async def _update_rate_limit_data(self):
         query = """
+        rateLimitData
         {
-            rateLimitData {
-                pointsSpentThisHour
-                limitPerHour
-                pointsResetIn
-            }
+            pointsSpentThisHour
+            limitPerHour
+            pointsResetIn
         }
         """
         result = await self.query(query, usecache=False)
@@ -202,23 +206,31 @@ class WarcraftlogsClient:
 
     ##############################
 
+    async def fetch_multiple_fights(self, fights, **kwargs):
+
+        query = "\n".join(f._build_query(**kwargs) for f in fights)
+        data = await self.query(query)
+
+        for fight in fights:
+            fight_data = data.get(fight.query_name)
+            fight._process_query_data(fight_data)
+
+
     async def get_top_ranks(self, encounter, spec, metric="", difficulty=5):
         """Get Top Ranks for a given encounter and spec."""
         metric = metric or spec.metric # use given metric. otherwise use spec default
-        query = f"""
+        query = f"""\
+        worldData
         {{
-            worldData
+            encounter(id: {encounter})
             {{
-                encounter(id: {encounter})
-                {{
-                    characterRankings(
-                        className: "{spec.class_.name_slug_cap}",
-                        specName: "{spec.name_slug_cap}",
-                        metric: {metric},
-                        includeCombatantInfo: false,
-                        serverRegion: "EU",
-                    )
-                }}
+                characterRankings(
+                    className: "{spec.class_.name_slug_cap}",
+                    specName: "{spec.name_slug_cap}",
+                    metric: {metric},
+                    includeCombatantInfo: false,
+                    serverRegion: "EU",
+                )
             }}
         }}
         """
@@ -269,19 +281,17 @@ class WarcraftlogsClient:
 
         rankings = []
 
-        for i in range(3):
+        for i in range(3):  # fixme
             query = f"""
+            worldData
             {{
-                worldData
+                encounter(id: {encounter})
                 {{
-                    encounter(id: {encounter})
-                    {{
-                        fightRankings(
-                            metric: {metric},
-                            filter: "{search}",
-                            page: {i+1}
-                        )
-                    }}
+                    fightRankings(
+                        metric: {metric},
+                        filter: "{search}",
+                        page: {i+1}
+                    )
                 }}
             }}
             """

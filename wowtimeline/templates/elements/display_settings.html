@@ -25,11 +25,11 @@
         <!-- SPELLS -->
         {% for spec, group_spells in all_spells|groupby("group") %}
         {% set group_name = spec.full_name_slug %}
-        {% set group_checked = spec.class_name_slug != "other" %}  <!-- FIXME -->
+        {% set group_checked = spec.class_name_slug != "other" %}
         <div class="ml-3">
             <!-- Group Header -->
             <div class="spell-checkbox-group-header wow-class-{{spec.class_name_slug}}">
-                <input type="checkbox" id="show-spells-group-{{spec.fi}}" {{"checked" if group_checked}} data-spell-group={{spec.fi}}>
+                <input type="checkbox" id="show-spells-group-{{group_name}}" {{"checked" if group_checked}} data-spell-group={{group_name}}>
                 <label class="form-check-label" for="show-spells-group-{{group_name}}">
                     <img class="icon-m rounded wow-class-border-{{spec.class_name_slug}}" src="static/images/specs/{{spec.full_name_slug}}.jpg">
                     {{ spec.name }}
@@ -39,8 +39,8 @@
             <!-- Spells -->
             {% for spell in group_spells %}
             <div class="ml-2">
-                <div class="spell-checkbox-group wow-class-{{group_slug}}">
-                    <input type="checkbox" value="1" id="show-spell-{{spell.spell_id}}" {{"checked" if spell.show else ""}} data-spell-group={{group_slug}} data-spell_id={{spell.spell_id}}>
+                <div class="spell-checkbox-group wow-class-{{spec.class_name_slug}}">
+                    <input type="checkbox" value="1" id="show-spell-{{spell.spell_id}}" {{"checked" if spell.show else ""}} data-spell-group={{group_name}} data-spell_id={{spell.spell_id}}>
                     <label class="form-check-label" for="show-spell-{{spell.spell_id}}">
                         <a href="#" data-wowhead="spell={{spell.spell_id}}" data-wh-rename-link="true"></a>
                     </label>

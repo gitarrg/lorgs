@@ -79,17 +79,13 @@ async def render_index():
 
 async def generate_ranking_report(boss, spec):
 
-    # points_before = await WCL_CLIENT.get_points_left()
-
     fights = []
     fights = await WCL_CLIENT.get_top_ranks(boss["id"], spec)
-    fights = fights[:25] # limit a bit for now
-    # if DEBUG:
-    #     fights = fights[:2]
+    fights = fights[:50] # limit a bit for now
+    if DEBUG:
+        fights = fights[:2]
 
-    tasks = [f.fetch(WCL_CLIENT) for f in fights]
-    tasks = [asyncio.create_task(t) for t in tasks]
-    await asyncio.gather(*tasks)
+    await WCL_CLIENT.fetch_multiple_fights(fights)
 
     data = {}
     data["boss"] = boss
@@ -133,18 +129,20 @@ async def generate_rankings():
             # wow_data.WARLOCK_DESTRUCTION,
         ]
 
-    tasks = []
+    # tasks = []
     for spec in specs:
         for boss in bosses:
-            f = generate_ranking_report(boss, spec)
-            tasks += [asyncio.create_task(f)]
+            await generate_ranking_report(boss, spec)
 
+            # tasks += [asyncio.create_task(f)]
+
+    # await asyncio.gather(*tasks)
     # if DEBUG:
     #     n = 1
     #     tasks, tasks_cancel = tasks[:n], tasks[n:]
     #     for task in tasks_cancel:
     #         task.cancel()
-    await asyncio.gather(*tasks)
+    # await asyncio.gather(*tasks)
 
 
 async def _generate_reports_index(heal_comps):
@@ -173,12 +171,10 @@ async def _generate_comp_report(comp):
     # Get Spells and avoid duplicates
     spells = {spell_id: spell for spec in comp.get("specs") for spell_id, spell in spec.all_spells.items()}
     spells = spells.values()
-
     extra_filter = comp.get("extra_filter")
 
+    await WCL_CLIENT.fetch_multiple_fights(fights, spells=spells, extra_filter=extra_filter)
     for fight in fights:
-        logger.info("[COMP REPORT] fetch fight: %s", comp.get("name"))
-        await fight.fetch(WCL_CLIENT, spells=spells, extra_filter=extra_filter)
         fight.players.sort(key=lambda p: p.spec.full_name)
 
     # get a list of all used spells
@@ -186,7 +182,7 @@ async def _generate_comp_report(comp):
     used_spells = utils.flatten(used_spells)
     used_spells = list(set(used_spells))
 
-    # assamble data and render
+    # assemble data and render
     data = {}
     data["comp"] = comp
     data["boss"] = boss
@@ -197,12 +193,6 @@ async def _generate_comp_report(comp):
 
 
 async def generate_reports():
-
-    # for comp in wow_data.HEAL_COMPS:
-    #     specs = comp.get("specs", [])
-    #     name =  comp.get("name", "")
-    #     print(name)
-
     await _generate_reports_index(wow_data.HEAL_COMPS)
     for comp in wow_data.HEAL_COMPS:
         await _generate_comp_report(comp)
