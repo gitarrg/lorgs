@@ -2,6 +2,20 @@
 /*  Hello!   */
 /*************************************************************/
 
+
+/* TOC
+
+    01) General Element Styles
+    02) Bootstrap Edits
+
+
+*/
+
+
+/********************************
+    01) General Element Styles
+********************************/
+
 @import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
 
 html,
@@ -40,8 +54,9 @@ label {
 }
 
 
-
-/*   BOOTSTRAP EDITS   */
+/********************************
+    02) Bootstrap Edits
+********************************/
 
 .border {
     border: 1px solid #424242 !important;
@@ -407,6 +422,25 @@ input#show_settings:checked+label {
 .player_total {
     right: 5px;
     color: #ffffff30;
+}
+
+
+.guild_name {
+    width: 175px;
+    height: 30px;
+    padding-right: 5px;
+    margin-bottom: 2px;
+    position: relative;
+
+}
+
+.guild_name a {
+    font-size: 1.2rem;
+    /*line-height: 1.5;*/
+    position: absolute;
+    top: 50%;
+    /*margin: 0;*/
+    transform: translate(3px, -50%);
 }
 
 

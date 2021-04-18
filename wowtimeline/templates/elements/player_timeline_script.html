@@ -13,19 +13,19 @@ $( document ).ready(function(){
 
     slider.addEventListener("mousedown", e => {
         isDown = true;
-        slider.classList.add("active");
+        // slider.classList.add("active");
         startX = e.pageX - slider.offsetLeft;
         scrollLeft = slider.scrollLeft;
     });
 
     slider.addEventListener("mouseleave", () => {
         isDown = false;
-        slider.classList.remove("active");
+        // slider.classList.remove("active");
     });
 
     slider.addEventListener("mouseup", () => {
         isDown = false;
-        slider.classList.remove("active");
+        // slider.classList.remove("active");
     });
 
     slider.addEventListener("mousemove", e => {
@@ -36,13 +36,18 @@ $( document ).ready(function(){
         slider.scrollLeft = scrollLeft - walk;
     });
 
+    slider.addEventListener("mousewheel", e => {
+        if (!e.shiftKey) return;
+        e.preventDefault();
+        slider.scrollLeft += e.deltaY;
+    });
+
 
     // Vertical Scrolls
     // https://stackoverflow.com/questions/12039038/how-to-synchronize-two-scrollbars-for-divs/12039247
     var ignoreScrollEvents = false
     function syncScroll(element1, element2) {
         element1.scroll(function (e) {
-            console.log("scroll")
             var ignore = ignoreScrollEvents
             ignoreScrollEvents = false
             if (ignore) return

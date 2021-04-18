@@ -42,7 +42,7 @@ TEMPLATE_ENV.filters["slug"] = utils.slug
 # str: folder where the generated html files will be saved
 OUTPUT_FOLDER = os.path.join(PWD, "../_build")
 
-DEBUG = True # os.getenv("DEBUG")
+DEBUG = False # os.getenv("DEBUG")
 
 
 WCL_CLIENT = client.WarcraftlogsClient(client_id=WCL_CLIENT_ID, client_secret=WCL_CLIENT_SECRET)
@@ -222,12 +222,10 @@ async def generate_report_breakdown():
 
     report = models.Report(report_id=report_id)
     fights = await report.fetch_fights(WCL_CLIENT)
-    # print("FIGHTS", fights)
 
     # Get Spells and avoid duplicates
     # spells = wow_data.SPELLS.values()
     spells = utils.flatten([spec.spells.values() for spec in wow_data.HEALS])
-    print(spells)
 
     await WCL_CLIENT.fetch_multiple_fights(fights, spells=spells, extra_filter="")
     for fight in fights:
@@ -263,15 +261,15 @@ async def main():
         logger.info("loaded cache")
 
         # auth once
-        # await WCL_CLIENT.update_auth_token()
-        # logger.info("updated auth")
+        await WCL_CLIENT.update_auth_token()
+        logger.info("updated auth")
 
         # generate
-        # await render_index()
+        await render_index()
         await generate_reports()
-        # await generate_rankings()
+        await generate_rankings()
         logger.info("generated rankings")
-        # await generate_report_breakdown()
+        await generate_report_breakdown()
 
     except KeyboardInterrupt:
         logger.info("closing...")

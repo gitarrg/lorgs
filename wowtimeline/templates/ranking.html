@@ -103,11 +103,12 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
     <!-- Player Names -->
     <div class="player_names_container float-left">
         <div class="player_timeline_scroll_y">
-        {% for fight in fights %}
-        {% for player in fight.players if player.casts %}
-        {% include "elements/player_name.html" %}
-        {% endfor %}
-        {% endfor %}
+            <div style="height: 32px"></div>
+            {% for fight in fights %}
+            {% for player in fight.players if player.casts %}
+            {% include "elements/player_name.html" %}
+            {% endfor %}
+            {% endfor %}
         </div>
     </div>
 

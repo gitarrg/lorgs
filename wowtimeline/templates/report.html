@@ -5,10 +5,11 @@ Lorgs: {{boss.name}}
 {% endblock %}
 
 
-{% block content %}
-<div class="row mb-1">
+{% block header %}
+<div class="row mb-3 mt-3">
+
     <!-- HEADER -->
-    <div class="col pl-0">
+    <div class="col">
         <h1>
             <img class="icon-big rounded shadow border" src="static/images/bosses/castle-nathria/{{boss.name_slug}}.jpg" alt="{{boss.name}}" target="_blank">
             {{boss.name}}
@@ -23,7 +24,7 @@ Lorgs: {{boss.name}}
         </h1>
     </div>
 
-    <div class="col pr-0 d-flex flex-column align-items-end">
+    <div class="col d-flex flex-column align-items-end">
         <div>
             <div class="flex-row d-flex mb-1">
                 <!-- Settings -->
@@ -52,9 +53,14 @@ Lorgs: {{boss.name}}
             </div>
         </div>
     </div>
+
+
 </div>
 
+{% endblock %}
 
+
+{% block content %}
 <!-- SETTINGS -->
 <div class="row">
     <div class="col px-0">
@@ -67,22 +73,16 @@ Lorgs: {{boss.name}}
 </div>
 
 <!-- TIMELINES -->
-<div class="bg-dark mt-3 py-2 rounded border" id=timeline>
+<div class="bg-dark mt-3 p-2 rounded border" id=timeline>
 
         <!-- Player Names -->
         <div class="player_names_container float-left">
 
         {% for fight in fights %}
             {% set report = fight.report %}
-            <div style="height: 32px">
-                <!-- Fight Headline -->
-                <div class="float-left overflow-hidden">
-                    <h5>
-                        <a href="{{fight.report_url}}" target="_blank" data-toggle="tooltip" title="&lt;{{report.guild}}&gt; {{report.realm}} ({{report.region}})">
-                            &lt;{{report.guild}}&gt;
-                        </a>
-                    </h5>
-                </div>
+
+            <div class="guild_name">
+                <a href="{{fight.report_url}}" target="_blank" data-toggle="tooltip" title="&lt;{{report.guild}}&gt; {{report.realm}} ({{report.region}})">&lt;{{report.guild}}&gt;</a>
             </div>
 
             {% for player in fight.players if player.casts %}

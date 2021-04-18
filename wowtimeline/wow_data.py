@@ -246,6 +246,12 @@ HEAL_COMPS = [
     },
 
     {
+        "specs": [PALADIN_HOLY, PALADIN_HOLY, PRIEST_DISCIPLINE, SHAMAN_RESTORATION],
+        "extra_filter": "source.role='healer'",
+    },
+
+
+    {
         "specs": [PALADIN_HOLY, PRIEST_HOLY, PRIEST_DISCIPLINE, SHAMAN_RESTORATION, SHAMAN_RESTORATION],
         "extra_filter": "source.role='healer'",
     }
@@ -292,7 +298,7 @@ HUNTER_MARKSMANSHIP.add_spell(spell_id=288613, cooldown=120, duration=15, show=F
 # Rogue
 
 # Priest
-PRIEST.add_spell(spell_id=10060, cooldown=CD2min, duration=20) # Power Infusion
+PRIEST.add_spell(spell_id=10060, cooldown=CD2min, duration=20, show=False) # Power Infusion
 # PRIEST_SHADOW.add_spell(spell_id=34433, cooldown=180, duration=15) # Shadowfiend
 # PRIEST_SHADOW.add_spell(spell_id=228260, cooldown=90) # Void Erruption
 # PRIEST_DISCIPLINE.add_spell(spell_id=34433, cooldown=180, duration=15, show=False) # Shadowfiend
@@ -428,4 +434,3 @@ for spec in SPECS:
 # 345539 # Ordnance
 
 SPELLS = {spell_id: spell for spec in SPECS for spell_id, spell in spec.all_spells.items()}
-
