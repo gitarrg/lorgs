@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
 # IMPORT STANDARD LIBRARIES
-import os
 import asyncio
-import aiofiles
-import shutil
+import os
 
 # IMPORT THIRD PARTY LIBRARIES
+import aiofiles
 import jinja2
 import dotenv
 
@@ -36,12 +35,14 @@ TEMPLATE_ENV = jinja2.Environment(loader=TEMPLATE_LOADER)
 TEMPLATE_ENV.trim_blocks = True
 TEMPLATE_ENV.lstrip_blocks = True
 
-# TEMPLATE_ENV.filters["slug"] = utils.slug
+TEMPLATE_ENV.filters["format_time"] = utils.format_time
+TEMPLATE_ENV.filters["format_big_number"] = utils.format_big_number
+TEMPLATE_ENV.filters["slug"] = utils.slug
 
 # str: folder where the generated html files will be saved
 OUTPUT_FOLDER = os.path.join(PWD, "../_build")
 
-DEBUG = os.getenv("DEBUG")
+DEBUG = True # os.getenv("DEBUG")
 
 
 WCL_CLIENT = client.WarcraftlogsClient(client_id=WCL_CLIENT_ID, client_secret=WCL_CLIENT_SECRET)
@@ -56,6 +57,9 @@ async def render(template_name, path, data):
     # include some global args
     data["wow_data"] = wow_data
     data["GOOGLE_ANALYTICS_ID"] = GOOGLE_ANALYTICS_ID
+
+    # 250ms = 1px
+    data["TIMESCALE"] = 250
 
     dirpath = os.path.dirname(path)
     if not os.path.exists(dirpath):
@@ -88,7 +92,7 @@ async def generate_ranking_report(boss, spec):
     fights = await WCL_CLIENT.get_top_ranks(boss["id"], spec)
     fights = fights[:50] # limit a bit for now
     # if DEBUG:
-    #     fights = fights[:10]
+    #     fights = fights[:30]
 
     await WCL_CLIENT.fetch_multiple_fights(fights)
 
@@ -97,6 +101,10 @@ async def generate_ranking_report(boss, spec):
     data["spec"] = spec
     data["all_spells"] = spec.spells.values()
     data["fights"] = fights
+
+    longest_fight = sorted(fights, key=lambda f: f.duration)[-1]
+    data["timeline_duration"] = longest_fight.duration
+
     path = f"{OUTPUT_FOLDER}/rankings_{spec.full_name_slug}_{boss['name_slug']}.html"
     await render("ranking.html", path, data)
 
@@ -109,10 +117,10 @@ async def generate_rankings():
     specs = wow_data.SPECS_SUPPORTED
 
     if DEBUG:
-        # bosses = [wow_data.ENCOUNTERS[-1]]
+        bosses = [wow_data.ENCOUNTERS[-1]]
         specs = [
             # healers
-            # wow_data.DRUID_RESTORATION,
+            wow_data.DRUID_RESTORATION,
             # wow_data.PALADIN_HOLY,
             # wow_data.PRIEST_DISCIPLINE,
             # wow_data.PRIEST_HOLY,
@@ -126,7 +134,7 @@ async def generate_rankings():
 
             # rdps
             # wow_data.SHAMAN_ELEMENTAL,
-            wow_data.WARRIOR_FURY,
+            # wow_data.WARRIOR_FURY,
             # wow_data.MONK_WINDWALKER,
             # wow_data.HUNTER_BEASTMASTERY,
             # wow_data.HUNTER_MARKSMANSHIP,
@@ -207,22 +215,63 @@ async def generate_reports():
             return
 
 
+async def generate_report_breakdown():
+
+    report_id = "fHyWYVvpd4Lbn1wQ"
+
+
+    report = models.Report(report_id=report_id)
+    fights = await report.fetch_fights(WCL_CLIENT)
+    # print("FIGHTS", fights)
+
+    # Get Spells and avoid duplicates
+    # spells = wow_data.SPELLS.values()
+    spells = utils.flatten([spec.spells.values() for spec in wow_data.HEALS])
+    print(spells)
+
+    await WCL_CLIENT.fetch_multiple_fights(fights, spells=spells, extra_filter="")
+    for fight in fights:
+        fight.players = [p for p in fight.players if p.spec in wow_data.HEALS]
+        fight.players.sort(key=lambda p: p.spec.full_name)
+
+
+    # get a list of all used spells
+    used_spells = [p.spells_used for f in fights for p in f.players]
+    used_spells = utils.flatten(used_spells)
+    used_spells = list(set(used_spells))
+
+    # assemble data and render
+    data = {}
+    data["comp"] = wow_data.HEAL_COMPS[0]  # FIXME
+    data["boss"] = wow_data.ENCOUNTERS[-1]  # FIXME: Get from report
+    data["fights"] = fights
+    data["all_spells"] = used_spells
+    path = f"{OUTPUT_FOLDER}/report_breakdown_{report_id}.html"
+    await render("report.html", path, data)
+
+
+
 ################################
 #       Main
 #
 
 async def main():
     try:
+        logger.info("starting")
         # load cache
         await WCL_CLIENT.cache.load()
+        logger.info("loaded cache")
 
         # auth once
-        await WCL_CLIENT.update_auth_token()
+        # await WCL_CLIENT.update_auth_token()
+        # logger.info("updated auth")
 
         # generate
-        await render_index()
+        # await render_index()
         await generate_reports()
-        await generate_rankings()
+        # await generate_rankings()
+        logger.info("generated rankings")
+        # await generate_report_breakdown()
 
     except KeyboardInterrupt:
         logger.info("closing...")
@@ -233,6 +282,4 @@ async def main():
 
 
 if __name__ == '__main__':
-    # asyncio.run(main())
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

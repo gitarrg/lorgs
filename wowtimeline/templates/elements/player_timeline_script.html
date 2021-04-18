@@ -4,6 +4,59 @@
 
 $( document ).ready(function(){
 
+
+    // Horizontal Slider
+    const slider = document.querySelector(".player_timelines_container");
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    slider.addEventListener("mousedown", e => {
+        isDown = true;
+        slider.classList.add("active");
+        startX = e.pageX - slider.offsetLeft;
+        scrollLeft = slider.scrollLeft;
+    });
+
+    slider.addEventListener("mouseleave", () => {
+        isDown = false;
+        slider.classList.remove("active");
+    });
+
+    slider.addEventListener("mouseup", () => {
+        isDown = false;
+        slider.classList.remove("active");
+    });
+
+    slider.addEventListener("mousemove", e => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - slider.offsetLeft;
+        const walk = x - startX;
+        slider.scrollLeft = scrollLeft - walk;
+    });
+
+
+    // Vertical Scrolls
+    // https://stackoverflow.com/questions/12039038/how-to-synchronize-two-scrollbars-for-divs/12039247
+    var ignoreScrollEvents = false
+    function syncScroll(element1, element2) {
+        element1.scroll(function (e) {
+            console.log("scroll")
+            var ignore = ignoreScrollEvents
+            ignoreScrollEvents = false
+            if (ignore) return
+            ignoreScrollEvents = true
+            element2.scrollTop(element1.scrollTop())
+    })
+    }
+
+    // const div_a = $(".player_names_container .player_timeline_scroll_y");
+    // const div_b = $(".player_timelines_container .player_timeline_scroll_y");
+    // syncScroll(div_a, div_b)
+    // syncScroll(div_b, div_a)
+
+    /*
     var lines = document.querySelectorAll('.timeline_cursor');
     document.querySelectorAll(".timeline_cursor_container").forEach(item => {
         item.addEventListener("mousemove", event => {
@@ -17,6 +70,36 @@ $( document ).ready(function(){
             }) // for each line
         }) // addEventListener
     }) // for each
+    */
+
+
+    // build casts
+    document.querySelectorAll(".cast").forEach(cast => {
+
+        let new_div;
+        let spell_id = $(cast).attr("data-spell_id");
+        let wowclass = $(cast).attr("data-wow-class");
+        let cooldown = $(cast).attr("data-cast-cd");
+        let duration = $(cast).attr("data-cast-duration");
+
+
+        // duration
+        if (duration != null) {
+            new_div = document.createElement("div");
+            new_div.classList.add("cast_duration");
+            new_div.classList.add(`wow-class-bg-${wowclass}`);
+            new_div.style.width = duration + "px";
+            cast.prepend(new_div)
+        }
+
+        if (cooldown != null) {
+            new_div = document.createElement("div");
+            new_div.classList.add("cast_cooldown");
+            new_div.classList.add(`wow-class-bg-${wowclass}`);
+            new_div.style.width = cooldown + "px";
+            cast.prepend(new_div)
+        }
+    });
 })
 </script>
 {% endblock %}

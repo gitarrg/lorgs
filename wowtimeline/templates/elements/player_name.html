@@ -1,0 +1,9 @@
+<div class="player_name">
+    <img class="player_spec_icon" src="static/images/specs/{{player.spec.full_name_slug}}.jpg">
+    <a class="wow-class-{{player.spec.class_name_slug}}" href="{{player.report_url}}" target="_blank">
+        {% if player.total %}
+            <span class="player_total">{{player.total_fmt}}</span>
+        {% endif %}
+        <span>{{player.name}}</span>
+    </a>
+</div>

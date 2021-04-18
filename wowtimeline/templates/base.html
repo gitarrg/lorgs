@@ -21,10 +21,6 @@
     <link rel="stylesheet" type="text/css" href="./static/style.css">
     <link rel="stylesheet" type="text/css" href="./static/style_wow.css">
 
-    <!-- wowhead -->
-    <script>const whTooltips = {colorLinks: true, iconizeLinks: true, renameLinks: false, iconSize: 'small'};</script>
-    <script src="https://wow.zamimg.com/widgets/power.js"></script>
-
     <!-- Google -->
     <script async src="https://www.googletagmanager.com/gtag/js?id={{GOOGLE_ANALYTICS_ID}}"></script>
     <script>
@@ -43,14 +39,44 @@
 <!-- Navbar -->
 {# {% include "elements/main_nav.html" %} #}
 
-<!-- Main -->
-<div class="container-fluid">
-    <div class="row mt-2 mx-4">
-        <div class="col p-3">
-            {% block content %}{% endblock %}
-        </div>
-    </div>
+
+
+<!-- Container -->
+<div class="container-fluid d-flex flex-column h-100">
+
+    <!-- HEADER -->
+    <header>
+        {% block header %}{% endblock %}
+    </header>
+
+    <!-- CONTENT -->
+    <main class="flex-grow-1">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-info mt-3">Footer</footer>
+
 </div>
+
+
+<!-- 
+    <div class="d-flex flex-column h-100">
+        <header class="bg-secondary" style="border: 1px solid pink">
+            <p>header</p>
+        </header>
+
+        <div class="bg-info mt-2 mx-4 flex-1 overflow-auto">
+            <div class="p-3" style="height: 2000px">
+                {# {% block content %}{% endblock %} #}
+            </div>
+        </div>
+
+    <div class="bg-secondary" style="border: 1px solid green">
+        <p>footer</p></div>
+    </div> -->
+
+<!-- </div> -->
 
 <!-- Scripts -->
 {% block scripts %}
@@ -60,9 +86,11 @@ $("document").ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
 });
 </script>
+
+<!-- wowhead -->
+<script>const whTooltips = {colorLinks: true, iconizeLinks: true, renameLinks: false, iconSize: 'small'};</script>
+<script src="https://wow.zamimg.com/widgets/power.js"></script>
+
 {% endblock %}
-
-
-
 </body>
 </html>

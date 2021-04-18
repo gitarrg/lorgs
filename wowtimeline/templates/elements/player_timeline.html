@@ -1,34 +1,17 @@
 {% set fight_duration = fight.duration / 250 %}
 <div class="player_timeline" style="width: {{fight_duration + 350}}px">
 
-    <!-- Icon -->
-    <div class="player_spec_icon">
-        <img src="static/images/specs/{{player.spec.full_name_slug}}.jpg">
-    </div>
-
-    <!-- Name -->
-    <div class="player_name wow-class-{{player.spec.class_name_slug}}">
-        <a href="{{player.report_url}}" target="_blank">
-            <span>{{player.name}}</span>
-            {% if player.total %}
-                <span class="player_total">{{player.total_fmt}}</span>
-            {% endif %}
-        </a>
-    </div>
-
     <!-- Casts -->
     <div class="cast_container inner_shadow" style="width: {{fight_duration}}px">
     {% for cast in player.casts %}
-        <div class="cast" data-spell_id="{{cast.spell_id}}" style="left: {{cast.time / 250}}px;">
-
-        {% if cast.spell.cooldown %}
-            <div class="cast_cooldown wow-class-bg-{{player.spec.class_name_slug}}"  style="width: {{cast.spell.cooldown * 4}}px"></div>
-        {% endif %}
-
-        {% if cast.spell.duration %}
-            <div class="cast_duration wow-class-bg-{{player.spec.class_name_slug}}" style="width: {{cast.spell.duration * 4}}px"></div>
-        {% endif %}
-
+        <div class="cast" data-spell_id="{{cast.spell_id}}" data-wow-class={{player.spec.class_name_slug}} style="left: {{cast.time / 250}}px;"
+            {%- if cast.spell.cooldown %}
+ data-cast-cd={{cast.spell.cooldown*4}}
+            {%- endif -%}
+            {% if cast.spell.duration %}
+ data-cast-duration={{cast.spell.duration*4}}
+            {%- endif -%}
+        >
             <div class="cast_icon"><a href="#" data-wowhead="spell={{cast.spell_id}}"></a></div>
             <div class="cast_text">{{cast.time_fmt}}</div>
         </div>

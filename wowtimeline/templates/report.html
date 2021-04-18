@@ -67,43 +67,47 @@ Lorgs: {{boss.name}}
 </div>
 
 <!-- TIMELINES -->
-<div class="row bg-dark mt-3 py-2 rounded border" id=timeline>
-    {% for fight in fights %}
-    {% set report = fight.report %}
+<div class="bg-dark mt-3 py-2 rounded border" id=timeline>
 
-    <div class="col-12 px-2 mb-3">
+        <!-- Player Names -->
+        <div class="player_names_container float-left">
 
-        <!-- Fight Headline -->
-        <div class="row">
-            <div class="col">
-                <div class="float-left">
-                    <a href="{{fight.report_url}}" target="_blank">
-                        <h5>
+        {% for fight in fights %}
+            {% set report = fight.report %}
+            <div style="height: 32px">
+                <!-- Fight Headline -->
+                <div class="float-left overflow-hidden">
+                    <h5>
+                        <a href="{{fight.report_url}}" target="_blank" data-toggle="tooltip" title="&lt;{{report.guild}}&gt; {{report.realm}} ({{report.region}})">
                             &lt;{{report.guild}}&gt;
-                            <span class="text-muted">
-                                ({{report.region}}) {{report.realm}}
-                                /
-                                <i class="fas fa-skull-crossbones"></i> {{fight.duration_fmt}}
-                            </span>
-                        </h5>
-                    </a>
+                        </a>
+                    </h5>
                 </div>
             </div>
+
+            {% for player in fight.players if player.casts %}
+                {% include "elements/player_name.html" %}
+            {% endfor %}
+        {% endfor %}
+
         </div>
 
-        <!-- <div class="timeline_cursor_container"> -->
-            {% for player in fight.players if player.casts %}
-            <div class="row">
-                <div class="col-12">
-                    {% include "elements/player_timeline.html" %}
-                </div>
-            </div>
-            <!-- <div class="timeline_cursor"></div> -->
-            {% endfor %}
-        <!-- </div> -->
-    </div>
 
-    {% endfor %}
+        <div class="player_timelines_container">
+            {% for fight in fights %}
+
+                {% set timeline_duration = fight.duration %}
+                {% include "elements/timeline_ruler.html" %}
+
+                {% for player in fight.players if player.casts %}
+                    {% set inline_killtime=loop.first %}
+                    {% include "elements/player_timeline.html" %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+
+        <div style="clear: both"></div>
+
 </div>
 
 

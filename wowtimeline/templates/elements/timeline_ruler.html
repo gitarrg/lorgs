@@ -1,0 +1,9 @@
+<div class="timeline_ruler">
+    {% for i in range(0, timeline_duration, 10*1000) -%}
+    <div class="timeline_tick">
+        {%- if i % 30000 == 0 -%}
+        <div class="timeline_timestamp">{{ i|format_time }}</div>
+        {%- endif -%}
+    </div>
+    {% endfor %}
+</div>

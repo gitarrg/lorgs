@@ -4,6 +4,12 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
 
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
 body {
     background-color: hsl(40deg 20% 8%);
     color: hsl(0, 0%, 90%);
@@ -32,6 +38,8 @@ a:hover {
 label {
     user-select: none;
 }
+
+
 
 /*   BOOTSTRAP EDITS   */
 
@@ -257,48 +265,7 @@ input#show_settings:checked+label {
 
 }
 
-.player_spec_icon img {
-    width: 30px;
-    height: 30px;
-    border: 1px solid black;
-    float: left;
 
-    border-top-left-radius: 0.25rem;
-    border-bottom-left-radius: 0.25rem;
-}
-
-
-.player_name {
-    background: hsl(0, 0%, 30%);
-
-    padding-left: 5px;
-    padding-right: 5px;
-
-    border: 1px solid black;
-    border-left: none;
-
-    position: sticky;
-    left: 0;
-
-    width: 150px;
-    height: 30px;
-    float: left;
-    font-size: 1.1rem;
-    overflow: hidden;
-}
-
-.player_name a:hover {
-}
-
-.player_name:hover {
-    background: hsl(0, 0%, 40%);
-    text-decoration: underline;
-}
-
-
-.player_total {
-    float: right;
-}
 
 
 
@@ -371,13 +338,134 @@ input#show_settings:checked+label {
     bottom: 2px;
     width: 2px;
     background: red;
-
-
     display: none;
+}
 
 
+/**
+.player_timeline_scroll_y {
+    overflow-y: scroll;
+    max-height: calc(100vh - 241px);
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/*.player_timeline_scroll_y::-webkit-scrollbar {
+  display: none;
+}*/
+
+
+/********************************
+
+        Player Names
+
+*********************************/
+
+.player_names_container {
+    /*padding-top: 32px; for the timeline ruler*/
+}
+
+.player_name {
+    width: 175px;
+    height: 30px;
+
+    background: hsl(0, 0%, 30%);
+
+    padding-right: 5px;
+    margin-bottom: 2px;
+
+    border: 1px solid black;
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+    position: relative;
+}
+
+.player_spec_icon {
+    width: 30px;
+    height: 30px;
+    border-right: 1px solid black;
+}
+
+.player_name span {
+    font-size: 1.2rem;
+    /*line-height: 1.5;*/
+    position: absolute;
+    top: 50%;
+    margin: 0;
+    transform: translate(3px, -50%);
+}
+
+.player_name a:hover {
+}
+
+.player_name:hover span {
+    text-decoration: underline;
+}
+
+
+.player_total {
+    right: 5px;
+    color: #ffffff30;
+}
+
+
+/********************************
+
+        Player Cast Timeline
+
+*********************************/
+
+
+.player_timelines_container {
+    overflow: hidden;
+    cursor: grab;
 }
 
 
 
+/********************************
+
+        Timeline Ruler
+
+*********************************/
+
+.timeline_ruler {
+    height: 32px;
+    display: flex;
+    flex-direction: row;
+}
+
+.timeline_tick {
+    width: 40px;
+    display: block;
+    align-self: flex-end;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.timeline_tick {
+    border-left: 1px solid;
+    bottom: 0;
+    border-color: hsl(0deg 0% 40%);
+
+    height: 5px;
+}
+
+.timeline_tick:nth-of-type(6n+1) {
+    height: 10px;
+    border-color: hsl(0deg 0% 60%);
+}
+
+
+.timeline_tick .timeline_timestamp {
+    font-size: 14px;
+    position: absolute;
+    bottom: 10px;
+    transform: translateX(-50%);
+}
+
+.timeline_tick:first-of-type .timeline_timestamp {
+    transform: translateX(0);
+}
 

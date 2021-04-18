@@ -427,9 +427,5 @@ for spec in SPECS:
 
 # 345539 # Ordnance
 
-
-
-SPELLS = {spell_id: spell for spell_id, spell in m.WoWSpell._all.items() if spell_id > 0}
-
-
+SPELLS = {spell_id: spell for spec in SPECS for spell_id, spell in spec.all_spells.items()}
 

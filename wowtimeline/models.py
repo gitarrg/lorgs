@@ -1,5 +1,4 @@
 
-
 # IMPORT THIRD PARTY LIBRARIES
 import textwrap
 import pprint
@@ -14,6 +13,7 @@ from wowtimeline.logger import logger
 
 class WoWSpell:
     """Container to define a spell."""
+
     _all = {}
 
     # def __new__(cls, spell_id, *args, **kwargs):
@@ -48,9 +48,6 @@ class WoWSpell:
 
 DUMMY_SPELL = WoWSpell(spell_id=0)
 
-# SPELL_A = WoWSpell(spell_id=1, cooldown=5)
-# SPELL_B = WoWSpell(spell_id=1)
-# print(SPELL_A, SPELL_B, SPELL_A == SPELL_B)
 
 class WowSpec:
     """docstring for Spec"""
@@ -151,7 +148,8 @@ class WoWClass:
         return spec
 
     def get_spec(self, name):
-        specs = {s.name: s for s in self.specs}
+        name = utils.slug(name)
+        specs = {s.name_slug: s for s in self.specs}
         return specs.get(name)
 
 
@@ -295,7 +293,6 @@ class Fight:
         '''
 
     def _process_player_data(self, players_data):
-
         if not players_data:
             return
 
@@ -309,14 +306,23 @@ class Fight:
             class_name = composition_data.get("type")
             wow_class = WoWClass.get_by_name(class_name)
             if not wow_class:
-                log.warning("Unknown Class: %s", class_name)
+                logger.warning("Unknown Class: %s", class_name)
+                continue
 
-            spec_data = composition_data.get("specs", [])[0]
+            spec_data = composition_data.get("specs", [])
+            if not spec_data:
+                logger.warning("Player has no spec: %s", player.name)
+                continue
+
+            spec_data = spec_data[0]
             spec_name = spec_data.get("spec")
             player.spec = wow_class.get_spec(spec_name)
+            # self.players.append(player)
+            if not player.spec:
+                logger.warning("Unknown Spec: %s", spec_name)
+                continue
 
             yield player
-            # self.players.append(player)
 
             # spec_role = spec_data.get("role")
             # if spec_role != "healer":
@@ -338,7 +344,8 @@ class Fight:
             if player:
                 player.healing_done = damage_data.get("total", 0)
         """
-    def _build_query(self, spells=(), extra_filter=""):
+
+    def _build_query(self, spells=None, extra_filter=""):
         table_query_args = f"fightIDs: {self.fight_id}, startTime: {self.start_time}, endTime: {self.end_time}"
 
         # Build Casts Filter
@@ -353,7 +360,7 @@ class Fight:
         else:
             spells = spells or (spell for spell in WoWSpell._all.keys() if spell > 0)
             spells = ",".join(str(s.spell_id) for s in spells)
-            casts_filter = f"ability.id in ({spells})"
+            casts_filter = f"ability.id in ({spells})" if spells else ""
 
         if extra_filter:
             casts_filter = f"({casts_filter}) and ({extra_filter})"
@@ -387,6 +394,8 @@ class Fight:
     def _process_query_data(self, data):
 
         report_data = data.get("report", {})
+        report_data = report_data or data.get("reportData", {}).get("report", {})  # not sure which one is correct
+
         logger.debug(f"fetched fights: {self.report_id}")
 
         casts_data = report_data.get("casts", {}).get("data", {})
@@ -405,7 +414,7 @@ class Fight:
 
         elif self.players:
             # fill in data from query
-            raise(NotImplemented)
+            raise NotImplementedError
 
         else:
             # read player info's from query
@@ -443,11 +452,6 @@ class Fight:
 
 
 
-
-
-
-
-
 class Report:
     """docstring for Fight"""
     def __init__(self, report_id):
@@ -460,3 +464,44 @@ class Report:
     @property
     def report_url(self):
         return f"https://www.warcraftlogs.com/reports/{self.report_id}"
+
+    async def fetch_fights(self, client):
+        """
+        TODO: move to client and combine processing logic?
+        """
+        query = f"""
+        reportData
+        {{
+            report(code: "{self.report_id}")
+            {{
+                fights
+                {{
+                    id
+                    encounterID
+                    fightPercentage
+                    kill
+                    startTime
+                    endTime
+                }}
+            }}
+        }}
+        """
+
+        data = await client.query(query)
+        report_data = data.get("reportData", {}).get("report", {})
+
+        fights = []
+        for fight_data in report_data.get("fights", []):
+
+            fight_start_time = fight_data.get("startTime", 0) - report_data.get("startTime", 0)
+            fight_end_time = fight_data.get("endTime", 0)
+
+            # build filter
+            fight = Fight(
+                report_id=self.report_id,
+                fight_id=fight_data.get("id"),
+                start_time=fight_start_time,
+                end_time=fight_end_time,
+            )
+            fights.append(fight)
+        return fights
