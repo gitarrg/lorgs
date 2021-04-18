@@ -8,6 +8,7 @@ import shutil
 
 # IMPORT THIRD PARTY LIBRARIES
 import jinja2
+import dotenv
 
 # IMPORT LOCAL LIBRARIES
 from wowtimeline import client
@@ -17,8 +18,12 @@ from wowtimeline import wow_data
 from wowtimeline.logger import logger
 
 
-WCL_CLIENT_ID = "91c26642-e3e9-4090-945d-e65cf4720b5c"          # TODO: save as env vars
-WCL_CLIENT_SECRET = "noOXQooD0qPXsXSPcnmluUElzT3tn2FR3GDviQbF"
+dotenv.load_dotenv()
+
+
+WCL_CLIENT_ID = os.getenv("WCL_CLIENT_ID")
+WCL_CLIENT_SECRET = os.getenv("WCL_CLIENT_SECRET")
+
 
 GOOGLE_ANALYTICS_ID = "G-Y92VPCY6QW"
 
@@ -54,7 +59,7 @@ async def render(template_name, path, data):
 
     dirpath = os.path.dirname(path)
     if not os.path.exists(dirpath):
-        logger.info("creating folder:", dirpath)
+        logger.info("creating folder: %s", dirpath)
         os.makedirs(dirpath)
 
     template = TEMPLATE_ENV.get_template(template_name)

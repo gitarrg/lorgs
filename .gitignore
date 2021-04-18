@@ -8,4 +8,6 @@ __pycache__/
 
 _build
 cache.json
-.env
+
+# for ".env", we need this (since its already tracked)
+# >>> git update-index --assume-unchanged .env

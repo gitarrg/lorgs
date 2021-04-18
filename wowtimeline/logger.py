@@ -1,9 +1,6 @@
 """Define and setup Logger-Instances."""
-import os
 import logging
-import time
 import datetime
-import logging.handlers
 
 
 LOG_FORMAT = "[%(reltime)s][%(name)s] %(levelname)s: %(message)s"
@@ -17,7 +14,7 @@ class DeltaTimeFormatter(logging.Formatter):
         return super().format(record)
 
 
-logger  = logging.getLogger("Lorgs")
+logger = logging.getLogger("Lorgs")
 """The logger to log logging related log messages."""
 
 formatter = DeltaTimeFormatter(LOG_FORMAT)
@@ -26,7 +23,10 @@ handler = logging.StreamHandler()
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
+
+
 logger.setLevel(logging.INFO)
+
 # logger.setLevel(logging.DEBUG)
 """
 if os.getenv("DEBUG"):
@@ -34,12 +34,3 @@ if os.getenv("DEBUG"):
 else:
     logger.setLevel(logging.INFO)
 """
-
-if __name__ == '__main__':
-    pass
-    logger.warning("A")
-    time.sleep(0.5)
-    logger.warning("B")
-    time.sleep(2.5)
-    logger.warning("C")
-

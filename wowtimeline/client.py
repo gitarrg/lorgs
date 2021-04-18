@@ -8,9 +8,9 @@ import asyncio
 import aiohttp
 import aiofiles
 
+# IMPORT LOCAL LIBRARIES
 from wowtimeline import models
 from wowtimeline.logger import logger
-
 
 
 def with_semaphore(limit=25):
@@ -73,16 +73,16 @@ class WarcraftlogsClient:
     URL_API = "https://www.warcraftlogs.com/api/v2/client"
     URL_AUTH = "https://www.warcraftlogs.com/oauth/token"
 
-    URL_APIv1 = "https://www.warcraftlogs.com:443/v1/"
-
     def __init__(self, client_id="", client_secret=""):
         super(WarcraftlogsClient, self).__init__()
+
+        # credentials
         self.client_id = client_id or os.getenv("WCL_CLIENT_ID")
         self.client_secret = client_secret or os.getenv("WCL_CLIENT_SECRET")
+
         self.headers = {}
 
         self.cache = JsonCache()
-        self.rate_limit_data = {}
         # self.connector = aiohttp.TCPConnector(limit_per_host=9999999)
 
     ##############################
@@ -151,7 +151,7 @@ class WarcraftlogsClient:
 
                 return data
 
-    async def _update_rate_limit_data(self):
+    async def get_points_left(self):
         query = """
         rateLimitData
         {
@@ -162,12 +162,7 @@ class WarcraftlogsClient:
         """
         result = await self.query(query, usecache=False)
         info = result.get("rateLimitData", {})
-        info["points_left"] = info.get("limitPerHour", 0) - info.get("pointsSpentThisHour", 0)
-        self.rate_limit_data = info
-
-    async def get_points_left(self):
-        await self._update_rate_limit_data()
-        return self.rate_limit_data.get("points_left", 0)
+        return info.get("limitPerHour", 0) - info.get("pointsSpentThisHour", 0)
 
     ##############################
 
@@ -227,7 +222,6 @@ class WarcraftlogsClient:
             fight_name = f"report_{i}"
             fight_data = data.get(fight_name)
             fight._process_query_data(fight_data)
-
 
     async def get_top_ranks(self, encounter, spec, metric="", difficulty=5):
         """Get Top Ranks for a given encounter and spec."""
