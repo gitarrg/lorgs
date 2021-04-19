@@ -1,4 +1,11 @@
 
+
+/*Parse Colors yoinked from Warcraftlogs*/
+.text-epic {color: rgb(163,53,238)}
+.text-legendary {color: rgb(255,128,0)}
+.text-astounding {color: rgb(226,104,168)}
+.text-artifact {color: rgb(229,204,128)}
+
 .wow-class-deathknight {color: #C41E3A}
 .wow-class-demonhunter {color: #A330C9}
 .wow-class-druid {color: #FF7C0A}

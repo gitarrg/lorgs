@@ -249,12 +249,6 @@ HEAL_COMPS = [
         "specs": [PALADIN_HOLY, PALADIN_HOLY, PRIEST_DISCIPLINE, SHAMAN_RESTORATION],
         "extra_filter": "source.role='healer'",
     },
-
-
-    {
-        "specs": [PALADIN_HOLY, PRIEST_HOLY, PRIEST_DISCIPLINE, SHAMAN_RESTORATION, SHAMAN_RESTORATION],
-        "extra_filter": "source.role='healer'",
-    }
 ]
 
 for comp in HEAL_COMPS:

@@ -3,72 +3,118 @@
 {% block title %}Lorgs: Index{% endblock %}
 
 {% block content %}
-<!-- Parses -->
-<div class="row p-2">
-    <div class="col-12 pl-0">
+
+
+<div class="d-flex flex-row p-2 mt-5 ml-5">
+
+    <!-- Info -->
+    <div class="col-3">
+        <h3>What is this?</h3>
+        <div class="bg-dark rounded border p-2 text-wrap" style="background-color: $blue-800">
+
+            This little website looks at the <strong class="text-astounding">top 50 logs</strong> for each spec<br>
+            and visualizes <strong class="text-legendary"><em>relevant(*)</em> spells on a timeline.</strong><br>
+            <br>
+            The Idea is to give players a <span class="text-epic">quick idea how to time their CDs,</span>
+            without having to go trough a number of logs themself and compare them by hand.<br>
+            <br>
+            <hr>
+            <b>* relevant spells:</b><br>
+            whats considered a relevant spell is just a list of spells per spec I manually create and maintain.<br>
+            If there are any spells you'd considerer relevant but they are currently missing,
+            please let me know and I will have a look into adding them.
+        </div>
+    </div>
+
+    <div>
+
+        <!-- Parses -->
         <h3>Top Parses by Spec:</h3>
-    </div>
 
-    <div class="col-12 bg-dark rounded border p-2">
-        <table>
-            {% for role in wow_data.ROLES %}
-            <tr>
-                <td><img class="icon-m rounded border border-black" src="static/images/roles/{{role.name|lower}}.jpg"></td>
-                <td style="width: 8rem;margin-right: 2rem"><span>{{role.name}}:</span></td>
+        <div class="bg-dark rounded border p-2">
+            <table>
+                {% for role in wow_data.ROLES %}
+                <tr>
+                    <td><img class="icon-m rounded border border-black" src="static/images/roles/{{role.name|lower}}.jpg"></td>
+                    <td style="width: 8rem;margin-right: 2rem"><span>{{role.name}}:</span></td>
 
-                <td>
-                    {% for spec in role.specs %}
-                    <div class="parse_spec_link">
-                        <a class="{{'disabled' if not spec.supported}}" href="rankings_{{spec.full_name_slug}}_{{boss.name_slug}}.html" data-toggle="tooltip" title="{{spec.full_name}}">
-                            <img class="icon-spec icon-m rounded wow-class-border-{{spec.class_name_slug}}" src="static/images/specs/{{spec.full_name_slug}}.jpg" alt="{{spec.full_name}}">
+                    <td>
+                        {% for spec in role.specs %}
+                        <div class="parse_spec_link">
+                            {% if spec.supported %}
+                            <a href="rankings_{{spec.full_name_slug}}_{{boss.name_slug}}.html">
+                            {% else %}
+                            <a class="disabled" href="#">
+                            {% endif %}
+                                <img class="icon-spec icon-m rounded wow-class-border-{{spec.class_name_slug}}" src="static/images/specs/{{spec.full_name_slug}}.jpg" alt="{{spec.full_name}}" data-toggle="tooltip" title="{{spec.full_name}}">
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% if not loop.last %}
+                    <tr style="height: 0.5rem"></tr>
+                {% endif %}
+                {% endfor %}
+            </table>
+        </div>
+
+        <div class="mb-3" style="clear: both"></div>
+
+        <h3>Top Reports by Comp:</h3>
+
+        <div class="bg-dark rounded border p-2">
+            <table>
+                {% for comp in wow_data.HEAL_COMPS %}
+                <tr>
+                    {% if loop.first %}
+                    <td rowspan="{{loop.length}}">
+                        <img class="icon-m rounded border border-black" src="static/images/roles/healer.jpg">
+                    </td>
+                    <td rowspan="{{loop.length}}" style="width: 8rem;margin-right: 2rem">
+                        <span>Healers:</span>
+                    </td>
+                    {% endif %}
+
+                    <td>
+                        <a href="comps_heal_{{comp.name}}.html">
+                        {% for spec in comp.specs %}
+                            <img class="icon-spec icon-s rounded wow-class-border-{{spec.class_name_slug}}" src="static/images/specs/{{spec.full_name_slug}}.jpg">
+                                <span class="wow-class-{{spec.class_name_slug}}">{{spec.short_name}}
+                                {% if not loop.last %}
+                                &nbsp;
+                                {% endif %}
+                                </span>
+                        {% endfor %}
                         </a>
-                    </div>
-                    {% endfor %}
-                </td>
-            </tr>
-            {% if not loop.last %}
-                <tr style="height: 0.5rem"></tr>
-            {% endif %}
-            {% endfor %}
-        </table>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+
+
     </div>
+
+
+
+
 </div>
 
+<div class="row p-2 mt-5 ml-5">
 
-<!-- Comps -->
-<div class="row p-2 mt-3">
-    <div class="col-12 pl-0">
-        <h3>Top Reports by Comp:</h3>
+
+
+    <!-- Parses -->
+    <div class="col-8">
+
     </div>
 
-    <div class="col-12 bg-dark rounded border p-2">
-        <table>
-            {% for comp in wow_data.HEAL_COMPS %}
-            <tr>
-                {% if loop.first %}
-                <td rowspan="{{loop.length}}">
-                    <img class="icon-m rounded border border-black" src="static/images/roles/healer.jpg">
-                </td>
-                <td rowspan="{{loop.length}}" style="width: 8rem;margin-right: 2rem">
-                    <span>Healers:</span>
-                </td>
-                {% endif %}
+    <div class="col-3">&nbsp;</div>
 
-                <td>
-                    <a href="comps_heal_{{comp.name}}.html">
-                    {% for spec in comp.specs %}
-                        <img class="icon-spec icon-s rounded wow-class-border-{{spec.class_name_slug}}" src="static/images/specs/{{spec.full_name_slug}}.jpg">
-                            <span class="wow-class-{{spec.class_name_slug}}">{{spec.short_name}}
-                            {% if not loop.last %}
-                            &nbsp;
-                            {% endif %}
-                            </span>
-                    {% endfor %}
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
+    <div class="col-8 mt-3">
+
     </div>
 </div>
 {% endblock %}
