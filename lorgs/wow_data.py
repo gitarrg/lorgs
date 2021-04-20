@@ -1,5 +1,5 @@
 
-from wowtimeline import models as m
+from lorgs import models as m
 
 
 # ROLES

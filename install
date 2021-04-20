@@ -4,7 +4,7 @@
 ############
 # Settings
 
-project_name=wowtimeline
+project_name=lorgs
 
 
 # vars
@@ -23,7 +23,7 @@ fi
 source $venv_dir/bin/activate
 
 # install requirements
-pip install -U -r wowtimeline/requirements.txt
+pip install -U -r lorgs/requirements.txt
 
 
 

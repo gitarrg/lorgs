@@ -10,11 +10,11 @@ import jinja2
 import dotenv
 
 # IMPORT LOCAL LIBRARIES
-from wowtimeline import client
-from wowtimeline import models
-from wowtimeline import utils
-from wowtimeline import wow_data
-from wowtimeline.logger import logger
+from lorgs import client
+from lorgs import models
+from lorgs import utils
+from lorgs import wow_data
+from lorgs.logger import logger
 
 
 dotenv.load_dotenv()

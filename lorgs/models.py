@@ -1,11 +1,10 @@
 
 # IMPORT THIRD PARTY LIBRARIES
 import textwrap
-import pprint
 
 # IMPORT LOCAL LIBRARIES
-from wowtimeline import utils
-from wowtimeline.logger import logger
+from lorgs import utils
+from lorgs.logger import logger
 
 ###############################
 # Constant Data

@@ -9,8 +9,8 @@ import aiohttp
 import aiofiles
 
 # IMPORT LOCAL LIBRARIES
-from wowtimeline import models
-from wowtimeline.logger import logger
+from lorgs import models
+from lorgs.logger import logger
 
 
 def with_semaphore(limit=25):
