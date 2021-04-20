@@ -264,6 +264,8 @@ async def main():
         await WCL_CLIENT.update_auth_token()
         logger.info("updated auth")
 
+        spells = wow_data.DRUID_RESTORATION.spells.values()
+        await WCL_CLIENT.load_spell_icons(spells)
         # generate
         await render_index()
         await generate_reports()

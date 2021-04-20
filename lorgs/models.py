@@ -34,6 +34,11 @@ class WoWSpell:
         self.group = group
         self.show = show
 
+        # info from query
+        self.icon = ""
+        self.name = ""
+
+
     def __repr__(self):
         return f"<Spell({self.spell_id}, cd={self.cooldown})>"
 
@@ -43,6 +48,24 @@ class WoWSpell:
     def __hash__(self):
         key = (self.spell_id, self.duration, self.cooldown, self.group)
         return hash(key)
+
+    @property
+    def info_query(self):
+        return textwrap.dedent(f"""\
+        reportData {{
+            report(code: "{self.report_id}") {{
+                {player_query}
+
+                casts: events(
+                    {table_query_args},
+                    dataType: Casts,
+                    filterExpression: "{casts_filter}"
+                ) {{data}}
+            }}
+        }}
+        """)
+        return query
+
 
 
 DUMMY_SPELL = WoWSpell(spell_id=0)

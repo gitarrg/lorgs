@@ -12,7 +12,10 @@
  data-cast-duration={{cast.spell.duration*4}}
             {%- endif -%}
         >
-            <div class="cast_icon"><a href="#" data-wowhead="spell={{cast.spell_id}}"></a></div>
+            <div class="cast_icon">
+                <img src="https://wow.zamimg.com/images/wow/icons/medium/{{cast.spell.icon}}">
+                {# <a href="#" data-wowhead="spell={{cast.spell_id}}"></a> #}
+            </div>
             <div class="cast_text">{{cast.time_fmt}}</div>
         </div>
         {% endfor %}

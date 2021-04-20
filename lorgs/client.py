@@ -347,14 +347,63 @@ class WarcraftlogsClient:
             fights.append(fight)
         return fights
 
+    async def load_spell_icons(self, spells):
+        print("load_spell_icons")
 
+        # Build query
+        ids = [spell.spell_id for spell in spells]
+        ids = set(ids)
+        queries = [f"spell_{i}: ability(id: {i}) {{name, icon}}" for i in ids]
+        queries = "\n".join(queries)
+        query = f"""
+        gameData
+        {{
+            {queries}
+        }}
+        """
+
+        # execute query
+        data = await self.query(query)
+        data = data.get("gameData", {})
+        print(data)
+
+        # attach data to spells
+        for spell in spells:
+            pass
+
+            key = f"spell_{spell.spell_id}"
+            spell_info = data.get(key)
+            if not spell_info:
+                logger.warning("No Spell Info for: %s", spell.spell_id)
+                continue
+
+            spell.name = spell_info.get("name")
+            spell.icon = spell_info.get("icon")
+
+            print(spell, spell.name, spell.icon)
+
+
+
+
+
+
+
+
+async def test_load_spells():
+    import dotenv
+    from lorgs import wow_data
+
+    dotenv.load_dotenv()
+
+    c = WarcraftlogsClient()
+    await c.update_auth_token()
+
+    spells = wow_data.DRUID_RESTORATION.spells.values()
+    await c.load_spell_icons(spells)
 
 
 if __name__ == '__main__':
     import asyncio
-    from wowtimeline.main import WCL_CLIENT
 
-    # search = "2.4.1,6.1.1,7.1.1,9.3.1|abilities.316958"
-    # asyncio.run(WCL_CLIENT.find_reports(encounter=2407, search=search))
-
+    asyncio.run(test_load_spells())
 
