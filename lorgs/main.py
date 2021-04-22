@@ -125,7 +125,7 @@ async def generate_rankings():
 
     if DEBUG:
         bosses = [wow_data.ENCOUNTERS[-1]]
-        specs2 = [
+        specs = [
             # healers
             wow_data.DRUID_RESTORATION,
             # wow_data.PALADIN_HOLY,

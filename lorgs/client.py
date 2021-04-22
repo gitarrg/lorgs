@@ -136,13 +136,16 @@ class WarcraftlogsClient:
 
                 # some reports are private.. but still show up in rankings..
                 # lets just see what happens
+                # ----> it stops..
+                # "You do not have permission to view this report"
+                # TODO: figure out how to skip those reports..
+                """
                 if result.get("errors"):
                     msg = ""
                     for error in result.get("errors"):
                         msg += "\n" + error.get("message") + " path:" + "/".join(error.get("path", []))
                         print(query)
                     raise ValueError(msg)
-                """
                 """
                 data = result.get("data", {})
 

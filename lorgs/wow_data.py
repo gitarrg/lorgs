@@ -309,7 +309,7 @@ HUNTER_MARKSMANSHIP.add_spell(spell_id=288613, cooldown=120, duration=15, show=F
 # Rogue
 
 # Priest
-PRIEST.add_spell(spell_id=10060, cooldown=CD2min, duration=20, show=False) # Power Infusion
+PRIEST.add_spell(spell_id=10060, cooldown=CD2min, duration=20, show=False, color="#1fbcd1") # Power Infusion
 # PRIEST_SHADOW.add_spell(spell_id=34433, cooldown=180, duration=15) # Shadowfiend
 # PRIEST_SHADOW.add_spell(spell_id=228260, cooldown=90) # Void Erruption
 # PRIEST_DISCIPLINE.add_spell(spell_id=34433, cooldown=180, duration=15, show=False) # Shadowfiend
@@ -330,7 +330,7 @@ DEATHKNIGHT_UNHOLY.add_spell(spell_id=275699, cooldown=60, duration=15, show=Fal
 
 
 # Shamans
-SHAMAN.add_spell(spell_id=326059, cooldown=45, show=False, color=COL_NECROLORD)  # Necro: Primordial Wave
+# SHAMAN.add_spell(spell_id=326059, cooldown=45, show=False, color=COL_NECROLORD)  # Necro: Primordial Wave
 SHAMAN.add_spell(spell_id=320674, cooldown=90, show=False, color=COL_VENTYR)  # Ventyr: Chain Harvest
 SHAMAN_ELEMENTAL.add_spell(spell_id=191634, cooldown=60, show=True, color="DeepSkyBlue")  # Stormkeeper
 SHAMAN_ELEMENTAL.add_spell(spell_id=198067, cooldown=150, show=True, color="DarkOrange")  # Fire Elemental
