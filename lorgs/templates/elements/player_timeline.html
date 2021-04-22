@@ -4,18 +4,8 @@
     <!-- Casts -->
     <div class="cast_container inner_shadow" style="width: {{fight_duration}}px">
     {% for cast in player.casts %}
-        <div class="cast" data-spell_id="{{cast.spell_id}}" data-wow-class={{player.spec.class_name_slug}} style="left: {{cast.time / 250}}px;"
-            {%- if cast.spell.cooldown %}
- data-cast-cd={{cast.spell.cooldown*4}}
-            {%- endif -%}
-            {% if cast.spell.duration %}
- data-cast-duration={{cast.spell.duration*4}}
-            {%- endif -%}
-        >
-            <div class="cast_icon"><a href="#" data-wowhead="spell={{cast.spell_id}}"></a></div>
-            <div class="cast_text">{{cast.time_fmt}}</div>
-        </div>
-        {% endfor %}
+        <div class="cast" data-spell_id="{{cast.spell_id}}" data-cast-time={{cast.time}}></div>
+    {% endfor %}
     </div>
 
     {% if inline_killtime %}

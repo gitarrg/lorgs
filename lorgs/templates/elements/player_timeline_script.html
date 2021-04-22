@@ -1,8 +1,48 @@
 {% block scripts %}
+<script src="spell_db.js"></script>
 <script type="text/javascript">
 
-
 $( document ).ready(function(){
+
+    // Timeline Ruler Logic
+    const cursor = document.querySelector(".timeline_cursor");
+    const cursor_handle = document.querySelector(".timeline_cursor_handle");
+    let cursor_clicked = false;
+    var cursor_init_x = 0;
+    var cursor_drag_dist = 0, cursor_drag_start_x = 0;
+
+    function cursor_drag_start(e) {
+        cursor_clicked = true;
+        e.preventDefault();
+        cursor.classList.add("active");
+        cursor_drag_start_x = e.clientX; // store initial offset
+        document.onmousemove = cursor_drag_move;
+        document.onmouseup  = cursor_drag_stop;
+    }
+
+    function cursor_drag_move(e) {
+        e = e || window.event;
+        e.preventDefault();
+
+        cursor_drag_dist = cursor_drag_start_x - e.clientX;
+        cursor_drag_start_x = e.clientX;
+        var x = cursor.offsetLeft - cursor_drag_dist;
+        cursor.style.left = x + "px";
+
+        cursor_handle.innerHTML = toMMSS(x / 4);
+    }
+
+    function cursor_drag_stop(e) {
+        document.onmouseup = null;
+        document.onmousemove = null;
+        cursor_clicked = false;
+        cursor.classList.remove("active");
+    }
+
+    // cursor.onmousedown = cursor_drag_start;
+    cursor.addEventListener("mousedown", e => {
+        cursor_drag_start(e);
+    });
 
 
     // Horizontal Slider
@@ -12,6 +52,7 @@ $( document ).ready(function(){
     let scrollLeft;
 
     slider.addEventListener("mousedown", e => {
+        if (cursor_clicked) return;
         isDown = true;
         // slider.classList.add("active");
         startX = e.pageX - slider.offsetLeft;
@@ -56,6 +97,7 @@ $( document ).ready(function(){
     })
     }
 
+
     // const div_a = $(".player_names_container .player_timeline_scroll_y");
     // const div_b = $(".player_timelines_container .player_timeline_scroll_y");
     // syncScroll(div_a, div_b)
@@ -76,35 +118,7 @@ $( document ).ready(function(){
         }) // addEventListener
     }) // for each
     */
+});
 
-
-    // build casts
-    document.querySelectorAll(".cast").forEach(cast => {
-
-        let new_div;
-        let spell_id = $(cast).attr("data-spell_id");
-        let wowclass = $(cast).attr("data-wow-class");
-        let cooldown = $(cast).attr("data-cast-cd");
-        let duration = $(cast).attr("data-cast-duration");
-
-
-        // duration
-        if (duration != null) {
-            new_div = document.createElement("div");
-            new_div.classList.add("cast_duration");
-            new_div.classList.add(`wow-class-bg-${wowclass}`);
-            new_div.style.width = duration + "px";
-            cast.prepend(new_div)
-        }
-
-        if (cooldown != null) {
-            new_div = document.createElement("div");
-            new_div.classList.add("cast_cooldown");
-            new_div.classList.add(`wow-class-bg-${wowclass}`);
-            new_div.style.width = cooldown + "px";
-            cast.prepend(new_div)
-        }
-    });
-})
 </script>
 {% endblock %}

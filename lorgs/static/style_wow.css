@@ -23,9 +23,11 @@
 .wow-class-bg-deathknight {background-color: #C41E3A}
 .wow-class-bg-demonhunter {background-color: #A330C9}
 .wow-class-bg-druid {background-color: #FF7C0A}
-.wow-class-bg-hunter {background-color: #AAD372}
+/*.wow-class-bg-hunter {background-color: #AAD372}*/
+.wow-class-bg-hunter {background-color: #7e9c54}
 .wow-class-bg-mage {background-color: #3FC7EB}
-.wow-class-bg-monk {background-color: #00FF98}
+/*.wow-class-bg-monk {background-color: #00FF98}*/
+.wow-class-bg-monk {background-color: #38c78d}
 .wow-class-bg-paladin {background-color: #F48CBA}
 .wow-class-bg-priest {background-color: #FFFFFF}
 .wow-class-bg-rogue {background-color: #FFF468}
