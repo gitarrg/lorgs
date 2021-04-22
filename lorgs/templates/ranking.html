@@ -29,7 +29,7 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
                     <div class="p-1 bg-dark border rounded">
                     {% for role in wow_data.ROLES %}
                         <div class="ranking-nav">
-                            <img class="ranking-nav-role-icon icon-m rounded border border-black" src="static/images/roles/{{role.name|lower}}.jpg">
+                            <img class="ranking-nav-role-icon icon-m rounded border-black" src="static/images/roles/{{role.name|lower}}.jpg">
 
                             <div class="ranking-nav-role-specs bg-dark border rounded">
                                 {% for spec in role.specs %}
@@ -105,6 +105,7 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
         <div class="player_timeline_scroll_y">
             <div style="height: 32px"></div>
             {% for fight in fights %}
+            {% set i = loop.index %}
             {% for player in fight.players if player.casts %}
             {% include "elements/player_name.html" %}
             {% endfor %}
@@ -114,6 +115,7 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
 
     <div class="player_timelines_container">
         {% include "elements/timeline_ruler.html" %}
+        <div class="timeline_cursor" style="left: 10px;"><div class="timeline_cursor_handle">0:00</div></div>
 
         <div class="player_timeline_scroll_y">
         {% set inline_killtime=True %}
@@ -125,10 +127,6 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
         </div>
     </div>
 
-    {#
-    <div class="col-12 px-2">
-    #}
-    <!-- <div class="timeline_cursor"></div> -->
 
     <div style="clear: both"></div>
 </div>
@@ -138,6 +136,6 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
 
 <!-- Content Scripts -->
 {% block scripts %}
-{{ super() }}
 {% include "elements/player_timeline_script.html" %}
+{{ super() }}
 {% endblock %}

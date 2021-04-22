@@ -42,7 +42,7 @@ TEMPLATE_ENV.filters["slug"] = utils.slug
 # str: folder where the generated html files will be saved
 OUTPUT_FOLDER = os.path.join(PWD, "../_build")
 
-DEBUG = False # os.getenv("DEBUG")
+DEBUG = os.getenv("DEBUG")
 
 
 WCL_CLIENT = client.WarcraftlogsClient(client_id=WCL_CLIENT_ID, client_secret=WCL_CLIENT_SECRET)
@@ -51,10 +51,11 @@ WCL_CLIENT = client.WarcraftlogsClient(client_id=WCL_CLIENT_ID, client_secret=WC
 #   Jinja
 #
 
-async def render(template_name, path, data):
+async def render(template_name, path, data=None):
     # print("[RENDER]", path)
 
     # include some global args
+    data = data or {}
     data["wow_data"] = wow_data
     data["GOOGLE_ANALYTICS_ID"] = GOOGLE_ANALYTICS_ID
 
@@ -82,6 +83,12 @@ async def render_index():
     path = f"{OUTPUT_FOLDER}/index.html"
     await render("index.html", path, data)
 
+
+async def render_spell_db():
+    path = f"{OUTPUT_FOLDER}/spell_db.js"
+    await render("elements/spell_db.js", path)
+
+
 ################################
 #       Rankings
 #
@@ -91,8 +98,8 @@ async def generate_ranking_report(boss, spec):
     fights = []
     fights = await WCL_CLIENT.get_top_ranks(boss["id"], spec)
     fights = fights[:50] # limit a bit for now
-    # if DEBUG:
-    #     fights = fights[:30]
+    if DEBUG:
+        fights = fights[:20]
 
     await WCL_CLIENT.fetch_multiple_fights(fights)
 
@@ -118,7 +125,7 @@ async def generate_rankings():
 
     if DEBUG:
         bosses = [wow_data.ENCOUNTERS[-1]]
-        specs = [
+        specs2 = [
             # healers
             wow_data.DRUID_RESTORATION,
             # wow_data.PALADIN_HOLY,
@@ -264,14 +271,15 @@ async def main():
         await WCL_CLIENT.update_auth_token()
         logger.info("updated auth")
 
-        spells = wow_data.DRUID_RESTORATION.spells.values()
-        await WCL_CLIENT.load_spell_icons(spells)
+        await WCL_CLIENT.load_spell_icons(wow_data.ALL_SPELLS)
+        await render_spell_db()
+
         # generate
         await render_index()
         await generate_reports()
         await generate_rankings()
         logger.info("generated rankings")
-        await generate_report_breakdown()
+        # await generate_report_breakdown()
 
     except KeyboardInterrupt:
         logger.info("closing...")

@@ -203,6 +203,7 @@ class WarcraftlogsClient:
 
     async def fetch_multiple_fights(self, fights, **kwargs):
 
+
         if not fights:  # might happen in debugging
             logger.warning("No fights passed")
             return
@@ -348,8 +349,6 @@ class WarcraftlogsClient:
         return fights
 
     async def load_spell_icons(self, spells):
-        print("load_spell_icons")
-
         # Build query
         ids = [spell.spell_id for spell in spells]
         ids = set(ids)
@@ -365,28 +364,17 @@ class WarcraftlogsClient:
         # execute query
         data = await self.query(query)
         data = data.get("gameData", {})
-        print(data)
 
         # attach data to spells
         for spell in spells:
-            pass
-
             key = f"spell_{spell.spell_id}"
             spell_info = data.get(key)
             if not spell_info:
                 logger.warning("No Spell Info for: %s", spell.spell_id)
                 continue
 
-            spell.name = spell_info.get("name")
-            spell.icon = spell_info.get("icon")
-
-            print(spell, spell.name, spell.icon)
-
-
-
-
-
-
+            spell.name = spell.name or spell_info.get("name")
+            spell.icon = spell.icon or spell_info.get("icon")
 
 
 async def test_load_spells():
@@ -398,12 +386,10 @@ async def test_load_spells():
     c = WarcraftlogsClient()
     await c.update_auth_token()
 
-    spells = wow_data.DRUID_RESTORATION.spells.values()
+    spells = wow_data.PALADIN_HOLY.spells.values()
     await c.load_spell_icons(spells)
 
 
 if __name__ == '__main__':
     import asyncio
-
     asyncio.run(test_load_spells())
-

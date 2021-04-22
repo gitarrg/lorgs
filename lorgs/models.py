@@ -22,7 +22,7 @@ class WoWSpell:
     #         cls._all[spell_id] = instance
     #     return cls._all[spell_id]
 
-    def __init__(self, spell_id, duration=0, cooldown=0, show=True, group=None):
+    def __init__(self, spell_id, duration=0, cooldown=0, show=True, group=None, color=None):
         super().__init__()
 
         # game info
@@ -33,6 +33,7 @@ class WoWSpell:
         # display info
         self.group = group
         self.show = show
+        self.color = color
 
         # info from query
         self.icon = ""
@@ -48,24 +49,6 @@ class WoWSpell:
     def __hash__(self):
         key = (self.spell_id, self.duration, self.cooldown, self.group)
         return hash(key)
-
-    @property
-    def info_query(self):
-        return textwrap.dedent(f"""\
-        reportData {{
-            report(code: "{self.report_id}") {{
-                {player_query}
-
-                casts: events(
-                    {table_query_args},
-                    dataType: Casts,
-                    filterExpression: "{casts_filter}"
-                ) {{data}}
-            }}
-        }}
-        """)
-        return query
-
 
 
 DUMMY_SPELL = WoWSpell(spell_id=0)
@@ -318,6 +301,9 @@ class Fight:
         if not players_data:
             return
 
+        total_damage = players_data.get("damageDone", [])
+        total_healing = players_data.get("healingDone", [])
+
         # player_by_id = {}  # TODO: add to FightClass
         for composition_data in players_data.get("composition", []):
             player = Player()
@@ -343,6 +329,14 @@ class Fight:
             if not player.spec:
                 logger.warning("Unknown Spec: %s", spec_name)
                 continue
+
+            # Get Total Damage or Healing
+            spec_role = spec_data.get("role")
+            total_data = total_healing if spec_role == "healer" else total_damage
+            for data in total_data:
+                if data.get("id", -1) == player.source_id:
+                    player.total = data.get("total", 0) / (self.duration / 1000)
+                    break
 
             yield player
 

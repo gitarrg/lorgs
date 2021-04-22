@@ -85,6 +85,7 @@ Lorgs: {{boss.name}}
                 <a href="{{fight.report_url}}" target="_blank" data-toggle="tooltip" title="&lt;{{report.guild}}&gt; {{report.realm}} ({{report.region}})">&lt;{{report.guild}}&gt;</a>
             </div>
 
+            {% set i = -1 %}
             {% for player in fight.players if player.casts %}
                 {% include "elements/player_name.html" %}
             {% endfor %}
@@ -94,6 +95,7 @@ Lorgs: {{boss.name}}
 
 
         <div class="player_timelines_container">
+            <div class="timeline_cursor" style="left: 10px;"><div class="timeline_cursor_handle">0:00</div></div>
             {% for fight in fights %}
 
                 {% set timeline_duration = fight.duration %}

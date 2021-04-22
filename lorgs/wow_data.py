@@ -1,5 +1,6 @@
 
 from lorgs import models as m
+from lorgs import utils
 
 
 # ROLES
@@ -259,6 +260,23 @@ for comp in HEAL_COMPS:
 # todo: filter for ventyr/kryan pala
 # "abilities.316958", # Ventyr Pala (WARNING! Could be a ret)
 
+################################################################################
+# Some Colors
+
+COL_NIGHTFAE = "#8d5ca1"
+COL_VENTYR = "FireBrick"
+COL_KYRIAN = "LightSkyBlue"
+COL_NECROLORD = "MediumSeaGreen"
+
+COL_MANA = "#5397ed"
+
+_COLOR_MANA = COL_MANA
+_COLOR_POT_MAINSTAT = "#b576e8"
+_COLOR_POT_EXTRA = "#57bd8b"
+
+
+COL_RED1 = "hsv(0deg 60% 50%)"
+
 
 ################################################################################
 # Define all the spells we care about
@@ -270,22 +288,21 @@ CD4min = 4 * 60 # 240
 CD5min = 5 * 60 # 300
 
 # DPS CDs
-WARRIOR.add_spell(spell_id=325886, cooldown=90, duration=12) # Nightfae: Ancient Aftershock
+WARRIOR.add_spell(spell_id=325886, cooldown=90, duration=12, color=COL_NIGHTFAE) # Nightfae: Ancient Aftershock
 WARRIOR.add_spell(spell_id=97462, cooldown=180, duration=10, show=False) # Rally Cry
 # WARRIOR_FURY.add_spell(spell_id=107574, cooldown=90, duration=20) # Avatar
 WARRIOR_FURY.add_spell(spell_id=1719, cooldown=60, duration=10) # Recklessness # reduced by Anger Management
 WARRIOR_FURY.add_spell(spell_id=46924, cooldown=60, duration=4) # Bladestorm
 
 # PALADIN.add_spell(spell_id=105809, cooldown=180, duration=20, show=False) # Holy Avenger
-PALADIN.add_spell(spell_id=304971, cooldown=CD1min, show=False) # Covenant: Divine Toll
-PALADIN.add_spell(spell_id=316958, cooldown=CD4min, duration=30) # Covenant: Ashen Hallow
+PALADIN.add_spell(spell_id=304971, cooldown=CD1min, show=False, color=COL_KYRIAN) # Covenant: Divine Toll
+PALADIN.add_spell(spell_id=316958, cooldown=CD4min, duration=30, color=COL_VENTYR) # Covenant: Ashen Hallow
 PALADIN.add_spell(spell_id=31884, cooldown=CD2min, duration=20) # Wings
 PALADIN_HOLY.add_spell(spell_id=31821, cooldown=CD3min, duration=8) # Aura Mastery
 
-HUNTER.add_spell(spell_id=328231, cooldown=120, duration=15) # Covenant: Wild Spirits
+HUNTER.add_spell(spell_id=328231, cooldown=120, duration=15, color=COL_NIGHTFAE) # Covenant: Wild Spirits
 HUNTER_BEASTMASTERY.add_spell(spell_id=193530, cooldown=180, duration=20) # Aspect of the Wild
-HUNTER_BEASTMASTERY.add_spell(spell_id=19574, cooldown=90, duration=15, show=False) # Bestial Wrath
-HUNTER_BEASTMASTERY.add_spell(spell_id=201430, cooldown=120, duration=12, show=False) # Stampede
+HUNTER_BEASTMASTERY.add_spell(spell_id=19574, cooldown=30, duration=15, show=False, color="#9c8954") # Bestial Wrath
 # HUNTER_SURVIVAL.add_spell(spell_id=266779, cooldown=120, duration=20) # Coordinated Assault
 HUNTER_MARKSMANSHIP.add_spell(spell_id=288613, cooldown=120, duration=15, show=False) # Trueshot
 
@@ -297,11 +314,11 @@ PRIEST.add_spell(spell_id=10060, cooldown=CD2min, duration=20, show=False) # Pow
 # PRIEST_SHADOW.add_spell(spell_id=228260, cooldown=90) # Void Erruption
 # PRIEST_DISCIPLINE.add_spell(spell_id=34433, cooldown=180, duration=15, show=False) # Shadowfiend
 #TODO: add mindbender?
-PRIEST_DISCIPLINE.add_spell(spell_id=62618,  cooldown=180, duration=10)  #Power Word: Cuddle
-PRIEST_DISCIPLINE.add_spell(spell_id=109964,  cooldown=60, duration=10)  # Spirit Shell
+PRIEST_DISCIPLINE.add_spell(spell_id=62618,  cooldown=180, duration=10, color="#b3ad91")  #Power Word: Cuddle
+PRIEST_DISCIPLINE.add_spell(spell_id=109964,  cooldown=60, duration=10, color="#d7abdb")  # Spirit Shell
 PRIEST_DISCIPLINE.add_spell(spell_id=47536,  cooldown=90, duration=8, show=False)  # Rapture
 PRIEST_DISCIPLINE.add_spell(spell_id=246287,  cooldown=90, show=False)  # Evengelism
-PRIEST_HOLY.add_spell(spell_id=64843, cooldown=180, duration=8) # Hymn
+PRIEST_HOLY.add_spell(spell_id=64843, cooldown=180, duration=8, color="#d7abdb") # Hymn
 PRIEST_HOLY.add_spell(spell_id=265202, cooldown=240) # Savl (not showing CD, because dynamic)
 PRIEST_HOLY.add_spell(spell_id=200183, cooldown=120, duration=20, show=False) # Apotheosis
 
@@ -313,57 +330,57 @@ DEATHKNIGHT_UNHOLY.add_spell(spell_id=275699, cooldown=60, duration=15, show=Fal
 
 
 # Shamans
-SHAMAN.add_spell(spell_id=326059, cooldown=45, show=False)  # Necro: Primordial Wave
-SHAMAN.add_spell(spell_id=320674, cooldown=90, show=False)  # Ventyr: Chain Harvest
-SHAMAN_ELEMENTAL.add_spell(spell_id=191634, cooldown=60, show=True)  # Stormkeeper
-SHAMAN_ELEMENTAL.add_spell(spell_id=198067, cooldown=150, show=True)  # Fire Elemental
+SHAMAN.add_spell(spell_id=326059, cooldown=45, show=False, color=COL_NECROLORD)  # Necro: Primordial Wave
+SHAMAN.add_spell(spell_id=320674, cooldown=90, show=False, color=COL_VENTYR)  # Ventyr: Chain Harvest
+SHAMAN_ELEMENTAL.add_spell(spell_id=191634, cooldown=60, show=True, color="DeepSkyBlue")  # Stormkeeper
+SHAMAN_ELEMENTAL.add_spell(spell_id=198067, cooldown=150, show=True, color="DarkOrange")  # Fire Elemental
 
 SHAMAN_ENHANCEMENT.add_spell(spell_id=114051, cooldown=CD3min, show=True)  # Ascendance
 SHAMAN_ENHANCEMENT.add_spell(spell_id=51533, cooldown=CD2min, show=True)  # Feral Spirit
 
 SHAMAN_RESTORATION.add_spell(spell_id=108280, cooldown=180, duration=10) # Healing Tide
-SHAMAN_RESTORATION.add_spell(spell_id=98008,  cooldown=180, duration=6)  # Spirit Link
-SHAMAN_RESTORATION.add_spell(spell_id=16191,  cooldown=180, duration=8, show=False)  # Mana Tide
-SHAMAN_RESTORATION.add_spell(spell_id=207399,  cooldown=300, duration=30)  # Ahnk totem
+SHAMAN_RESTORATION.add_spell(spell_id=98008,  cooldown=180, duration=6, color="#24b385")  # Spirit Link
+SHAMAN_RESTORATION.add_spell(spell_id=16191,  cooldown=180, duration=8, show=False, color=COL_MANA)  # Mana Tide
+SHAMAN_RESTORATION.add_spell(spell_id=207399,  cooldown=300, duration=30, color="#d15a5a")  # Ahnk totem
 SHAMAN_RESTORATION.add_spell(spell_id=114052,  cooldown=180, duration=15)  # Ascendance
 
 # Mage
-MAGE.add_spell(spell_id=314791, cooldown=60, duration=3.1, show=False) # Shifting Power
-MAGE_FIRE.add_spell(spell_id=190319, cooldown=60, duration=10) # Combustion
+MAGE.add_spell(spell_id=314791, cooldown=60, duration=3.1, show=False, color=COL_NIGHTFAE) # Shifting Power
+MAGE_FIRE.add_spell(spell_id=190319, cooldown=60, duration=10, color="#e3b02d") # Combustion
 MAGE_FIRE.add_spell(spell_id=153561, cooldown=45, show=False) # Meteor
 
 # Warlock
-WARLOCK.add_spell(spell_id=325640, cooldown=60, duration=8, show=False) # Soulrot
+WARLOCK.add_spell(spell_id=325640, cooldown=60, duration=8, show=False, color=COL_NIGHTFAE) # Soulrot
 
-WARLOCK_AFFLICTION.add_spell(spell_id=205180, cooldown=180, duration=8) # Darkglare
-WARLOCK_AFFLICTION.add_spell(spell_id=113860, cooldown=120, duration=20) # Dark Soul: Misery
-WARLOCK_AFFLICTION.add_spell(spell_id=205179, cooldown=45, duration=16) # PS
+WARLOCK_AFFLICTION.add_spell(spell_id=205180, cooldown=180, duration=8, color="#49ad6e") # Darkglare
+WARLOCK_AFFLICTION.add_spell(spell_id=113860, cooldown=120, duration=20, color="#c35ec4") # Dark Soul: Misery
+WARLOCK_AFFLICTION.add_spell(spell_id=205179, cooldown=45, duration=16, color="#7833b0") # PS
 
-WARLOCK_DEMONOLOGY.add_spell(spell_id=265187, cooldown=90, duration=15) # Tyrant
-WARLOCK_DEMONOLOGY.add_spell(spell_id=111898, cooldown=120, duration=17) # Felguard
+WARLOCK_DEMONOLOGY.add_spell(spell_id=265187, cooldown=90, duration=15, color="#9150ad") # Tyrant
+WARLOCK_DEMONOLOGY.add_spell(spell_id=111898, cooldown=120, duration=17, color="#c46837") # Felguard
 WARLOCK_DEMONOLOGY.add_spell(spell_id=267217, cooldown=180, duration=15) # Netherportal
 
-WARLOCK_DESTRUCTION.add_spell(spell_id=1122, cooldown=180, duration=30) # Infernal
-WARLOCK_DESTRUCTION.add_spell(spell_id=113858, cooldown=120, duration=20) # Dark Soul: Instability
+WARLOCK_DESTRUCTION.add_spell(spell_id=1122, cooldown=180, duration=30, color="#91c45a") # Infernal
+WARLOCK_DESTRUCTION.add_spell(spell_id=113858, cooldown=120, duration=20, color="#c35ec4") # Dark Soul: Instability
 
 # Monk
-MONK.add_spell(spell_id=322109, cooldown=180) # Touch of Death
+MONK.add_spell(spell_id=322109, cooldown=180, color="#c72649") # Touch of Death
 MONK.add_spell(spell_id=115203, cooldown=360, duration=15, show=False) # Fort Brew
-MONK.add_spell(spell_id=310454, cooldown=120, duration=30, show=False) # Weapons of Order
+MONK.add_spell(spell_id=310454, cooldown=120, duration=30, show=False, color=COL_KYRIAN) # Weapons of Order
 
 MONK_MISTWEAVER.add_spell(spell_id=322118, cooldown=180, duration=3.5) # Yulon
-MONK_MISTWEAVER.add_spell(spell_id=115310, cooldown=180) # Revival
-MONK_MISTWEAVER.add_spell(spell_id=325197, cooldown=180) # Chiji
+MONK_MISTWEAVER.add_spell(spell_id=115310, cooldown=180, color="#00FF98") # Revival
+MONK_MISTWEAVER.add_spell(spell_id=325197, cooldown=180, duration=25, color="#e0bb36") # Chiji
 
-MONK_WINDWALKER.add_spell(spell_id=123904, cooldown=120, duration=24) # Xuen
-MONK_WINDWALKER.add_spell(spell_id=137639, cooldown=90, duration=15) # Storm, Earth and Fire
+MONK_WINDWALKER.add_spell(spell_id=123904, cooldown=120, duration=24, color="#8cdbbc") # Xuen
+MONK_WINDWALKER.add_spell(spell_id=137639, cooldown=90, duration=15, color="#be53db") # Storm, Earth and Fire
 
 
 # Druid
-DRUID.add_spell(spell_id=323764, cooldown=120, duration=4, show=False)  # Convoke
-DRUID_RESTORATION.add_spell(spell_id=197721, cooldown=90, duration=8, show=False) # Flourish
-DRUID_RESTORATION.add_spell(spell_id=29166, cooldown=180, duration=10, show=False) # Innervate
-DRUID_RESTORATION.add_spell(spell_id=740, cooldown=180, duration=6) # Tranquility
+DRUID.add_spell(spell_id=323764, cooldown=120, duration=4, show=False, color=COL_NIGHTFAE)  # Convoke
+DRUID_RESTORATION.add_spell(spell_id=197721, cooldown=90, duration=8, show=False, color="#7ec44d") # Flourish
+DRUID_RESTORATION.add_spell(spell_id=29166, cooldown=180, duration=10, show=False, color="#3b97ed") # Innervate
+DRUID_RESTORATION.add_spell(spell_id=740, cooldown=180, duration=6, color="#6cbfd9") # Tranquility
 DRUID_RESTORATION.add_spell(spell_id=33891, cooldown=180, duration=30) # Tree of Life
 
 DRUID_BALANCE.add_spell(spell_id=194223, cooldown=180, duration=20) # Celestrial
@@ -372,35 +389,40 @@ DRUID_BALANCE.add_spell(spell_id=205636, cooldown=60, duration=10, show=False) #
 DRUID_BALANCE.add_spell(spell_id=202770, cooldown=60, duration=8, show=False) # Fury of Elune
 
 # DH
-DEMONHUNTER.add_spell(spell_id=306830, cooldown=60) # Elysian Decree
-DEMONHUNTER.add_spell(spell_id=323639, cooldown=90) # The Hunt
-DEMONHUNTER.add_spell(spell_id=317009, cooldown=60) # Sinful Brand
+DEMONHUNTER.add_spell(spell_id=306830, cooldown=60, color=COL_KYRIAN) # Elysian Decree
+DEMONHUNTER.add_spell(spell_id=323639, cooldown=90, duration=6, color=COL_NIGHTFAE) # The Hunt
+DEMONHUNTER.add_spell(spell_id=317009, cooldown=60, color=COL_VENTYR) # Sinful Brand
 
-DEMONHUNTER_HAVOC.add_spell(spell_id=200166, cooldown=CD4min, duration=30) # Meta
+DEMONHUNTER_HAVOC.add_spell(spell_id=200166, cooldown=CD4min, duration=30, color="#348540") # Meta
 DEMONHUNTER_HAVOC.add_spell(spell_id=196718, cooldown=180, duration=8, show=False) # Darkness
 DEMONHUNTER_HAVOC.add_spell(spell_id=196555, cooldown=180, duration=5, show=False) # Netherwalk
+
+# fix meta icon
+DEMONHUNTER_HAVOC.spells[200166].icon = "ability_demonhunter_metamorphasisdps.jpg"
 
 ################################################################################
 # Potions (figure out how to best include them later)
 
 
+
 for spec in HEALS:
-    spec.add_spell(group=OTHER_POTION, spell_id=307161, cooldown=300, duration=10, show=False) # Mana Channel Pot
-    spec.add_spell(group=OTHER_POTION, spell_id=307193, cooldown=300, show=False)              # Mana Pot
-    spec.add_spell(group=OTHER_POTION, spell_id=307162, cooldown=300, duration=25, show=False) # Intellect Pot
-    spec.add_spell(group=OTHER_POTION, spell_id=307495, cooldown=300, duration=25, show=False) # Phantom Fire
+    spec.add_spell(group=OTHER_POTION, spell_id=307161, cooldown=300, duration=10, show=False, color=COL_MANA) # Mana Channel Pot
+    spec.add_spell(group=OTHER_POTION, spell_id=307193, cooldown=300, show=False, color=COL_MANA)              # Mana Pot
+    spec.add_spell(group=OTHER_POTION, spell_id=307162, cooldown=300, duration=25, show=False, color=_COLOR_POT_MAINSTAT) # Intellect Pot
+    spec.add_spell(group=OTHER_POTION, spell_id=307495, cooldown=300, duration=25, show=False, color=_COLOR_POT_EXTRA) # Phantom Fire
 
 for spec in MELEE+RANGE:
-    spec.add_spell(group=OTHER_POTION, spell_id=307495, cooldown=300, duration=25, show=False) # Phantom Fire
+    spec.add_spell(group=OTHER_POTION, spell_id=307495, cooldown=300, duration=25, show=False, color=_COLOR_POT_EXTRA) # Phantom Fire
+
 
 for spec in [PRIEST_SHADOW, SHAMAN_ELEMENTAL, MAGE, WARLOCK, DRUID_BALANCE]:
-    spec.add_spell(group=OTHER_POTION, spell_id=307162, cooldown=300, duration=25, show=False) # Intellect Pot
+    spec.add_spell(group=OTHER_POTION, spell_id=307162, cooldown=300, duration=25, show=False, color=_COLOR_POT_MAINSTAT) # Intellect Pot
 
 for spec in [HUNTER, ROGUE, SHAMAN_ENHANCEMENT, MONK_WINDWALKER, DRUID_FERAL, DEMONHUNTER]:
-    spec.add_spell(group=OTHER_POTION, spell_id=307159, cooldown=300, duration=25, show=False) # Agility Pot
+    spec.add_spell(group=OTHER_POTION, spell_id=307159, cooldown=300, duration=25, show=False, color=_COLOR_POT_MAINSTAT) # Agility Pot
 
 for spec in [WARRIOR, PALADIN_RETRIBUTION, DEATHKNIGHT]:
-    spec.add_spell(group=OTHER_POTION, spell_id=307164, cooldown=300, duration=25, show=False) # Strength Pot
+    spec.add_spell(group=OTHER_POTION, spell_id=307164, cooldown=300, duration=25, show=False, color=_COLOR_POT_MAINSTAT) # Strength Pot
 
 
 ################################################################################
@@ -408,7 +430,7 @@ for spec in [WARRIOR, PALADIN_RETRIBUTION, DEATHKNIGHT]:
 for spec in SPECS:
 
     spec.add_spell(group=OTHER_POTION, spell_id=6262, show=False) # Healthstone
-    spec.add_spell(group=OTHER_POTION, spell_id=307192, cooldown=CD5min, show=False) # Healthpot
+    spec.add_spell(group=OTHER_POTION, spell_id=307192, cooldown=CD5min, show=False, color="#e35f5f") # Healthpot
 
     # Raid Trinkets
     spec.add_spell(group=OTHER_TRINKET, spell_id=349857, cooldown=90, show=False) # Dreadfire Vessel
@@ -428,3 +450,5 @@ for spec in SPECS:
 # 345539 # Ordnance
 
 SPELLS = {spell_id: spell for spec in SPECS for spell_id, spell in spec.all_spells.items()}
+
+ALL_SPELLS = utils.flatten(spec.spells.values() for spec in SPECS)
