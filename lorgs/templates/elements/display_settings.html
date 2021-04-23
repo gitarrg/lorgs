@@ -5,6 +5,11 @@
         <div class="ml-1">
             <h5><u>Display</u></h5>
             <div>
+                <input type="checkbox" id="show-spell-casttime" checked>
+                <label class="m-0" for="show-spell-casttime">show cast time</label>
+            </div>
+
+            <div>
                 <input type="checkbox" id="show-spell-duration" checked>
                 <label class="m-0" for="show-spell-duration">show duration</label>
             </div>
@@ -73,6 +78,12 @@ SHOW_SETTINGS_BUTTON.addEventListener("click", function() {
 
 });
 
+// show/hide all spell cast times
+document.getElementById("show-spell-casttime").addEventListener("click", function() {
+    document.querySelectorAll(".cast_text").forEach(el => {
+        show(el, this.checked)
+    });
+});
 
 // show/hide all spell duration bars
 document.getElementById("show-spell-duration").addEventListener("click", function() {
