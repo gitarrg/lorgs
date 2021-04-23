@@ -1,0 +1,80 @@
+
+
+.parse_spec_link {
+    display: inline-block;
+}
+
+
+.icon-spec {
+    border: 1px solid black;
+}
+
+a:not(.disabled) .icon-spec:hover,
+.ranking-nav a:not(.disabled):hover .icon-spec
+{
+    transform: scale(1.2);
+}
+
+
+.disabled .icon-spec {
+    border: none !important;
+    filter: saturate(0%) blur(1px);
+    opacity: 30%;
+    cursor: default;
+}
+
+.active .icon-spec {
+    border-width: 2px;
+    border-color: white;
+}
+
+
+
+
+.nav-link {
+    padding: 2px !important;
+}
+
+
+
+.ranking-nav {
+    display: inline-block;
+    position: relative;
+}
+
+
+.ranking-nav-role-icon {
+}
+
+.ranking-nav-role-specs {
+    display: none;
+    position: absolute;
+    z-index: 99;
+    left: -0.75rem;
+
+    padding: 0.75rem;
+    padding-top: 0.5rem;
+
+}
+
+
+.ranking-nav:hover .ranking-nav-role-specs {
+    display: block;
+}
+
+
+.ranking-nav .disabled,
+.ranking-nav .disabled span,
+.ranking-nav a.disabled,
+.ranking-nav .disabled:hover
+{
+    color: grey;
+    text-decoration: none;
+    cursor: default;
+}
+
+
+.ranking-nav a:not(.disabled):hover
+{
+    font-weight: bold;
+}

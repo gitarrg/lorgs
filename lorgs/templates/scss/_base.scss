@@ -1,0 +1,70 @@
+/* General Element Styles */
+
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+    background-color: hsl(40, 20%, 8%);
+    color: hsl(0, 0%, 90%);
+    white-space: nowrap;
+    box-sizing: border-box;
+
+    font-family: 'Lato', sans-serif;
+    font-size: 16px;
+    line-height: 1.25;
+    /*background: #36393f;*/
+}
+
+
+/*disable link text color and decoration*/
+a, a:hover, a:visited, a:active {
+  color: inherit;
+  text-decoration: none;
+ }
+
+
+label {
+    user-select: none;
+}
+
+img {
+    aspect-ratio: attr(width) / attr(height);
+}
+
+.disable-hover,
+.disable-hover * {
+    pointer-events: none;
+}
+
+
+
+
+
+.icon-s {
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+.icon-m {
+    width: 2rem;
+    height: 2rem;
+}
+
+.icon-big {
+    width: 56px;
+    height: 56px;
+    margin-top: -12px;   /*to align it with the h1 properly*/
+}
+
+
+h2 img.icon {
+    width: auto;
+    height: 2.5rem;
+    margin-top: -0.25rem;
+}
+
