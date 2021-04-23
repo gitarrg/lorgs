@@ -29,7 +29,8 @@ const CONTAINER = document.querySelector(".player_timelines_container");
 
 
 // handle spell selection
-function select_spell() {
+function select_spell(event) {
+    event.stopImmediatePropagation();
 
     // swap global toggle
     if (SELECTED_SPELL == this.spell_id) {
@@ -104,7 +105,5 @@ function create_single_cast(cast) {
 
 [...ALL_CASTS].map(cast => {
     create_single_cast(cast)
-    cast.onclick = select_spell;
+    cast.addEventListener("mousedown", select_spell);
 });
-
-

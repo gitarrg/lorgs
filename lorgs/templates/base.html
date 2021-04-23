@@ -60,8 +60,6 @@
 <!-- Scripts -->
 {% block scripts %}
 <script>
-
-
 // enable tooltips
 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-toggle="tooltip"]'))
 var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
@@ -73,6 +71,34 @@ var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
 <!-- wowhead -->
 <script>const whTooltips = {colorLinks: true, iconizeLinks: true, renameLinks: false, iconSize: 'small'};</script>
 <script src="https://wow.zamimg.com/widgets/power.js"></script>
+
+
+<script type="text/javascript">
+
+var body = document.body
+var scroll_timer;
+
+function enable_hover_effects() {
+    body.classList.remove('disable-hover')
+}
+
+function disable_hover_effects() {
+    if(!body.classList.contains('disable-hover')) {
+        body.classList.add('disable-hover')
+    }
+}
+
+
+window.addEventListener("scroll", function() {
+    clearTimeout(scroll_timer);
+    disable_hover_effects();
+
+    // timer to enable again after 500ms
+    scroll_timer = setTimeout(enable_hover_effects, 500);
+}, {passive: true});
+
+</script>
+
 
 {% endblock %}
 </body>

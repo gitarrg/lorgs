@@ -53,6 +53,12 @@ img {
 }
 
 
+.disable-hover,
+.disable-hover * {
+    pointer-events: none;
+}
+
+
 /********************************
     02) Bootstrap Edits
 ********************************/
@@ -248,6 +254,7 @@ input#show_settings:checked+label {
 
 
 .player_timeline {
+    user-select: none;
     height: 30px;
     line-height: 28px;
     vertical-align: middle;
@@ -289,7 +296,6 @@ input#show_settings:checked+label {
 .cast_duration {
     position: absolute;
     cursor: pointer;
-    user-select: none;
 }
 
 
@@ -594,6 +600,7 @@ input#show_settings:checked+label {
 *******************************************/
 
 .timeline_cursor {
+    user-select: none;
     position: absolute;
     top: 2px;
     bottom: 2px;
