@@ -144,8 +144,6 @@ document.querySelectorAll(".spell-checkbox-group-header").forEach(group => {
     let group_name = checkbox.dataset.group
 
     checkbox.addEventListener("change", function() {
-        console.log("update group", group_name)
-
         document.querySelectorAll(`.spell-checkbox-group input[data-group=${group_name}]`).forEach(child => {
             child.checked = checkbox.checked;
             update_spell_display(child);

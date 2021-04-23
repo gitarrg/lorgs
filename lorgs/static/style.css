@@ -379,8 +379,8 @@ input#show_settings:checked+label {
 /* selection=active + this is NOT the selected cast */
 .player_timelines_container.selected .cast:not(.selected) {
     z-index: 10;
-    filter: saturate(0.25) blur(0.75px) brightness(0.75);
-    opacity: 0.75;
+    filter: saturate(0.25) brightness(0.75);
+    opacity: 0.5;
 }
 
 

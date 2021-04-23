@@ -82,8 +82,10 @@ class WarcraftlogsClient:
 
         self.headers = {}
 
-        self.cache = JsonCache()
-        # self.connector = aiohttp.TCPConnector(limit_per_host=9999999)
+        if os.getenv("DEBUG"):
+            self.cache = JsonCache("cache_DEBUG.json")
+        else:
+            self.cache = JsonCache()
 
     ##############################
 

@@ -49,7 +49,7 @@ function select_spell(event) {
 };
 
 
-function create_single_cast(cast) {
+async function create_single_cast(cast) {
     // Get dynamic info from Div
     cast.spell_id = cast.dataset.spell_id;
     const casttime = cast.dataset.casttime
@@ -100,10 +100,11 @@ function create_single_cast(cast) {
         div.innerHTML = toMMSS(casttime / 1000);
         cast.append(div)
     }
+
+    // add click-event
+    cast.addEventListener("mousedown", select_spell);
 }
 
 
-[...ALL_CASTS].map(cast => {
-    create_single_cast(cast)
-    cast.addEventListener("mousedown", select_spell);
-});
+const tasks = [...ALL_CASTS].map(cast => {create_single_cast(cast)})
+Promise.all(tasks)

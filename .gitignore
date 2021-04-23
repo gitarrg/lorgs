@@ -7,7 +7,7 @@ __pycache__/
 *.sublime-workspace
 
 _build
-cache.json
+cache*.json
 
 # for ".env", we need this (since its already tracked)
 # >>> git update-index --assume-unchanged .env

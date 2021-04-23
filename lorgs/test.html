@@ -825,7 +825,6 @@ Timeline
 $(".spell-checkbox-group input").click(function() {
     let checked = !$(this).is(':checked');
     let spell_id = $(this).attr("data-spell_id");
-    // console.log("clicked", spell_id, checked)
     $(`.cast[data-spell_id=${spell_id}]`).toggle(!checked)
 });
 
