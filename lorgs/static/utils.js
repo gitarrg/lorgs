@@ -9,3 +9,17 @@ function toMMSS(sec_num) {
     return minutes+':'+seconds;
 }
 
+
+// show/hide an element (aka jquery.. but js)
+function show(element, display=true) {
+    if (display) {
+        element.style.display = "block";
+    } else {
+        element.style.display = "none";
+    }
+}
+
+function hide(element) {
+    show(element, false);
+}
+

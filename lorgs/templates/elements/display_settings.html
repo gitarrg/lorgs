@@ -1,10 +1,9 @@
 <div id="settings_container">
-    <div class="row bg-dark p-1 mr-0 mt-2 rounded border d-flex flex-row" >
+    <div class="bg-dark p-1 mr-0 mt-2 rounded border d-flex flex-row" >
 
         <!-- DISPLAY -->
         <div class="ml-1">
             <h5><u>Display</u></h5>
-
             <div>
                 <input type="checkbox" id="show-spell-duration" checked>
                 <label class="m-0" for="show-spell-duration">show duration</label>
@@ -14,12 +13,6 @@
                 <input type="checkbox" id="show-spell-cooldown" checked>
                 <label class="m-0" for="show-spell-cooldown">show cooldown</label>
             </div>
-
-<!--             <div>
-                <input type="checkbox" id="show-spell-timeline-handle">
-                <label class="m-0" for="show-spell-timeline-handle">show timeline handle</label>
-            </div> -->
-
         </div>
 
         <!-- SPELLS -->
@@ -29,7 +22,7 @@
         <div class="ml-3">
             <!-- Group Header -->
             <div class="spell-checkbox-group-header wow-class-{{spec.class_name_slug}}">
-                <input type="checkbox" id="show-spells-group-{{group_name}}" {{"checked" if group_checked}} data-spell-group={{group_name}}>
+                <input type="checkbox" id="show-spells-group-{{group_name}}" {{"checked" if group_checked}} data-group={{group_name}}>
                 <label class="form-check-label" for="show-spells-group-{{group_name}}">
                     <img class="icon-m rounded wow-class-border-{{spec.class_name_slug}}" src="static/images/specs/{{spec.full_name_slug}}.jpg">
                     {{ spec.name }}
@@ -40,7 +33,7 @@
             {% for spell in group_spells %}
             <div class="ml-2">
                 <div class="spell-checkbox-group wow-class-{{spec.class_name_slug}}">
-                    <input type="checkbox" value="1" id="show-spell-{{spell.spell_id}}" {{"checked" if spell.show else ""}} data-spell-group={{group_name}} data-spell_id={{spell.spell_id}}>
+                    <input type="checkbox" value="1" id="show-spell-{{spell.spell_id}}" {{"checked" if spell.show else ""}} data-group={{group_name}} data-spell_id={{spell.spell_id}}>
                     <label class="form-check-label" for="show-spell-{{spell.spell_id}}">
                         <a href="#" data-wowhead="spell={{spell.spell_id}}" data-wh-rename-link="true"></a>
                     </label>
@@ -55,84 +48,98 @@
 <script type="text/javascript">
 
 
-function hide_hint() {
-    $("#settings_hint").hide();
-}
+////////////////////////////////
+// Settings Hint
+////////////////////////////////
+const SETTINGS_HINT = document.getElementById("settings_hint");
 
-$("#settings_hint").click(hide_hint); // hide on click
+function hide_hint() {
+    hide(SETTINGS_HINT);
+}
+SETTINGS_HINT.onclick = hide_hint; // hide on click
 setTimeout(hide_hint, 10000);  // auto hide after 10sec
 
 
-$("#show_settings").click(function() {
-    let checked = !$(this).is(':checked');
-    $("#settings_container").toggle(!checked)
+////////////////////////////////
+// Settings Options
 
+const SHOW_SETTINGS_BUTTON = document.getElementById("show_settings");
+const SETTINGS_CONTAINER = document.getElementById("settings_container");
+
+
+SHOW_SETTINGS_BUTTON.addEventListener("click", function() {
+    show(SETTINGS_CONTAINER, this.checked);
     hide_hint();
+
 });
 
 
-// show/hide all spell durtion bars
-$("#show-spell-duration").click(function() {
-    let checked = !$(this).is(':checked');
-    $(".cast_duration").toggle(!checked)
-
+// show/hide all spell duration bars
+document.getElementById("show-spell-duration").addEventListener("click", function() {
+    document.querySelectorAll(".cast_duration").forEach(el => {
+        show(el, this.checked)
+    });
 });
 
 // show/hide all spell cooldown bars
-$("#show-spell-cooldown").click(function() {
-    let checked = !$(this).is(':checked');
-    $(".cast_cooldown").toggle(!checked)
-});
-
-// show/hide timeline handles
-$("#show-spell-timeline-handle").click(function() {
-    let checked = !$(this).is(':checked');
-    $(".timeline_cursor").toggle(!checked)
+document.getElementById("show-spell-cooldown").addEventListener("click", function() {
+    document.querySelectorAll(".cast_cooldown").forEach(el => {
+        show(el, this.checked)
+    });
 });
 
 
-function _update_spell_display(checkbox) {
-    let checked = checkbox.is(':checked');
-    let spell_id = checkbox.attr("data-spell_id");
-    $(`.cast[data-spell_id=${spell_id}]`).toggle(checked)
+function update_spell_display(checkbox) {
+    let checked = checkbox.checked;
+    let spell_id = checkbox.dataset.spell_id;
+
+    document.querySelectorAll(`.cast[data-spell_id="${spell_id}"]`).forEach(cast => {
+        show(cast, checked);
+    });
 }
 
-$(".spell-checkbox-group input").click(function() {
-    _update_spell_display($(this))
-});
 
+const SPELL_CHECKBOX_GROUPS = document.querySelectorAll(".spell-checkbox-group")
 
-// re-connect label click to checkbox for spells
-$(".spell-checkbox-group label").click(function() {
-    let input_name = $(this).attr("for");
-    let input = $("#"+input_name);
-    input.click();
-});
+SPELL_CHECKBOX_GROUPS.forEach(group => {
 
+    let checkbox = group.querySelector("input");
+    let label = group.querySelector("label");
 
-function _update_all_spells() {
-    $(".spell-checkbox-group input").each(function(index) {
-        _update_spell_display($(this));
+    // re-connect label click to checkbox for spells
+    label.addEventListener("click", event => {
+        checkbox.checked = !checkbox.checked;
+        update_spell_display(checkbox);
     });
-};
 
-// initial refresh on page load
-$( document ).ready(_update_all_spells);
+    checkbox.addEventListener("change", event => {
+        update_spell_display(checkbox);
+    });
+});
 
 
+// initial refresh
+document.addEventListener('DOMContentLoaded', (event) => {
+    SPELL_CHECKBOX_GROUPS.forEach(group => {
+        let checkbox = group.querySelector("input");
+        update_spell_display(checkbox);
+    });
+});
 
-$(".spell-checkbox-group-header input").click(function() {
+// Group Headers
+document.querySelectorAll(".spell-checkbox-group-header").forEach(group => {
 
-    // Label --> Checkbox
-    let input_name = $(this).attr("for");
-    let checkbox = $("#"+input_name);
+    let checkbox = group.querySelector("input");
+    let group_name = checkbox.dataset.group
 
-    let checked = $(this).is(':checked');
-    let group_name = $(this).attr("data-spell-group");
+    checkbox.addEventListener("change", function() {
+        console.log("update group", group_name)
 
-    let inputs = $(`.spell-checkbox-group input[data-spell-group=${group_name}]`);
-    inputs.prop("checked", checked);
-    _update_all_spells();
+        document.querySelectorAll(`.spell-checkbox-group input[data-group=${group_name}]`).forEach(child => {
+            child.checked = checkbox.checked;
+            update_spell_display(child);
+        });
+    });
 });
 
 </script>

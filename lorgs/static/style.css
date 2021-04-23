@@ -48,6 +48,10 @@ label {
     user-select: none;
 }
 
+img {
+    aspect-ratio: attr(width) / attr(height);
+}
+
 
 /********************************
     02) Bootstrap Edits
@@ -62,40 +66,19 @@ label {
 }
 
 
-
-.rounded-sm {
-    border-radius: 0.125rem;
-}
-
 .tooltip {
     font-size: 1rem;
 }
 
 
-
-.bg-dark-2 {
-    background-color: #484848 !important;
-}
-
-.bg-dark-3 {
-    background-color: #303030 !important;
-}
-
-.inner_shadow-sm {
-   -moz-box-shadow:    0 0 6px #00000080;
-   -webkit-box-shadow: 0 0 6px #00000080;
-   box-shadow:         0 0 6px #00000080;
-}
-
-
 .icon-s {
     width: 1.1rem;
-    height: auto;
+    height: 1.1rem;
 }
 
 .icon-m {
     width: 2rem;
-    height: auto;
+    height: 2rem;
 }
 
 .icon-big {
@@ -147,8 +130,6 @@ a:not(.disabled) .icon-spec:hover,
 
 #settings_container {
     display: none;
-    transition: max-height 2s ease-out;
-    transition: max-height 2s ease-in;
 }
 
 .spell-checkbox-group-header {
@@ -392,7 +373,7 @@ input#show_settings:checked+label {
 /* selection=active + this is NOT the selected cast */
 .player_timelines_container.selected .cast:not(.selected) {
     z-index: 10;
-    filter: saturate(0.25) blur(1px);
+    filter: saturate(0.25) blur(0.75px) brightness(0.75);
     opacity: 0.75;
 }
 
@@ -440,20 +421,6 @@ input#show_settings:checked+label {
     height: 28px;
     margin-top: 1px;
 }
-
-
-/**
-.player_timeline_scroll_y {
-    overflow-y: scroll;
-    max-height: calc(100vh - 241px);
-
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-
-/*.player_timeline_scroll_y::-webkit-scrollbar {
-  display: none;
-}*/
 
 
 /********************************
@@ -582,6 +549,7 @@ input#show_settings:checked+label {
 *********************************/
 
 .timeline_ruler {
+    user-select: none;
     height: 32px;
     display: flex;
     flex-direction: row;

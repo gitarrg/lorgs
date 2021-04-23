@@ -2,7 +2,7 @@
 <script src="spell_db.js"></script>
 <script type="text/javascript">
 
-$( document ).ready(function(){
+document.addEventListener('DOMContentLoaded', (event) => {
 
     // Timeline Ruler Logic
     const cursor = document.querySelector(".timeline_cursor");
@@ -13,11 +13,13 @@ $( document ).ready(function(){
 
     function cursor_drag_start(e) {
         cursor_clicked = true;
-        e.preventDefault();
+        // e.preventDefault();
         cursor.classList.add("active");
         cursor_drag_start_x = e.clientX; // store initial offset
         document.onmousemove = cursor_drag_move;
         document.onmouseup  = cursor_drag_stop;
+
+         {passive: true}
     }
 
     function cursor_drag_move(e) {
@@ -39,11 +41,7 @@ $( document ).ready(function(){
         cursor.classList.remove("active");
     }
 
-    // cursor.onmousedown = cursor_drag_start;
-    cursor.addEventListener("mousedown", e => {
-        cursor_drag_start(e);
-    });
-
+    cursor.addEventListener("mousedown", cursor_drag_start, {passive: true});
 
     // Horizontal Slider
     const slider = document.querySelector(".player_timelines_container");
@@ -51,37 +49,39 @@ $( document ).ready(function(){
     let startX;
     let scrollLeft;
 
-    slider.addEventListener("mousedown", e => {
+
+    function scroll_start(e) {
         if (cursor_clicked) return;
         isDown = true;
         // slider.classList.add("active");
         startX = e.pageX - slider.offsetLeft;
         scrollLeft = slider.scrollLeft;
-    });
+    }
 
-    slider.addEventListener("mouseleave", () => {
+    function scroll_move(e) {
         isDown = false;
-        // slider.classList.remove("active");
-    });
+    }
 
-    slider.addEventListener("mouseup", () => {
+    function scroll_stop(e) {
         isDown = false;
-        // slider.classList.remove("active");
-    });
+    }
+
+    slider.addEventListener("mousedown", scroll_start, {passive: true});
+    slider.addEventListener("mouseleave", scroll_stop, {passive: true});
+    slider.addEventListener("mouseup", scroll_stop, {passive: true});
 
     slider.addEventListener("mousemove", e => {
         if (!isDown) return;
-        e.preventDefault();
         const x = e.pageX - slider.offsetLeft;
         const walk = x - startX;
         slider.scrollLeft = scrollLeft - walk;
-    });
+    }, {passive: true});
 
     slider.addEventListener("mousewheel", e => {
         if (!e.shiftKey) return;
         e.preventDefault();
         slider.scrollLeft += e.deltaY;
-    });
+    }, {passive: true});
 
 
     // Vertical Scrolls
@@ -96,29 +96,6 @@ $( document ).ready(function(){
             element2.scrollTop(element1.scrollTop())
     })
     }
-
-
-    // const div_a = $(".player_names_container .player_timeline_scroll_y");
-    // const div_b = $(".player_timelines_container .player_timeline_scroll_y");
-    // syncScroll(div_a, div_b)
-    // syncScroll(div_b, div_a)
-
-    /*
-    var lines = document.querySelectorAll('.timeline_cursor');
-    document.querySelectorAll(".timeline_cursor_container").forEach(item => {
-        item.addEventListener("mousemove", event => {
-
-            // var x = event.pageX - item.offset().left;
-            var rect = item.getBoundingClientRect()
-            var x = event.clientX - rect.left; //x position within the element.
-            // var y = evt.pageY - $(this).offset().top;
-            lines.forEach(function(line) {
-                line.style.left = (x+10) + "px";
-            }) // for each line
-        }) // addEventListener
-    }) // for each
-    */
 });
-
 </script>
 {% endblock %}

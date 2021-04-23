@@ -42,7 +42,7 @@ function select_spell() {
     CONTAINER.classList.toggle("selected", SELECTED_SPELL != null);
 
     // update all casts
-    ALL_CASTS.forEach(cast => {
+    [...ALL_CASTS].map(cast => {
         cast.classList.toggle("selected", SELECTED_SPELL == cast.spell_id);
     });
 };
@@ -50,7 +50,8 @@ function select_spell() {
 
 function create_single_cast(cast) {
     // Get dynamic info from Div
-    cast.spell_id = $(cast).attr("data-spell_id");
+    cast.spell_id = cast.dataset.spell_id;
+    const casttime = cast.dataset.casttime
 
     // Get static info from "DB"
     const spell_data = SPELLS[cast.spell_id];
@@ -61,7 +62,6 @@ function create_single_cast(cast) {
     const group = spell_data.g;
 
     // time when the spell was cast
-    const casttime = $(cast).attr("data-cast-time");
     cast.style.left = (casttime/1000 * SCALE) + "px";
 
     if (cooldown > 0) {
@@ -102,14 +102,9 @@ function create_single_cast(cast) {
 }
 
 
-
-$( document ).ready(function(){
-
-    ALL_CASTS.forEach(cast => {
-        create_single_cast(cast)
-        cast.onclick = select_spell;
-    });
+[...ALL_CASTS].map(cast => {
+    create_single_cast(cast)
+    cast.onclick = select_spell;
 });
-
 
 
