@@ -102,7 +102,7 @@ DEMONHUNTER_VENGEANCE = DEMONHUNTER.add_spec(name="Vengeance", role=TANK)
 
 
 OTHER = m.WoWClass(name="Other")
-OTHER_POTION = OTHER.add_spec(name="Potion", role="other")
+OTHER_POTION = OTHER.add_spec(name="Potions", role="other")
 OTHER_TRINKET = OTHER.add_spec(name="Trinkets", role="other")
 
 

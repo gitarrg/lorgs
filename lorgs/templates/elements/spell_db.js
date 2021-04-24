@@ -5,7 +5,7 @@
 
 var SPELLS = {};
 {% for s in wow_data.SPELLS.values() %}
-SPELLS[{{s.spell_id}}] = {"g": "{{s.group.class_name_slug}}", "cd": {{s.cooldown}}, "d": {{s.duration}}, "c": "{{s.color or ''}}", "i": "{{s.icon}}"}
+SPELLS[{{s.spell_id}}] = {"g": "{{s.group.class_name_slug}}", "cd": {{s.cooldown}}, "d": {{s.duration}}, "c": "{{s.color or ''}}", "i": "{{s.icon}}", "s": {{"true" if s.show else "false"}} }
 {% endfor %}
 
 
@@ -61,6 +61,10 @@ async function create_single_cast(cast) {
     const color = spell_data.c;
     const icon = spell_data.i;
     const group = spell_data.g;
+    const show_ = spell_data.s;
+
+    // set initial visibility
+    show(cast, show_)
 
     // time when the spell was cast
     cast.style.left = (casttime/1000 * SCALE) + "px";

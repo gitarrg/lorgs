@@ -1,0 +1,135 @@
+
+<div class="settings_bar d-flex flex-row align-items-end">
+
+
+    <div class="ml-auto mr-2">
+
+        <small class="clear-both text-muted">Display</small>
+
+        <div class="bg-dark p-1 rounded border">
+            <div id="settings_button_casttime" class="button icon-s rounded border-white fas fa-clock" data-toggle="tooltip" title="cast time"></div>
+            <div id="settings_button_duration" class="button icon-s rounded border-white fas fa-stream" data-toggle="tooltip" title="active duration"></div>
+            <div id="settings_button_cooldown" class="button icon-s rounded border-white fas fa-hourglass" data-toggle="tooltip" title="cooldown"></div>
+        </div>
+    </div>
+
+
+    {% for spec, group_spells in all_spells|groupby("group") %}
+    {% set group_name = spec.short_name %}
+    <div class="{{"mr-2" if not loop.last}}">
+        {% set group_checked = spec.class_name_slug != "other" %}
+
+        <div class="group_header {{"disabled" if not group_checked}}" data-spell_group={{group_name}}>
+        {#
+            <img class="icon-xs rounded wow-class-border-{{spec.class_name_slug}} clear-both" src="static/images/specs/{{spec.full_name_slug}}.jpg">
+        #}
+            <small class="wow-class-{{spec.class_name_slug}} clear-both">{{group_name}}</small >
+        </div>
+
+        <div class="bg-dark p-1 rounded border">
+            {% for spell in group_spells %}
+            <a href="#a" data-wowhead="spell={{spell.spell_id}}">
+                <img class="button icon-s rounded wow-class-border-{{spec.class_name_slug}} {{"disabled" if not spell.show}}" src="https://wow.zamimg.com/images/wow/icons/medium/{{spell.icon}}" data-toggle="tooltip" data-spell_id={{spell.spell_id}} data-spell_group={{group_name}}>
+            </a>
+            {% endfor %}
+        </div>
+
+
+    </div>
+
+{% endfor %}
+</div>
+
+<script type="text/javascript">
+
+// show/hide all spell cast times
+document.getElementById("settings_button_casttime").addEventListener("click", function() {
+    this.classList.toggle("disabled")
+    const enabled = !this.classList.contains("disabled")
+
+    document.querySelectorAll(".cast_text").forEach(el => {
+        show(el, enabled)
+    });
+});
+
+// show/hide all spell duration bars
+document.getElementById("settings_button_duration").addEventListener("click", function() {
+    this.classList.toggle("disabled")
+    const enabled = !this.classList.contains("disabled")
+
+    document.querySelectorAll(".cast_duration").forEach(el => {
+        show(el, enabled)
+    });
+});
+
+// show/hide all spell cooldown bars
+document.getElementById("settings_button_cooldown").addEventListener("click", function() {
+    this.classList.toggle("disabled")
+    const enabled = !this.classList.contains("disabled")
+
+    document.querySelectorAll(".cast_cooldown").forEach(el => {
+        show(el, enabled)
+    });
+});
+
+function show_casts(spell_id, enabled) {
+    document.querySelectorAll(`.cast[data-spell_id="${spell_id}"]`).forEach(cast => {
+        show(cast, enabled);
+    });
+}
+
+
+// Hack: using the old settings
+document.querySelectorAll(".settings_bar .button[data-spell_id]").forEach(item => {
+
+    const spell_id = item.dataset.spell_id;
+    const spell_group = item.dataset.spell_group;
+    const group = document.querySelector(`.group_header[data-spell_group="${spell_group}"`);
+
+    item.addEventListener("click", event => {
+        item.classList.toggle("disabled")
+        const enabled = !item.classList.contains("disabled")
+
+        // show the cast
+        show_casts(spell_id, enabled);
+
+        // update group status
+        if (enabled) {
+            group.classList.remove("disabled");
+        }
+
+    });
+});
+
+/////////////////////////
+// Header Clicks
+//
+
+document.querySelectorAll(".group_header").forEach(item => {
+
+    const spell_group = item.dataset.spell_group;
+    const spell_buttons = document.querySelectorAll(`.settings_bar .button[data-spell_group="${spell_group}"]`);
+
+    item.addEventListener("click", event => {
+
+        console.log("header clicked", spell_group)
+
+        item.classList.toggle("disabled")
+        const enabled = !item.classList.contains("disabled")
+
+        spell_buttons.forEach(button => {
+            button.classList.toggle("disabled", !enabled);
+            show_casts(button.dataset.spell_id, enabled);
+        });
+    });
+
+});
+
+
+
+
+
+</script>
+
+
+

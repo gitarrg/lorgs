@@ -6,75 +6,49 @@ Lorgs: {{boss.name}}
 
 
 {% block header %}
-<div class="row mb-3 mt-3">
+<div class="mb-2 mt-3">
+    <div class="row">
 
     <!-- HEADER -->
-    <div class="col">
-        <h1>
-            <img class="icon-big rounded shadow border" src="static/images/bosses/castle-nathria/{{boss.name_slug}}.jpg" alt="{{boss.name}}" target="_blank">
-            {{boss.name}}
-            vs
-            {% for spec in comp.specs %}
-                <img class="icon-big rounded shadow wow-class-border-{{spec.class_name_slug}}" src="static/images/specs/{{spec.full_name_slug}}.jpg" alt="{{group }}">
-                <span class="wow-class-{{spec.class_name_slug}}">{{spec.short_name}}</span>
-                {% if not loop.last %}
-                    <span> </span>
-                {% endif %}
-            {% endfor %}
-        </h1>
-    </div>
+    <h1 class="col">
+        <img class="icon-l rounded shadow border" src="static/images/bosses/castle-nathria/{{boss.name_slug}}.jpg" alt="{{boss.name}}" target="_blank">
+        {{boss.name}}
+        vs
+        {% for spec in comp.specs %}
+            <img class="icon-l rounded shadow wow-class-border-{{spec.class_name_slug}}" src="static/images/specs/{{spec.full_name_slug}}.jpg" alt="{{group }}">
+            <span class="wow-class-{{spec.class_name_slug}}">{{spec.short_name}}</span>
+            {% if not loop.last %}
+                <span> </span>
+            {% endif %}
+        {% endfor %}
+    </h1>
 
-    <div class="col d-flex flex-column align-items-end">
-        <div>
-            <div class="flex-row d-flex mb-1">
-                <!-- Settings -->
-                <div class="ml-auto">
-                    <div class="p-1 bg-dark border ml-auto rounded">
-                        <input type="checkbox" id="show_settings">
-                        <label for="show_settings" data-toggle="tooltip" title="open settings" class="m-0">
-                            <i class="fas fa-tools fa-2x"></i>
-                        </label>
-                    </div>
+    <div class="col ml-auto d-flex flex-row align-items-end">
 
-                    <div style="text-align: end;" class="mt-2 bg-info rounded border p-2 shadow" id=settings_hint>
-                        <h5>click here to show/hide spells <i class="fas fa-hand-point-up mx-1"></i></h5>
-                    </div>
+        <!-- SETTINGS v2 -->
+        <div class="ml-auto">
+        {% include "elements/settings_bar.html" %}
+        </div>
 
-                </div>
-
-                <!-- Home -->
-                <div class="ml-2">
-                    <div class="p-1 bg-dark border ml-auto rounded">
-                        <a href="./" class="ranking-nav-home-icon" data-toggle="tooltip" title="home">
-                            <i class="fas fa-home fa-2x"></i>
-                        </a>
-                    </div>
-                </div>
+        <!-- Home -->
+        <div class="ml-2 settings_bar">
+            <small class="clear-both text-muted"></small>
+            <div class="p-1 bg-dark border rounded">
+                <a href="./" id=home_button class="button icon-s rounded fas fa-home" data-toggle="tooltip" title="click here or home"></a>
             </div>
         </div>
     </div>
 
 
+    </div>
 </div>
-
 {% endblock %}
 
 
+
 {% block content %}
-<!-- SETTINGS -->
-<div class="row">
-    <div class="col px-0">
-        <div class="d-flex flex-row">
-            <div class="ml-auto">
-                {% include "elements/display_settings.html" %}
-            </div>
-        </div>
-    </div>
-</div>
-
-
 <!-- TIMELINES -->
-<div class="bg-dark mt-3 p-2 rounded border" id=timeline>
+<div class="bg-dark p-2 rounded border" id=timeline>
 
         <!-- Player Names -->
         <div class="player_names_container float-left">

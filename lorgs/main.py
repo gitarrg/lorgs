@@ -106,8 +106,14 @@ async def generate_ranking_report(boss, spec):
     data = {}
     data["boss"] = boss
     data["spec"] = spec
-    data["all_spells"] = spec.spells.values()
     data["fights"] = fights
+
+    # get a list of all used spells
+    used_spells = [p.spells_used for f in fights for p in f.players]
+    used_spells = utils.flatten(used_spells)
+    used_spells = list(set(used_spells))
+    data["all_spells"] = used_spells
+    # data["all_spells"] = spec.spells.values()
 
     longest_fight = sorted(fights, key=lambda f: f.duration)[-1]
     data["timeline_duration"] = longest_fight.duration
@@ -268,7 +274,8 @@ async def main():
         logger.info("loaded cache")
 
         # auth once
-        await WCL_CLIENT.update_auth_token()
+        if not DEBUG:
+            await WCL_CLIENT.update_auth_token()
         logger.info("updated auth")
 
         await WCL_CLIENT.load_spell_icons(wow_data.ALL_SPELLS)
@@ -285,8 +292,9 @@ async def main():
         logger.info("closing...")
 
     finally:
-        logger.info("SAVING Cache!")
-        await WCL_CLIENT.cache.save()
+        if not DEBUG:
+            logger.info("SAVING Cache!")
+            await WCL_CLIENT.cache.save()
 
 
 if __name__ == '__main__':
