@@ -41,6 +41,7 @@
     // button specific
     .button {
 
+
         &.disabled {
             box-shadow: inset 1px 1px 2px #000000;
         }
@@ -49,6 +50,11 @@
             border: 1px solid white;
             transform: scale(1.2);
         }
+
+        &:not(:hover) {
+            transition: transform 0.5s 0.1s;
+        }
+
     }
 
     .fas {

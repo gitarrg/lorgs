@@ -9,11 +9,18 @@
     border: 1px solid black;
 }
 
+
 a:not(.disabled) .icon-spec:hover,
 .ranking-nav a:not(.disabled):hover .icon-spec
 {
     transform: scale(1.2);
 }
+
+a:not(.disabled) .icon-spec:not(:hover) {
+    transition: transform 0.5s 0.1s;
+}
+
+
 
 
 .disabled .icon-spec {
