@@ -1,6 +1,0 @@
-aiofiles
-aiohttp
-Jinja2
-python-dotenv
-
-libsass

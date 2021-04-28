@@ -16,5 +16,10 @@
 		{
 			"path": "."
 		}
-	]
+	],
+
+	"binary_file_patterns":
+	[
+		"cache.json"
+	],
 }

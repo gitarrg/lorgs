@@ -59,9 +59,6 @@ async def render(template_name, path, data=None):
     data["wow_data"] = wow_data
     data["GOOGLE_ANALYTICS_ID"] = GOOGLE_ANALYTICS_ID
 
-    # 250ms = 1px
-    data["TIMESCALE"] = 250
-
     dirpath = os.path.dirname(path)
     if not os.path.exists(dirpath):
         logger.info("creating folder: %s", dirpath)

@@ -1,0 +1,51 @@
+version: '3.7'
+services:
+
+
+  page:
+    build: .
+    # command: flask run --host=0.0.0.0
+    # command: gunicorn
+    #   --bind 0.0.0.0:5000
+    #   --worker-tmp-dir /dev/shm
+    #   --workers=1
+    #   "tvcSkyhooks.app:create_app()"
+    ports:
+      - "5010:5000"
+      # SQLALCHEMY_DATABASE_URI: sqlite://
+    environment:
+
+      SQLALCHEMY_DATABASE_URI: mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db/${MYSQL_DATABASE}
+
+      # dev env
+      FLASK_APP: "lorgs/app:create_app()"
+      FLASK_ENV: development
+      DEBUG: "true"
+
+    volumes:
+      - ./lorgs:/app/lorgs
+
+
+  db:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+    # volumes:
+    #   - db-data:/var/lib/mysql/data
+
+    ports:
+    - 3308:3306
+
+  adminer:  # DB UI
+    image: adminer
+    ports:
+    - 5021:8080
+    depends_on:
+    - db
+
+# volumes:
+#   db-data:

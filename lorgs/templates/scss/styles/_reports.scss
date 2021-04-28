@@ -1,0 +1,56 @@
+/* Styles only used on the report's Page
+
+*/
+
+
+.settings_display {
+    user-select: none;
+}
+
+.settings_display_player,
+.settings_display_pull,
+#settings_display_pull_header {
+
+    cursor: pointer;
+    border: 1px solid transparent;
+
+    &.disabled {
+        opacity: 30%;
+        color: white;
+    }
+
+    &:hover {
+        border: 1px solid transparent;
+
+        color: white !important;
+        img {
+            border: 1px solid white;
+        }
+    }
+}
+
+.settings_display_pull {
+
+    background: #525252;
+    border: 1px solid black;
+
+    &:hover {
+        border: 1px solid white;
+    }
+
+    &.disabled {
+        border: 1px solid transparent;
+        filter: blur(0.5px);
+    }
+
+}
+
+
+.fight_percentage_fg {
+    height: 100%;
+}
+
+.fight_percentage_bg {
+    height: 4px;
+    background: rgba(black, 0.2);
+}

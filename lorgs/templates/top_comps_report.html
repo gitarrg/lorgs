@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}
+Lorgs: {{boss.name}}
+{% endblock %}
+
+
+{% block header %}
+<div class="mb-2 mt-3">
+    <div class="row">
+
+    <!-- HEADER -->
+    <h1 class="col">
+        <img class="icon-l rounded shadow border" src="static/images/bosses/castle-nathria/{{boss.name_slug}}.jpg" alt="{{boss.name}}" target="_blank">
+        {{boss.name}}
+        vs
+        {% for spec in comp.specs %}
+            <img class="icon-l rounded shadow wow-class-border-{{spec.class_name_slug}}" src="static/images/specs/{{spec.full_name_slug}}.jpg" alt="{{group }}">
+            <span class="wow-class-{{spec.class_name_slug}}">{{spec.short_name}}</span>
+            {% if not loop.last %}
+                <span> </span>
+            {% endif %}
+        {% endfor %}
+    </h1>
+
+    <div class="col ml-auto d-flex flex-row align-items-end">
+
+        <!-- SETTINGS v2 -->
+        <div class="ml-auto">
+        {% include "elements/settings_bar.html" %}
+        </div>
+
+        <!-- Home -->
+        <div class="ml-2 settings_bar">
+            <small class="clear-both text-muted"></small>
+            <div class="p-1 bg-dark border rounded">
+                <a href="./" id=home_button class="button icon-s rounded fas fa-home" data-toggle="tooltip" title="click here or home"></a>
+            </div>
+        </div>
+    </div>
+
+
+    </div>
+</div>
+{% endblock %}
+
+
+
+{% block content %}
+<!-- TIMELINES -->
+<div class="bg-dark p-2 rounded border" id=timeline>
+
+        <!-- Player Names -->
+        <div class="player_names_container float-left">
+
+        {% for fight in fights %}
+            {% set report = fight.report %}
+
+            <div class="guild_name">
+                <a href="{{fight.report_url}}" target="_blank" data-toggle="tooltip" title="&lt;{{report.guild}}&gt; {{report.realm}} ({{report.region}})">&lt;{{report.guild}}&gt;</a>
+            </div>
+
+            {% set i = -1 %}
+            {% for player in fight.players if player.casts %}
+                {% include "elements/player_name.html" %}
+            {% endfor %}
+        {% endfor %}
+
+        </div>
+
+
+        <div class="player_timelines_container">
+            <div class="timeline_cursor" style="left: 10px;"><div class="timeline_cursor_handle">0:00</div></div>
+            {% for fight in fights %}
+
+                {% set timeline_duration = fight.duration %}
+                {% include "elements/timeline_ruler.html" %}
+
+                {% for player in fight.players if player.casts %}
+                    {% set inline_killtime=loop.first %}
+                    {% include "elements/player_timeline.html" %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+
+        <div style="clear: both"></div>
+
+</div>
+
+
+{% endblock %}
+
+
+
+<!-- Content Scripts -->
+{% block scripts %}
+{{ super() }}
+{% include "elements/player_timeline_script.html" %}
+{% endblock %}

@@ -33,20 +33,20 @@
 
         <div class="bg-dark rounded border p-2">
             <table>
-                {% for role in wow_data.ROLES %}
+                {% for role in roles %}
                 <tr>
-                    <td><img class="icon-m rounded border border-black" src="static/images/roles/{{role.name|lower}}.jpg"></td>
+                    <td><img class="icon-m rounded border border-black" src="{{role.img_path}}"></td>
                     <td style="width: 8rem;margin-right: 2rem"><span>{{role.name}}:</span></td>
 
                     <td>
                         {% for spec in role.specs %}
                         <div class="parse_spec_link">
                             {% if spec.supported %}
-                            <a href="rankings_{{spec.full_name_slug}}_{{boss.name_slug}}.html">
+                            <a href="{{url_for('ui.spec_ranking', spec_slug=spec.full_name_slug, boss_slug=boss.name_slug)}}" data-toggle="tooltip" title="{{spec.full_name}}">
                             {% else %}
-                            <a class="disabled" href="#">
+                            <a class="disabled" href="#" data-toggle="tooltip" title="{{spec.full_name}} (not supported yet)">
                             {% endif %}
-                                <img class="icon-spec icon-m rounded wow-class-border-{{spec.class_name_slug}}" src="static/images/specs/{{spec.full_name_slug}}.jpg" alt="{{spec.full_name}}" data-toggle="tooltip" title="{{spec.full_name}}">
+                                <img class="icon-spec icon-m rounded wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.img_path}}" alt="{{spec.full_name}}" >
                             </a>
                         </div>
                         {% endfor %}
@@ -61,6 +61,7 @@
 
         <div class="mb-3" style="clear: both"></div>
 
+        {#
         <h3>Top Reports by Comp:</h3>
 
         <div class="bg-dark rounded border p-2">
@@ -92,28 +93,37 @@
                 {% endfor %}
             </table>
         </div>
+        #}
 
+        <h3>Analyse Custom Report:</h3>
 
+        <div class="bg-dark rounded border p-2">
 
-    </div>
+            <form action="" method="post" novalidate class="d-flex">
+                {{ form.hidden_tag() }}
 
+                <div class="input-group has-validation">
+                    <input class="flex-grow-1 form-control {{'is-invalid' if form.report_link.errors}}" id="report_link" name="report_link" placeholder="https://www.warcraftlogs.com/reports/..." required type="url" aria-describedby="report_link_erors">
+                    <button class="btn btn-primary ml-2" id="load_report" name="load_report" type="submit"><i class="fas fa-play mr-2"></i>load</button>
 
+                    {% for error in form.report_link.errors %}
+                        <div id=report_link_erors class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
 
+            </form>
 
-</div>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
 
-<div class="row p-2 mt-5 ml-5">
-
-
-
-    <!-- Parses -->
-    <div class="col-8">
-
-    </div>
-
-    <div class="col-3">&nbsp;</div>
-
-    <div class="col-8 mt-3">
+        </div>
 
     </div>
 </div>

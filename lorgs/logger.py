@@ -1,4 +1,5 @@
 """Define and setup Logger-Instances."""
+import os
 import logging
 import datetime
 
@@ -25,12 +26,10 @@ logger.addHandler(handler)
 
 
 
-logger.setLevel(logging.INFO)
-
-# logger.setLevel(logging.DEBUG)
-"""
 if os.getenv("DEBUG"):
     logger.setLevel(logging.DEBUG)
 else:
     logger.setLevel(logging.INFO)
 """
+"""
+# logger.setLevel(logging.DEBUG)

@@ -21,15 +21,15 @@
 
         <div class="group_header {{"disabled" if not group_checked}}" data-spell_group={{group_name}}>
         {#
-            <img class="icon-xs rounded wow-class-border-{{spec.class_name_slug}} clear-both" src="static/images/specs/{{spec.full_name_slug}}.jpg">
+            <img class="icon-xs rounded wow-class-border-{{spec.wow_class.name_slug}} clear-both" src="static/images/specs/{{spec.full_name_slug}}.jpg">
         #}
-            <small class="wow-class-{{spec.class_name_slug}} clear-both">{{group_name}}</small >
+            <small class="wow-class-{{spec.wow_class.name_slug}} clear-both">{{group_name}}</small >
         </div>
 
         <div class="bg-dark p-1 rounded border">
             {% for spell in group_spells %}
             <a href="#a" data-wowhead="spell={{spell.spell_id}}">
-                <img class="button icon-s rounded wow-class-border-{{spec.class_name_slug}} {{"disabled" if not spell.show}}" src="https://wow.zamimg.com/images/wow/icons/medium/{{spell.icon}}" data-toggle="tooltip" data-spell_id={{spell.spell_id}} data-spell_group={{group_name}}>
+                <img class="button icon-s rounded wow-class-border-{{spec.wow_class.name_slug}} {{"disabled" if not spell.show}}" src="https://wow.zamimg.com/images/wow/icons/medium/{{spell.icon}}" data-toggle="tooltip" data-spell_id={{spell.spell_id}} data-spell_group={{group_name}}>
             </a>
             {% endfor %}
         </div>

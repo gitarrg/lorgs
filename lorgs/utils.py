@@ -1,7 +1,9 @@
 
 
+from functools import wraps
 import itertools
 import datetime
+import re
 
 
 def chunks(lst, n):
@@ -28,11 +30,11 @@ def format_big_number(num):
     return '%.2f%s' % (num, ['', 'k', 'm', 'g', 't', 'p'][magnitude])
 
 
-def slug(text):
+def slug(text, space=""):
     text = text.lower()
-    text = text.replace(" ", "")
     text = text.replace("'", "")
     text = text.replace("-", "")
+    text = text.replace(" ", space)
     return text
 
 
@@ -43,3 +45,15 @@ def flatten(l):
     """
     return list(itertools.chain.from_iterable(l))
 
+
+def shrink_text(text):
+    return re.sub(r"\s+", " ", text)
+
+
+def as_list(func):
+    """Wrap a Generator to return a list."""
+    @wraps(func)
+    def wrapped(*args, **kwargs):
+        return list(func(*args, **kwargs))
+
+    return wrapped

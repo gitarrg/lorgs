@@ -4,7 +4,7 @@
 
 
 var SPELLS = {};
-{% for s in wow_data.SPELLS.values() %}
+{% for s in spells %}
 SPELLS[{{s.spell_id}}] = {"g": "{{s.group.class_name_slug}}", "cd": {{s.cooldown}}, "d": {{s.duration}}, "c": "{{s.color or ''}}", "i": "{{s.icon}}", "s": {{"true" if s.show else "false"}} }
 {% endfor %}
 

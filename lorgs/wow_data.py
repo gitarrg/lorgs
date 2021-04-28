@@ -452,3 +452,4 @@ for spec in SPECS:
 SPELLS = {spell_id: spell for spec in SPECS for spell_id, spell in spec.all_spells.items()}
 
 ALL_SPELLS = utils.flatten(spec.spells.values() for spec in SPECS)
+

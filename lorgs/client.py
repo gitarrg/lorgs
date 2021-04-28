@@ -10,7 +10,9 @@ import aiofiles
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import models
+from lorgs import utils
 from lorgs.logger import logger
+from lorgs.db import db
 
 
 def with_semaphore(limit=25):
@@ -73,6 +75,29 @@ class WarcraftlogsClient:
     URL_API = "https://www.warcraftlogs.com/api/v2/client"
     URL_AUTH = "https://www.warcraftlogs.com/oauth/token"
 
+    _instance = None
+    # <WarcraftlogsClient> or None: reference used to provide a singelton interface.
+
+    @classmethod
+    def get_instance(cls, *args, **kwargs):
+        """Get an instance of the Client.
+
+        This is a singleton-style wrapper,
+        which will return an existing instance, if there is one,
+        or create a new instance otherwise.
+
+        Args:
+            *args, **kwargs passed to the __init__
+
+        Returns:
+            <WarcraftlogsClient> instance.
+
+        """
+        if cls._instance is None:
+            logger.debug("creating new WarcraftlogsClient")
+            cls._instance = cls(*args, **kwargs)
+        return cls._instance
+
     def __init__(self, client_id="", client_secret=""):
         super(WarcraftlogsClient, self).__init__()
 
@@ -87,7 +112,9 @@ class WarcraftlogsClient:
         else:
             self.cache = JsonCache()
 
-    ##############################
+    ################################
+    #   Connection
+    #
 
     async def update_auth_token(self):
         """Request a new Auth Token from Warcraftlogs."""
@@ -141,7 +168,6 @@ class WarcraftlogsClient:
                 # ----> it stops..
                 # "You do not have permission to view this report"
                 # TODO: figure out how to skip those reports..
-                """
                 if result.get("errors"):
                     msg = ""
                     for error in result.get("errors"):
@@ -149,12 +175,21 @@ class WarcraftlogsClient:
                         print(query)
                     raise ValueError(msg)
                 """
+                """
                 data = result.get("data", {})
 
                 if usecache:
                     self.cache[query] = data
 
                 return data
+
+    async def multiquery(self, queries):
+
+        queries = [f"data{i}: {q}" for i, q in enumerate(queries)]
+        query = "\n".join(queries)
+
+        result = await self.query(query)
+        return [result.get(f"data{i}") for i, _ in enumerate(queries)]
 
     async def get_points_left(self):
         query = """
@@ -170,6 +205,33 @@ class WarcraftlogsClient:
         return info.get("limitPerHour", 0) - info.get("pointsSpentThisHour", 0)
 
     ##############################
+
+    async def load_spell_icons(self, spells):
+        # Build query
+        ids = [spell.spell_id for spell in spells]
+        ids = set(ids)
+        queries = [f"spell_{i}: ability(id: {i}) {{name, icon}}" for i in ids]
+        queries = "\n".join(queries)
+        query = f"""
+        gameData
+        {{
+            {queries}
+        }}
+        """
+        # execute query
+        data = await self.query(query)
+        data = data.get("gameData", {})
+
+        # attach data to spells
+        for spell in spells:
+            key = f"spell_{spell.spell_id}"
+            spell_info = data.get(key)
+            if not spell_info:
+                logger.warning("No Spell Info for: %s", spell.spell_id)
+                continue
+
+            spell.spell_name = spell.spell_name or spell_info.get("name")
+            spell.icon = spell.icon or spell_info.get("icon") # keep existing ones (or manually overwritten)
 
     async def fetch_classids(self, wow_classes):
 
@@ -229,18 +291,55 @@ class WarcraftlogsClient:
             fight_data = data.get(fight_name)
             fight._process_query_data(fight_data)
 
-    async def get_top_ranks(self, encounter, spec, metric="", difficulty=5):
+    async def _char_rankings_get_source_ids(self, rankings):
+        """Fetch and add the source_id's for ranking data."""
+        query = ""
+        for i, ranking_data in enumerate(rankings):
+            report_data = ranking_data.get("report", {})
+            report_id = report_data.get("code")
+            player_class = ranking_data.get("class")
+
+            query += f"""\
+            data{i}: reportData
+            {{
+                report(code: "{report_id}")
+                {{
+                    masterData
+                    {{
+                        actors(type: "Player", subType: "{player_class}")
+                        {{
+                            name
+                            id
+                        }}
+                    }}
+                }}
+            }}
+            """
+
+        # query
+        actor_data = await self.query(query)
+
+        # process data
+        for i, ranking_data in enumerate(rankings):
+            report_data = actor_data.get(f"data{i}")
+            master_data = report_data.get("report", {}).get("masterData", {})
+            for actor in master_data.get("actors", []):
+                actor_name = actor.get("name")
+                if actor_name == ranking_data["name"]:
+                    ranking_data["source_id"] = actor.get("id", -1)
+                    break
+
+    async def get_rankings(self, encounter, spec, difficulty=5, limit=0):
         """Get Top Ranks for a given encounter and spec."""
-        metric = metric or spec.metric # use given metric. otherwise use spec default
         query = f"""\
         worldData
         {{
-            encounter(id: {encounter})
+            encounter(id: {encounter.boss_id})
             {{
                 characterRankings(
-                    className: "{spec.class_.name_slug_cap}",
+                    className: "{spec.wow_class.name_slug_cap}",
                     specName: "{spec.name_slug_cap}",
-                    metric: {metric},
+                    metric: {spec.role.metric},
                     includeCombatantInfo: false,
                     serverRegion: "EU",
                 )
@@ -249,11 +348,14 @@ class WarcraftlogsClient:
         """
         data = await self.query(query)
         data = data.get("worldData", {}).get("encounter", {}).get("characterRankings", {})
+
         rankings = data.get("rankings", [])
+        if limit:
+            rankings = rankings[:limit]
 
-        spell_ids = ",".join(str(s) for s in spec.all_spells.keys())
+        await self._char_rankings_get_source_ids(rankings)
 
-        fights = []
+        reports = []
         for ranking_data in rankings:
             report_data = ranking_data.get("report", {})
 
@@ -261,33 +363,36 @@ class WarcraftlogsClient:
             if ranking_data.get("hidden"):
                 continue
 
-            # skip asian reports (sorry)
-            # server_region = ranking_data.get("server", {}).get("region", "")
-            # if server_region not in ("EU", "US"):
-            #     continue
-
-            fight_start_time = ranking_data.get("startTime", 0) - report_data.get("startTime", 0)
-            fight_end_time = fight_start_time + ranking_data.get("duration", 0)
-
-            # build filter
-            player_name = ranking_data["name"]
-
-            filter_expression = f"ability.id in ({spell_ids}) and source.name='{player_name}'"
-            fight = models.Fight(
-                report_id=report_data.get("code"),
-                fight_id=report_data.get("fightID"),
-                start_time=fight_start_time,
-                end_time=fight_end_time,
-                filter_expression=filter_expression
+            # Report
+            report = models.Report.get_or_create(
+                report_id=report_data.get("code")
             )
 
-            player = models.Player(name=player_name, spec=spec)
-            player.total = ranking_data.get("amount", 0)
-            player.fight = fight
+            # Fight
+            fight = models.Fight.get_or_create(
+                report=report,
+                fight_id=report_data.get("fightID"),
+            )
+            fight.boss = encounter
+            fight.start_time = ranking_data.get("startTime", 0) - report_data.get("startTime", 0)
+            fight.end_time = fight.start_time + ranking_data.get("duration", 0) # TODO: check property thing
 
-            fight.players = [player]
-            fights.append(fight)
-        return fights
+
+            # Player
+            if fight.id:
+                player = models.Player.get_or_create(fight=fight, source_id=ranking_data.get("source_id"))
+            else:
+                player = models.Player(fight=fight, source_id=ranking_data.get("source_id"))
+
+            player.name = ranking_data.get("name")
+            player.fight = fight
+            player.report = report
+            player.spec = spec
+            player.total = ranking_data.get("amount", 0)
+
+            db.session.add(report)
+            reports.append(report)
+        return reports
 
     async def find_reports(self, encounter, search="", metric="execution"):
         """Get Top Fights for a given encounter."""
@@ -353,48 +458,4 @@ class WarcraftlogsClient:
             fights.append(fight)
         return fights
 
-    async def load_spell_icons(self, spells):
-        # Build query
-        ids = [spell.spell_id for spell in spells]
-        ids = set(ids)
-        queries = [f"spell_{i}: ability(id: {i}) {{name, icon}}" for i in ids]
-        queries = "\n".join(queries)
-        query = f"""
-        gameData
-        {{
-            {queries}
-        }}
-        """
 
-        # execute query
-        data = await self.query(query)
-        data = data.get("gameData", {})
-
-        # attach data to spells
-        for spell in spells:
-            key = f"spell_{spell.spell_id}"
-            spell_info = data.get(key)
-            if not spell_info:
-                logger.warning("No Spell Info for: %s", spell.spell_id)
-                continue
-
-            spell.name = spell.name or spell_info.get("name")
-            spell.icon = spell.icon or spell_info.get("icon")
-
-
-async def test_load_spells():
-    import dotenv
-    from lorgs import wow_data
-
-    dotenv.load_dotenv()
-
-    c = WarcraftlogsClient()
-    await c.update_auth_token()
-
-    spells = wow_data.PALADIN_HOLY.spells.values()
-    await c.load_spell_icons(spells)
-
-
-if __name__ == '__main__':
-    import asyncio
-    asyncio.run(test_load_spells())
