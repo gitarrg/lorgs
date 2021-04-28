@@ -6,10 +6,8 @@ python-dotenv
 # SQLAlchemy==1.4.9
 # PyMySQL==1.0
 # libsass
-
 gunicorn==20.1.0
 Flask==1.1
-gunicorn==19.10
 Flask-SQLAlchemy==2.4
 Flask-WTF==0.14.3
 flask_wtf==0.14.3

@@ -1,0 +1,1 @@
+web: gunicorn "lorgs.app:create_app()"

@@ -22,14 +22,10 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI") or 'sqlite://'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {
-        "pool_size": 10,
-        "pool_recycle": 120,
         "pool_pre_ping": True,
-
         # "echo": True,
     }
-
-    SEND_FILE_MAX_AGE_DEFAULT = 0  # for DEV. updates static files
+    # SEND_FILE_MAX_AGE_DEFAULT = 0  # for DEV. updates static files
 
     GOOGLE_ANALYTICS_ID = "G-Y92VPCY6QW"
 
