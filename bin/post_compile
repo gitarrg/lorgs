@@ -4,5 +4,7 @@ echo "-----> Compiling SCSS"
 mkdir lorgs/static/_generated
 pysassc --style=compact "lorgs/templates/scss/main.scss" "lorgs/static/_generated/style.css"
 
+# make sure these are in the redis cache
+flask load_spell_icons
 
 
