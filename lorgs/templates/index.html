@@ -35,7 +35,7 @@
             <table>
                 {% for role in roles %}
                 <tr>
-                    <td><img class="icon-m rounded border border-black" src="{{role.img_path}}"></td>
+                    <td><img class="icon-m rounded border border-black" src="{{role.icon_path}}"></td>
                     <td style="width: 8rem;margin-right: 2rem"><span>{{role.name}}:</span></td>
 
                     <td>
@@ -46,7 +46,7 @@
                             {% else %}
                             <a class="disabled" href="#" data-toggle="tooltip" title="{{spec.full_name}} (not supported yet)">
                             {% endif %}
-                                <img class="icon-spec icon-m rounded wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.img_path}}" alt="{{spec.full_name}}" >
+                                <img class="icon-spec icon-m rounded wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.icon_path}}" alt="{{spec.full_name}}" >
                             </a>
                         </div>
                         {% endfor %}

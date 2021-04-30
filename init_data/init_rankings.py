@@ -1,102 +1,79 @@
-# pylint: disable=wrong-import-position,invalid-name
 
 # IMPORT STANDARD LIBRARIES
 import asyncio
-import pprint
 
-# IMPORT THIRD PARTY LIBRARIES
 import dotenv
-import sqlalchemy
 dotenv.load_dotenv()
 
+# IMPORT THIRD PARTY LIBRARIES
 from lorgs.app import create_app
+from lorgs.cache import Cache
 from lorgs.client import WarcraftlogsClient
-from lorgs.db import db
 from lorgs.logger import logger
-from lorgs import utils
-
-from lorgs.models.specs import WowClass, WowSpec
+from lorgs.models import loader
+from lorgs import data
 from lorgs.models.encounters import RaidBoss
-from lorgs.models.reports import Report, Fight, Player, Cast
+from lorgs.models.specs import WowClass
+from lorgs.models.specs import WowSpec
+from lorgs.models.specs import WowSpell
+
 
 
 WCL_CLIENT = WarcraftlogsClient.get_instance()
 
 
-LIMIT_PER_BOSS = 10
+async def load_spell_data():
 
+    spells = {spell.spell_id: spell for spell in WowSpell.all}
+    logger.info("%d spells", len(spells))
 
-async def generate_char_rankings(spec, boss):
-    logger.info(f"{spec.full_name} vs. {boss.name} START")
-
-
-    reports = await WCL_CLIENT.get_rankings(boss, spec, limit=LIMIT_PER_BOSS)
+    # Build query
+    queries = [f"spell_{spell_id}: ability(id: {spell_id}) {{id, name, icon}}" for spell_id in spells.keys()]
+    queries = "\n".join(queries)
+    query = f"""
+    gameData
+    {{
+        {queries}
+    }}
     """
-    for report in reports:
-        print(report)
-        for fight in report.fights:
-            print("\t", fight)
-            for player in fight.players:
-                print("\t\t", player.fight, player)
-    """
+    data = await WCL_CLIENT.query(query)
+    data = data.get("gameData", {})
 
-    players = []
-    for report in reports:
-        for fight in report.fights:
-            if fight.boss == boss:
-                players += fight.players
-
-    # players = utils.flatten([r.players for r in reports])
-    # players = utils.flatten(players)
-
-    queries = [p.get_casts_query() for p in players]
-    data = await WCL_CLIENT.multiquery(queries)
-
-    for player, cast_data in zip(players, data):
-        player.process_cast_data(cast_data)
-
-    # return
-    # print("FIGHTS")
-    for player in players:
-        print(player.fight.boss.name, player.fight.report.report_id, player.name)
+    # save cache
+    spell_infos = {info.pop("id"): info for info in data.values()}
+    Cache.set("spell_infos", spell_infos, timeout=0)
 
 
-    db.session.bulk_save_objects(reports)
-    db.session.commit()
+async def load_one_char_rankings(spec, boss, limit=0):
 
-    logger.info(f"{spec.full_name} vs. {boss.name} DONE")
-    return
+    key = f"char_rankings/{spec.full_name_slug}/boss={boss.name_slug}"
+    logger.info(key)
+    players = await loader.load_char_rankings(boss=boss, spec=spec, limit=limit)
+    Cache.set(key, players, timeout=0)
+
+
+async def load_all_char_rankings(specs=None, bosses=None, limit=0):
+    logger.info(f">>>>>>> START <<<<<<<<")
+
+    specs = specs or data.SPECS
+    specs = [spec for spec in specs if spec.supported]
+    specs = [WowSpec.get(full_name_slug="druid-restoration")]
+
+    bosses = bosses or data.BOSSES
+    bosses = list(bosses)[:2]
+
+    for spec in specs:
+        tasks = [load_one_char_rankings(spec, boss, limit=limit) for boss in bosses]
+        await asyncio.gather(*tasks)
 
 
 async def main():
 
     app = create_app()
-    app.app_context().push()
+    with app.app_context():
 
-    await WCL_CLIENT.cache.load()
-
-    specs = WowSpec.query.all()
-    # spec = WowSpec.query
-    # spec = spec.filter(WowClass.name == "Paladin")
-    # spec = spec.filter(WowSpec.name == "Holy")
-    # spec = spec.first()
-    # specs = [spec]
-
-    bosses = RaidBoss.query.limit(3).all()
-
-    for spec in specs:
-
-        tasks = [generate_char_rankings(spec, boss) for boss in bosses]
-        await asyncio.gather(*tasks)
-        """
-        for boss in bosses:
-            await generate_char_rankings(spec, boss)
-            # return
-        """
-
-    await WCL_CLIENT.cache.save()
-
+        # await load_spell_data()
+        await load_all_char_rankings(limit=10)
 
 if __name__ == '__main__':
     asyncio.run(main())
-

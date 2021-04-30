@@ -3,84 +3,117 @@
 # pylint: disable=too-few-public-methods
 
 # IMPORT THIRD PARTY LIBRARIES
-import sqlalchemy
-from sqlalchemy.ext.associationproxy import association_proxy
 
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
-from lorgs.db import db
 from lorgs.logger import logger
 
-from lorgs.models.specs import WowClass, WowSpec, WowSpell
+
+from lorgs.models import base
+from lorgs.models.specs import WowClass
+from lorgs.models.specs import WowSpec
+from lorgs.models.specs import WowSpell
+from lorgs.models.encounters import RaidZone
+from lorgs.models.encounters import RaidBoss
 
 
-class Report(db.Model):
+class Report(base.Model):
     """docstring for Fight"""
 
-    report_id = db.Column(db.String(64), primary_key=True)
+    def __init__(self, report_id: str):
+        self.report_id = report_id
+        self.title = ""
+        self.start_time = 0
+        self.zone = None
+        self.fights = []
 
-    start_time = db.Column(db.BigInteger, default=0)
-    title = db.Column(db.Unicode(128))
-    guild = ""
-    realm = ""
-    region = ""
+    def __repr__(self):
+        return f"<Report({self.report_id})>"
 
-    zone = sqlalchemy.orm.relationship("RaidZone")
-    zone_id = db.Column(db.Integer, db.ForeignKey("raid_zone.id"))
+    def __setstate__(self, data):
+        self.report_id = data.get("report_id")
+        self.title = data.get("title")
+        self.start_time = data.get("start_time")
+        self.zone = RaidZone.get(**data.get("zone", {}))
 
-    # children
-    fights = sqlalchemy.orm.relationship(
-        "Fight",
-        back_populates="report",
-        cascade="all,save-update,delete,delete-orphan",
-        lazy="joined"
-    )
-    # players = sqlalchemy.orm.relationship("Player", back_populates="report")
-    players = association_proxy("fights", "players")
-    casts = association_proxy("fights", "casts")
+        self.fights = []
+        for fight_data in data.get("fights", []):
+            self.add_fight(**fight_data)
 
-    @property
-    def unique_players(self):
-        all_players = utils.flatten(self.players)
-        all_players = {p.source_id: p for p in all_players}
-        return all_players.values()
+    def as_dict(self):
+        return {
+            "report_id": self.report_id,
+            "title": self.title,
+            "start_time": self.start_time,
+            "zone": self.zone.as_dict() if self.zone else {},
+            "fights": [fight.as_dict() for fight in self.fights]
+        }
 
-    @property
-    def used_spells(self):
-
-        all_spells = {spell.spell_id : spell for player in self.unique_players for spell in player.used_spells}
-        return all_spells.values()
-
+    def add_fight(self, **kwargs):
+        fight = Fight(**kwargs)
+        fight.report = self
+        self.fights.append(fight)
+        return fight
 
     @property
     def report_url(self):
         return f"https://www.warcraftlogs.com/reports/{self.report_id}"
 
+    @property
+    def players(self):
+        players = utils.flatten(fight.players for fight in self.fights)
+        return utils.uniqify(players, key=lambda player: player.source_id)
 
-class Fight(db.Model):
+    @property
+    def used_spells(self):
+        spells = utils.flatten(fight.used_spells for fight in self.fights)
+        return utils.uniqify(spells, key=lambda spell: spell.spell_id)
+
+
+class Fight(base.Model):
     """Basically a pull."""
 
-    id = db.Column(db.Integer, primary_key=True)
+    def __init__(self, fight_id=0, start_time=0, end_time=0, percent=0, **kwargs):
+        super().__init__()
 
-    # parent report
-    report_id = db.Column(db.String(64), db.ForeignKey("report.report_id", ondelete="cascade"))
-    report = sqlalchemy.orm.relationship("Report", back_populates="fights")
+        self.fight_id = fight_id
+        self.start_time = start_time
+        self.end_time = end_time
+        self.percent = percent
 
-    fight_id = db.Column(db.Integer)
-    start_time = db.Column(db.BigInteger)
-    end_time = db.Column(db.BigInteger)
-    percent = db.Column(db.Float, default=0)
+        self.report = None
 
-    boss_id = db.Column(db.Integer, db.ForeignKey("raid_boss.boss_id"))
-    boss = sqlalchemy.orm.relationship("RaidBoss", back_populates="fights")
+        boss_id = kwargs.get("boss_id") or kwargs.get("boss", {}).get("id")
+        self.boss = RaidBoss.get(id=boss_id) if boss_id else None
 
-    # children
-    players = sqlalchemy.orm.relationship("Player", back_populates="fight", lazy="joined")
-    casts = association_proxy("players", "casts")
+        self.players = []
+        for player_data in kwargs.get("players", []):
+            self.add_player(**player_data)
 
     def __repr__(self):
         return f"Fight({self.report.report_id}, id={self.fight_id}, players={len(self.players)})"
+
+    @classmethod
+    def from_dict(cls, data):
+        return cls(**data)
+        # fight.players = [Fight.from_dict(fight_data) for fight_data in data.get("fights", [])]
+
+    def as_dict(self):
+        return {
+            "fight_id": self.fight_id,
+            "start_time": self.start_time,
+            "end_time": self.end_time,
+            "percent": self.percent,
+            "boss": self.boss.as_dict() if self.boss else {},
+            "players": [player.as_dict() for player in self.players],
+        }
+
+    def add_player(self, **kwargs):
+        player = Player(**kwargs)
+        player.fight = self
+        self.players.append(player)
+        return player
 
     ##########################
     # Attributes
@@ -90,16 +123,16 @@ class Fight(db.Model):
         return self.end_time - self.start_time
 
     @property
-    def duration_fmt(self):
-        return utils.format_time(self.duration)
-
-    @property
     def report_url(self):
         return f"{self.report.report_url}#fight={self.fight_id}"
 
     @property
-    def percent_color(self):
+    def used_spells(self):
+        spells = utils.flatten(player.used_spells for player in self.players)
+        return utils.uniqify(spells, key=lambda spell: spell.spell_id)
 
+    @property
+    def percent_color(self):
         if self.percent < 3:
             return "astounding"
         if self.percent < 10:
@@ -112,209 +145,39 @@ class Fight(db.Model):
             return "uncommon"
         return "common"
 
-    ##########################
-    # Query
 
-    async def load_players(self, source_ids=[]):
-        logger.info(f"source_ids: {source_ids}")
-
-    async def fetch_fight_data(self):
-        pass
-        '''
-        query = f"""
-        {{
-            reportData {{
-                report(code: "{self.report_id}") {{
-                    fights(fightIDs: {self.fight_id}) {{
-                        id
-                        encounterID
-                        fightPercentage
-                        kill
-                        startTime
-                        endTime
-                    }}
-                }}
-            }}
-        }}
-        """
-        self.data = await self.client.query(query)
-        data_fight = self.data.get("reportData", {}).get("report", {}).get("fights", [])[-1]
-
-        self.startTime = data_fight.get("startTime") or self.startTime
-        self.endTime = data_fight.get("endTime") or self.endTime
-        self.encounterID = data_fight.get("encounterID") or self.encounterID
-        '''
-
-    def _process_player_data(self, players_data):
-        logger.info("Hey")
-        print("Hey 2")
-        if not players_data:
-            return
-
-        total_damage = players_data.get("damageDone", [])
-        total_healing = players_data.get("healingDone", [])
-
-        # player_by_id = {}  # TODO: add to FightClass
-        for composition_data in players_data.get("composition", []):
-            source_id = composition_data.get("id")
-
-
-            class_name = composition_data.get("type")
-            wow_class = WowClass.query.filter_by(name=class_name).first()
-            if not wow_class:
-                logger.warning("Unknown Class: %s", class_name)
-                continue
-
-            spec_data = composition_data.get("specs", [])
-            if not spec_data:
-                logger.warning("Player has no spec: %s", composition_data.get("name"))
-                continue
-
-            spec_data = spec_data[0]
-            spec_name = spec_data.get("spec")
-
-
-            spec = WowSpec.query.join(WowSpec.wow_class) # join the class so we can filter
-            spec = spec.filter(WowClass.name == class_name)
-            spec = spec.filter(WowSpec.name == spec_name)
-            spec = spec.first()
-
-            # Person.query.join(Person.address).filter(Adress.city == 'Paris').all()
-            # player.wow_spec = spec
-
-            # self.players.append(player)
-            if not spec:
-                logger.warning("Unknown Spec: %s", spec_name)
-                continue
-
-            # Get Total Damage or Healing
-            spec_role = spec_data.get("role")
-            total_data = total_healing if spec_role == "healer" else total_damage
-            total = 0
-            for data in total_data:
-                if data.get("id", -1) == source_id:
-                    total = data.get("total", 0) / (self.duration / 1000)
-                    break
-
-            player = Player()
-            player.name = composition_data.get("name")
-            player.total = total
-            player.fight = self
-            player.source_id = source_id
-            player.spec = spec
-            yield player
-
-            # spec_role = spec_data.get("role")
-            # if spec_role != "healer":
-            #     continue
-            # player.role = player_spec.get("role")
-            # player_by_id[player.source_id] = player
-
-        """
-        # who asked?
-        for damage_data in players_data.get("damageDone", []):
-            player_id = damage_data.get("id", -1)
-            player = self.players.get(player_id)
-            if player:
-                player.damage_done = damage_data.get("total", 0)
-
-        for damage_data in players_data.get("healingDone", []):
-            player_id = damage_data.get("id", -1)
-            player = self.players.get(player_id)
-            if player:
-                player.healing_done = damage_data.get("total", 0)
-        """
-
-    def _process_query_data(self, data):
-        report_data = data.get("report", {})
-        report_data = report_data or data.get("reportData", {}).get("report", {})  # not sure which one is correct
-
-        logger.debug(f"fetched fights: {self.report_id}")
-
-        casts_data = report_data.get("casts", {}).get("data", {})
-        casts_data = [c for c in casts_data if c.get("type") == "cast"] # skip additional events like "begincast"
-        # TODO: at some point i should check for "begincast" instead.. for non instant casts
-
-        ################
-        # Players
-        if len(self.players) == 1:
-            player = self.players[0]
-            for cast_data in casts_data:
-                source_id = cast_data.get("sourceID")
-                if source_id:
-                    player.source_id = source_id
-                    break
-
-        elif self.players:
-            # fill in data from query
-            raise NotImplementedError
-
-        else:
-            # read player info's from query
-            players_data = report_data.get("players", {}).get("data", {})
-            players = self._process_player_data(players_data)
-            self.players = list(players)
-
-        ################
-        # Casts
-        ################
-        player_by_id = {p.source_id: p for p in self.players}
-        for cast_data in casts_data:
-            print("cast_data", cast_data)
-
-            source_id = cast_data["sourceID"]
-            player = player_by_id.get(source_id)
-            if not player:
-                continue
-
-            cast = Cast()
-            cast.player = player
-            # cast.fight = self
-            cast.timestamp = cast_data["timestamp"]
-            cast.spell_id = cast_data["abilityGameID"]
-
-        return
-        # remove players with no casts
-        # self.players = [p for p in self.players if p.casts]
-
-    async def fetch(self, client, spells=(), extra_filter=""):
-        # we need to fetch the fight itself
-        if self.start_time <= 0:
-            await self.fetch_fight_data()
-
-        query = self._build_query(spells=spells, extra_filter=extra_filter)
-        data = await client.query(query)
-        self._process_query_data(data)
-
-
-class Player(db.Model):
+class Player(base.Model):
     """a player in a given fight.
 
     TODO:
         rename to actor?
 
     """
-    id = db.Column(db.Integer, primary_key=True)
+    def __init__(self, source_id=0, name="", total=0, **kwargs):
+        super().__init__()
+        self.source_id = source_id
+        self.name = name
+        self.total = total
 
-    report = association_proxy("fight", "report")
+        self.fight = None
 
-    # parent fight
-    fight = sqlalchemy.orm.relationship("Fight", back_populates="players")
-    fight_id = db.Column(db.Integer, db.ForeignKey("fight.id", ondelete="cascade"))
+        spec_name = kwargs.get("spec")
+        self.spec = WowSpec.get(full_name_slug=spec_name) if spec_name else None
 
-    # the actual player
-    source_id = db.Column(db.Integer)  # TODO: rename?
-    name = db.Column(db.Unicode(12)) # names can be max 12 chars
-    total = db.Column(db.Integer)
-
-    spec = sqlalchemy.orm.relationship("WowSpec", lazy="joined")
-    spec_id = db.Column(db.Integer, db.ForeignKey("wow_spec.id"))
-
-    # children
-    casts = sqlalchemy.orm.relationship("Cast", back_populates="player", cascade="all,save-update,delete,delete-orphan")
+        self.casts = []
+        for cast_data in kwargs.get("casts", []):
+            self.add_cast(**cast_data)
 
     def __repr__(self):
         return f"Player({self.name} spec={self.spec.name} id={self.source_id} casts={len(self.casts)})"
+
+    def as_dict(self):
+        return {
+            "name": self.name,
+            "total": self.total,
+            "spec": self.spec.full_name_slug if self.spec else "",
+            "casts": [cast.as_dict() for cast in self.casts]
+        }
 
     @property
     def report_url(self):
@@ -322,55 +185,37 @@ class Player(db.Model):
 
     @property
     def used_spells(self):
-        spells = {cast.spell.spell_id: cast.spell for cast in self.casts}
-        return spells.values()
+        spells = [cast.spell for cast in self.casts]
+        return utils.uniqify(spells, key=lambda spell: spell.spell_id)
 
-    def get_casts_query(self):
-        """Build a query to fetch the casts done by this player."""
-        print("STILL USED??? player.get_casts_query")
-        spell_ids = ",".join(str(s.spell_id) for s in self.spec.spells)
-        filter_expression = f"source.name='{self.name}' and ability.id in ({spell_ids})"
-
-        return utils.shrink_text(f"""\
-        reportData
-        {{
-            report(code: "{self.report.report_id}")
-            {{
-                casts: events(
-                    fightIDs: {self.fight.fight_id},
-                    startTime: {self.fight.start_time},
-                    endTime: {self.fight.end_time},
-                    dataType: Casts,
-                    filterExpression: "{filter_expression}"
-                ) {{data}}
-            }}
-        }}
-        """)
+    def add_cast(self, **kwargs):
+        cast = Cast(**kwargs)
+        cast.player = self
+        self.casts.append(cast)
+        return cast
 
 
-class Cast(db.Model):
+class Cast(base.Model):
     """docstring for Cast"""
 
-    id = db.Column(db.Integer, primary_key=True)
-
-    # parent player
-    player_id = db.Column(db.Integer, db.ForeignKey("player.id", ondelete="cascade"))
-    player = sqlalchemy.orm.relationship("Player", back_populates="casts")
-
-    timestamp = db.Column(db.Integer)
-
-    spell = sqlalchemy.orm.relationship("WowSpell", lazy="joined")
-    spell_id = db.Column(db.Integer, db.ForeignKey("wow_spell.spell_id"))
-
-    fight = association_proxy("player", "fight")
-    report = association_proxy("fight", "report")
+    def __init__(self, timestamp=0, spell_id=None, **kwargs):
+        super().__init__()
+        self.timestamp = timestamp
+        self.player = None
+        self.spell = WowSpell.get(spell_id=spell_id) if spell_id else None
 
     def __repr__(self):
-        return f"Cast({self.spell_id}, at={self.time_fmt})"
+        return f"Cast({self.spell.spell_id}, at={self.time_fmt})"
+
+    def as_dict(self):
+        return {
+            "timestamp": self.timestamp,
+            "spell_id": self.spell.spell_id if self.spell else 0,
+        }
 
     @property
     def time(self):
-        return self.timestamp - self.fight.start_time
+        return self.timestamp - self.player.fight.start_time
 
     @property
     def time_fmt(self):

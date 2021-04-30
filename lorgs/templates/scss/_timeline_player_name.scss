@@ -1,0 +1,76 @@
+
+/********************************
+        Player Names
+*********************************/
+
+.player_name {
+    width: 150px;
+    height: 30px;
+
+    background: hsl(0, 0%, 30%);
+
+    padding-right: 5px;
+    margin-bottom: 2px;
+
+    border: 1px solid black;
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+    overflow: hidden;
+
+    position: relative;
+
+    &__spec_icon,
+    &__role_icon {
+        width: 30px;
+        height: 30px;
+        border-right: 1px solid black;
+    }
+
+    &__name,
+    &__rank,
+    &__total {
+        font-size: 1.2rem;
+        font-weight: bold;
+
+        position: absolute;
+
+        // Y Position
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    &__name,
+    &__rank {
+        left: 30+5px;
+    }
+
+    &__total {
+        right: 5px;
+    }
+}
+
+
+// Edits for the Spec Rankings
+.spec_ranking {
+
+    .player_name:hover .player_name__rank,
+    .player_name:hover .player_name__total,
+    .player_name:not(:hover) .player_name__name {
+        opacity: 0;
+        filter: blur(2px);
+        color: #808080;
+    }
+
+    // slowly fade back
+    .player_name:not(:hover) {
+        .player_name__rank,
+        .player_name__total,
+        .player_name__name {
+            transition-property: filter, opacity, color;
+            transition-timing-function: ease-in;
+            transition-duration: 4s;
+            transition-delay: 1s;
+        }
+    }
+}
+

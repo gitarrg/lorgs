@@ -13,7 +13,7 @@ export FLASK_APP="lorgs/app:create_app()"
 
 
 # Build SASS
-pysassc --style=compact lorgs/templates/scss/main.scss "lorgs/static/_generated/style.css"
+# pysassc --style=compact lorgs/templates/scss/main.scss "lorgs/static/_generated/style.css"
 
 
 # run flask

@@ -1,116 +1,116 @@
 
-from lorgs import models as m
+# pylint: disable=line-too-long
+
 from lorgs import utils
-
-
-# ROLES
-TANK = "tank"
-HEAL = "heal"
-MDPS = "mdps"
-RDPS = "rdps"
+from lorgs.models.specs import WowClass
+from lorgs.models.specs import WowRole
+from lorgs.models.specs import WowSpec
+from lorgs.models.specs import WowSpell
 
 
 ################################################################################
-
-ENCOUNTERS = [
-    {"id": 2398, "name": "Shriekwing", "name_slug": "shriekwing"},
-    {"id": 2418, "name": "Huntsman Altimor", "name_slug": "huntsman-altimor"},
-    {"id": 2383, "name": "Hungering Destroyer", "name_slug": "hungering-destroyer"},
-    {"id": 2402, "name": "Sun King's Salvation", "name_slug": "sun-kings-salvation"},
-    {"id": 2405, "name": "Artificer Xy'mox", "name_slug": "artificer-xymox"},
-    {"id": 2406, "name": "Lady Inerva Darkvein", "name_slug": "lady-inerva-darkvein"},
-    {"id": 2412, "name": "The Council of Blood", "name_slug": "the-council-of-blood"},
-    {"id": 2399, "name": "Sludgefist", "name_slug": "sludgefist"},
-    {"id": 2417, "name": "Stone Legion Generals", "name_slug": "stone-legion-generals"},
-    {"id": 2407, "name": "Sire Denathrius", "name_slug": "sire-denathrius"},
-]
-
-
+#
+#   ROLES
+#
+################################################################################
+TANK = WowRole(code="tank", name="Tank", sort_index=10)
+HEAL = WowRole(code="heal", name="Healer", sort_index=20)
+MDPS = WowRole(code="mdps", name="Melee", sort_index=30)
+RDPS = WowRole(code="rdps", name="Range", sort_index=40)
+ROLES = [TANK, HEAL, MDPS, RDPS]
 
 
 ################################################################################
+#
+#   CLASSES AND SPECS
+#
+################################################################################
 
-# Define all classes and specs
-
-WARRIOR = m.WoWClass(name="Warrior")
+#   Warrior
+WARRIOR = WowClass(name="Warrior", color="#C69B6D")
 WARRIOR_ARMS = WARRIOR.add_spec(name="Arms", role=MDPS)
 WARRIOR_FURY = WARRIOR.add_spec(name="Fury", role=MDPS)
-WARRIOR_PROTECTION = WARRIOR.add_spec(name="Protection", role=TANK)
-WARRIOR_PROTECTION.short_name = "Prot"
+WARRIOR_PROT = WARRIOR.add_spec(name="Protection", role=TANK, short_name="Prot")
 
-PALADIN = m.WoWClass(name="Paladin")
+################################
+#   Paladin
+PALADIN = WowClass(name="Paladin", color="#F48CBA")
 PALADIN_HOLY = PALADIN.add_spec(name="Holy", role=HEAL)
-PALADIN_PROTECTION = PALADIN.add_spec(name="Protection", role=TANK)
-PALADIN_PROTECTION.short_name = "Prot"
-PALADIN_RETRIBUTION = PALADIN.add_spec(name="Retribution", role=MDPS)
-PALADIN_RETRIBUTION.short_name = "Ret"
+PALADIN_PROTECTION = PALADIN.add_spec(name="Protection", role=TANK, short_name="Prot")
+PALADIN_RETRIBUTION = PALADIN.add_spec(name="Retribution", role=MDPS, short_name="Ret")
 
-HUNTER = m.WoWClass(name="Hunter")
+################################
+# Hunter
+HUNTER = WowClass(name="Hunter", color="#AAD372")
 HUNTER_BEASTMASTERY = HUNTER.add_spec(name="Beast Mastery", role=RDPS)
 HUNTER_MARKSMANSHIP = HUNTER.add_spec(name="Marksmanship", role=RDPS)
 HUNTER_SURVIVAL = HUNTER.add_spec(name="Survival", role=MDPS)
 
-ROGUE = m.WoWClass(name="Rogue")
-ROGUE_ASSASSINATION = ROGUE.add_spec(name="Assassination", role=MDPS)
-ROGUE_SUBTLETY = ROGUE.add_spec(name="Subtlety", role=MDPS)
+################################
+#   Rouge
+ROGUE = WowClass(name="Rogue", color="#FFF468")
+ROGUE_ASSASSINATION = ROGUE.add_spec(name="Assassination", role=MDPS, short_name="Assa")
 ROGUE_OUTLAW = ROGUE.add_spec(name="Outlaw", role=MDPS)
+ROGUE_SUBTLETY = ROGUE.add_spec(name="Subtlety", role=MDPS)
 
-PRIEST = m.WoWClass(name="Priest")
-PRIEST_DISCIPLINE = PRIEST.add_spec(name="Discipline", role=HEAL)
-PRIEST_DISCIPLINE.short_name = "Disc"
+################################
+#   Priest
+PRIEST = WowClass(name="Priest", color="#FFFFFF")
+PRIEST_DISCIPLINE = PRIEST.add_spec(name="Discipline", role=HEAL, short_name="Disc")
 PRIEST_HOLY = PRIEST.add_spec(name="Holy", role=HEAL)
 PRIEST_SHADOW = PRIEST.add_spec(name="Shadow", role=RDPS)
 
-DEATHKNIGHT = m.WoWClass(name="Death Knight")
+################################
+# DK
+DEATHKNIGHT = WowClass(name="Death Knight", color="#C41E3A")
 DEATHKNIGHT_BLOOD = DEATHKNIGHT.add_spec(name="Blood", role=TANK)
 DEATHKNIGHT_FROST = DEATHKNIGHT.add_spec(name="Frost", role=MDPS)
 DEATHKNIGHT_UNHOLY = DEATHKNIGHT.add_spec(name="Unholy", role=MDPS)
 
-SHAMAN = m.WoWClass(name="Shaman")
+################################
+#   Shaman
+SHAMAN = WowClass(name="Shaman", color="#0070DD")
 SHAMAN_ELEMENTAL = SHAMAN.add_spec(name="Elemental", role=RDPS)
 SHAMAN_ENHANCEMENT = SHAMAN.add_spec(name="Enhancement", role=MDPS)
-SHAMAN_RESTORATION = SHAMAN.add_spec(name="Restoration", role=HEAL)
-SHAMAN_RESTORATION.short_name = "Resto"
+SHAMAN_RESTORATION = SHAMAN.add_spec(name="Restoration", role=HEAL, short_name="Resto")
 
-MAGE = m.WoWClass(name="Mage")
+################################
+#   Mage
+MAGE = WowClass(name="Mage", color="#3FC7EB")
 MAGE_ARCANE = MAGE.add_spec(name="Arcane", role=RDPS)
 MAGE_FIRE = MAGE.add_spec(name="Fire", role=RDPS)
 MAGE_FROST = MAGE.add_spec(name="Frost", role=RDPS)
 
-WARLOCK = m.WoWClass(name="Warlock")
-WARLOCK_AFFLICTION = WARLOCK.add_spec(name="Affliction", role=RDPS)
-WARLOCK_AFFLICTION.short_name = "Aff"
-WARLOCK_DEMONOLOGY = WARLOCK.add_spec(name="Demonology", role=RDPS)
-WARLOCK_DEMONOLOGY.short_name = "Demo"
+################################
+#   Warlock
+WARLOCK = WowClass(name="Warlock", color="#8788EE")
+WARLOCK_AFFLICTION = WARLOCK.add_spec(name="Affliction", role=RDPS, short_name="Aff")
+WARLOCK_DEMONOLOGY = WARLOCK.add_spec(name="Demonology", role=RDPS, short_name="Demo")
 WARLOCK_DESTRUCTION = WARLOCK.add_spec(name="Destruction", role=RDPS)
 
-MONK = m.WoWClass(name="Monk")
+################################
+# Monk
+MONK = WowClass(name="Monk", color="#00FF98")
 MONK_BREWMASTER = MONK.add_spec(name="Brewmaster", role=TANK)
 MONK_MISTWEAVER = MONK.add_spec(name="Mistweaver", role=HEAL)
 MONK_WINDWALKER = MONK.add_spec(name="Windwalker", role=MDPS)
 
-DRUID = m.WoWClass(name="Druid")
+################################
+# Druid
+DRUID = WowClass(name="Druid", color="#FF7C0A")
 DRUID_BALANCE = DRUID.add_spec(name="Balance", role=RDPS)
 DRUID_FERAL = DRUID.add_spec(name="Feral", role=MDPS)
 DRUID_GUARDIAN = DRUID.add_spec(name="Guardian", role=TANK)
 DRUID_RESTORATION = DRUID.add_spec(name="Restoration", role=HEAL)
-DRUID_RESTORATION.short_name = "Resto"
 
-DEMONHUNTER = m.WoWClass(name="Demon Hunter")
+################################
+# DH
+DEMONHUNTER = WowClass(name="Demon Hunter", color="#A330C9")
 DEMONHUNTER_HAVOC = DEMONHUNTER.add_spec(name="Havoc", role=MDPS)
 DEMONHUNTER_VENGEANCE = DEMONHUNTER.add_spec(name="Vengeance", role=TANK)
 
-
-OTHER = m.WoWClass(name="Other")
-OTHER_POTION = OTHER.add_spec(name="Potions", role="other")
-OTHER_TRINKET = OTHER.add_spec(name="Trinkets", role="other")
-
-
-
 # sorry guys...
-
-# tanks
-WARRIOR_PROTECTION.supported = False
+WARRIOR_PROT.supported = False
 PALADIN_PROTECTION.supported = False
 DEATHKNIGHT_BLOOD.supported = False
 MONK_BREWMASTER.supported = False
@@ -132,62 +132,7 @@ MAGE_ARCANE.supported = False
 MAGE_FROST.supported = False
 
 
-# Warcraft Logs: Class IDs
-DEATHKNIGHT.id = 1
-DRUID.id = 2
-HUNTER.id = 3
-MAGE.id = 4
-MONK.id = 5
-PALADIN.id = 6
-PRIEST.id = 7
-ROGUE.id = 8
-SHAMAN.id = 9
-WARLOCK.id = 10
-WARRIOR.id = 11
-DEMONHUNTER.id = 12
-
-# Warcraft Logs: Spec IDs
-DEATHKNIGHT_BLOOD.id = 1
-DEATHKNIGHT_FROST.id = 2
-DEATHKNIGHT_UNHOLY.id = 3
-DRUID_BALANCE.id  = 1
-DRUID_FERAL.id = 2
-DRUID_GUARDIAN.id = 3
-DRUID_RESTORATION.id = 4
-HUNTER_BEASTMASTERY.id = 1
-HUNTER_MARKSMANSHIP.id = 2
-HUNTER_SURVIVAL.id = 3
-MAGE_ARCANE.id = 1
-MAGE_FIRE.id = 2
-MAGE_FROST.id = 3
-MONK_BREWMASTER.id = 1
-MONK_MISTWEAVER.id = 2
-MONK_WINDWALKER.id = 3
-PALADIN_HOLY.id = 1
-PALADIN_PROTECTION.id = 2
-PALADIN_RETRIBUTION.id = 3
-PRIEST_DISCIPLINE.id = 1
-PRIEST_HOLY.id = 2
-PRIEST_SHADOW.id = 3
-ROGUE_ASSASSINATION.id = 1
-ROGUE_OUTLAW.id = 4
-ROGUE_SUBTLETY.id = 3
-SHAMAN_ELEMENTAL.id = 1
-SHAMAN_ENHANCEMENT.id = 2
-SHAMAN_RESTORATION.id = 3
-WARLOCK_AFFLICTION.id = 1
-WARLOCK_DEMONOLOGY.id = 2
-WARLOCK_DESTRUCTION.id = 3
-WARRIOR_ARMS.id = 1
-WARRIOR_FURY.id = 2
-WARRIOR_PROTECTION.id = 3
-DEMONHUNTER_HAVOC.id = 1
-DEMONHUNTER_VENGEANCE.id = 2
-
-################################################################################
-# Alias to some full lists
-#
-#
+# Because the values are constant..  lets just save them here
 CLASSES = [
     WARRIOR,
     PALADIN,
@@ -200,69 +145,29 @@ CLASSES = [
     WARLOCK,
     MONK,
     DRUID,
-    DEMONHUNTER
+    DEMONHUNTER,
 ]
 
 SPECS = [spec for wow_class in CLASSES for spec in wow_class.specs]
-SPECS_SUPPORTED = [spec for spec in SPECS if spec.supported]
 
 
-TANKS = [spec for spec in SPECS if spec.role == TANK]
-HEALS = [spec for spec in SPECS if spec.role == HEAL]
-MELEE = [spec for spec in SPECS if spec.role == MDPS]
-RANGE = [spec for spec in SPECS if spec.role == RDPS]
-
-
-ROLES = [
-    {"slug": TANK, "name": "Tank"},
-    {"slug": HEAL, "name": "Healer"},
-    {"slug": RDPS, "name": "Range"},
-    {"slug": MDPS, "name": "Melee"},
-]
 for role in ROLES:
-    role["specs"] = [spec for spec in SPECS if spec.role == role["slug"]]
+    role.specs = [spec for spec in SPECS if spec.role == role]
 
-
-class_by_name = {c.name: c for c in CLASSES}
-spec_by_full_name = {s.full_name: s for s in SPECS}
-
-
-# OTHER
-POTIONS_GRP = "90_Potion"
-spec_by_full_name[POTIONS_GRP] = OTHER_POTION
-TRINKET_GRP = "80_Trinket"
-spec_by_full_name[TRINKET_GRP] = OTHER_TRINKET
-
-
-# common heal Comps to check
-HEAL_COMPS = [
-    {
-        "specs": [PALADIN_HOLY, PRIEST_DISCIPLINE, SHAMAN_RESTORATION, DRUID_RESTORATION],
-        "extra_filter": "source.role='healer'",
-    },
-
-    {
-        "specs": [PALADIN_HOLY, PRIEST_DISCIPLINE, SHAMAN_RESTORATION, SHAMAN_RESTORATION],
-        "extra_filter": "source.role='healer'",
-    },
-
-    {
-        "specs": [PALADIN_HOLY, PALADIN_HOLY, PRIEST_DISCIPLINE, SHAMAN_RESTORATION],
-        "extra_filter": "source.role='healer'",
-    },
-]
-
-for comp in HEAL_COMPS:
-    specs = comp.get("specs", [])
-    comp["search"] = ",".join(f"{s.class_.id}.{s.id}.{specs.count(s)}" for s in SPECS if s in specs)
-    comp["name"] = "_".join(spec.full_name_slug for spec in specs)
-
-# todo: filter for ventyr/kryan pala
-# "abilities.316958", # Ventyr Pala (WARNING! Could be a ret)
 
 ################################################################################
-# Some Colors
+#
+#   SPELLS
+#
+################################################################################
 
+CD_1_MIN = 1 * 60 # 60
+CD_2_MIN = 2 * 60 # 120
+CD_3_MIN = 3 * 60 # 180
+CD_4_MIN = 4 * 60 # 240
+CD_5_MIN = 5 * 60 # 300
+
+# Some Colors
 COL_NIGHTFAE = "#8d5ca1"
 COL_VENTYR = "FireBrick"
 COL_KYRIAN = "LightSkyBlue"
@@ -275,41 +180,39 @@ _COLOR_POT_MAINSTAT = "#b576e8"
 _COLOR_POT_EXTRA = "#57bd8b"
 
 
-COL_RED1 = "hsv(0deg 60% 50%)"
-
-
-################################################################################
-# Define all the spells we care about
-#
-CD1min = 1 * 60 # 60
-CD2min = 2 * 60 # 120
-CD3min = 3 * 60 # 180
-CD4min = 4 * 60 # 240
-CD5min = 5 * 60 # 300
-
-# DPS CDs
+################################
+#   Warrior
 WARRIOR.add_spell(spell_id=325886, cooldown=90, duration=12, color=COL_NIGHTFAE) # Nightfae: Ancient Aftershock
 WARRIOR.add_spell(spell_id=97462, cooldown=180, duration=10, show=False) # Rally Cry
-# WARRIOR_FURY.add_spell(spell_id=107574, cooldown=90, duration=20) # Avatar
 WARRIOR_FURY.add_spell(spell_id=1719, cooldown=60, duration=10) # Recklessness # reduced by Anger Management
 WARRIOR_FURY.add_spell(spell_id=46924, cooldown=60, duration=4) # Bladestorm
 
-# PALADIN.add_spell(spell_id=105809, cooldown=180, duration=20, show=False) # Holy Avenger
-PALADIN.add_spell(spell_id=304971, cooldown=CD1min, show=False, color=COL_KYRIAN) # Covenant: Divine Toll
-PALADIN.add_spell(spell_id=316958, cooldown=CD4min, duration=30, color=COL_VENTYR) # Covenant: Ashen Hallow
-PALADIN.add_spell(spell_id=31884, cooldown=CD2min, duration=20) # Wings
-PALADIN_HOLY.add_spell(spell_id=31821, cooldown=CD3min, duration=8) # Aura Mastery
 
+################################
+#   Paladin
+# paladin.add_spell(spell_id=105809, cooldown=180, duration=20, show=False) # Holy Avenger
+PALADIN.add_spell(spell_id=304971, cooldown=CD_1_MIN, show=False, color=COL_KYRIAN) # Covenant: Divine Toll
+PALADIN.add_spell(spell_id=316958, cooldown=CD_4_MIN, duration=30, color=COL_VENTYR) # Covenant: Ashen Hallow
+PALADIN.add_spell(spell_id=31884, cooldown=CD_2_MIN, duration=20) # Wings
+PALADIN_HOLY.add_spell(spell_id=31821, cooldown=CD_3_MIN, duration=8, color="#dc65f5") # Aura Mastery
+
+
+################################
+# Hunter
 HUNTER.add_spell(spell_id=328231, cooldown=120, duration=15, color=COL_NIGHTFAE) # Covenant: Wild Spirits
 HUNTER_BEASTMASTERY.add_spell(spell_id=193530, cooldown=180, duration=20) # Aspect of the Wild
 HUNTER_BEASTMASTERY.add_spell(spell_id=19574, cooldown=30, duration=15, show=False, color="#9c8954") # Bestial Wrath
-# HUNTER_SURVIVAL.add_spell(spell_id=266779, cooldown=120, duration=20) # Coordinated Assault
+# hunter_survival.add_spell(spell_id=266779, cooldown=120, duration=20) # Coordinated Assault
 HUNTER_MARKSMANSHIP.add_spell(spell_id=288613, cooldown=120, duration=15, show=False) # Trueshot
 
-# Rogue
 
-# Priest
-PRIEST.add_spell(spell_id=10060, cooldown=CD2min, duration=20, show=False, color="#1fbcd1") # Power Infusion
+################################
+#   Rouge
+
+
+################################
+#   Priest
+PRIEST.add_spell(spell_id=10060, cooldown=CD_2_MIN, duration=20, show=False, color="#1fbcd1") # Power Infusion
 # PRIEST_SHADOW.add_spell(spell_id=34433, cooldown=180, duration=15) # Shadowfiend
 # PRIEST_SHADOW.add_spell(spell_id=228260, cooldown=90) # Void Erruption
 # PRIEST_DISCIPLINE.add_spell(spell_id=34433, cooldown=180, duration=15, show=False) # Shadowfiend
@@ -323,20 +226,22 @@ PRIEST_HOLY.add_spell(spell_id=265202, cooldown=240) # Savl (not showing CD, bec
 PRIEST_HOLY.add_spell(spell_id=200183, cooldown=120, duration=20, show=False) # Apotheosis
 
 
+################################
 # DK
 DEATHKNIGHT.add_spell(spell_id=51052, cooldown=120, duration=10, show=False)  # Anti-Magic Zone
 DEATHKNIGHT_UNHOLY.add_spell(spell_id=42650, cooldown=4*60, duration=30)  # Army (usually 4min with talent)
 DEATHKNIGHT_UNHOLY.add_spell(spell_id=275699, cooldown=60, duration=15, show=False)  # Apocalypse (90sec -> 60sec talent)
 
 
-# Shamans
-# SHAMAN.add_spell(spell_id=326059, cooldown=45, show=False, color=COL_NECROLORD)  # Necro: Primordial Wave
+################################
+#   Shaman
+# shaman.add_spell(spell_id=326059, cooldown=45, show=False, color=COL_NECROLORD)  # Necro: Primordial Wave
 SHAMAN.add_spell(spell_id=320674, cooldown=90, show=False, color=COL_VENTYR)  # Ventyr: Chain Harvest
 SHAMAN_ELEMENTAL.add_spell(spell_id=191634, cooldown=60, show=True, color="DeepSkyBlue")  # Stormkeeper
 SHAMAN_ELEMENTAL.add_spell(spell_id=198067, cooldown=150, show=True, color="DarkOrange")  # Fire Elemental
 
-SHAMAN_ENHANCEMENT.add_spell(spell_id=114051, cooldown=CD3min, show=True)  # Ascendance
-SHAMAN_ENHANCEMENT.add_spell(spell_id=51533, cooldown=CD2min, show=True)  # Feral Spirit
+SHAMAN_ENHANCEMENT.add_spell(spell_id=114051, cooldown=CD_3_MIN, show=True)  # Ascendance
+SHAMAN_ENHANCEMENT.add_spell(spell_id=51533, cooldown=CD_2_MIN, show=True)  # Feral Spirit
 
 SHAMAN_RESTORATION.add_spell(spell_id=108280, cooldown=180, duration=10) # Healing Tide
 SHAMAN_RESTORATION.add_spell(spell_id=98008,  cooldown=180, duration=6, color="#24b385")  # Spirit Link
@@ -344,12 +249,16 @@ SHAMAN_RESTORATION.add_spell(spell_id=16191,  cooldown=180, duration=8, show=Fal
 SHAMAN_RESTORATION.add_spell(spell_id=207399,  cooldown=300, duration=30, color="#d15a5a")  # Ahnk totem
 SHAMAN_RESTORATION.add_spell(spell_id=114052,  cooldown=180, duration=15)  # Ascendance
 
-# Mage
+
+################################
+#   Mage
 MAGE.add_spell(spell_id=314791, cooldown=60, duration=3.1, show=False, color=COL_NIGHTFAE) # Shifting Power
 MAGE_FIRE.add_spell(spell_id=190319, cooldown=60, duration=10, color="#e3b02d") # Combustion
 MAGE_FIRE.add_spell(spell_id=153561, cooldown=45, show=False) # Meteor
 
-# Warlock
+
+################################
+#   Warlock
 WARLOCK.add_spell(spell_id=325640, cooldown=60, duration=8, show=False, color=COL_NIGHTFAE) # Soulrot
 
 WARLOCK_AFFLICTION.add_spell(spell_id=205180, cooldown=180, duration=8, color="#49ad6e") # Darkglare
@@ -363,6 +272,8 @@ WARLOCK_DEMONOLOGY.add_spell(spell_id=267217, cooldown=180, duration=15) # Nethe
 WARLOCK_DESTRUCTION.add_spell(spell_id=1122, cooldown=180, duration=30, color="#91c45a") # Infernal
 WARLOCK_DESTRUCTION.add_spell(spell_id=113858, cooldown=120, duration=20, color="#c35ec4") # Dark Soul: Instability
 
+
+################################
 # Monk
 MONK.add_spell(spell_id=322109, cooldown=180, color="#c72649") # Touch of Death
 MONK.add_spell(spell_id=115203, cooldown=360, duration=15, show=False) # Fort Brew
@@ -376,6 +287,7 @@ MONK_WINDWALKER.add_spell(spell_id=123904, cooldown=120, duration=24, color="#8c
 MONK_WINDWALKER.add_spell(spell_id=137639, cooldown=90, duration=15, color="#be53db") # Storm, Earth and Fire
 
 
+################################
 # Druid
 DRUID.add_spell(spell_id=323764, cooldown=120, duration=4, show=False, color=COL_NIGHTFAE)  # Convoke
 DRUID_RESTORATION.add_spell(spell_id=197721, cooldown=90, duration=8, show=False, color="#7ec44d") # Flourish
@@ -388,68 +300,96 @@ DRUID_BALANCE.add_spell(spell_id=102560, cooldown=180, duration=30) # Incarnatio
 DRUID_BALANCE.add_spell(spell_id=205636, cooldown=60, duration=10, show=False) # Treants
 DRUID_BALANCE.add_spell(spell_id=202770, cooldown=60, duration=8, show=False) # Fury of Elune
 
+
+################################
 # DH
 DEMONHUNTER.add_spell(spell_id=306830, cooldown=60, color=COL_KYRIAN) # Elysian Decree
 DEMONHUNTER.add_spell(spell_id=323639, cooldown=90, duration=6, color=COL_NIGHTFAE) # The Hunt
 DEMONHUNTER.add_spell(spell_id=317009, cooldown=60, color=COL_VENTYR) # Sinful Brand
 
-DEMONHUNTER_HAVOC.add_spell(spell_id=200166, cooldown=CD4min, duration=30, color="#348540") # Meta
+DEMONHUNTER_HAVOC.add_spell(spell_id=200166, cooldown=CD_4_MIN, duration=30, color="#348540", icon_name="ability_demonhunter_metamorphasisdps.jpg") # Meta
 DEMONHUNTER_HAVOC.add_spell(spell_id=196718, cooldown=180, duration=8, show=False) # Darkness
 DEMONHUNTER_HAVOC.add_spell(spell_id=196555, cooldown=180, duration=5, show=False) # Netherwalk
 
-# fix meta icon
-DEMONHUNTER_HAVOC.spells[200166].icon = "ability_demonhunter_metamorphasisdps.jpg"
 
 ################################################################################
-# Potions (figure out how to best include them later)
+#
+#   POTIONS & TRINKETS
+#
+################################################################################
+
+ITEM = WowRole(code="z_item", name="Items")
+OTHER = WowClass(name="Other", color="#cccccc")
+
+OTHER_POTION = OTHER.add_spec(name="Potions", role=ITEM)
+OTHER_TRINKET = OTHER.add_spec(name="Trinkets", role=ITEM)
 
 
+_specs_dps = MDPS.specs+RDPS.specs
 
-for spec in HEALS:
+_specs_int = HEAL.specs + [PRIEST_SHADOW, SHAMAN_ELEMENTAL, MAGE, WARLOCK, DRUID_BALANCE]
+_specs_agi = [HUNTER, ROGUE, SHAMAN_ENHANCEMENT, MONK_WINDWALKER, DRUID_FERAL, DEMONHUNTER]
+_specs_str = [WARRIOR, PALADIN_RETRIBUTION, DEATHKNIGHT]
+
+for spec in HEAL.specs:
     spec.add_spell(group=OTHER_POTION, spell_id=307161, cooldown=300, duration=10, show=False, color=COL_MANA) # Mana Channel Pot
     spec.add_spell(group=OTHER_POTION, spell_id=307193, cooldown=300, show=False, color=COL_MANA)              # Mana Pot
-    spec.add_spell(group=OTHER_POTION, spell_id=307162, cooldown=300, duration=25, show=False, color=_COLOR_POT_MAINSTAT) # Intellect Pot
     spec.add_spell(group=OTHER_POTION, spell_id=307495, cooldown=300, duration=25, show=False, color=_COLOR_POT_EXTRA) # Phantom Fire
 
-for spec in MELEE+RANGE:
+for spec in MDPS.specs+RDPS.specs:
     spec.add_spell(group=OTHER_POTION, spell_id=307495, cooldown=300, duration=25, show=False, color=_COLOR_POT_EXTRA) # Phantom Fire
 
-
-for spec in [PRIEST_SHADOW, SHAMAN_ELEMENTAL, MAGE, WARLOCK, DRUID_BALANCE]:
+for spec in _specs_int:
     spec.add_spell(group=OTHER_POTION, spell_id=307162, cooldown=300, duration=25, show=False, color=_COLOR_POT_MAINSTAT) # Intellect Pot
 
-for spec in [HUNTER, ROGUE, SHAMAN_ENHANCEMENT, MONK_WINDWALKER, DRUID_FERAL, DEMONHUNTER]:
+for spec in _specs_agi:
     spec.add_spell(group=OTHER_POTION, spell_id=307159, cooldown=300, duration=25, show=False, color=_COLOR_POT_MAINSTAT) # Agility Pot
 
-for spec in [WARRIOR, PALADIN_RETRIBUTION, DEATHKNIGHT]:
+for spec in _specs_str:
     spec.add_spell(group=OTHER_POTION, spell_id=307164, cooldown=300, duration=25, show=False, color=_COLOR_POT_MAINSTAT) # Strength Pot
 
 
 ################################################################################
-# All Classes
-for spec in SPECS:
+#
+#   TRINKETS (and all class-potions)
+#
+################################################################################
 
-    spec.add_spell(group=OTHER_POTION, spell_id=6262, show=False) # Healthstone
-    spec.add_spell(group=OTHER_POTION, spell_id=307192, cooldown=CD5min, show=False, color="#e35f5f") # Healthpot
+# everyone
+for spec in WowSpec.all:
+
+    spec.add_spell(group=OTHER_POTION, spell_id=6262, wowhead_data="item=5512") # Healthstone
+    spec.add_spell(group=OTHER_POTION, spell_id=307192, cooldown=CD_5_MIN, color="#e35f5f", wowhead_data="item=171267") # Healthpot
 
     # Raid Trinkets
-    spec.add_spell(group=OTHER_TRINKET, spell_id=349857, cooldown=90, show=False) # Dreadfire Vessel
-    spec.add_spell(group=OTHER_TRINKET, spell_id=345019, cooldown=90, show=False) # Skulking Predator
-    spec.add_spell(group=OTHER_TRINKET, spell_id=345251, cooldown=60, duration=15, show=False) # Soul Igniter
+    spec.add_spell(group=OTHER_TRINKET, spell_id=345019, cooldown=90) # Skulking Predator
 
-    # Dungeon Trinkets
-    spec.add_spell(group=OTHER_TRINKET, spell_id=330323, cooldown=CD3min, show=False) # Quantum Device
-    spec.add_spell(group=OTHER_TRINKET, spell_id=345539, cooldown=CD3min, duration=35, show=False) # Ordnance (estimated duration)
-    spec.add_spell(group=OTHER_TRINKET, spell_id=345530, cooldown=90, duration=6, show=False) # Overcharged Anima Battery
-    spec.add_spell(group=OTHER_TRINKET, spell_id=345801, cooldown=CD2min, duration=15, show=False) # Soulletting Ruby
+    spec.add_spell(group=OTHER_TRINKET, spell_id=349857, cooldown=90, wowhead_data="item=184030&bonus=7359:6646")              # Dreadfire Vessel
+    spec.add_spell(group=OTHER_TRINKET, spell_id=330323, cooldown=180, wowhead_data="item=179350&ilvl=226")                    # Quantum Device
+    spec.add_spell(group=OTHER_TRINKET, spell_id=345539, cooldown=180, duration=35, wowhead_data="item=180117&ilvl=226")       # Ordnance (estimated duration)
+    spec.add_spell(group=OTHER_TRINKET, spell_id=348139, cooldown=90, duration=9, wowhead_data="item=184842&ilvl=226")         # Divine Bell
+
+for spec in _specs_int:
+    spec.add_spell(group=OTHER_TRINKET, spell_id=345801, cooldown=120, duration=15, wowhead_data="item=178809&ilvl=226")  # Soulletting Ruby
+    spec.add_spell(group=OTHER_TRINKET, spell_id=345251, cooldown=60, duration=15, wowhead_data="item=184019&bonus=7359:6646") # Soul Igniter
+
+
+for spec in _specs_agi:
+    spec.add_spell(group=OTHER_TRINKET, spell_id=345530, cooldown=90, duration=6, wowhead_data="item=180116&bonus=7359:6646")  # Overcharged Anima Battery
+    spec.add_spell(group=OTHER_TRINKET, spell_id=345251, cooldown=60, duration=15, wowhead_data="item=184025&ilvl=226")        # Memory of Past Sins
+
+
+for spec in _specs_str:
 
     # Other Trinkets
-    spec.add_spell(group=OTHER_TRINKET, spell_id=348139, cooldown=90, duration=9, show=False) # Divine Bell
-    spec.add_spell(group=OTHER_TRINKET, spell_id=345228, cooldown=CD1min, duration=15, show=False) # Badge
+    item = spec.add_spell(group=OTHER_TRINKET, spell_id=345228, cooldown=CD_1_MIN, duration=15) # Badge
 
-# 345539 # Ordnance
 
-SPELLS = {spell_id: spell for spec in SPECS for spell_id, spell in spec.all_spells.items()}
+# disable all by default
+for spell in WowSpell.all:
+    if spell.group.role == ITEM:
+        spell.show = False
 
-ALL_SPELLS = utils.flatten(spec.spells.values() for spec in SPECS)
 
+# load spell icons
+SPELLS = utils.uniqify(WowSpell.all, key=lambda spell: spell.spell_id)

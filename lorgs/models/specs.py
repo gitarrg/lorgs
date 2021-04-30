@@ -1,42 +1,26 @@
 """Models for Classes, Specs, Spells and Roles."""
 
-# pylint: disable=too-few-public-methods
-
-# IMPORT THIRD PARTY LIBRARIES
-# import textwrap
-import sqlalchemy
-from sqlalchemy.ext.hybrid import hybrid_property #, hybrid_method
-import flask
-
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
-from lorgs.db import db
-# from lorgs.logger import logger
+from lorgs.models import base
 
 
-###############################
-# Constant Data
-
-class WowRole(db.Model):
+class WowRole(base.Model):
     """A role like Tank, Healer, DPS."""
 
-    id = db.Column(db.Integer, primary_key=True) # mostly used for sort
+    def __init__(self, code: str, name: str, sort_index=99):
+        self.code = code
+        self.name = name
+        self.specs = []
 
-    code = db.Column(db.String(4))
-    name = db.Column(db.String(8))
-
-    specs = sqlalchemy.orm.relationship("WowSpec", back_populates="role")
+        self.icon_name = f"roles/{self.name.lower()}.jpg"
+        self.sort_index = sort_index
 
     def __repr__(self):
         return f"<Role({self.name})>"
 
     def __lt__(self, other):
-        return self.id < other.id
-
-    @property
-    def img_path(self):
-        filename = f"images/roles/{self.name.lower()}.jpg"
-        return flask.url_for("static", filename=filename)
+        return self.sort_index < other.sort_index
 
     @property
     def metric(self):
@@ -44,218 +28,91 @@ class WowRole(db.Model):
         return "hps" if self.code == "heal" else "dps"
 
 
-class WowClass(db.Model):
+class WowClass(base.Model):
     """A playable class in wow."""
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=False)
-    name = db.Column(db.String(64))
-    color = db.Column(db.String(32))
+    def __init__(self, name: str, color: str):
+        self.name = name
+        self.color = color
+        self.specs = []
 
-    specs = sqlalchemy.orm.relationship("WowSpec", back_populates="wow_class", cascade="all,save-update,delete")
+        self.name_slug_cap = self.name.replace(" ", "")
+        self.name_slug = utils.slug(self.name)
 
-    # def __init__(self, name):
-    #     super().__init__()
-        # self.name = name
-        # self.specs = []
-        # self.id = 0
-        # self._all[self.name_slug] = self
+        #: bool: flag for the trinkets/potions groups
+        self.is_other = self.name.lower() == "other"
 
     def __repr__(self):
         return f"<Class(name='{self.name}')>"
 
-    def add_spell(self, spell_id, **kwargs):
-        kwargs.setdefault("color", self.color)
-
-        spell = WowSpell.get(spell_id=spell_id)
-        spell.update(**kwargs)
-
-        for spec in self.specs:
-            spec.spells.append(spell)
-        """
-        """
-
-    """
-    @classmethod
-    def get_by_name(cls, name):
-        name = utils.slug(name)
-        return cls._all.get(name)
-    """
-
-    @property
-    def name_slug_cap(self):
-        return self.name.replace(" ", "")
-
-    @property
-    def name_slug(self):
-        return utils.slug(self.name)
-
-    """
-    def add_spec(self, **kwargs):
-        spec = WowSpec(self, **kwargs)
-        # spec.class_ = self
+    def add_spec(self, *args, **kwargs):
+        kwargs["wow_class"] = self
+        spec = WowSpec(*args, **kwargs)
         self.specs.append(spec)
         return spec
 
-    def get_spec(self, name):
-        name = utils.slug(name)
-        specs = {s.name_slug: s for s in self.specs}
-        return specs.get(name)
-    """
+    def add_spell(self, **kwargs):
+        # kwargs.setdefault("color", self.color)
+        for spec in self.specs:
+            spec.add_spell(**kwargs)
 
 
-# table that stores which spells have access to which spells
-spec_spells = db.Table( # pylint: disable=invalid-name
-    "spec_spells",
-    db.Column("spec_id", db.Integer, db.ForeignKey("wow_spec.id"), primary_key=True),
-    db.Column("spell_id", db.Integer, db.ForeignKey("wow_spell.spell_id"), primary_key=True)
-)
-
-
-class WowSpec(db.Model):
+class WowSpec(base.Model):
     """docstring for Spec"""
 
-    wow_class = sqlalchemy.orm.relationship("WowClass", back_populates="specs", lazy="joined")
-    wow_class_id = db.Column(db.Integer, db.ForeignKey("wow_class.id", ondelete="cascade"), primary_key=True)
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True, index=True)
-
-    wcl_id = db.Column(db.Integer) # id used on warcraftlogs
-    name = db.Column(db.String(64))
-    color = db.Column(db.String(32))
-    _short_name = db.Column("short_name", db.String(16))
-
-    role = sqlalchemy.orm.relationship("WowRole", back_populates="specs")
-    role_id = db.Column(db.Integer, db.ForeignKey("wow_role.id"))
-
-    spells = sqlalchemy.orm.relationship("WowSpell", secondary=spec_spells, back_populates="specs")
-
-    players = sqlalchemy.orm.relationship("Player", back_populates="spec")
-
-    supported = db.Column(db.Boolean, default=True)
-
-    """
-    def __init__(self, class_, name, role="dps"):
+    def __init__(self, name, wow_class, role=None, short_name: str = ""):
         super().__init__()
-        self.id = 0
+        # self.id = 0
         self.name = name
+        self.wow_class = wow_class
         self.role = role
-        self.class_ = class_
-        self.spells = {}
+        self.short_name = short_name or self.name
+        # self.spells = {}
 
         # used for sorting
-        role_order = {"tank": 0, "heal": 1, "rdps": 2, "mdps": 3, "other": 4}
-        self.role_index = role_order.get(self.role, 99)
+        # role_order = {"tank": 0, "heal": 1, "rdps": 2, "mdps": 3, "other": 4}
+        # self.role_index = role_order.get(self.role, 99)
 
         # bool: is this spec is currently supported
         self.supported = True
 
         # Generate some names
-        self.class_name = self.class_.name
-        self.short_name = self.name # to be overwritten
-
+        self.name_slug = utils.slug(self.name)
+        self.name_slug_cap = self.name.replace(" ", "")
+        self.full_name = f"{self.name} {self.wow_class.name}"
+        self.full_name_slug = f"{self.wow_class.name_slug}-{self.name_slug}"
+        # self.class_name = self.class_.name
+        # self.short_name = self.name # to be overwritten
         # slugified names
+        # self.class_name_slug = self.class_.name_slug
 
-        self.class_name_slug = self.class_.name_slug
+        self.icon_name = f"specs/{self.full_name_slug}.jpg"
 
-    """
+        self.spells = []
+
     def __repr__(self):
         return f"<Spec({self.full_name})>"
 
     def __lt__(self, other):
         return (self.role, self.name) < (other.role, other.name)
 
-    def as_dict(self):
-        return {
-            "name": self.name,
-            "class": self.wow_class.name,
-            "role": self.role.name,
-        }
+    def add_spell(self, **kwargs):
+        # kwargs.setdefault("color", self.wow_class.color)
 
-    @property
-    def short_name(self):
-        return self._short_name or self.name
-
-    @short_name.setter
-    def short_name(self, value):
-        self._short_name = value
-
-    @property
-    def name_slug(self):
-        return utils.slug(self.name)
-
-    @property
-    def name_slug_cap(self):
-        """str: Spec Name without spaces, but still capCase.. eg.: BeastMastery."""
-        return self.name.replace(" ", "")
-
-    @property
-    def full_name(self):
-        return f"{self.name} {self.wow_class.name}"
-
-    @hybrid_property
-    def full_name_slug(self):
-        return f"{self.wow_class.name_slug}-{self.name_slug}"
-
-    """
-    @property
-    def _sort_tuple(self):
-        return (self.role_index, self.name, self.full_name_slug)
-    """
-
-    def add_spell(self, spell_id, **kwargs):
-        # kwargs["group"] = kwargs.get("group") or self
-        kwargs.setdefault("color", self.wow_class.color)
-        spell = WowSpell.get(spell_id=spell_id)
-        spell.update(**kwargs)
+        kwargs["group"] = kwargs.get("group") or self
+        kwargs.setdefault("spec", self)
+        spell = WowSpell(**kwargs)
         self.spells.append(spell)
         return spell
-        # self.spells[spell.spell_id] = spell
-        # return spell
-
-    """
-    @property
-    def all_spells(self):
-        return self.spells
-        # return {**self.spells, **self.class_.spells}
-    """
-
-    @property
-    def img_path(self):
-        filename = f"images/specs/{self.full_name_slug}.jpg"
-        return flask.url_for("static", filename=filename)
 
 
-class WowSpell(db.Model):
+class WowSpell(base.Model):
     """Container to define a spell."""
 
-    # def __new__(cls, spell_id, *args, **kwargs):
-    #     """Create a new spell or reuse an instance if we already have that spell."""
-    #     if spell_id not in cls._all:
-    #         instance = super(WoWSpell, cls).__new__(cls)
-    #         cls._all[spell_id] = instance
-    #     return cls._all[spell_id]
+    # yoink
+    ICON_ROOT = "https://wow.zamimg.com/images/wow/icons/medium"
 
-    spell_id = db.Column(db.Integer, primary_key=True, autoincrement=False)
-    spell_name = db.Column(db.String(64))
-
-    specs = sqlalchemy.orm.relationship("WowSpec", secondary=spec_spells, back_populates="spells", lazy="joined")
-    # wow_spec_id = db.Column(db.Integer, db.ForeignKey("wow_spec.id", ondelete="cascade"))
-
-    icon = db.Column(db.String(128))
-    duration = db.Column(db.Integer, default=0)
-    cooldown = db.Column(db.Integer, default=0)
-
-    # group = "todo"
-    # group = {"class_name_slug": "paladin"} # TODO!
-    color = db.Column(db.String(32))
-    show = db.Column(db.Boolean, default=True)
-    # show = True
-
-    # wow_class = sqlalchemy.orm.relationship("WowClass", back_populates="specs")
-    # wow_class_id = db.Column(db.Integer, db.ForeignKey("wow_class.id"))
-
-    """
-    def __init__(self, spell_id, duration=0, cooldown=0, show=True, group=None, color=None):
+    def __init__(self, spell_id, spec=None, duration=0, cooldown=0, show=True, group=None, **kwargs):
         super().__init__()
 
         # game info
@@ -266,25 +123,61 @@ class WowSpell(db.Model):
         # display info
         self.group = group
         self.show = show
-        self.color = color
+        self.color = kwargs.get("color") or (group and group.wow_class.color)
+
+        self.spec = spec
 
         # info from query
-        self.icon = ""
-        self.name = ""
-    """
+        self.icon_name = kwargs.get("icon_name") or ""
+        self.spell_name = kwargs.get("spell_name") or ""
 
+        # the data for the wowhead tooltip.
+        # pregenerated, so we can overwrite it, eg.: for trinkets
+        self.wowhead_data = kwargs.get("wowhead_data") or f"spell={self.spell_id}"
 
     def __repr__(self):
         return f"<Spell({self.spell_id}, cd={self.cooldown})>"
 
-    def __eq__(self, other):
-        return self.spell_id == other.spell_id
+    def __getstate__(self):
 
-    def __hash__(self):
-        key = (self.spell_id, self.duration, self.cooldown, self.group)
-        return hash(key)
+        print("saving spell", self)
+
+        return {
+            "spell_id": self.spell_id
+        }
+
+        # capture what is normally pickled
+        state = self.__dict__.copy()
+        # replace the `value` key (now an EnumValue instance), with it's index:
+        # state["test"] = state['value'].index
+        # what we return here will be stored in the pickle
+        return state
+
+    def __setstate__(self, newstate):
+        # re-create the EnumState instance based on the stored index
+        raise NotImplementedError
+
+        print("loading spell", newstate)
+
+        spell_id = newstate.get("spell_id")
+        return self.get(spell_id=spell_id)
+
+        # self.__dict__.update(newstate)
+
+    def as_dict(self):
+
+        return {
+            "spell_id": self.spell_id,
+            "spell_name": self.spell_name,
+            "duration": self.duration,
+            "cooldown": self.cooldown,
+
+            # display attributes
+            "icon_name": self.icon_name,
+            "color": self.color,
+            "show": self.show,
+        }
 
     @property
-    def group(self):  # TMP
-        return self.specs[0]
-
+    def icon_path(self):
+        return f"{self.ICON_ROOT}/{self.icon_name}"

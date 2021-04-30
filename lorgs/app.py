@@ -4,30 +4,39 @@
 # IMPORT STANDARD LIBRARIES
 import os
 
-# IMPORT THIRD PARTY
+# IMPORT THIRD PARTY LIBRARIES
 import flask
 
-# IMPORT LOCAL LIBS
-from lorgs import db
-from lorgs import routes
+# IMPORT LOCAL LIBRARIES
+from lorgs.routes import api
+from lorgs.routes import views
 from lorgs import utils
+from lorgs import cache
+from lorgs import models
+from lorgs.logger import logger
 
 
-class Config:
 
-    # Flask Main
-    SECRET_KEY = os.environ.get("SECRET_KEY") or "giga-secret_key-nobody-will-ever-find-out"
+def load_spell_icons():
+    logger.info("[load spell icons] start")
+    return
+    spell_infos = cache.Cache.get("spell_infos") or []
+    if not spell_infos:
+        logger.warning("SPELL INFO NOT FOUND!")
+        return
 
-    # SQLAlchemy
-    SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI") or 'sqlite://'
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_ENGINE_OPTIONS = {
-        "pool_pre_ping": True,
-        # "echo": True,
-    }
-    # SEND_FILE_MAX_AGE_DEFAULT = 0  # for DEV. updates static files
+    # attach data to spells
+    for spell in models.WowSpell.all:
+        spell_info = spell_infos.get(spell.spell_id, {})
+        if not spell_info:
+            logger.warning("No Spell Info for: %s", spell.spell_id)
+            continue
 
-    GOOGLE_ANALYTICS_ID = "G-Y92VPCY6QW"
+        # check for existing values so we keep manual overwrites
+        spell.spell_name = spell.spell_name or spell_info.get("name")
+        spell.icon_name = spell.icon_name or spell_info.get("icon")
+
+    logger.info("[load spell icons] done")
 
 
 def create_app(config_obj=None):
@@ -43,7 +52,9 @@ def create_app(config_obj=None):
     """
     # create APP
     app = flask.Flask(__name__)
-    app.config.from_object(config_obj or Config)
+
+    config_name = os.getenv("LORGS_CONFIG_NAME")
+    app.config.from_object(config_name)
 
     # configure jina
     app.jinja_env.trim_blocks = True
@@ -51,14 +62,9 @@ def create_app(config_obj=None):
     app.jinja_env.filters["format_time"] = utils.format_time
     app.jinja_env.filters["format_big_number"] = utils.format_big_number
 
+    cache.init_app(app)
+    load_spell_icons()
 
-    db.init_app(app)
-
-    app.register_blueprint(routes.BP, url_prefix="/")
-
+    app.register_blueprint(views.BP, url_prefix="/")
+    app.register_blueprint(api.BP, url_prefix="/api")
     return app
-
-
-if __name__ == "__main__":
-    app = create_app()
-    app.run(debug=True, host="0.0.0.0")

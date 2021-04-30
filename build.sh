@@ -12,7 +12,11 @@ cp -r lorgs/static $build_dir/static
 
 
 # Build SASS
-pysassc --style=compact lorgs/templates/scss/main.scss "$build_dir/static/style.css"
+# pysassc --style=compact lorgs/templates/scss/main.scss "$build_dir/static/style.css"
+
+# Watchdog
+# pysass --style=compact lorgs/templates/scss/main.scss "lorgs/static/_generated/style.css" -I lorgs/templates/scss --watch 
+
 
 # source ~/.envs/lorgs/bin/activate
 # export PYTHONPATH=.  # adds current dir, so we can import from rcu_bot

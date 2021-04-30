@@ -11,12 +11,12 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
 
     <!-- HEADER -->
     <div>
-        <a href="https://www.warcraftlogs.com/zone/rankings/26#boss={{boss.boss_id}}&class={{spec.wow_class.name_slug_cap}}&spec={{spec.name_slug_cap}}&metric={{spec.role.metric}}&region=2" target="_blank">
+        <a href="https://www.warcraftlogs.com/zone/rankings/{{boss.zone.id}}#boss={{boss.id}}&class={{spec.wow_class.name_slug_cap}}&spec={{spec.name_slug_cap}}&metric={{spec.role.metric}}&region=2" target="_blank">
             <h1>
-                <img class="icon-l rounded shadow wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.img_path}}">
+                <img class="icon-l rounded shadow wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.icon_path}}">
                 <span class="wow-class-{{spec.wow_class.name_slug}}">{{spec.full_name}}s</span>
                 vs
-                <img class="icon-l rounded shadow border-white" src="{{boss.img_path}}" alt="{{boss.name}}" target="_blank">
+                <img class="icon-l rounded shadow border-white" src="{{boss.icon_path}}" alt="{{boss.name}}" target="_blank">
                 {{boss.name}}
             </h1>
         </a>
@@ -32,7 +32,7 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
                 <div class="p-1 bg-dark border rounded">
                 {% for role in roles %}
                     <div class="ranking-nav">
-                        <img class="ranking-nav-role-icon icon-m rounded border-black" src="{{role.img_path}}">
+                        <img class="ranking-nav-role-icon icon-m rounded border-black" src="{{role.icon_path}}">
 
                         <div class="ranking-nav-role-specs bg-dark border rounded">
                             {% for spec in role.specs %}
@@ -42,7 +42,7 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
                                 {% else %}
                                 <a class="disabled" href="#">
                                 {% endif %}
-                                    <img class="icon-spec icon-m rounded wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.img_path}}" alt="{{spec.full_name}}" title="{{spec.full_name}}">
+                                    <img class="icon-spec icon-m rounded wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.icon_path}}" alt="{{spec.full_name}}" title="{{spec.full_name}}">
                                     <span class="wow-class-{{spec.wow_class.name_slug}}">{{spec.full_name}}</span>
                                 </a>
                             </div>
@@ -51,7 +51,6 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
                     </div>
                 {% endfor %}
                 </div>
-                <!-- <div style="text-align: end;"><h5>other specs</h5></div> -->
             </div>
 
             <!-- Bosses -->
@@ -59,11 +58,10 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
                 <div class="p-1 bg-dark border ml-auto rounded">
                     {% for boss2 in bosses %}
                     <a href="{{url_for('ui.spec_ranking', spec_slug=spec.full_name_slug, boss_slug=boss2.name_slug)}}" class="{{'active' if boss2 == boss}}" data-toggle="tooltip" title="{{boss2.name}}">
-                        <img class="icon-spec icon-m border-black rounded" src="{{boss2.img_path}}" alt="{{boss2.name_slug}}">
+                        <img class="icon-spec icon-m border-black rounded" src="{{boss2.icon_path}}" alt="{{boss2.name_slug}}">
                     </a>
                     {% endfor %}
                 </div>
-                <!-- <div style="text-align: end;"><h5>other bosses</h5></div> -->
             </div>
 
             <!-- Home -->
@@ -76,7 +74,6 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
             </div>
         </div>
 
-        <!-- SETTINGS v2 -->
         <div class="mt-2">
             {% include "elements/settings_bar.html" %}
         </div>
@@ -89,18 +86,17 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
 
 
 {% block content -%}
+{% from "elements/timeline_player_name.html" import player_name with context %}
+
 <!-- TIMELINES -->
 <div class="p-2 bg-dark rounded border">
 
     <!-- Player Names -->
-    <div class="player_names_container float-left">
-        <div class="player_timeline_scroll_y">
-            <div style="height: 32px"></div>
-            {% for player in players if player.casts %}
-                {% set i = loop.index %}
-                {% include "elements/player_name.html" %}
-            {% endfor %}
-        </div>
+    <div class="player_names_container spec_ranking float-left">
+        <div style="height: 32px"></div>
+        {% for player in players if true or player.casts %}
+            {{ player_name(player, loop.index) }}
+        {% endfor %}
     </div>
 
     <div class="player_timelines_container">
@@ -125,6 +121,7 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
 
 <!-- Content Scripts -->
 {% block scripts %}
-{% include "elements/player_timeline_script.html" %}
+<script src="{{url_for('static',filename='spells.js')}}"></script>
+<script src="{{url_for('static',filename='timeline.js')}}"></script>
 {{ super() }}
 {% endblock %}

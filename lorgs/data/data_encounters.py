@@ -1,10 +1,11 @@
+"""Models for Raids and RaidBosses."""
 
-from lorgs.db import db
+# IMPORT LOCAL LIBRARIES
 from lorgs.models.encounters import RaidZone, RaidBoss
 
 
 # TODO: get from query?
-ENCOUNTER_DATA = [
+_ENCOUNTER_DATA = [
     {
         "id": 26,
         "name": "Castle Nathria",
@@ -24,24 +25,15 @@ ENCOUNTER_DATA = [
 ]
 
 
+for zone_data in _ENCOUNTER_DATA:
+    zone = RaidZone(id=zone_data["id"], name=zone_data["name"])
 
-def create():
-    for zone in ENCOUNTER_DATA:
-        raid_zone = RaidZone.get(id=zone["id"], name=zone["name"])
-        print(raid_zone.id, raid_zone.name)
-
-        for boss in zone.get("encounters", []):
-            raid_boss = RaidBoss.get(zone=raid_zone, boss_id=boss["id"], name=boss["name"])
-            print("\t", raid_boss.boss_id, raid_boss.name)
-
-        db.session.add(raid_zone)
+    for boss_data in zone_data.get("encounters", []):
+        zone.add_boss(id=boss_data["id"], name=boss_data["name"])
 
 
+DEFAULT_ZONE = RaidZone.get(id=26)
+DEFAULT_BOSS = RaidBoss.get(id=2407)
 
-if __name__ == '__main__':
-
-    from lorgs.app import create_app
-
-    app = create_app()
-    app.app_context().push()
-    create()
+ZONES = RaidZone.all
+BOSSES = DEFAULT_ZONE.bosses

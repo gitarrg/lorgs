@@ -1,12 +1,12 @@
 /*
     Create all Spell-Elements and their logic
-*/
 
 
 var SPELLS = {};
 {% for s in spells %}
-SPELLS[{{s.spell_id}}] = {"g": "{{s.group.class_name_slug}}", "cd": {{s.cooldown}}, "d": {{s.duration}}, "c": "{{s.color or ''}}", "i": "{{s.icon}}", "s": {{"true" if s.show else "false"}} }
+SPELLS[{{s.spell_id}}] = {"g": "{{s.group.class_name_slug}}", "cd": {{s.cooldown}}, "d": {{s.duration}}, "c": "{{s.color or ''}}", "i": "{{s.icon_name}}", "s": {{"true" if s.show else "false"}} }
 {% endfor %}
+*/
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@ const IMG_ROOT = "https://wow.zamimg.com/images/wow/icons/medium/"
 //      CREATION
 //
 
+var SPELLS;
 
 // int: which spell are are currently selecting (or null if no selection)
 var SELECTED_SPELL = null;
@@ -55,46 +56,43 @@ async function create_single_cast(cast) {
     const casttime = cast.dataset.casttime
 
     // Get static info from "DB"
-    const spell_data = SPELLS[cast.spell_id];
-    const cooldown = spell_data.cd * SCALE;
-    const duration = spell_data.d * SCALE;
-    const color = spell_data.c;
-    const icon = spell_data.i;
-    const group = spell_data.g;
-    const show_ = spell_data.s;
+    const spell = SPELLS[cast.spell_id];
+    // const cooldown = spell.cooldown * SCALE;
+    // const duration = spell.duration * SCALE;
+    // const group = spell.group;
 
     // set initial visibility
-    show(cast, show_)
+    show(cast, spell.show)
 
     // time when the spell was cast
     cast.style.left = (casttime/1000 * SCALE) + "px";
 
-    if (cooldown > 0) {
+    if (spell.cooldown > 0) {
         let div = document.createElement("div");
         div.classList.add("cast_cooldown");
-        div.style.width = cooldown + "px";
-        div.classList.add(`wow-class-bg-${group}`);
-        div.style.backgroundColor = color;
+        div.style.width = spell.cooldown * SCALE + "px";
+        // div.classList.add(`wow-class-bg-${group}`);
+        div.style.backgroundColor = spell.color;
         cast.append(div)
     }
 
     // duration
-    if (duration > 0) {
+    if (spell.duration > 0) {
         let div = document.createElement("div");
         div.classList.add("cast_duration");
-        div.classList.add(`wow-class-bg-${group}`);
-        div.style.width = duration + "px";
-        div.style.backgroundColor = color;
+        // div.classList.add(`wow-class-bg-${group}`);
+        div.style.width = spell.duration * SCALE + "px";
+        div.style.backgroundColor = spell.color;
         cast.append(div)
     }
 
-    if (icon != null) {
+    if (spell.icon_name != null) {
         let div = document.createElement("div");
         div.classList.add("cast_icon");
         cast.append(div)
 
         let img = document.createElement("img");
-        img.src = IMG_ROOT + icon;
+        img.src = IMG_ROOT + spell.icon_name;
         div.append(img)
     }
 
@@ -110,5 +108,19 @@ async function create_single_cast(cast) {
 }
 
 
-const tasks = [...ALL_CASTS].map(cast => {create_single_cast(cast)})
-Promise.all(tasks)
+function create_all_casts() {
+    const tasks = [...ALL_CASTS].map(cast => {create_single_cast(cast)})
+    Promise.all(tasks)
+}
+
+
+document.addEventListener('DOMContentLoaded', (event) => {
+
+    console.log("LOAD SPELLS")
+
+    fetch("/api/spells")
+        .then(response => response.json())
+        .then(data => SPELLS=data)
+        .then(create_all_casts)
+});
+

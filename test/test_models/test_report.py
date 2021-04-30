@@ -1,90 +1,90 @@
 
 # pylint: disable=wrong-import-position,invalid-name
-
-# IMPORT STANDARD LIBRARIES
-import os
 import asyncio
 
-# IMPORT THIRD PARTY LIBRARIES
 import dotenv
 dotenv.load_dotenv()
 
-# IMPORT LOCAL LIBRARIES
+from lorgs import data
+from lorgs import utils
+from lorgs.models.specs import WowRole
+from lorgs.models.specs import WowClass
+from lorgs.models.specs import WowSpell
+from lorgs.models.specs import WowSpec
+from lorgs.models import Report
+from lorgs.cache import Cache
+from lorgs.models import loader
+
 from lorgs.app import create_app
-from lorgs.models.specs import WowSpec, WowSpell
-# from lorgs.models.encounters import RaidZone, RaidBoss
-from lorgs.models import reports
 
-from lorgs.db import db
-from lorgs import client
-
-
-REPORT_ID = "KQBbcGCyX87L92NR"
-FIGHT = 7
-source=20
-
-
-# create app instance
 app = create_app()
-app.app_context().push()
+
+from pprint import pprint
 
 
-WCL_CLIENT_ID = os.getenv("WCL_CLIENT_ID")
-WCL_CLIENT_SECRET = os.getenv("WCL_CLIENT_SECRET")
-WCL_CLIENT = client.WarcraftlogsClient(client_id=WCL_CLIENT_ID, client_secret=WCL_CLIENT_SECRET)
+import redis
+client = redis.Redis(host="localhost")#, port=6379, password="mypassword")
+import json
 
 
-def _init_db():
-    db.create_all()
-    db.session.commit()
+async def test_1():
+    """Load a report."""
 
+    report_id = "6YGnLdrtyKMWwcmx"
 
-async def test1():
-
-    # await WCL_CLIENT.update_auth_token()
-
-    report = db.get_or_create(reports.Report, report_id=REPORT_ID)
-    print("report", report)
-    # db.session.delete(report)
-    # db.session.commit()
-
-    if report.fights:
-        db.session.delete(report.fights)
-        db.session.commit()
-
-    if not report.fights:
-        await report.fetch_fights(WCL_CLIENT)
-
-    spells = WowSpell.query.all()
-    fights = report.fights[:1]
-    await WCL_CLIENT.fetch_multiple_fights(fights, spells=spells)
-
-
-    print(report)
-    for fight in report.fights:
-        print("\t", fight)
-
-        for player in fight.players:
-            print("\t\t", player)
-
-    db.session.commit()
-    # return
     """
-    warrior = WowClass.query.filter_by(name="Warrior").first()
-    print(warrior)
-    for spec in warrior.specs:
-        print("\t", spec.full_name, spec.role)
-    print("------------")
-
-    print("SPECS:")
-    for role in WowRole.query.all():
-        print("\t", role)
-        for spec in role.specs:
-            print("\t\t", spec)
+    report = Report(report_id=report_id)
+    await loader.load_report(report)
+    report = Cache.set(f"report/{report_id}", report, timeout=0)
     """
 
+    report = Cache.get(f"report/{report_id}")
+    report.fights = report.fights[:3]
+    pprint(report.as_dict())
+
+    client.set("test", json.dumps(report.as_dict()))
+
+    # report = Cache.set(f"report/{report_id}")
+
+async def test_2():
+
+
+    import pickle
+    spec = WowSpec.get(full_name_slug="paladin-holy")
+    spec = pickle.loads(pickle.dumps(spec))
+    pprint(spec.as_dict())
+
+    # res.file.read()  # OK
+
+
+
+
+async def main():
+    await test_1()
+    # await test_2()
 
 
 if __name__ == '__main__':
-    _init_db()
-    asyncio.run(test1())
+    asyncio.run(main())
+
+
+
+
+
+"""
+Cache.set("spell_infos", {}, timeout=600)
+
+# import pickle
+wow_class = WowSpec.get(wow_class__name="Druid", name="Restoration")
+spells = wow_class.spells
+
+data = spells[:3]
+Cache.set("test", data)
+
+print("======== SAVED ========")
+
+data = Cache.get("test")
+print(data)
+
+# with app.app_context():
+"""

@@ -1,56 +1,60 @@
 """Models for Raids and RaidBosses."""
 # pylint: disable=too-few-public-methods
 
-# IMPORT THIRD PARTY LIBRARIES
-import sqlalchemy
-import flask
-
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
-from lorgs.db import db
+from lorgs.models import base
 
 
-class RaidZone(db.Model):
+class RaidZone(base.Model):
     """A raid zone in the Game."""
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128))
+    def __init__(self, id, name):
+        super().__init__()
 
-    bosses = sqlalchemy.orm.relationship(
-        "RaidBoss",
-        back_populates="zone",
-        cascade="all,save-update,delete",
-    )
+        #: int
+        self.id = id
+
+        #: str
+        self.name = name
+
+        #: list(<RaidBoss>)
+        self.bosses = []
+
+        #: str
+        self.name_slug = utils.slug(self.name, space="-")
 
     def __repr__(self):
-        return f"<RaidZone({self.name})>"
+        return f"<RaidZone(id={self.id} name={self.name})>"
 
-    @property
-    def name_slug(self):
-        return utils.slug(self.name, space="-")
+    def add_boss(self, **kwargs):
+        boss = RaidBoss(zone=self, **kwargs)
+        self.bosses.append(boss)
+
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+        }
 
 
-class RaidBoss(db.Model):
+class RaidBoss(base.Model):
     """A raid boss in the Game."""
 
-    id = db.Column(db.Integer, primary_key=True)  # id to maintain order of creation
+    def __init__(self, zone, id, name):
+        super().__init__()
+        self.id = id
+        self.name = name
+        self.zone = zone
 
-    zone = sqlalchemy.orm.relationship("RaidZone", back_populates="bosses")
-    zone_id = db.Column(db.Integer, db.ForeignKey("raid_zone.id", ondelete="cascade"))
-
-    boss_id = db.Column(db.Integer, index=True) # ingame id
-    name = db.Column(db.String(128))
-
-    fights = sqlalchemy.orm.relationship("Fight", back_populates="boss")
+        self.name_slug = utils.slug(self.name, space="-")
+        self.icon_name = f"bosses/{self.zone.name_slug}/{self.name_slug}.jpg"
 
     def __repr__(self):
         return f"<RaidBoss({self.name})>"
 
-    @property
-    def name_slug(self):
-        return utils.slug(self.name, space="-")
-
-    @property
-    def img_path(self):
-        filename = f"images/bosses/{self.zone.name_slug}/{self.name_slug}.jpg"
-        return flask.url_for("static", filename=filename)
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+        }

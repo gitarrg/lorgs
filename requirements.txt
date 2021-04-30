@@ -1,22 +1,12 @@
 aiofiles
 aiohttp
-Jinja2
 python-dotenv
-
-# SQLAlchemy==1.4.9
-# PyMySQL==1.0
-# libsass
 
 # to build scss
 pysass
 
+
 gunicorn==20.1.0
 Flask==1.1
-Flask-SQLAlchemy==2.4
 Flask-WTF==0.14.3
-flask_wtf==0.14.3
-
-PyMySQL==1.0
-
-# https://www.tutorialguruji.com/dbms/retrieving-data-from-rds-gives-attributeerror-sqlalchemy-cimmutabledict-immutabledict-object-has-no-attribute-setdefault/
-SQLAlchemy<1.4
+Flask-Caching

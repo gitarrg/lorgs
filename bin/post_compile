@@ -5,3 +5,4 @@ mkdir lorgs/static/_generated
 pysassc --style=compact "lorgs/templates/scss/main.scss" "lorgs/static/_generated/style.css"
 
 
+

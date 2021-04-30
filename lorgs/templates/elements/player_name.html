@@ -1,10 +1,10 @@
 <div class="player_name wow-class-{{player.spec.wow_class.name_slug}}" data-source_id={{player.source_id}}>
 
     {% if show_role_icon %}
-    <img class="player_role_icon" src="{{player.spec.role.img_path}}">
+    <img class="player_role_icon" src="{{player.spec.role.icon_path}}">
     {% endif %}
 
-    <img class="player_spec_icon" src="{{player.spec.img_path}}">
+    <img class="player_spec_icon" src="{{player.spec.icon_path}}">
 
     <a href={{player.report_url}} target="_blank">
 

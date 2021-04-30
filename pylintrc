@@ -1,0 +1,3 @@
+[MESSAGES CONTROL]
+disable=locally-disabled,redefined-builtin,logging-fstring-interpolation
+

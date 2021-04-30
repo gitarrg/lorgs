@@ -14,21 +14,19 @@ Lorgs: Report: {{report.report_id}}
         <a href="{{report.report_url}}">Report: {{report.report_id}}</a>
     </h1>
 
-    <div class="col ml-auto d-flex flex-row align-items-end">
-
-        <!-- SETTINGS v2 -->
-        <div class="ml-auto">
-        {% include "elements/settings_bar.html" %}
-        </div>
-
-        <!-- Home -->
-        <div class="ml-2 settings_bar">
-            <small class="clear-both text-muted"></small>
-            <div class="p-1 bg-dark border rounded">
-                <a href="{{url_for('ui.index')}}" id=home_button class="button icon-s rounded fas fa-home" data-toggle="tooltip" title="click here or home"></a>
-            </div>
+    <!-- Home -->
+    <div class="ml-2 settings_bar">
+        <small class="clear-both text-muted"></small>
+        <div class="p-1 bg-dark border rounded">
+            <a href="{{url_for('ui.index')}}" id=home_button class="button icon-s rounded fas fa-home" data-toggle="tooltip" title="click here or home"></a>
         </div>
     </div>
+
+    <div class="col ml-auto d-flex flex-row flex-wrap">
+        <!-- SETTINGS v2 -->
+        {% include "elements/settings_bar.html" %}
+    </div>
+
 
 
     </div>
@@ -42,17 +40,17 @@ Lorgs: Report: {{report.report_id}}
 <div class="settings_display d-flex flex-row">
 
     <!-- Players -->
-    {% for role, players in report.unique_players|groupby("spec.role") %}
+    {% for role, players in report.players|groupby("spec.role") %}
     <div class="mr-2">
 
         <small class="settings_display_role clear-both text-muted" data-role={{role.code}}>{{role.name}}</small>
 
         <div class="bg-dark p-1 rounded border d-flex flex-row">
             <div>
-                {% for player in players|sort(attribute="spec.role.id,spec.name,name") %}
+                {% for player in players|sort(attribute="spec.role,spec.name,name") %}
                 {% set spec = player.spec %}
                 <div class="settings_display_player wow-class-{{spec.wow_class.name_slug}}" data-source_id={{player.source_id}} data-role={{role.code}}>
-                    <img class="icon-spec icon-s rounded wow-class-border-{{spec.class_name_slug}}" src="{{spec.img_path}}">
+                    <img class="icon-spec icon-s rounded wow-class-border-{{spec.class_name_slug}}" src="{{spec.icon_path}}">
                     <span>{{player.name}}</span>
                 </div>
                 {% if loop.index is divisibleby(5) %}</div><div>{% endif %}
@@ -88,31 +86,22 @@ Lorgs: Report: {{report.report_id}}
 
 <div class="d-flex flex-row mt-2">
 
-    {#
-    <div class="mr-2">
-        {% include "elements/report_sidebar.html" %}
-    </div>
-    #}
-
     <!-- TIMELINES -->
+    {% from "elements/timeline_player_name.html" import player_name with context %}
     <div class="bg-dark p-2 rounded border" id=timeline>
 
             <!-- Player Names -->
-            <div class="player_names_container float-left">
+            <div class="player_names_container report float-left">
+                <div style="height: 32px"></div>
 
-            <div style="height: 32px"></div>
-
-            {% for fight in report.fights %}
-                <div class="fight-container" data-fight_id={{fight.fight_id}}>
-                    <small>#{{fight.fight_id}} ({{fight.duration|format_time}}) {{fight.percent}}% </small>
-
-                    {% set i = -1 %}
-                    {% set show_role_icon = false %}
-                    {% for player in fight.players|sort(attribute="spec.role.id,spec.name,name") %}
-                        {% include "elements/player_name.html" %}
-                    {% endfor %}
-                </div>
-            {% endfor %}
+                {% for fight in report.fights %}
+                    <div class="fight-container" data-fight_id={{fight.fight_id}}>
+                        <small>#{{fight.fight_id}} ({{fight.duration|format_time}}) {{fight.percent}}% </small>
+                        {% for player in fight.players|sort(attribute="spec.role,spec.name,name") %}
+                            {{ player_name(player) }}
+                        {% endfor %}
+                    </div>
+                {% endfor %}
 
             </div>
 
@@ -126,7 +115,7 @@ Lorgs: Report: {{report.report_id}}
                     <div class="timeline-fight" data-fight_id={{fight.fight_id}}>
                         <small>&nbsp;</small>
 
-                        {% for player in fight.players|sort(attribute="spec.role.id,spec.name,name") %}
+                        {% for player in fight.players|sort(attribute="spec.role,spec.name,name") %}
                             {% set inline_killtime=loop.first %}
                             {% include "elements/player_timeline.html" %}
                         {% endfor %}
@@ -143,10 +132,11 @@ Lorgs: Report: {{report.report_id}}
 <!-- Content Scripts -->
 {% block scripts %}
 {{ super() }}
-{% include "elements/player_timeline_script.html" %}
+<script src="{{url_for('static',filename='timeline.js')}}"></script>
+<script src="{{url_for('static',filename='spells.js')}}"></script>
+
 
 <script type="text/javascript">
-
 
 const SETTINGS_DISPLAY_PLAYER = document.querySelectorAll(".settings_display_player")
 const SETTINGS_DISPLAY_FIGHTS = document.querySelectorAll(".settings_display_pull")
@@ -179,7 +169,6 @@ function update_fights() {
         timeline_player_names.forEach(el => {show(el, enabled)});
     });
 };
-
 
 
 // show/hide players
@@ -225,7 +214,4 @@ document.getElementById("settings_display_pull_header").addEventListener("click"
 });
 
 </script>
-
-
-
 {% endblock %}

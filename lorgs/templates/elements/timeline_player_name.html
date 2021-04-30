@@ -1,0 +1,18 @@
+{% macro player_name(player, i=0) -%}
+<div class="player_name {{ spec_ranking_color(i) if i else 'wow-class-' + player.spec.wow_class.name_slug }}" data-source_id={{player.source_id}}>
+
+    <img class="player_name__spec_icon" src="{{player.spec.icon_path}}">
+
+    <a href={{player.report_url}} target="_blank" >
+        <span class="player_name__name wow-class-{{player.spec.wow_class.name_slug}}">{{player.name if i else player.name[:4]}}</span>
+
+        {% if i > 0 %}
+        <span class="player_name__rank">#{{i}}</span>
+        {% endif %}
+
+        {% if player.total %}
+            <span class="player_name__total">{{player.total|format_big_number}}</span>
+        {% endif %}
+    </a>
+</div>
+{%- endmacro %}
