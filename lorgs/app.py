@@ -16,10 +16,8 @@ from lorgs import models
 from lorgs.logger import logger
 
 
-
 def load_spell_icons():
     logger.info("[load spell icons] start")
-    return
     spell_infos = cache.Cache.get("spell_infos") or []
     if not spell_infos:
         logger.warning("SPELL INFO NOT FOUND!")

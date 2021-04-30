@@ -52,23 +52,6 @@ async def load_spell_icons(spells):
     data = data.get("gameData", {})
 
     return data
-    """
-    # execute query
-    data = await WCL_CLIENT.query(query)
-    data = data.get("gameData", {})
-
-    # attach data to spells
-    for spell in spells:
-        key = f"spell_{spell.spell_id}"
-        spell_info = data.get(key)
-        if not spell_info:
-            logger.warning("No Spell Info for: %s", spell.spell_id)
-            continue
-
-        # check for existing values so we keep manual overwrites
-        spell.spell_name = spell.spell_name or spell_info.get("name")
-        spell.icon_name = spell.icon_name or spell_info.get("icon")
-    """
 
 
 @utils.as_list
@@ -337,7 +320,6 @@ async def load_report(report):
 
     logger.info(f"{report} | load fights")
     fights_to_load = [fight for fight in report.fights if not fight.players]
-    fights_to_load = fights_to_load[:2]
     await load_fights(fights_to_load)
     return report
 
