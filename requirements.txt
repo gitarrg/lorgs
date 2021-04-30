@@ -4,7 +4,7 @@ python-dotenv
 
 # to build scss
 pysass
-
+redis
 
 gunicorn==20.1.0
 Flask==1.1
