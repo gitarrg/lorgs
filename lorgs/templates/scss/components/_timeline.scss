@@ -1,0 +1,13 @@
+
+
+$timeline-height: 30px;
+$timeline-height-cast: 28px;  // -2px for border
+$timeline-cast-icon-size: 24px; // 2px padding on each side
+
+
+@import "timeline_main";
+@import "timeline_cursor";
+@import "timeline_player_name";
+@import "timeline_casts";
+@import "timeline_ruler";
+

@@ -19,17 +19,22 @@ class Config:
     CACHE_REDIS_PASSWORD = os.getenv("REDIS_PASS")
     CACHE_REDIS_DB = os.getenv("REDIS_DB")
 
-    """
-    # SEND_FILE_MAX_AGE_DEFAULT = 0  # for DEV. updates static files
-    """
 
-    GOOGLE_ANALYTICS_ID = "G-Y92VPCY6QW"
+################################################################################
+
+
+class DevelopmentConfig(Config):
+
+    GOOGLE_ANALYTICS_ID = ""
+    SEND_FILE_MAX_AGE_DEFAULT = 0  # for DEV. updates static files
+
+
+################################################################################
 
 
 class ProductionConfig(Config):
 
     GOOGLE_ANALYTICS_ID = "G-Y92VPCY6QW"
-
 
 
 class HerokuProductionConfig(ProductionConfig):

@@ -1,0 +1,37 @@
+
+
+.player_timeline {
+    user-select: none;
+    height: 30px;
+    line-height: 28px;
+    vertical-align: middle;
+
+    margin-bottom: 2px;
+
+}
+
+
+.fight_killtime {
+    border-left: 2px solid yellow;
+    padding-left: 10px;
+    float: left;
+    color: #ffffff75;
+    height: 28px;
+    margin-top: 1px;
+}
+
+
+
+
+/********************************
+
+        Player Cast Timeline
+
+*********************************/
+
+
+.player_timelines_container {
+    overflow: hidden;
+    cursor: grab;
+    position: relative;
+}

@@ -1,3 +1,20 @@
+
+
+
+{% macro header_boss(boss, spec) -%}
+<h1 class="m-0">
+    <a href="https://www.warcraftlogs.com/zone/rankings/{{boss.zone.id}}#boss={{boss.id}}&class={{spec.wow_class.name_slug_cap}}&spec={{spec.name_slug_cap}}&metric={{spec.role.metric}}&region=2" target="_blank">
+        <img class="icon-l rounded shadow wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.icon_path}}">
+        <span class="wow-class-{{spec.wow_class.name_slug}}">{{spec.full_name}}s</span>
+        <span>vs</span>
+        <img class="icon-l rounded shadow border-white" src="{{boss.icon_path}}" alt="{{boss.name}}" target="_blank">
+        <span>{{boss.name}}</span>
+    </a>
+</h1>
+{%- endmacro %}
+
+
+
 {% extends "base.html" %}
 
 {%- block title %}
@@ -6,86 +23,24 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
 
 
 {% block header -%}
-<div class="mb-2 mt-3">
-    <div class="flex-row d-flex">
-
-    <!-- HEADER -->
-    <div>
-        <a href="https://www.warcraftlogs.com/zone/rankings/{{boss.zone.id}}#boss={{boss.id}}&class={{spec.wow_class.name_slug_cap}}&spec={{spec.name_slug_cap}}&metric={{spec.role.metric}}&region=2" target="_blank">
-            <h1>
-                <img class="icon-l rounded shadow wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.icon_path}}">
-                <span class="wow-class-{{spec.wow_class.name_slug}}">{{spec.full_name}}s</span>
-                vs
-                <img class="icon-l rounded shadow border-white" src="{{boss.icon_path}}" alt="{{boss.name}}" target="_blank">
-                {{boss.name}}
-            </h1>
-        </a>
+<div class="mt-3 flex-row d-flex flex-wrap-reverse">
+    <div class="mb-2">
+    {{ header_boss(boss, spec) }}
     </div>
 
-    <div class="ml-auto">
-
-        <!-- NAV -->
-        <div class="flex-row d-flex">
-
-            <!-- Roles -->
-            <div class="ml-auto">
-                <div class="p-1 bg-dark border rounded">
-                {% for role in roles %}
-                    <div class="ranking-nav">
-                        <img class="ranking-nav-role-icon icon-m rounded border-black" src="{{role.icon_path}}">
-
-                        <div class="ranking-nav-role-specs bg-dark border rounded">
-                            {% for spec in role.specs %}
-                            <div {{'class="mb-1"' if not loop.last}}>
-                                {% if spec.supported %}
-                                <a href="{{url_for('ui.spec_ranking', spec_slug=spec.full_name_slug, boss_slug=boss.name_slug)}}">
-                                {% else %}
-                                <a class="disabled" href="#">
-                                {% endif %}
-                                    <img class="icon-spec icon-m rounded wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.icon_path}}" alt="{{spec.full_name}}" title="{{spec.full_name}}">
-                                    <span class="wow-class-{{spec.wow_class.name_slug}}">{{spec.full_name}}</span>
-                                </a>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endfor %}
-                </div>
-            </div>
-
-            <!-- Bosses -->
-            <div class="ml-2">
-                <div class="p-1 bg-dark border ml-auto rounded">
-                    {% for boss2 in bosses %}
-                    <a href="{{url_for('ui.spec_ranking', spec_slug=spec.full_name_slug, boss_slug=boss2.name_slug)}}" class="{{'active' if boss2 == boss}}" data-toggle="tooltip" title="{{boss2.name}}">
-                        <img class="icon-spec icon-m border-black rounded" src="{{boss2.icon_path}}" alt="{{boss2.name_slug}}">
-                    </a>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <!-- Home -->
-            <div class="ml-2">
-                <div class="p-1 bg-dark border ml-auto rounded">
-                    <a href="{{url_for('ui.index')}}" class="ranking-nav-home-icon" data-toggle="tooltip" title="home">
-                        <i class="fas fa-home fa-2x"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="mt-2">
-            {% include "elements/settings_bar.html" %}
-        </div>
+    <div class="ml-auto mb-2">
+        {% include "elements/spec_ranking_nav.html" %}
     </div>
-</div>
-
-
 </div>
 {% endblock %}
 
 
 {% block content -%}
+<div class="mb-2">
+    {% include "elements/settings_bar.html" %}
+</div>
+
+
 {% from "elements/timeline_player_name.html" import player_name with context %}
 
 <!-- TIMELINES -->

@@ -16,6 +16,10 @@ const SCALE = 4;
 const IMG_ROOT = "https://wow.zamimg.com/images/wow/icons/medium/"
 
 
+const CUSTOM_IMAGES = {}
+CUSTOM_IMAGES[740] = "/static/images/spells/spell_nature_tranquility.jpg";
+
+
 ////////////////////////////////////////////////////////////////////////////////
 //      CREATION
 //
@@ -80,20 +84,16 @@ async function create_single_cast(cast) {
     if (spell.duration > 0) {
         let div = document.createElement("div");
         div.classList.add("cast_duration");
-        // div.classList.add(`wow-class-bg-${group}`);
         div.style.width = spell.duration * SCALE + "px";
         div.style.backgroundColor = spell.color;
         cast.append(div)
     }
 
     if (spell.icon_name != null) {
-        let div = document.createElement("div");
-        div.classList.add("cast_icon");
-        cast.append(div)
-
         let img = document.createElement("img");
-        img.src = IMG_ROOT + spell.icon_name;
-        div.append(img)
+        img.src = CUSTOM_IMAGES[cast.spell_id] || IMG_ROOT + spell.icon_name
+        img.classList.add("cast_icon");
+        cast.append(img)
     }
 
     if (casttime > 0) {

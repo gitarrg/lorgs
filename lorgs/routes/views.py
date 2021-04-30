@@ -32,34 +32,20 @@ BP = flask.Blueprint(
 )
 
 
-
-
 @BP.app_context_processor
 def add_shared_variables():
     config = flask.current_app.config
     return {
         # "wow_data": wow_data,
         "GOOGLE_ANALYTICS_ID": config["GOOGLE_ANALYTICS_ID"],
-
         "spec_ranking_color": spec_ranking_color,
     }
 
 
-@BP.route("/", methods=['GET', 'POST'])
+@BP.route("/")
 def index():
     """Main Route for the index page."""
-    form = forms.CustomReportForm()
-
-    if form.validate_on_submit():
-        link = form.report_link.data
-        match = re.match(forms.WCL_LINK_REGEX, link)
-        report_id = match.group("code")
-
-        flask.flash(f"valid link: {report_id}")
-        return flask.redirect(flask.url_for("ui.report", report_id=report_id))
-
     kwargs = {}
-    kwargs["form"] = form
     kwargs["boss"] = data.DEFAULT_BOSS
     kwargs["roles"] = data.ROLES
     return flask.render_template("index.html", **kwargs)
@@ -78,18 +64,16 @@ def spec_ranking(spec_slug, boss_slug):
             "spec": {"slug:": spec_slug, "str": str(spec)},
         }
 
-    # Get Data
+    # get cached data
     key = f"char_rankings/{spec.full_name_slug}/boss={boss.name_slug}"
-    players = Cache.get(key) or []
-    """
-    # for now.. I don't want this to trigger on its own
-    if not players:
-        players = asyncio.run(loader.load_char_rankings(boss, spec, limit=5))
-        Cache.set(key, players)
-    """
+    reports = Cache.get(key) or []
 
-    # used_spells = [cast.spell for player in players for cast in player.casts]
-    used_spells = utils.uniqify(spec.spells, key=lambda spell: spell.spell_id)
+    # prepare some data
+    fights = utils.flatten(report.fights for report in reports)
+    players = utils.flatten(fight.players for fight in fights)
+
+    used_spells = [cast.spell for player in players for cast in player.casts]
+    used_spells = utils.uniqify(used_spells, key=lambda spell: spell.spell_id)
 
     # Return
     kwargs = {}
@@ -97,12 +81,28 @@ def spec_ranking(spec_slug, boss_slug):
     kwargs["boss"] = boss
     kwargs["players"] = players
     kwargs["all_spells"] = used_spells
-    kwargs["timeline_duration"] = max(player.fight.duration for player in players) if players else 0
+    kwargs["timeline_duration"] = max(fight.duration for fight in fights) if fights else 0
 
     # Data for Nav
     kwargs["roles"] = data.ROLES
     kwargs["bosses"] = data.BOSSES # TODO: current zone only
     return flask.render_template("spec_ranking.html", **kwargs)
+
+
+@BP.route("/report", methods=['GET', 'POST'])
+def report_index():
+    form = forms.CustomReportForm()
+    if form.validate_on_submit():
+        link = form.report_link.data
+        match = re.match(forms.WCL_LINK_REGEX, link)
+        report_id = match.group("code")
+
+        flask.flash(f"valid link: {report_id}")
+        return flask.redirect(flask.url_for("ui.report", report_id=report_id))
+
+    kwargs = {}
+    kwargs["form"] = form
+    return flask.render_template("report_index.html", **kwargs)
 
 
 @BP.route("/report/<string:report_id>")
@@ -111,8 +111,6 @@ def report(report_id):
     report = Cache.get(f"report/{report_id}")
     if not report:
         return {"error": "report not found"}
-
-    # report.fights = report.fights[:3]
 
     specs = [player.spec for player in report.players]
     specs = utils.uniqify(specs, key=lambda spec: spec.full_name)

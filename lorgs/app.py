@@ -51,7 +51,7 @@ def create_app(config_obj=None):
     # create APP
     app = flask.Flask(__name__)
 
-    config_name = os.getenv("LORGS_CONFIG_NAME")
+    config_name = os.getenv("LORGS_CONFIG_NAME") or "lorgs.config.DevelopmentConfig"
     app.config.from_object(config_name)
 
     # configure jina

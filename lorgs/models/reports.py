@@ -31,14 +31,14 @@ class Report(base.Model):
     def __repr__(self):
         return f"<Report({self.report_id})>"
 
-    def __setstate__(self, data):
-        self.report_id = data.get("report_id")
-        self.title = data.get("title")
-        self.start_time = data.get("start_time")
-        self.zone = RaidZone.get(**data.get("zone", {}))
+    def __setstate__(self, state):
+        self.report_id = state.get("report_id")
+        self.title = state.get("title")
+        self.start_time = state.get("start_time")
+        self.zone = RaidZone.get(**state.get("zone", {}))
 
         self.fights = []
-        for fight_data in data.get("fights", []):
+        for fight_data in state.get("fights", []):
             self.add_fight(**fight_data)
 
     def as_dict(self):
@@ -171,8 +171,21 @@ class Player(base.Model):
     def __repr__(self):
         return f"Player({self.name} spec={self.spec.name} id={self.source_id} casts={len(self.casts)})"
 
+    def __setstate__(self, state):
+        self.source_id = state["source_id"]
+        self.name = state["name"]
+        self.total = state["total"]
+
+        spec_name = state.get("spec")
+        self.spec = WowSpec.get(full_name_slug=spec_name) if spec_name else None
+
+        self.casts = []
+        for cast_data in state.get("casts", []):
+            self.add_cast(**cast_data)
+
     def as_dict(self):
         return {
+            "source_id": self.source_id,
             "name": self.name,
             "total": self.total,
             "spec": self.spec.full_name_slug if self.spec else "",
@@ -202,10 +215,11 @@ class Cast(base.Model):
         super().__init__()
         self.timestamp = timestamp
         self.player = None
-        self.spell = WowSpell.get(spell_id=spell_id) if spell_id else None
+        self.spell_id = spell_id
 
     def __repr__(self):
-        return f"Cast({self.spell.spell_id}, at={self.time_fmt})"
+        time_fmt = utils.format_time(self.time)
+        return f"Cast({self.spell.spell_id}, at={time_fmt})"
 
     def as_dict(self):
         return {
@@ -214,9 +228,10 @@ class Cast(base.Model):
         }
 
     @property
-    def time(self):
-        return self.timestamp - self.player.fight.start_time
+    def spell(self):
+        spec = self.player.spec
+        return WowSpell.get(spec=spec, spell_id=self.spell_id)
 
     @property
-    def time_fmt(self):
-        return utils.format_time(self.time)
+    def time(self):
+        return self.timestamp - self.player.fight.start_time

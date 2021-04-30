@@ -18,7 +18,6 @@ from lorgs.models.specs import WowSpec
 from lorgs.models.specs import WowSpell
 
 
-
 WCL_CLIENT = WarcraftlogsClient.get_instance()
 
 
@@ -49,7 +48,10 @@ async def load_one_char_rankings(spec, boss, limit=0):
     key = f"char_rankings/{spec.full_name_slug}/boss={boss.name_slug}"
     logger.info(key)
     players = await loader.load_char_rankings(boss=boss, spec=spec, limit=limit)
-    Cache.set(key, players, timeout=0)
+
+    # we always cache from report level
+    reports = [player.fight.report for player in players]
+    Cache.set(key, reports, timeout=0)
 
 
 async def load_all_char_rankings(specs=None, bosses=None, limit=0):
@@ -67,13 +69,12 @@ async def load_all_char_rankings(specs=None, bosses=None, limit=0):
         await asyncio.gather(*tasks)
 
 
-async def main():
 
+async def main():
     app = create_app()
     with app.app_context():
-
-        # await load_spell_data()
         await load_all_char_rankings(limit=10)
+
 
 if __name__ == '__main__':
     asyncio.run(main())
