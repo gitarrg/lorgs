@@ -5,5 +5,5 @@ mkdir lorgs/static/_generated
 pysassc --style=compact "lorgs/templates/scss/main.scss" "lorgs/static/_generated/style.css"
 
 # make sure these are in the redis cache
-env FLASK_APP="lorgs/app:create_app()" flask load_spell_icons
+# env FLASK_APP="lorgs/app:create_app()" flask load_spell_icons
 
