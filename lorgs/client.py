@@ -2,10 +2,12 @@
 """Warcaftlogs API Client."""
 
 # IMPORT STANDARD LIBRARIES
-import aiohttp
 import asyncio
 import hashlib
 import os
+
+# IMPORT THIRD PARTY LIBRARIES
+import aiohttp
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import models
@@ -57,6 +59,9 @@ class WarcraftlogsClient:
     def __init__(self, client_id="", client_secret=""):
         super(WarcraftlogsClient, self).__init__()
 
+        print("WarcraftlogsClient INIT")
+        print("TEST: ", os.getenv("WCL_CLIENT_ID"))
+
         # credentials
         self.client_id = client_id or os.getenv("WCL_CLIENT_ID")
         self.client_secret = client_secret or os.getenv("WCL_CLIENT_SECRET")
@@ -64,6 +69,8 @@ class WarcraftlogsClient:
 
         self.cached = True
         self.cache = Cache
+
+        self._num_queries = 0
 
     ################################
     #   Connection
@@ -104,6 +111,14 @@ class WarcraftlogsClient:
         return info.get("limitPerHour", 0) - info.get("pointsSpentThisHour", 0)
 
     async def query(self, query, usecache=True):
+        """
+
+        TODO:
+            - add a "@cached"-wrapper to clean this up
+
+        """
+        self._num_queries += 1
+        logger.debug("Num Queries: %d", self._num_queries)
 
         usecache = self.cached and usecache
 
@@ -118,13 +133,11 @@ class WarcraftlogsClient:
         # caching
         if usecache:
             cached_result = usecache and self.cache.get(cache_key)
-
-            if not cached_result:
-                print("U NO CACHED???", cache_key, bool(cached_result))
-
             if cached_result:
                 logger.debug("using cached result")
                 return cached_result
+
+        logger.debug("not cached: %s", cache_key)
 
         # auth
         if not self.headers:

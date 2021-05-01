@@ -18,11 +18,11 @@ from lorgs.client import WarcraftlogsClient
 from lorgs.logger import logger
 from lorgs.models.encounters import RaidZone
 from lorgs.models.encounters import RaidBoss
-from lorgs.models.reports import Fight
+# from lorgs.models.reports import Fight
 from lorgs.models.reports import Report
 from lorgs.models.specs import WowClass
 from lorgs.models.specs import WowSpec
-from lorgs.models.specs import WowSpell
+# from lorgs.models.specs import WowSpell
 from lorgs.data import SPELLS
 
 
@@ -72,7 +72,7 @@ def load_player_casts(player, casts_data):
         cast = player.add_cast()
         cast.timestamp = cast_data["timestamp"]
         spell_id = cast_data["abilityGameID"]
-        cast.spell = WowSpell.get(spell_id=spell_id)
+        cast.spell_id = spell_id
         yield cast
 
 
@@ -186,6 +186,9 @@ def fight_data_query(fight, spells=None):
         player_query = f"players: table({table_query_args}, dataType: Summary)"
         casts_filter = f"ability.id in ({spell_ids(spells or SPELLS)})"
 
+    logger.debug("player_query: %s", player_query)
+    logger.debug("casts_filter: %s", casts_filter)
+
     casts_query = f"casts: events({table_query_args}, dataType: Casts, filterExpression: \"{casts_filter}\") {{data}}"
     return textwrap.dedent(f"""\
     reportData {{
@@ -204,7 +207,7 @@ async def load_fights(fights):
         fights[list(<Fight>)]
 
     """
-    logger.info("start loading %d fights", len(fights))
+    logger.debug("start loading %d fights", len(fights))
     queries = [fight_data_query(fight) for fight in fights]
 
     # Get Queries
@@ -222,7 +225,7 @@ async def load_fights(fights):
         for player in fight.players:
             player.casts = load_player_casts(player, casts_data)
 
-    logger.info("load_fights end")
+    logger.debug("load_fights end")
 
 
 ################################################################################
@@ -295,15 +298,6 @@ async def load_report_info(report, fight_ids=None):
         fight.end_time = fight_data.get("endTime", 0)
         fight.boss = RaidBoss.get(id=boss_id)
         fight.percent = fight_data.get("fightPercentage")
-        # kill = fight_data.get("kill")
-
-        # fight.boss = encounter
-
-        # fight = models.Fight.get(report=self, fight_id=fight_data.get("id"))
-        # fight.start_time = fight_data.get("startTime", 0) - report.start_time
-        # fight.end_time = fight_data.get("endTime", 0) - report.start_time
-        # report.fights.append(fight)
-    # db.session.bulk_save_objects(fights)
 
 
 async def load_report(report):
@@ -365,7 +359,7 @@ async def load_char_rankings_source_ids(rankings):
         if not master_data:
             continue
 
-        for actor in master_data.get("actors", []):
+        for actor in master_data.get("actors") or []:
             actor_name = actor.get("name")
             if actor_name == ranking_data["name"]:
                 ranking_data["source_id"] = actor.get("id", -1)
@@ -400,7 +394,7 @@ async def load_char_rankings(boss, spec, difficulty=5, limit=50):
     if limit:
         rankings = rankings[:limit]
 
-    logger.info(f"{boss.name} vs. {spec.name} {spec.wow_class.name} load source ids")
+    logger.debug(f"{boss.name} vs. {spec.name} {spec.wow_class.name} load source ids")
     await load_char_rankings_source_ids(rankings)
 
     players = []
@@ -431,7 +425,13 @@ async def load_char_rankings(boss, spec, difficulty=5, limit=50):
         # reports.append(report)
         players.append(player)
 
-    logger.info(f"{boss.name} vs. {spec.name} {spec.wow_class.name} load casts")
-    await load_fights([player.fight for player in players])
+    logger.debug(f"{boss.name} vs. {spec.name} {spec.wow_class.name} load casts")
 
+    fights = [player.fight for player in players]
+    await load_fights(fights)
+    # load in chunks of 10 each
+    # for chunk in utils.chunks(fights, 20):
+
+    # this should not really happen..
+    players = [player for player in players if player.casts]
     return players

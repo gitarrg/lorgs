@@ -42,6 +42,8 @@ def add_shared_variables():
     }
 
 
+
+
 @BP.route("/")
 def index():
     """Main Route for the index page."""
@@ -49,6 +51,24 @@ def index():
     kwargs["boss"] = data.DEFAULT_BOSS
     kwargs["roles"] = data.ROLES
     return flask.render_template("index.html", **kwargs)
+
+
+@BP.route("/admin")
+def admin():
+    kwargs = {}
+
+
+    spec_rankings = {}
+    for spec in data.SPECS:
+        for boss in data.BOSSES:
+            spec_ranking = models.reports.SpecRanking(spec, boss)
+            spec_ranking.load()
+            spec_rankings[(spec, boss)] = spec_ranking
+
+    kwargs["data"] = data
+    kwargs["specs"] = data.SPECS
+    kwargs["spec_rankings"] = spec_rankings
+    return flask.render_template("admin.html", **kwargs)
 
 
 @BP.route("/spec_ranking/<spec_slug>_<boss_slug>")
@@ -64,12 +84,11 @@ def spec_ranking(spec_slug, boss_slug):
             "spec": {"slug:": spec_slug, "str": str(spec)},
         }
 
-    # get cached data
-    key = f"char_rankings/{spec.full_name_slug}/boss={boss.name_slug}"
-    reports = Cache.get(key) or []
+    spec_ranking = models.reports.SpecRanking(spec, boss)
+    spec_ranking.load()
 
     # prepare some data
-    fights = utils.flatten(report.fights for report in reports)
+    fights = utils.flatten(report.fights for report in spec_ranking.reports)
     players = utils.flatten(fight.players for fight in fights)
 
     used_spells = [cast.spell for player in players for cast in player.casts]

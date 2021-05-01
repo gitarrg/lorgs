@@ -2,20 +2,65 @@
 
 # pylint: disable=too-few-public-methods
 
-# IMPORT THIRD PARTY LIBRARIES
-
+# IMPORT STANRD LIBRARIES
+# import datetime
+import arrow
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
 from lorgs.logger import logger
 
-
 from lorgs.models import base
+from lorgs.cache import Cache
 from lorgs.models.specs import WowClass
 from lorgs.models.specs import WowSpec
 from lorgs.models.specs import WowSpell
 from lorgs.models.encounters import RaidZone
 from lorgs.models.encounters import RaidBoss
+
+
+class SpecRanking(base.Model):
+
+    def __init__(self, spec, boss):
+        self.last_update = 0
+        self.spec = spec
+        self.boss = boss
+        self.cache_key = f"spec_ranking/{self.spec.full_name_slug}/{self.boss.name_slug}"
+
+        self.reports = []
+
+    def __repr__(self):
+        return f"<SpecRanking({self.spec.full_name} vs {self.boss.name})>"
+
+    def as_dict(self):
+        return {
+            "spec": self.spec.full_name_slug,
+            "boss": self.boss.as_dict(),
+
+            "last_update": self.last_update,
+            "reports": [report.as_dict() for report in self.reports]
+        }
+
+    async def update(self, limit=50, force=True):
+        from lorgs.models import loader
+
+        players = await loader.load_char_rankings(boss=self.boss, spec=self.spec, limit=limit)
+
+        self.reports = [player.fight.report for player in players]
+        self.last_update = arrow.utcnow().timestamp()
+        self.save()
+
+    def save(self):
+        Cache.set(self.cache_key, self.as_dict())
+
+    def load(self):
+
+        data = Cache.get(self.cache_key) or {}
+
+        self.last_update = data.get("last_update") or self.last_update
+        for report_data in data.get("reports", []):
+            report = Report.from_dict(report_data)
+            self.reports.append(report)
 
 
 class Report(base.Model):
@@ -31,8 +76,11 @@ class Report(base.Model):
     def __repr__(self):
         return f"<Report({self.report_id})>"
 
-    def __setstate__(self, state):
-        self.report_id = state.get("report_id")
+    @classmethod
+    def from_dict(cls, state):
+
+        report_id = state.get("report_id")
+        self = cls(report_id)
         self.title = state.get("title")
         self.start_time = state.get("start_time")
         self.zone = RaidZone.get(**state.get("zone", {}))
@@ -40,6 +88,8 @@ class Report(base.Model):
         self.fights = []
         for fight_data in state.get("fights", []):
             self.add_fight(**fight_data)
+
+        return self
 
     def as_dict(self):
         return {

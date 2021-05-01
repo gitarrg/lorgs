@@ -1,9 +1,9 @@
 version: '3.7'
 services:
 
-  page:
+  web:
     build: .
-    command: echo "none"
+    # command: echo "none"
 
     # command: flask run --host=0.0.0.0
     # command: gunicorn
@@ -15,24 +15,59 @@ services:
       - "5010:5000"
       # SQLALCHEMY_DATABASE_URI: sqlite://
     environment:
-
       # dev env
       FLASK_APP: "lorgs/app:create_app()"
       FLASK_ENV: development
       DEBUG: "true"
+
+      REDIS_HOST: redis
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+
+    depends_on:
+      - redis
+
+    env_file:
+      - .env
+
 
   redis:
     image: redis
     ports:
     - "6379:6379"
 
-  redis-commander:
-    image: rediscommander/redis-commander:latest
-    # restart: always
+  celery_worker:
+    build: .
+    command: celery worker --app=lorgs.tasks.celery --loglevel=info
     environment:
-    - REDIS_HOSTS=local:redis:6379
-    ports:
-    - "8081:8081"
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+
+      REDIS_HOST: redis
+
+    # volumes:
+    #   - .:/usr/src/app
+
+    env_file:
+      - .env
+
+    depends_on:
+      - web
+      - redis
+
+  # celery_dashboard:
+  #   build: .
+  #   command:  flower --app=lorgs.tasks.celery --port=5555 --broker=redis://redis:6379/0
+  #   ports:
+  #     - 5556:5555
+  #   environment:
+  #     - FLASK_DEBUG=1
+  #   depends_on:
+  #     - web
+  #     - redis
+  #     - celery_worker
+
+
 
 
 # docker run -it --network="host" windok/redis-browser bash

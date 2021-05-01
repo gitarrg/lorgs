@@ -5,6 +5,7 @@ import datetime
 import itertools
 import re
 import weakref
+import arrow
 
 
 def chunks(lst, n):
@@ -20,7 +21,13 @@ def format_time(timestamp):
     t = t[2:7]
     return t
 
-    # minutes = timestamp
+def format_timestamp(timestamp):
+    if timestamp == 0:
+        return "never"
+
+    t = arrow.get(timestamp)
+    return t.strftime("%H:%M %d.%m.%Y")
+
 
 def format_big_number(num):
     magnitude = 0

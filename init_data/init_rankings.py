@@ -1,3 +1,4 @@
+# pylint: disable=wrong-import-position,invalid-name
 
 # IMPORT STANDARD LIBRARIES
 import asyncio
@@ -5,15 +6,15 @@ import asyncio
 import dotenv
 dotenv.load_dotenv()
 
+
 # IMPORT THIRD PARTY LIBRARIES
+from lorgs import data
+from lorgs import utils
 from lorgs.app import create_app
 from lorgs.cache import Cache
 from lorgs.client import WarcraftlogsClient
 from lorgs.logger import logger
 from lorgs.models import loader
-from lorgs import data
-from lorgs.models.encounters import RaidBoss
-from lorgs.models.specs import WowClass
 from lorgs.models.specs import WowSpec
 from lorgs.models.specs import WowSpell
 
@@ -40,7 +41,7 @@ async def load_spell_data():
 
     # save cache
     spell_infos = {info.pop("id"): info for info in data.values()}
-    Cache.set("spell_infos", spell_infos, timeout=0)
+    Cache.set("spell_infos", spell_infos)
 
 
 async def load_one_char_rankings(spec, boss, limit=0):
@@ -51,7 +52,7 @@ async def load_one_char_rankings(spec, boss, limit=0):
 
     # we always cache from report level
     reports = [player.fight.report for player in players]
-    Cache.set(key, reports, timeout=0)
+    Cache.set(key, reports)
 
 
 async def load_all_char_rankings(specs=None, bosses=None, limit=0):
@@ -59,22 +60,21 @@ async def load_all_char_rankings(specs=None, bosses=None, limit=0):
 
     specs = specs or data.SPECS
     specs = [spec for spec in specs if spec.supported]
-    specs = [WowSpec.get(full_name_slug="druid-restoration")]
+    # specs = [WowSpec.get(full_name_slug="druid-restoration")]
 
     bosses = bosses or data.BOSSES
-    bosses = list(bosses)[:2]
+    # bosses = list(bosses)[:1]
 
+    tasks = []
     for spec in specs:
-        tasks = [load_one_char_rankings(spec, boss, limit=limit) for boss in bosses]
-        await asyncio.gather(*tasks)
-
+        for boss in bosses:
+            await load_one_char_rankings(spec, boss, limit=limit)
 
 
 async def main():
     app = create_app()
     with app.app_context():
-        await load_all_char_rankings(limit=10)
-
+        await load_all_char_rankings(limit=50)
 
 if __name__ == '__main__':
     asyncio.run(main())

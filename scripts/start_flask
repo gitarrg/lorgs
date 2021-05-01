@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
 
 
-# source ~/.envs/tvcSkyhooks/bin/activate
-# pip install -r requirements.txt
-# interwebs
+echo "sourcing .env"
+source .env
+
 
 export FLASK_ENV=development
 export DEBUG=true
+export LORGS_CONFIG_NAME=lorgs.config.DevelopmentConfig
 
-export PORT=5010
 export FLASK_APP="lorgs/app:create_app()"
+export PORT=5010
 
 
 # Build SASS
 # pysassc --style=compact lorgs/templates/scss/main.scss "lorgs/static/_generated/style.css"
-
 
 # run flask
 export PYTHONPATH=.  # adds current dir, so we can import

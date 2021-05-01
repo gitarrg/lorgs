@@ -295,6 +295,11 @@ DRUID_RESTORATION.add_spell(spell_id=29166, cooldown=180, duration=10, show=Fals
 DRUID_RESTORATION.add_spell(spell_id=740, cooldown=180, duration=6, color="#6cbfd9") # Tranquility
 DRUID_RESTORATION.add_spell(spell_id=33891, cooldown=180, duration=30) # Tree of Life
 
+
+# TODO:
+# const CUSTOM_IMAGES = {}
+# CUSTOM_IMAGES[740] = "/static/images/spells/spell_nature_tranquility.jpg";
+
 DRUID_BALANCE.add_spell(spell_id=194223, cooldown=180, duration=20) # Celestrial
 DRUID_BALANCE.add_spell(spell_id=102560, cooldown=180, duration=30) # Incarnation
 DRUID_BALANCE.add_spell(spell_id=205636, cooldown=60, duration=10, show=False) # Treants
@@ -370,7 +375,7 @@ for spec in WowSpec.all:
     spec.add_spell(group=OTHER_TRINKET, spell_id=348139, cooldown=90, duration=9, wowhead_data="item=184842&ilvl=226")         # Divine Bell
 
 for spec in _specs_int:
-    spec.add_spell(group=OTHER_TRINKET, spell_id=345801, cooldown=120, duration=15, wowhead_data="item=178809&ilvl=226")  # Soulletting Ruby
+    spec.add_spell(group=OTHER_TRINKET, spell_id=345801, cooldown=120, duration=15, wowhead_data="item=178809&ilvl=226")       # Soulletting Ruby
     spec.add_spell(group=OTHER_TRINKET, spell_id=345251, cooldown=60, duration=15, wowhead_data="item=184019&bonus=7359:6646") # Soul Igniter
 
 

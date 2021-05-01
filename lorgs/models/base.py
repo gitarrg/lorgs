@@ -57,6 +57,8 @@ class Model(IconPathMixin, metaclass=MetaInstanceRegistry):
     def as_dict(self):
         raise NotImplementedError(self)
 
+    toJSON = as_dict
+
     def __getstate__(self):
         return self.as_dict()
 

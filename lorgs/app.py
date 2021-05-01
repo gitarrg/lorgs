@@ -23,9 +23,11 @@ def load_spell_icons():
         logger.warning("SPELL INFO NOT FOUND!")
         return
 
+    spell_info_by_id = {info.pop("id"): info for info in spell_infos}
+
     # attach data to spells
     for spell in models.WowSpell.all:
-        spell_info = spell_infos.get(spell.spell_id, {})
+        spell_info = spell_info_by_id.get(spell.spell_id, {})
         if not spell_info:
             logger.warning("No Spell Info for: %s", spell.spell_id)
             continue
@@ -59,8 +61,9 @@ def create_app(config_obj=None):
     app.jinja_env.lstrip_blocks = True
     app.jinja_env.filters["format_time"] = utils.format_time
     app.jinja_env.filters["format_big_number"] = utils.format_big_number
+    app.jinja_env.filters["format_timestamp"] = utils.format_timestamp
 
-    cache.init_app(app)
+    # cache.init_app(app)
     load_spell_icons()
 
     app.register_blueprint(views.BP, url_prefix="/")

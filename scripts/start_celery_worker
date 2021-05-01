@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+
+echo "sourcing .env"
+source .env
+
+echo "WCL_CLIENT_ID: $WCL_CLIENT_ID"
+celery --app=lorgs.tasks.celery worker --loglevel=info
+

@@ -4,10 +4,23 @@
     <!-- Casts -->
     <div class="cast_container inner_shadow" style="width: {{fight_duration}}px">
     {% for cast in player.casts %}
-        <div class="cast" data-spell_id="{{cast.spell.spell_id}}" data-casttime={{cast.time}}></div>
+        {% set spell = cast.spell %}
+        <div class="cast" data-spell_id="{{spell.spell_id}}" style="left: {{cast.time/250}}px{{'; display: none' if not spell.show}}">
+            {% if spell.cooldown %}
+                <div class="cast_cooldown" style="width: {{spell.cooldown * 4}}px; background-color: {{spell.color}}"></div>
+            {% endif %}
+            {% if spell.duration %}
+                <div class="cast_duration" style="width: {{spell.duration * 4}}px; background-color: {{spell.color}}"></div>
+            {% endif %}
+            {% if spell.icon_path %}
+                <img class="cast_icon" src="{{cast.spell.icon_path}}">
+            {% endif %}
+            {% if cast.time %}
+                <span class="cast_text">{{cast.time|format_time}}</span>
+            {% endif %}
+        </div>
     {% endfor %}
     </div>
-
     {% if inline_killtime %}
     <div class="fight_killtime">
         <i class="fas fa-skull-crossbones"></i> {{fight.duration|format_time}}

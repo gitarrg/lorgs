@@ -14,7 +14,7 @@ class Config:
     CACHE_DEFAULT_TIMEOUT = 0  # no timeouts! :yaaah:
     CACHE_TYPE = "RedisCache"
 
-    CACHE_REDIS_HOST = os.getenv("REDIS_HOST") or "localhost"
+    CACHE_REDIS_HOST = os.getenv("REDIS_HOST") or "localhostCONFIG"
     CACHE_REDIS_PORT = os.getenv("REDIS_PORT") or 6379
     CACHE_REDIS_PASSWORD = os.getenv("REDIS_PASS")
     CACHE_REDIS_DB = os.getenv("REDIS_DB")
@@ -38,8 +38,6 @@ class ProductionConfig(Config):
 
 
 class HerokuProductionConfig(ProductionConfig):
-
-    DATABASE_URI = 'mysql://user@localhost/foo'
 
     CACHE_OPTIONS = {
         "ssl": True,

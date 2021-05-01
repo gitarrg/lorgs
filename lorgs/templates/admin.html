@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}
+Lorgs: Crazy Admin Page
+{% endblock %}
+
+
+
+{% block content %}
+<div class="p-2 mt-5 ml-5">
+
+
+    <h3>Spec Rankings</h3>
+
+    <div class="bg-dark rounded border p-2">
+
+        <table class="table table-sm table-dark table-striped table-hover">
+
+
+            <thead>
+                <th>Class</th>
+                <th>Specs</th>
+            </thead>
+
+            {% for wow_class in data.CLASSES %}
+                <tr>
+                    <td class="wow-class-{{wow_class.name_slug}}">{{wow_class.name}}</td>
+                    <td>
+
+                        <div>
+                            {% for spec in wow_class.specs if spec.supported %}
+                            <img class="icon-s rounded wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.icon_path}}" alt="{{spec.full_name}}">
+                            <button type="button" class="update_spec_ranking_button btn btn-primary btn-sm" data-spec="{{spec.full_name_slug}}">update</button>
+                            {% endfor %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+
+function update_spec_ranking() {
+    console.log("this", this);
+    const spec = this.dataset.spec;
+    // const boss = this.dataset.boss;
+
+    // cast.dataset.spell_id;
+    console.log("update_spec_ranking", spec);
+    this.innerHTML = "loading...";
+
+    fetch(`/api/load_spec_rankings/${spec}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log("created tasks", data)
+
+            for (var i = data.tasks.length - 1; i >= 0; i--) {
+                    let task_id = data.tasks[i];
+
+                    let div = document.createElement("div");
+                    div.innerHTML = i;
+                    this.append(div);
+            }
+        });
+}
+
+
+
+document.querySelectorAll(".update_spec_ranking_button").forEach(button => {
+    button.onclick = update_spec_ranking;
+})
+
+
+
+</script>
+
+{% endblock %}
+
+
