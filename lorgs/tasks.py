@@ -17,8 +17,16 @@ from lorgs.models.reports import SpecRanking
 from lorgs.models.specs import WowSpec
 
 
-CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379")
-CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "redis://localhost:6379")
+# CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379")
+# CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "redis://localhost:6379")
+
+REDIS_HOST = os.getenv("REDIS_HOST") or "localhost"
+REDIS_PORT = os.getenv("REDIS_PORT") or 6379
+REDIS_USER = os.getenv("REDIS_USER") or ""
+REDIS_PASS = os.getenv("REDIS_PASS") or ""
+
+CELERY_BROKER_URL = f"redis://{REDIS_USER}:{REDIS_PASS}@{REDIS_HOST}:{REDIS_PORT}"
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 
 
 celery = Celery(
