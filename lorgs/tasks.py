@@ -1,10 +1,12 @@
 
+# IMPORT STANDARD LIBRARIES
 import os
 import asyncio
 
+# IMPORT THIRD PARTY LIBRARIES
 from celery import Celery
 
-# from lorgs.app import create_app
+# IMPORT LOCAL LIBRARIES
 from lorgs.cache import Cache
 from lorgs.logger import logger
 from lorgs.models import loader
@@ -14,15 +16,7 @@ from lorgs.models.reports import SpecRanking
 from lorgs.models.specs import WowSpec
 
 
-# CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379")
-# CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "redis://localhost:6379")
-
-REDIS_HOST = os.getenv("REDIS_HOST") or "localhost"
-REDIS_PORT = os.getenv("REDIS_PORT") or 6379
-REDIS_USER = os.getenv("REDIS_USER") or ""
-REDIS_PASS = os.getenv("REDIS_PASS") or ""
-
-CELERY_BROKER_URL = f"rediss://{REDIS_USER}:{REDIS_PASS}@{REDIS_HOST}:{REDIS_PORT}?ssl_cert_reqs=CERT_NONE"
+CELERY_BROKER_URL = os.getenv("REDISCLOUD_URL") or "redis://localhost:6379"
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 
 
@@ -31,6 +25,15 @@ celery = Celery(
     broker=CELERY_BROKER_URL,
     backend=CELERY_BROKER_URL,
 )
+
+
+@celery.task(name="debug_task")
+def debug_task(*args, **kwargs):
+    import datetime
+    x = datetime.datetime.now()
+    Cache.set("test_value", str(x))
+
+    print("running", *args, **kwargs)
 
 
 @celery.task(name="load_spell_icons")
@@ -63,4 +66,3 @@ def load_report(report_id):
     print("done?")
 
     Cache.set(f"report/{report_id}", report.as_dict())
-

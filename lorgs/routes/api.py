@@ -103,20 +103,19 @@ def load_spec_rankings(spec_full_name_slug):
     return {"tasks": task_ids}
 
 
-@BP.route("/task_test")
+@BP.route("/test")
+def test():
+    test_value = Cache.get("test_value")
+
+    return {
+        "status": "OK",
+        "value": test_value,
+    }
+
+
+@BP.route("/task_debug")
 def task_test():
-    import os
     logger.info("start | DONE")
-
-    c = os.getenv("REDIS_HOST") or "localhostCACHE"
-    logger.info("CACHE: %s", c)
-
-    CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "redis://localhostCEL:6379")
-    logger.info("CELERY: %s", CELERY_BROKER_URL)
-
-    logger.info("CELERY: %s", os.environ)
-
-
-    tasks.create_task.delay("x")
+    tasks.debug_task.delay("x")
     logger.info("test | DONE")
     return "ok"

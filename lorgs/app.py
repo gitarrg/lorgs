@@ -63,9 +63,11 @@ def create_app(config_obj=None):
     app.jinja_env.filters["format_big_number"] = utils.format_big_number
     app.jinja_env.filters["format_timestamp"] = utils.format_timestamp
 
-    # cache.init_app(app)
-    load_spell_icons()
-
+    # Blueprints
     app.register_blueprint(views.BP, url_prefix="/")
     app.register_blueprint(api.BP, url_prefix="/api")
+
+    # init scripts
+    load_spell_icons()
+
     return app
