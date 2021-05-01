@@ -1,8 +1,6 @@
 
 import os
-import time
 import asyncio
-import random
 
 from celery import Celery
 
@@ -10,7 +8,6 @@ from celery import Celery
 from lorgs.cache import Cache
 from lorgs.logger import logger
 from lorgs.models import loader
-from lorgs.models import Report
 from lorgs.models.encounters import RaidBoss
 from lorgs.models.reports import Report
 from lorgs.models.reports import SpecRanking
@@ -25,21 +22,20 @@ REDIS_PORT = os.getenv("REDIS_PORT") or 6379
 REDIS_USER = os.getenv("REDIS_USER") or ""
 REDIS_PASS = os.getenv("REDIS_PASS") or ""
 
-CELERY_BROKER_URL = f"rediss://{REDIS_USER}:{REDIS_PASS}@{REDIS_HOST}:{REDIS_PORT}"
+CELERY_BROKER_URL = f"rediss://{REDIS_USER}:{REDIS_PASS}@{REDIS_HOST}:{REDIS_PORT}?ssl_cert_reqs=CERT_NONE"
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 
 
 celery = Celery(
     __name__,
     broker=CELERY_BROKER_URL,
-    backend=CELERY_RESULT_BACKEND,
+    backend=CELERY_BROKER_URL,
 )
 
 
 @celery.task(name="load_spell_icons")
 def load_spell_icons():
     pass
-
 
 
 @celery.task(name="load_spec_ranking")
@@ -56,7 +52,6 @@ def load_spec_ranking(boss_id, spec_full_name_slug, limit=50):
     logger.info(f"{boss.name} vs. {spec.name} {spec.wow_class.name} done")
 
 
-
 @celery.task(name="load_report")
 def load_report(report_id):
 
@@ -68,3 +63,4 @@ def load_report(report_id):
     print("done?")
 
     Cache.set(f"report/{report_id}", report.as_dict())
+
