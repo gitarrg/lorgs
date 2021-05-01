@@ -26,7 +26,7 @@ class RedisJsonCache:
         user = user or os.getenv("REDIS_USER") or ""
         password = password or os.getenv("REDIS_PASS") or ""
 
-        if "productuon" in os.getenv("LORGS_CONFIG_NAME", "").lower():
+        if "heroku" in os.getenv("LORGS_CONFIG_NAME", "").lower():
             kwargs["ssl"] = True
             kwargs["ssl_cert_reqs"] = None
 
