@@ -11,12 +11,15 @@ import redis
 from lorgs.logger import logger
 
 
+REDIS_URL = os.getenv("REDISCLOUD_URL") or os.getenv("REDIS_URL") or "redis://localhost:6379"
+
+logger.info("REDIS_URL: %s", os.getenv("REDIS_URL"))
+
+
 class RedisJsonCache:
     """docstring for RedisCache"""
-    def __init__(self, url=""):
+    def __init__(self, url=REDIS_URL):
         super().__init__()
-
-        url = url or os.getenv("REDISCLOUD_URL") or "redis://localhost:6379"
         self.client = redis.StrictRedis.from_url(url)
 
     def set(self, key, data, timeout=None):

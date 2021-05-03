@@ -1,57 +1,33 @@
 """Endpoints related to the Backend/API."""
 
 # IMPORT STANDARD LIBRARIES
-import asyncio
+# import asyncio
 
 # IMPORT THIRD PARTY LIBRARIES
 import flask
+from celery.result import AsyncResult
 
 # IMPORT LOCAL LIBRARIES
-from lorgs.cache import Cache
-from lorgs.data import SPELLS
+# from lorgs.models import loader
 from lorgs import data
-from lorgs.models import loader
-from lorgs.models import Report
-from lorgs.logger import logger
-from lorgs import models
 from lorgs import tasks
+from lorgs.cache import Cache
+from lorgs.logger import logger
+from lorgs.models import Report
+
 
 
 BP = flask.Blueprint("api", __name__, cli_group=None)
 
 
-def _load_spells():
-    logger.info("%d spells", len(SPELLS))
-    data = asyncio.run(loader.load_spell_icons(SPELLS))
-
-    # save cache
-    spell_infos = [info for info in data.values()]
-    Cache.set("spell_infos", spell_infos)
-
-    spell_info_by_id = {info.pop("id"): info for info in spell_infos}
-
-    # attach data to spells
-    for spell in models.WowSpell.all:
-        spell_info = spell_info_by_id.get(spell.spell_id, {})
-        if not spell_info:
-            logger.warning("No Spell Info for: %s", spell.spell_id)
-            continue
-
-        # check for existing values so we keep manual overwrites
-        spell.spell_name = spell.spell_name or spell_info.get("name")
-        spell.icon_name = spell.icon_name or spell_info.get("icon")
-
-    logger.info("[load spell icons] done")
-
-
 @BP.cli.command("load_spell_icons")
 def load_spell_icons():
-    _load_spells()
+    raise NotImplementedError
 
 
 @BP.route("/load_spells")
 def load_spells():
-    _load_spells()
+    tasks.load_spell_icons.delay()
     return "ok"
 
 
@@ -70,52 +46,81 @@ def report(report_id):
     return report.as_dict()
 
 
+"""
 @BP.route("/load_report/<string:report_id>")
 def load_report(report_id):
 
     report = Report(report_id=report_id)
-
     # TODO: replace with celery
-    asyncio.run(loader.load_report(report))
+    # asyncio.run(loader.load_report(report))
 
-    report = Cache.set(f"report/{report_id}", report, timeout=0)
+    Cache.set(f"report/{report_id}", report, timeout=0)
     return {"message": "loaded"}
+"""
+
+@BP.route("/load_report/<string:report_id>")
+def task_load_report(report_id=""):
+    report_id = report_id or "6YGnLdrtyKMWwcmx"
+    logger.info("report_id: %s | START", report_id)
+
+    task = tasks.load_report.delay(report_id)
+    return {
+        "task": task.id
+    }
 
 
-@BP.route("/task_load_report/<string:report_id>")
-def task_load_report(report_id):
-    logger.info("report_id: %s | START")
-    tasks.load_report.delay("6YGnLdrtyKMWwcmx")
-    logger.info("report_id: %s | DONE")
-    return "ok"
+@BP.route("/task_status/<string:task_id>")
+def task_status(task_id):
+    task = AsyncResult(task_id)
+    logger.info("task: %s", task.result)
+    # logger.info("STATUS: %s", task.status)
+
+    info = task.info or {}
+    if task.failed:
+        info = {} # as the Exception might not be JSON serializable
+
+    return {
+        "status": task.status,
+        "info": info,
+    }
 
 
-@BP.route("/load_spec_rankings/<string:spec_full_name_slug>")
-def load_spec_rankings(spec_full_name_slug):
 
-    print("load_spec_rankings route", spec_full_name_slug)
+@BP.route("/load_spec_rankings/<string:spec_full_name_slug>/<int:boss_id>")
+def load_spec_rankings(spec_full_name_slug, boss_id):
 
-    task_ids = []
-    for boss in data.BOSSES:
-        new_task = tasks.load_spec_ranking.delay(boss_id=boss.id, spec_full_name_slug=spec_full_name_slug, limit=50)
-        task_ids += [new_task.id]
+    print("load_spec_rankings route", spec_full_name_slug, boss_id)
 
-    return {"tasks": task_ids}
+    # task_ids = []
+    # for boss in data.BOSSES:
+    new_task = tasks.load_spec_ranking.delay(boss_id=boss_id, spec_full_name_slug=spec_full_name_slug, limit=10)
+    """
+    """
+    # task_ids += [new_task.id]
+    # return {"tasks": task_ids}
+    return {"task": new_task.id}
 
 
 @BP.route("/test")
 def test():
+    import os
     test_value = Cache.get("test_value")
 
     return {
         "status": "OK",
         "value": test_value,
+
+        "WCL_CLIENT_ID": os.getenv("WCL_CLIENT_ID", "not set")
     }
 
 
 @BP.route("/task_debug")
 def task_test():
     logger.info("start | DONE")
-    tasks.debug_task.delay("x")
+
+    for i in range(50):
+        tasks.debug_task.delay(i)
+
     logger.info("test | DONE")
     return "ok"
+

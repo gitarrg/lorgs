@@ -18,7 +18,7 @@ class RaidZone(base.Model):
         #: str
         self.name = name
 
-        #: list(<RaidBoss>)
+        #: list[<RaidBoss>]
         self.bosses = []
 
         #: str

@@ -127,9 +127,11 @@ def report_index():
 @BP.route("/report/<string:report_id>")
 def report(report_id):
 
-    report = Cache.get(f"report/{report_id}")
-    if not report:
+    report_data = Cache.get(f"report/{report_id}")
+    if not report_data:
         return {"error": "report not found"}
+
+    report = models.Report.from_dict(report_data)
 
     specs = [player.spec for player in report.players]
     specs = utils.uniqify(specs, key=lambda spec: spec.full_name)

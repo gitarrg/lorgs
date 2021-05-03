@@ -428,9 +428,9 @@ async def load_char_rankings(boss, spec, difficulty=5, limit=50):
     logger.debug(f"{boss.name} vs. {spec.name} {spec.wow_class.name} load casts")
 
     fights = [player.fight for player in players]
-    await load_fights(fights)
     # load in chunks of 10 each
-    # for chunk in utils.chunks(fights, 20):
+    for chunk in utils.chunks(fights, 10):
+        await load_fights(chunk)
 
     # this should not really happen..
     players = [player for player in players if player.casts]

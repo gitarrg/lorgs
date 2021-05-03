@@ -12,5 +12,5 @@ Flask==1.1
 Flask-WTF==0.14.3
 Flask-Caching
 
-celery==4.4.7  # cant use 5. due to flower
-# flower
+# celery==4.4.7  # cant use 5. due to flower
+celery==5.0

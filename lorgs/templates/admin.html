@@ -14,34 +14,135 @@ Lorgs: Crazy Admin Page
 
     <div class="bg-dark rounded border p-2">
 
-        <table class="table table-sm table-dark table-striped table-hover">
 
+        <table class="table table-dark table-sm">
 
             <thead>
-                <th>Class</th>
-                <th>Specs</th>
+                <th></th>
+                <th></th>
+
+                {% for boss in data.BOSSES %}
+                <th>
+                    <img class="icon-spec icon-s rounded" src="{{boss.icon_path}}">
+                </th>
+                {% endfor %}
+
+                <th style="width: 100%"></th>
+
             </thead>
 
-            {% for wow_class in data.CLASSES %}
-                <tr>
-                    <td class="wow-class-{{wow_class.name_slug}}">{{wow_class.name}}</td>
-                    <td>
+            {% for spec in data.SPECS if spec.supported %}
+            {% set wow_class = spec.wow_class %}
+            <tr>
+                <td><img class="icon-s rounded wow-class-border-{{wow_class.name_slug}}" src="{{spec.icon_path}}"></td>
+                <td class="wow-class-{{wow_class.name_slug}}">{{spec.name}}</td>
 
-                        <div>
-                            {% for spec in wow_class.specs if spec.supported %}
-                            <img class="icon-s rounded wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.icon_path}}" alt="{{spec.full_name}}">
-                            <button type="button" class="update_spec_ranking_button btn btn-primary btn-sm" data-spec="{{spec.full_name_slug}}">update</button>
-                            {% endfor %}
-                        </div>
+                {% for boss in data.BOSSES %}
+                    {% set spec_ranking = spec_rankings[(spec, boss)] %}
+                    {% set num_reports = spec_ranking.reports|length %}
+
+                    {% if num_reports >= 45 %}
+                        {% set status_class = "text-success" %}
+                    {% elif num_reports >= 30 %}
+                        {% set status_class = "text-warning" %}
+                    {% elif num_reports >= 20 %}
+                        {% set status_class = "text-danger font-weight-bold" %}
+                    {% elif num_reports >= 0 %}
+                        {% set status_class = "text-muted disabled" %}
+                    {% endif %}
+
+                    <td class="{{status_class}} spec_ranking_status" data-spec="{{spec.full_name_slug}}" data-boss_id={{boss.id}}>
+                        <a href="{{url_for('ui.spec_ranking', spec_slug=spec.full_name_slug, boss_slug=boss.name_slug)}}">
+                            {{spec_ranking.reports|length}}
+                        </a>
                     </td>
-                </tr>
+                {% endfor %}
+
+                <td><button type="button" class="update_spec_ranking_button btn btn-primary btn-sm" data-spec="{{spec.full_name_slug}}">update</button></td>
+
+            </tr>
             {% endfor %}
         </table>
     </div>
+
+    <h3>Spells</h3>
+    <div class="bg-dark rounded border p-2">
+        <table class="table table-dark table-sm">
+
+            <thead>
+                <th></th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Spec</th>
+                <th>Color</th>
+
+            </thead>
+
+            {% for spell in data.SPELLS|sort(attribute="group") %}
+
+            <tr>
+                <td><img class="icon-s rounded wow-class-border-{{spell.spec.wow_class.name_slug}} " src="{{spell.icon_path}}"></td>
+                <td>{{spell.spell_id}}</td>
+                <td>{{spell.spell_name}}</td>
+                <td class="wow-class-{{spell.group.wow_class.name_slug}}" >{{spell.group.name}}</td>
+                <td style="background-color: {{spell.color}}">{{spell.color}}</td>
+            </tr>
+            {% endfor %}
+
+        </table>
+
+
 </div>
 
 
 <script type="text/javascript">
+
+
+function update_task_status(element, task_id) {
+
+    console.log("update_task_status", task_id);
+
+    fetch(`/api/task_status/${task_id}`)
+        .then(response => response.json())
+        .then(data => {
+            // task_status.innerHTML = "\nNAME: " + data.info.name;
+            // task_status.innerHTML += "</br>STATUS: " + data.status;
+            // task_status.innerHTML += "</br>STEP: " + data.info.step;
+            // document.getElementById("task_status_bar-fg").style.width = (data.info.step*100) + "%";
+            // element.innerHTML = data.status;
+            element.className = "";
+
+            if (data.status == "PENDING") {
+                element.innerHTML = '<i class="far fa-hourglass"></i>'
+                element.className = "spec_ranking_status text-info"
+            }
+            if (data.status == "STARTED") {
+                element.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>'
+                element.className = "spec_ranking_status text-primary"
+            }
+            if (data.status == "PROGRESS") {
+                element.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>'
+                element.className = "spec_ranking_status text-primary"
+            }
+            if (data.status == "SUCCESS") {
+                element.innerHTML = '<i class="fas fa-check-square"></i>'
+                element.className = "spec_ranking_status text-success"
+            }
+            if (data.status == "FAILURE") {
+                element.innerHTML = '<i class="fas fa-exclamation-triangle"></i>'
+                element.className = "spec_ranking_status text-danger"
+            }
+
+            if (data.status == "PENDING" || data.status == "STARTED" || data.status == "PROGRESS") {
+                setTimeout(
+                    function() {
+                        update_task_status(element, task_id)
+                    },
+                    100
+                );
+            }
+        });
+}
 
 
 function update_spec_ranking() {
@@ -51,9 +152,28 @@ function update_spec_ranking() {
 
     // cast.dataset.spell_id;
     console.log("update_spec_ranking", spec);
-    this.innerHTML = "loading...";
+    // this.innerHTML = "loading...";
 
-    fetch(`/api/load_spec_rankings/${spec}`)
+
+    document.querySelectorAll(`.spec_ranking_status[data-spec=${spec}]`).forEach(element => {
+        const boss_id = element.dataset.boss_id;
+        element.innerHTML = '<i class="fas fa-paper-plane"></i>'
+        element.className = "spec_ranking_status text-info"
+
+        fetch(`/api/load_spec_rankings/${spec}/${boss_id}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log("created tasks", data)
+                update_task_status(element, data.task)
+            });
+    });
+
+    // spec_ranking_status
+
+
+
+
+    /*
         .then(response => response.json())
         .then(data => {
             console.log("created tasks", data)
@@ -66,6 +186,7 @@ function update_spec_ranking() {
                     this.append(div);
             }
         });
+    */
 }
 
 

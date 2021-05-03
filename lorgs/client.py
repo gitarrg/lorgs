@@ -59,13 +59,12 @@ class WarcraftlogsClient:
     def __init__(self, client_id="", client_secret=""):
         super(WarcraftlogsClient, self).__init__()
 
-        print("WarcraftlogsClient INIT")
-        print("TEST: ", os.getenv("WCL_CLIENT_ID"))
-
         # credentials
         self.client_id = client_id or os.getenv("WCL_CLIENT_ID")
         self.client_secret = client_secret or os.getenv("WCL_CLIENT_SECRET")
         self.headers = {}
+
+        logger.info("NEW CLIENT: %s", self.client_id)
 
         self.cached = True
         self.cache = Cache
@@ -83,7 +82,7 @@ class WarcraftlogsClient:
             "client_id": self.client_id,
             "client_secret": self.client_secret,
         }
-        logger.debug("Auth %s %s", self.client_id, self.client_secret)
+        logger.debug("Auth: %s", self.client_id)
         async with aiohttp.ClientSession() as session:
             async with session.post(url=self.URL_AUTH, data=data) as resp:
 

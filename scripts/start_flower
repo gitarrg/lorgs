@@ -2,15 +2,13 @@
 
 
 echo "sourcing .env"
+set -a
 source .env
+set +a
 
-# export FLASK_ENV=development
-# export DEBUG=true
-# export LORGS_CONFIG_NAME=lorgs.config.DevelopmentConfig
-# export FLASK_APP="lorgs/app:create_app()"
-# export PORT=5010
 
+REDISCLOUD_URL="redis://localhost:6379/0"
 
 export PYTHONPATH=.  # adds current dir, so we can import
-flower --app=lorgs.tasks.celery  --port=5555 --broker=redis://localhost:6379/0
+flower --app=lorgs.tasks.celery  --port=5555 --broker=$REDISCLOUD_URL
 

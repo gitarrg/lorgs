@@ -1,11 +1,11 @@
-
+# IMPORT THIRD PARTY LIBRARIES
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
+from wtforms import SubmitField
 from wtforms import validators
 from wtforms.fields import html5
 
 
-
+#:str: regex expression to match warcraftlogs-link
 WCL_LINK_REGEX = (
 
     r"(https?\:\/\/www\.warcraftlogs\.com\/reports\/)?"

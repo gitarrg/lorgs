@@ -2,7 +2,9 @@
 
 
 echo "sourcing .env"
+set -a
 source .env
+set +a
 
 
 export FLASK_ENV=development

@@ -16,7 +16,8 @@ from lorgs import models
 from lorgs.logger import logger
 
 
-def load_spell_icons():
+def _load_spell_icons():
+    """Init Script to load spell icons and names from the DB."""
     logger.info("[load spell icons] start")
     spell_infos = cache.Cache.get("spell_infos") or []
     if not spell_infos:
@@ -39,24 +40,19 @@ def load_spell_icons():
     logger.info("[load spell icons] done")
 
 
-def create_app(config_obj=None):
+def create_app():
     """Create and return a new FlaskApp-Instance.
-
-    Args:
-        config_obj(obj, optional): Object used to load config values.
-            default will call `config.get_config()`
 
     Returns:
         <Flask>: the new flask-app instance
 
     """
-    # create APP
+    # Flask
     app = flask.Flask(__name__)
-
     config_name = os.getenv("LORGS_CONFIG_NAME") or "lorgs.config.DevelopmentConfig"
     app.config.from_object(config_name)
 
-    # configure jina
+    # Jina
     app.jinja_env.trim_blocks = True
     app.jinja_env.lstrip_blocks = True
     app.jinja_env.filters["format_time"] = utils.format_time
@@ -68,6 +64,6 @@ def create_app(config_obj=None):
     app.register_blueprint(api.BP, url_prefix="/api")
 
     # init scripts
-    load_spell_icons()
+    _load_spell_icons()
 
     return app

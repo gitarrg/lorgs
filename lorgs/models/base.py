@@ -1,9 +1,7 @@
 
-
 import weakref
 
 # IMPORT THIRD PARTY LIBRARIES
-import flask
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
@@ -57,6 +55,7 @@ class Model(IconPathMixin, metaclass=MetaInstanceRegistry):
     def as_dict(self):
         raise NotImplementedError(self)
 
+    # todo: do we need this?
     toJSON = as_dict
 
     def __getstate__(self):
