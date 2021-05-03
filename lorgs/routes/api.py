@@ -2,6 +2,7 @@
 
 # IMPORT STANDARD LIBRARIES
 # import asyncio
+import os
 
 # IMPORT THIRD PARTY LIBRARIES
 import flask
@@ -93,7 +94,8 @@ def load_spec_rankings(spec_full_name_slug, boss_id):
 
     # task_ids = []
     # for boss in data.BOSSES:
-    new_task = tasks.load_spec_ranking.delay(boss_id=boss_id, spec_full_name_slug=spec_full_name_slug, limit=10)
+    limit = 10 if os.getenv("DEBUG") else 50
+    new_task = tasks.load_spec_ranking.delay(boss_id=boss_id, spec_full_name_slug=spec_full_name_slug, limit=limit)
     """
     """
     # task_ids += [new_task.id]
