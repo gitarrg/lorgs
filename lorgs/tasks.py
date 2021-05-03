@@ -23,6 +23,8 @@ from lorgs.models.specs import WowSpec
 os.environ["CELERY_BROKER_URL"] = os.getenv("CELERY_BROKER_URL") or os.getenv("REDISCLOUD_URL") or os.getenv("REDIS_URL") or "redis://localhost:6379"
 os.environ["CELERY_RESULT_BACKEND"] = os.getenv("CELERY_RESULT_BACKEND") or os.environ["CELERY_BROKER_URL"]
 
+
+logger.info("CELERY_BROKER_URL: %s", os.environ["CELERY_BROKER_URL"])
 celery = Celery("lorgs_celery")
 
 
