@@ -9,6 +9,7 @@ from lorgs import utils
 from lorgs import data
 from lorgs import forms
 from lorgs import models
+from lorgs import tasks
 from lorgs.cache import Cache
 
 
@@ -116,7 +117,9 @@ def report_index():
         match = re.match(forms.WCL_LINK_REGEX, link)
         report_id = match.group("code")
 
-        flask.flash(f"valid link: {report_id}")
+        report_data = Cache.get(f"report/{report_id}")
+        if not report_data:
+            return flask.redirect(flask.url_for("ui.report_load", report_id=report_id))
         return flask.redirect(flask.url_for("ui.report", report_id=report_id))
 
     kwargs = {}
@@ -124,15 +127,23 @@ def report_index():
     return flask.render_template("report_index.html", **kwargs)
 
 
+@BP.route("/report_load/<string:report_id>")
+def report_load(report_id):
+    task = tasks.load_report.delay(report_id=report_id)
+    kwargs = {}
+    kwargs["report_id"] = report_id
+    kwargs["task_id"] = task.id
+    return flask.render_template("report_loading.html", **kwargs)
+
+
 @BP.route("/report/<string:report_id>")
 def report(report_id):
 
     report_data = Cache.get(f"report/{report_id}")
     if not report_data:
-        return {"error": "report not found"}
+        return flask.redirect(flask.url_for("ui.report_load", report_id=report_id))
 
     report = models.Report.from_dict(report_data)
-
     specs = [player.spec for player in report.players]
     specs = utils.uniqify(specs, key=lambda spec: spec.full_name)
     used_spells = utils.flatten([spec.spells for spec in specs])

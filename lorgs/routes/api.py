@@ -94,7 +94,7 @@ def load_spec_rankings(spec_full_name_slug, boss_id):
 
     # task_ids = []
     # for boss in data.BOSSES:
-    limit = 10 if os.getenv("DEBUG") else 50
+    limit = 10 if os.getenv("DEBUG") else 25
     new_task = tasks.load_spec_ranking.delay(boss_id=boss_id, spec_full_name_slug=spec_full_name_slug, limit=limit)
     """
     """
@@ -120,8 +120,7 @@ def test():
 def task_test():
     logger.info("start | DONE")
 
-    for i in range(50):
-        tasks.debug_task.delay(i)
+    tasks.debug_task.delay(5)
 
     logger.info("test | DONE")
     return "ok"

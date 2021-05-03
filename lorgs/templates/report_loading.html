@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div class="row h-100" style="max-height:700px">
+    <div class="col-sm-12 my-auto d-flex justify-content-center">
+        <div style="width: 400px">
+
+            <h4 id="task_status_header">loading...</h4>
+            <div id="task_progress_bar_bg" class="bg-dark">
+                <div id="task_progress_bar_fg"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+
+<script type="text/javascript">
+
+const TASK_STATUS_BAR = document.getElementById("task_progress_bar_fg");
+const TASK_STATUS_HEADER = document.getElementById("task_status_header");
+
+
+
+
+var _LAST_STATUS;
+function update_header(status) {
+    // only update if the status has changed
+    if (status == _LAST_STATUS) {return;}
+    _LAST_STATUS = status;
+
+    if (status == "PENDING") {
+        TASK_STATUS_HEADER.innerHTML = '<i class="far fa-hourglass"></i> in queue'
+        TASK_STATUS_BAR.className = "bg-info"
+        TASK_STATUS_BAR.style.width = "0%";
+        return;
+    }
+
+    if (status == "STARTED") {
+        TASK_STATUS_HEADER.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> loading started..'
+        TASK_STATUS_BAR.className = "bg-warning"
+        TASK_STATUS_BAR.style.width = "5%";
+        return;
+    }
+
+    if (status == "PROGRESS") {
+        TASK_STATUS_HEADER.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> loading...'
+        TASK_STATUS_BAR.className = "bg-warning"
+        TASK_STATUS_BAR.style.width = "80%";
+        return;
+    }
+
+    if (status == "SUCCESS") {
+        TASK_STATUS_HEADER.innerHTML = '<i class="fas fa-check-square"></i> done. :yaaah:'
+        TASK_STATUS_BAR.className = "bg-success no-transition"
+        TASK_STATUS_BAR.style.width = "100%";
+        TASK_STATUS_BAR.style.transition = "none";
+        return;
+    }
+
+    if (status == "FAILURE") {
+        TASK_STATUS_HEADER.innerHTML = '<i class="fas fa-exclamation-triangle"></i> failed :/'
+        TASK_STATUS_BAR.className = "bg-danger no-transition"
+        TASK_STATUS_BAR.style.width = "100%";
+        return;
+    }
+}
+
+
+
+function update_task_status(task_id) {
+    fetch(`/api/task_status/${task_id}`)
+        .then(response => response.json())
+        .then(data => {
+
+            update_header(data.status);
+
+            if (data.status == "SUCCESS") {
+                window.location.href = "{{url_for('ui.report', report_id=report_id)}}";
+            }
+
+            if (data.status == "PENDING" || data.status == "STARTED" || data.status == "PROGRESS") {
+                setTimeout(
+                    function() {
+                        update_task_status(task_id)
+                    },
+                    100
+                );
+            }
+        });
+}
+
+
+update_task_status("{{task_id}}");
+
+
+</script>
+{% endblock %}
+
+
+
+

@@ -28,74 +28,8 @@
                 {% endif %}
                 {% endwith %}
             </div>
-
-
-            <button onclick="load_report()">load</button>
-
-            <div id=task_status_bar-bg class="bg-dark border rounded" style="width: 100%; height: 20px">
-                <div id=task_status_bar-fg class="bg-primary" style="width: 0%; height: 100%"></div>
-            </div>
-
-            <div id=task_status>no task</div>
-
-
         </div>
     </div>
 </div>
 {% endblock %}
-
-
-{% block scripts %}
-
-<script type="text/javascript">
-
-const task_status = document.getElementById("task_status");
-
-function update_task_status(task_id) {
-
-    console.log("update_task_status", task_id);
-
-    fetch(`/api/task_status/${task_id}`)
-        .then(response => response.json())
-        .then(data => {
-            task_status.innerHTML = "\nNAME: " + data.info.name;
-            task_status.innerHTML += "</br>STATUS: " + data.status;
-            task_status.innerHTML += "</br>STEP: " + data.info.step;
-
-            document.getElementById("task_status_bar-fg").style.width = (data.info.step*100) + "%";
-
-            if (data.status == "PENDING" || data.status == "STARTED" || data.status == "PROGRESS") {
-                setTimeout(
-                    function() {
-                        update_task_status(task_id)
-                    },
-                    100
-                );
-            }
-        });
-}
-
-
-function load_report() {
-    console.log("loading report")
-
-
-    console.log("A")
-
-    let report_id = "123"
-    fetch(`/api/load_report/${report_id}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log("B")
-
-            task_status.innerHTML = "task queued. ID: " + data.task
-            update_task_status(data.task)
-        });
-}
-
-</script>
-{% endblock %}
-
-
-
 

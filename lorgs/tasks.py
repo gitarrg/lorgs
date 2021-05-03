@@ -74,29 +74,10 @@ def load_spec_ranking(self, boss_id, spec_full_name_slug, limit=50):
 
 @celery.task(bind=True, name="load_report")
 def load_report(self, report_id):
-    task_info = {"name": f"load_report: {report_id}"}
-    self.update_state(state="STARTED", meta=task_info)
+    self.update_state(state="STARTED")
 
-    """
-    for i in range(100):
-        time.sleep(0.01)
-        task_info["step"] = i/100.0
-        self.update_state(state="PROGRESS", meta=task_info)
-
-    task_info["step"] = 1.0
-    task_info["players"] = ["A", "B", "C"]
-    return task_info
-    """
     report = Report(report_id=report_id)
-
-    print("OK pre sleep")
+    self.update_state(state="PROGRESS")
     asyncio.run(loader.load_report(report))
-    print("done?")
 
     Cache.set(f"report/{report_id}", report.as_dict())
-
-
-
-
-# if __name__ == '__main__':
-#     celery.control.purge()
