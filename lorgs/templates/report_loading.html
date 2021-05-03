@@ -34,7 +34,7 @@ function update_header(status) {
     _LAST_STATUS = status;
 
     if (status == "PENDING") {
-        TASK_STATUS_HEADER.innerHTML = '<i class="far fa-hourglass"></i> in queue'
+        TASK_STATUS_HEADER.innerHTML = '<i class="far fa-hourglass fa-spin"></i> in queue'
         TASK_STATUS_BAR.className = "bg-info"
         TASK_STATUS_BAR.style.width = "0%";
         return;
