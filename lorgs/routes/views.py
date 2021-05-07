@@ -119,7 +119,7 @@ def spec_ranking(spec_id, boss_id):
     ranked_chars = warcraftlogs_ranking.RankedCharacter.query
     ranked_chars = ranked_chars.filter_by(spec=spec, boss=boss)
     ranked_chars = ranked_chars.order_by(warcraftlogs_ranking.RankedCharacter.amount.desc())
-    ranked_chars = ranked_chars.limit(25)
+    ranked_chars = ranked_chars.limit(50)
     ranked_chars = ranked_chars.options(
         sa.orm.joinedload("spec"),
         sa.orm.joinedload("spec.wow_class"),
