@@ -15,7 +15,10 @@ from lorgs.logger import logger
 
 URI = os.getenv("SQLALCHEMY_DATABASE_URI") or os.getenv("CLEARDB_DATABASE_URL")
 
-engine = sqlalchemy.create_engine(URI)
+
+engine = sqlalchemy.create_engine(URI, pool_recycle=45)
+# on heroku connections last max 60sec.. so we need to recycle fast
+
 factory = sqlalchemy.orm.sessionmaker(bind=engine, autoflush=True)
 session = sqlalchemy.orm.scoped_session(factory)
 
