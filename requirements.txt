@@ -12,5 +12,10 @@ Flask==1.1
 Flask-WTF==0.14.3
 Flask-Caching
 
-# celery==4.4.7  # cant use 5. due to flower
-celery==5.0
+
+celery==4.4.7  # cant use 5. due to flower
+# celery==5.0
+
+PyMySQL==1.0
+# https://www.tutorialguruji.com/dbms/retrieving-data-from-rds-gives-attributeerror-sqlalchemy-cimmutabledict-immutabledict-object-has-no-attribute-setdefault/
+SQLAlchemy<1.4

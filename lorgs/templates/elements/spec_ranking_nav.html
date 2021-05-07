@@ -11,7 +11,7 @@
                 {% for spec in role.specs %}
                 <div {{'class="mb-1"' if not loop.last}}>
                     {% if spec.supported %}
-                    <a href="{{url_for('ui.spec_ranking', spec_slug=spec.full_name_slug, boss_slug=boss.name_slug)}}">
+                    <a href="{{url_for('ui.spec_ranking', spec_id=spec.id, boss_id=boss.id)}}">
                     {% else %}
                     <a class="disabled" href="#">
                     {% endif %}
@@ -28,7 +28,7 @@
     <!-- Bosses -->
     <div class="p-1 bg-dark border ml-2 rounded">
         {% for boss2 in bosses %}
-        <a href="{{url_for('ui.spec_ranking', spec_slug=spec.full_name_slug, boss_slug=boss2.name_slug)}}" class="{{'active' if boss2 == boss}}" data-toggle="tooltip" title="{{boss2.name}}">
+        <a href="{{url_for('ui.spec_ranking', spec_id=spec.id, boss_id=boss2.id)}}" class="{{'active' if boss2 == boss}}" data-toggle="tooltip" title="{{boss2.name}}">
             <img class="icon-spec icon-m border-black rounded" src="{{boss2.icon_path}}" alt="{{boss2.name_slug}}">
         </a>
         {% endfor %}

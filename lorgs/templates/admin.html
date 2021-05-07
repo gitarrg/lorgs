@@ -21,7 +21,7 @@ Lorgs: Crazy Admin Page
                 <th></th>
                 <th></th>
 
-                {% for boss in data.BOSSES %}
+                {% for boss in bosses %}
                 <th>
                     <img class="icon-spec icon-s rounded" src="{{boss.icon_path}}">
                 </th>
@@ -31,34 +31,37 @@ Lorgs: Crazy Admin Page
 
             </thead>
 
-            {% for spec in data.SPECS if spec.supported %}
+
+            <ul>
+            {% for (spec, boss), count in spec_rankings.items() %}
+                <li>{{spec}} / {{boss}} / {{count}}</li>
+            {% endfor %}
+            </ul>
+
+            {% for spec in specs if spec.supported %}
             {% set wow_class = spec.wow_class %}
             <tr>
                 <td><img class="icon-s rounded wow-class-border-{{wow_class.name_slug}}" src="{{spec.icon_path}}"></td>
                 <td class="wow-class-{{wow_class.name_slug}}">{{spec.name}}</td>
 
-                {% for boss in data.BOSSES %}
-                    {% set spec_ranking = spec_rankings[(spec, boss)] %}
-                    {% set num_reports = spec_ranking.reports|length %}
-
-                    {% if num_reports >= 45 %}
+                {% for boss in bosses %}
+                    {% set n = spec_rankings.get((spec.id, boss.id)) or 0 %}
+                    {% if n >= 45 %}
                         {% set status_class = "text-success" %}
-                    {% elif num_reports >= 30 %}
+                    {% elif n >= 30 %}
                         {% set status_class = "text-warning" %}
-                    {% elif num_reports >= 20 %}
+                    {% elif n >= 20 %}
                         {% set status_class = "text-danger font-weight-bold" %}
-                    {% elif num_reports >= 0 %}
+                    {% elif n >= 0 %}
                         {% set status_class = "text-muted disabled" %}
                     {% endif %}
 
-                    <td class="{{status_class}} spec_ranking_status" data-spec="{{spec.full_name_slug}}" data-boss_id={{boss.id}}>
-                        <a href="{{url_for('ui.spec_ranking', spec_slug=spec.full_name_slug, boss_slug=boss.name_slug)}}">
-                            {{spec_ranking.reports|length}}
-                        </a>
+                    <td class="{{status_class}} spec_ranking_status" data-spec_id="{{spec.id}}" data-boss_id={{boss.id}}>
+                        <a href="{{url_for('ui.spec_ranking', spec_id=spec.id, boss_id=boss.id)}}">{{n}}</a>
                     </td>
                 {% endfor %}
 
-                <td><button type="button" class="update_spec_ranking_button btn btn-primary btn-sm" data-spec="{{spec.full_name_slug}}">update</button></td>
+                <td><button type="button" class="update_spec_ranking_button btn btn-primary btn-sm" data-spec_id="{{spec.id}}">update</button></td>
 
             </tr>
             {% endfor %}
@@ -78,14 +81,14 @@ Lorgs: Crazy Admin Page
 
             </thead>
 
-            {% for spell in data.SPELLS|sort(attribute="group") %}
+            {% for spell in spells %}
 
             <tr>
-                <td><img class="icon-s rounded wow-class-border-{{spell.spec.wow_class.name_slug}} " src="{{spell.icon_path}}"></td>
-                <td>{{spell.spell_id}}</td>
-                <td>{{spell.spell_name}}</td>
+                <td><img class="icon-s rounded wow-class-border-{{spell.spec.wow_class.name_slug}} " src="{{spell.spell.icon_path}}"></td>
+                <td>{{spell.spell.spell_id}}</td>
+                <td>{{spell.spell.spell_name}}</td>
                 <td class="wow-class-{{spell.group.wow_class.name_slug}}" >{{spell.group.name}}</td>
-                <td style="background-color: {{spell.color}}">{{spell.color}}</td>
+                <td style="background-color: {{spell.spell.color}}">{{spell.spell.color}}</td>
             </tr>
             {% endfor %}
 
@@ -147,20 +150,20 @@ function update_task_status(element, task_id) {
 
 function update_spec_ranking() {
     console.log("this", this);
-    const spec = this.dataset.spec;
+    const spec_id = this.dataset.spec_id;
     // const boss = this.dataset.boss;
 
     // cast.dataset.spell_id;
-    console.log("update_spec_ranking", spec);
+    console.log("update_spec_ranking", spec_id);
     // this.innerHTML = "loading...";
 
 
-    document.querySelectorAll(`.spec_ranking_status[data-spec=${spec}]`).forEach(element => {
+    document.querySelectorAll(`.spec_ranking_status[data-spec_id="${spec_id}"]`).forEach(element => {
         const boss_id = element.dataset.boss_id;
         element.innerHTML = '<i class="fas fa-paper-plane"></i>'
         element.className = "spec_ranking_status text-info"
 
-        fetch(`/api/load_spec_rankings/${spec}/${boss_id}`)
+        fetch(`/api/load_spec_rankings/${spec_id}/${boss_id}`)
             .then(response => response.json())
             .then(data => {
                 console.log("created tasks", data)

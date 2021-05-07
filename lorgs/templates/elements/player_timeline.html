@@ -5,7 +5,8 @@
     <div class="cast_container inner_shadow" style="width: {{fight_duration}}px">
     {% for cast in player.casts %}
         {% set spell = cast.spell %}
-        <div class="cast" data-spell_id="{{spell.spell_id}}" style="left: {{cast.time/250}}px{{'; display: none' if not spell.show}}">
+
+        <div class="cast" data-spell_id="{{spell.spell_id}}" style="left: {{cast.timestamp/250}}px{{'; display: none' if not spell.show}}">
             {% if spell.cooldown %}
                 <div class="cast_cooldown" style="width: {{spell.cooldown * 4}}px; background-color: {{spell.color}}"></div>
             {% endif %}
@@ -15,8 +16,8 @@
             {% if spell.icon_path %}
                 <img class="cast_icon" src="{{cast.spell.icon_path}}">
             {% endif %}
-            {% if cast.time %}
-                <span class="cast_text">{{cast.time|format_time}}</span>
+            {% if cast.timestamp %}
+                <span class="cast_text">{{cast.timestamp|format_time}}</span>
             {% endif %}
         </div>
     {% endfor %}

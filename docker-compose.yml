@@ -52,6 +52,27 @@ services:
     ports:
     - "6379:6379"
 
+  db:
+    image: mariadb
+    env_file:
+      - .env
+    ports:
+    - 3308:3306
+    # volumes:
+    #   - db-data:/var/lib/mysql/data
+
+  adminer:  # DB UI
+    image: adminer
+    ports:
+    - 5021:8080
+    depends_on:
+    - db
+
+# Adminer:
+# >>> docker run-d -p 5015:8080 adminer
+# docker run --link some_database:db -p 8080:8080 adminer
+
+
 
   # celery_dashboard:
   #   build: .

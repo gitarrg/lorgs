@@ -4,92 +4,62 @@
 
 # IMPORT STANRD LIBRARIES
 # import datetime
-import arrow
+# import arrow
+# import textwrap
+
+# IMPORT THIRD PARTY LIBRARIES
+# import sqlalchemy
+import sqlalchemy as sa
+# from sqlalchemy import sa.Column, sa.ForeignKey
+# from sqlalchemy import sa.Integer, String, Bigsa.Integer, sa.Unicode, Float
+# from sqlalchemy.orm import sa.orm.relationship
 
 # IMPORT LOCAL LIBRARIES
+from lorgs import db
 from lorgs import utils
-from lorgs.logger import logger
-
-from lorgs.models import base
-from lorgs.cache import Cache
-from lorgs.models.specs import WowClass
-from lorgs.models.specs import WowSpec
-from lorgs.models.specs import WowSpell
-from lorgs.models.encounters import RaidZone
-from lorgs.models.encounters import RaidBoss
-
-
-class SpecRanking(base.Model):
-
-    def __init__(self, spec, boss):
-        self.last_update = 0
-        self.spec = spec
-        self.boss = boss
-        self.cache_key = f"spec_ranking/{self.spec.full_name_slug}/{self.boss.name_slug}"
-
-        self.reports = []
-
-    def __repr__(self):
-        return f"<SpecRanking({self.spec.full_name} vs {self.boss.name})>"
-
-    def as_dict(self):
-        return {
-            "spec": self.spec.full_name_slug,
-            "boss": self.boss.as_dict(),
-
-            "last_update": self.last_update,
-            "reports": [report.as_dict() for report in self.reports]
-        }
-
-    async def update(self, limit=50, force=True):
-        from lorgs.models import loader
-
-        players = await loader.load_char_rankings(boss=self.boss, spec=self.spec, limit=limit)
-
-        self.reports = [player.fight.report for player in players]
-        self.last_update = arrow.utcnow().timestamp()
-        self.save()
-
-    def save(self):
-        Cache.set(self.cache_key, self.as_dict())
-
-    def load(self):
-
-        data = Cache.get(self.cache_key) or {}
-
-        self.last_update = data.get("last_update") or self.last_update
-        for report_data in data.get("reports", []):
-            report = Report.from_dict(report_data)
-            self.reports.append(report)
+# from lorgs.cache import Cache
+# from lorgs.client import WarcraftlogsClient
+# from lorgs.logger import logger
+# from lorgs.models import base
+# from lorgs.models.encounters import RaidBoss
+# from lorgs.models.encounters import RaidZone
+# from lorgs.models.specs import WowClass
+# from lorgs.models.specs import WowSpec
+# from lorgs.models.specs import WowSpell
 
 
-class Report(base.Model):
+class Report(db.Base):
     """docstring for Fight"""
 
+    __tablename__ = "report"
+
+    # attributes
+    report_id = sa.Column(sa.String(64), primary_key=True)
+    start_time = sa.Column(sa.BigInteger, default=0)
+    title = sa.Column(sa.Unicode(128))
+
+    # sa.orm.relationships
+    zone = sa.orm.relationship("RaidZone")
+    zone_id = sa.Column(sa.Integer, sa.ForeignKey("raid_zone.id"))
+
+    fights = sa.orm.relationship(
+        "Fight",
+        back_populates="report",
+        cascade="all,delete,delete-orphan",
+        lazy="joined"
+    )
+
+    """
     def __init__(self, report_id: str):
         self.report_id = report_id
         self.title = ""
         self.start_time = 0
         self.zone = None
         self.fights = []
+    """
 
     def __repr__(self):
         return f"<Report({self.report_id})>"
-
-    @classmethod
-    def from_dict(cls, state):
-
-        report_id = state.get("report_id")
-        self = cls(report_id)
-        self.title = state.get("title")
-        self.start_time = state.get("start_time")
-        self.zone = RaidZone.get(**state.get("zone", {}))
-
-        self.fights = []
-        for fight_data in state.get("fights", []):
-            self.add_fight(**fight_data)
-
-        return self
 
     def as_dict(self):
         return {
@@ -100,12 +70,6 @@ class Report(base.Model):
             "fights": [fight.as_dict() for fight in self.fights]
         }
 
-    def add_fight(self, **kwargs):
-        fight = Fight(**kwargs)
-        fight.report = self
-        self.fights.append(fight)
-        return fight
-
     @property
     def report_url(self):
         return f"https://www.warcraftlogs.com/reports/{self.report_id}"
@@ -114,40 +78,45 @@ class Report(base.Model):
     def players(self):
         players = utils.flatten(fight.players for fight in self.fights)
         return utils.uniqify(players, key=lambda player: player.source_id)
+    """
 
     @property
     def used_spells(self):
         spells = utils.flatten(fight.used_spells for fight in self.fights)
         return utils.uniqify(spells, key=lambda spell: spell.spell_id)
+    """
 
 
-class Fight(base.Model):
+class Fight(db.Base):
     """Basically a pull."""
 
-    def __init__(self, fight_id=0, start_time=0, end_time=0, percent=0, **kwargs):
-        super().__init__()
+    __tablename__ = "report_fight"
 
-        self.fight_id = fight_id
-        self.start_time = start_time
-        self.end_time = end_time
-        self.percent = percent
+    # attributes
+    # id = sa.Column(sa.Integer, primary_key=True)
+    fight_id = sa.Column(sa.Integer, primary_key=True)
+    start_time = sa.Column(sa.BigInteger)
+    end_time = sa.Column(sa.BigInteger)
+    percent = sa.Column(sa.Float, default=0)
 
-        self.report = None
+    # sa.orm.relationships
+    report_id = sa.Column(sa.String(64), sa.ForeignKey("report.report_id", ondelete="cascade"), primary_key=True)
+    report = sa.orm.relationship("Report", back_populates="fights")
 
-        boss_id = kwargs.get("boss_id") or kwargs.get("boss", {}).get("id")
-        self.boss = RaidBoss.get(id=boss_id) if boss_id else None
+    boss_id = sa.Column(sa.Integer, sa.ForeignKey("raid_boss.id"))
+    boss = sa.orm.relationship("RaidBoss")
 
-        self.players = []
-        for player_data in kwargs.get("players", []):
-            self.add_player(**player_data)
+    # children
+    players = sa.orm.relationship(
+        "Player",
+        back_populates="fight",
+        cascade="all,delete,delete-orphan",
+        lazy="joined"
+    )
+    # casts = association_proxy("players", "casts")
 
     def __repr__(self):
-        return f"Fight({self.report.report_id}, id={self.fight_id}, players={len(self.players)})"
-
-    @classmethod
-    def from_dict(cls, data):
-        return cls(**data)
-        # fight.players = [Fight.from_dict(fight_data) for fight_data in data.get("fights", [])]
+        return f"Fight({self.report_id}, id={self.fight_id}, players={len(self.players)})"
 
     def as_dict(self):
         return {
@@ -156,14 +125,8 @@ class Fight(base.Model):
             "end_time": self.end_time,
             "percent": self.percent,
             "boss": self.boss.as_dict() if self.boss else {},
-            "players": [player.as_dict() for player in self.players],
+            # "players": [player.as_dict() for player in self.players],
         }
-
-    def add_player(self, **kwargs):
-        player = Player(**kwargs)
-        player.fight = self
-        self.players.append(player)
-        return player
 
     ##########################
     # Attributes
@@ -176,10 +139,12 @@ class Fight(base.Model):
     def report_url(self):
         return f"{self.report.report_url}#fight={self.fight_id}"
 
+    """
     @property
     def used_spells(self):
         spells = utils.flatten(player.used_spells for player in self.players)
         return utils.uniqify(spells, key=lambda spell: spell.spell_id)
+    """
 
     @property
     def percent_color(self):
@@ -196,11 +161,36 @@ class Fight(base.Model):
         return "common"
 
 
-class Player(base.Model):
+class Player(db.Base):
     """a player in a given fight.
 
     TODO:
         rename to actor?
+
+    """
+    __tablename__ = "report_player"
+
+    id = sa.Column(sa.Integer, primary_key=True)
+
+    # the actual player
+    source_id = sa.Column(sa.Integer)  # TODO: rename?
+    name = sa.Column(sa.Unicode(12)) # names can be max 12 chars
+    total = sa.Column(sa.Integer)
+
+    fight_id = sa.Column(sa.Integer, sa.ForeignKey("report_fight.fight_id", ondelete="cascade"))
+    fight = sa.orm.relationship("Fight", back_populates="players")
+
+    casts = sa.orm.relationship(
+        "Cast",
+        back_populates="player",
+        cascade="all,delete,delete-orphan",
+        lazy="joined"
+    )
+
+    # report = association_proxy("fight", "report")
+    spec = sa.orm.relationship("WowSpec")
+    spec_id = sa.Column(sa.Integer, sa.ForeignKey("wow_spec.id"))
+
 
     """
     def __init__(self, source_id=0, name="", total=0, **kwargs):
@@ -218,9 +208,11 @@ class Player(base.Model):
         for cast_data in kwargs.get("casts", []):
             self.add_cast(**cast_data)
 
+    """
     def __repr__(self):
-        return f"Player({self.name} spec={self.spec.name} id={self.source_id} casts={len(self.casts)})"
+        return f"Player({self.name} spec=TODO id={self.source_id} casts={len(self.casts)})"
 
+    """
     def __setstate__(self, state):
         self.source_id = state["source_id"]
         self.name = state["name"]
@@ -256,32 +248,30 @@ class Player(base.Model):
         cast.player = self
         self.casts.append(cast)
         return cast
+    """
 
 
-class Cast(base.Model):
+class Cast(db.Base):
     """docstring for Cast"""
 
-    def __init__(self, timestamp=0, spell_id=None, **kwargs):
-        super().__init__()
-        self.timestamp = timestamp
-        self.player = None
-        self.spell_id = spell_id
+    __tablename__ = "report_cast"
+
+    id = sa.Column(sa.Integer, primary_key=True)
+    timestamp = sa.Column(sa.Integer)
+
+    player_id = sa.Column(sa.Integer, sa.ForeignKey(Player.id, ondelete="cascade"))
+    player = sa.orm.relationship("Player", back_populates="casts")
+
+    # parent player
+    spell = sa.orm.relationship("WowSpell")
+    spell_id = sa.Column(sa.Integer, sa.ForeignKey("wow_spell.spell_id"))
 
     def __repr__(self):
         time_fmt = utils.format_time(self.time)
-        return f"Cast({self.spell.spell_id}, at={time_fmt})"
+        return f"Cast({self.spell_id}, at={time_fmt})"
 
     def as_dict(self):
         return {
             "timestamp": self.timestamp,
             "spell_id": self.spell.spell_id if self.spell else 0,
         }
-
-    @property
-    def spell(self):
-        spec = self.player.spec
-        return WowSpell.get(spec=spec, spell_id=self.spell_id)
-
-    @property
-    def time(self):
-        return self.timestamp - self.player.fight.start_time

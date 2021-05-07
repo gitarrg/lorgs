@@ -8,4 +8,4 @@ from lorgs.models.specs import WowClass
 from lorgs.models.specs import WowSpec
 from lorgs.models.specs import WowSpell
 
-from lorgs.models.reports import Report
+# from lorgs.models.reports import Report

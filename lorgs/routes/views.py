@@ -1,16 +1,27 @@
 """Views/Routes for the UI/Frontend."""
 
-# IMPORT THIRD PARTY LIBS
 import re
+from collections import defaultdict
+
+# IMPORT THIRD PARTY LIBS
+from sqlalchemy.sql import func
 import flask
+import sqlalchemy as sa
 
 # IMPORT LOCAL LIBS
-from lorgs import utils
-from lorgs import data
+from lorgs import db
 from lorgs import forms
 from lorgs import models
 from lorgs import tasks
+from lorgs import utils
 from lorgs.cache import Cache
+from lorgs.models import encounters
+from lorgs.models import specs
+from lorgs.models import warcraftlogs
+from lorgs.models import warcraftlogs_ranking
+
+
+DEFAULT_BOSS_ID = 2407 # Sire Denathrius
 
 
 def spec_ranking_color(i):
@@ -33,6 +44,9 @@ BP = flask.Blueprint(
 )
 
 
+SHARED_DATA = {}
+
+
 @BP.app_context_processor
 def add_shared_variables():
     config = flask.current_app.config
@@ -43,70 +57,97 @@ def add_shared_variables():
     }
 
 
+@BP.before_app_first_request
+def load_shared_data():
+
+    roles = specs.WowRole.query
+    roles = roles.filter(specs.WowRole.id < 1000)
+    roles = roles.options(sa.orm.joinedload(specs.WowRole.specs))
+    roles = roles.all()
+    SHARED_DATA["roles"] = roles
+    SHARED_DATA["specs"] = utils.flatten(role.specs for role in roles)
+
+    bosses = encounters.RaidBoss.query
+    bosses = bosses.options(sa.orm.joinedload(encounters.RaidBoss.zone))
+    bosses = bosses.all()
+    SHARED_DATA["bosses"] = bosses
+
+
+################################################################################
+#
+#   GLOBAL
+#
+################################################################################
 
 
 @BP.route("/")
 def index():
-    """Main Route for the index page."""
+    """Render the main index page."""
+    # query some data
+    roles = specs.WowRole.query
+    roles = roles.filter(specs.WowRole.id < 1000)
+    roles = roles.options(sa.orm.joinedload(specs.WowRole.specs))
+    roles = roles.all()
+    boss = encounters.RaidBoss.query.get(DEFAULT_BOSS_ID)
+
+    # render our template
     kwargs = {}
-    kwargs["boss"] = data.DEFAULT_BOSS
-    kwargs["roles"] = data.ROLES
+    kwargs["boss"] = boss
+    kwargs["roles"] = roles
     return flask.render_template("index.html", **kwargs)
 
 
-@BP.route("/admin")
-def admin():
-    kwargs = {}
+################################################################################
+#
+#   SPEC RANKINGS
+#
+################################################################################
 
-
-    spec_rankings = {}
-    for spec in data.SPECS:
-        for boss in data.BOSSES:
-            spec_ranking = models.reports.SpecRanking(spec, boss)
-            spec_ranking.load()
-            spec_rankings[(spec, boss)] = spec_ranking
-
-    kwargs["data"] = data
-    kwargs["specs"] = data.SPECS
-    kwargs["spec_rankings"] = spec_rankings
-    return flask.render_template("admin.html", **kwargs)
-
-
-@BP.route("/spec_ranking/<spec_slug>_<boss_slug>")
-def spec_ranking(spec_slug, boss_slug):
+@BP.route("/spec_ranking/<int:spec_id>/<int:boss_id>")
+def spec_ranking(spec_id, boss_id):
 
     # Inputs
-    spec = models.WowSpec.get(full_name_slug=spec_slug)
-    boss = models.RaidBoss.get(name_slug=boss_slug)
+    spec = models.WowSpec.query.get(spec_id)
+    boss = encounters.RaidBoss.query.get(boss_id)
     if not (spec and boss):
         # TODO: add proper error message
         return {
-            "boss": {"slug:": boss_slug, "str": str(boss)},
-            "spec": {"slug:": spec_slug, "str": str(spec)},
+            "spec": {"slug:": spec_id, "str": str(spec)},
+            "boss": {"slug:": boss_id, "str": str(boss)},
         }
 
-    spec_ranking = models.reports.SpecRanking(spec, boss)
-    spec_ranking.load()
+    ranked_chars = warcraftlogs_ranking.RankedCharacter.query
+    ranked_chars = ranked_chars.filter_by(spec=spec, boss=boss)
+    ranked_chars = ranked_chars.order_by(warcraftlogs_ranking.RankedCharacter.amount.desc())
+    ranked_chars = ranked_chars.limit(25)
+    ranked_chars = ranked_chars.options(
+        sa.orm.joinedload("spec"),
+        sa.orm.joinedload("spec.wow_class"),
+        sa.orm.joinedload("casts"),
+        sa.orm.joinedload("casts.spell"),
+    )
+    ranked_chars = ranked_chars.all()
 
-    # prepare some data
-    fights = utils.flatten(report.fights for report in spec_ranking.reports)
-    players = utils.flatten(fight.players for fight in fights)
-
-    used_spells = [cast.spell for player in players for cast in player.casts]
-    used_spells = utils.uniqify(used_spells, key=lambda spell: spell.spell_id)
+    # preprocess some data
+    spells_used = utils.flatten(char.spells_used for char in ranked_chars)
+    spells_used = utils.uniqify(spells_used, key=lambda spell: spell)
+    timeline_duration = max(char.fight_duration for char in ranked_chars) if ranked_chars else 0
 
     # Return
     kwargs = {}
     kwargs["spec"] = spec
     kwargs["boss"] = boss
-    kwargs["players"] = players
-    kwargs["all_spells"] = used_spells
-    kwargs["timeline_duration"] = max(fight.duration for fight in fights) if fights else 0
+    kwargs["players"] = ranked_chars
+    kwargs["all_spells"] = spells_used
+    kwargs["timeline_duration"] = timeline_duration
+    return flask.render_template("spec_ranking.html", **kwargs, **SHARED_DATA)
 
-    # Data for Nav
-    kwargs["roles"] = data.ROLES
-    kwargs["bosses"] = data.BOSSES # TODO: current zone only
-    return flask.render_template("spec_ranking.html", **kwargs)
+
+################################################################################
+#
+#   REPORTS
+#
+################################################################################
 
 
 @BP.route("/report", methods=['GET', 'POST'])
@@ -139,24 +180,41 @@ def report_load(report_id):
 @BP.route("/report/<string:report_id>")
 def report(report_id):
 
-    report_data = Cache.get(f"report/{report_id}")
-    if not report_data:
+
+    report = warcraftlogs.Report.query
+    report = report.options(
+        sa.orm.joinedload(warcraftlogs.Report.fights),
+        sa.orm.joinedload("fights.boss"),
+        sa.orm.joinedload("fights.players"),
+        sa.orm.joinedload("fights.players.spec"),
+        sa.orm.joinedload("fights.players.casts"),
+        sa.orm.joinedload("fights.players.casts.spell"),
+        # db.joinedload("fights.players.casts.player"),
+        # db.joinedload("fights.players.casts.player.fight"),
+    )
+    report = report.get(report_id)
+    if not report:
         return flask.redirect(flask.url_for("ui.report_load", report_id=report_id))
 
-    report = models.Report.from_dict(report_data)
-    specs = [player.spec for player in report.players]
-    specs = utils.uniqify(specs, key=lambda spec: spec.full_name)
-    used_spells = utils.flatten([spec.spells for spec in specs])
-    used_spells = utils.uniqify(used_spells, key=lambda spell: (spell.group, spell.spell_id))
+    bosses = encounters.RaidBoss.query.filter_by(zone_id=report.zone_id).all()
+
+    all_players = utils.flatten([fight.players for fight in report.fights])
+
+    specs = [player.spec for player in all_players]
+    specs = list(set(specs))
+
+    # TODO: check which spells are actually used
+    used_spells = [(spec, spec.spells) for spec in specs]
+    used_spells = sorted(used_spells)
+    # used_spells = utils.uniqify(used_spells, key=lambda spell: (spell.group, spell.spell_id))
 
     kwargs = {
-
         "report": report,
         "all_spells": used_spells,
-        "timeline_duration": max(f.duration for f in report.fights),
+        "timeline_duration": max(f.duration for f in report.fights) if report.fights else 0,
 
         # Data for Nav
-        "roles": data.ROLES,
-        "bosses": data.BOSSES # TODO: current zone only
+        # "roles": [],
+        # "bosses": bosses
     }
     return flask.render_template("report.html", **kwargs)

@@ -1,6 +1,14 @@
+#!/usr/bin/env python
 """Models for Raids and RaidBosses."""
 
+# IMPORT STANDARD LIBRARIES
+
+# IMPORT THIRD PARTY LIBRARIES
+import dotenv
+dotenv.load_dotenv() # pylint: disable=wrong-import-position
+
 # IMPORT LOCAL LIBRARIES
+from lorgs import db
 from lorgs.models.encounters import RaidZone, RaidBoss
 
 
@@ -25,15 +33,28 @@ _ENCOUNTER_DATA = [
 ]
 
 
-for zone_data in _ENCOUNTER_DATA:
-    zone = RaidZone(id=zone_data["id"], name=zone_data["name"])
+def create():
+    print("creating encounters")
 
-    for boss_data in zone_data.get("encounters", []):
-        zone.add_boss(id=boss_data["id"], name=boss_data["name"])
+    for zone_data in _ENCOUNTER_DATA:
+        zone = RaidZone(id=zone_data["id"], name=zone_data["name"])
+
+        for i, boss_data in enumerate(zone_data.get("encounters", [])):
+            boss = RaidBoss(
+                zone_id=zone.id,
+                id=boss_data["id"],
+                name=boss_data["name"],
+                order=i,
+            )
+            zone.bosses.append(boss)
+
+        db.session.add(zone)
 
 
-DEFAULT_ZONE = RaidZone.get(id=26)
-DEFAULT_BOSS = RaidBoss.get(id=2407)
+def main():
+    with db.session_context(commit=True):
+        create()
 
-ZONES = RaidZone.all
-BOSSES = DEFAULT_ZONE.bosses
+
+if __name__ == '__main__':
+    main()

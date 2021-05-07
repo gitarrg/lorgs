@@ -1,38 +1,30 @@
-
 # IMPORT STANDARD LIBRARIES
-import os
 import time
 import asyncio
 
 # IMPORT THIRD PARTY LIBRARIES
-from celery import Celery
+# from celery import Celery
+import sqlalchemy as sa
+
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import data
+from lorgs import utils
+from lorgs.celery import celery
 from lorgs.cache import Cache
+from lorgs import db
 from lorgs.logger import logger
 from lorgs.models import loader
+from lorgs.models import warcraftlogs_ranking
 from lorgs.models.encounters import RaidBoss
-from lorgs.models.reports import Report
-from lorgs.models.reports import SpecRanking
 from lorgs.models.specs import WowSpec
-
-
-
-# make sure these are set
-os.environ["CELERY_BROKER_URL"] = os.getenv("CELERY_BROKER_URL") or os.getenv("REDISCLOUD_URL") or os.getenv("REDIS_URL") or "redis://localhost:6379"
-os.environ["CELERY_RESULT_BACKEND"] = os.getenv("CELERY_RESULT_BACKEND") or os.environ["CELERY_BROKER_URL"]
-
-
-logger.info("CELERY_BROKER_URL: %s", os.environ["CELERY_BROKER_URL"])
-celery = Celery("lorgs_celery")
 
 
 @celery.task(bind=True, name="debug_task")
 def debug_task(self):
     task_info = {"name": "DebugTask"}
     for i in range(10):
-        time.sleep(1)
+        logger.info("Step: %d", i)
+        time.sleep(0.25)
         task_info["step"] = i
         self.update_state(state="PROGRESS", meta=task_info)
 
@@ -44,32 +36,41 @@ def debug_task(self):
     return task_info
 
 
-@celery.task(name="load_spell_icons")
-def load_spell_icons():
-    spells = data.SPELLS
-    logger.info("%d spells", len(spells))
-
-    spell_infos = asyncio.run(loader.load_spell_icons(spells))
-
-    # save cache
-    spell_infos = [info for info in spell_infos.values()]
-    Cache.set("spell_infos", spell_infos)
-
-
 @celery.task(bind=True, name="load_spec_ranking")
-def load_spec_ranking(self, boss_id, spec_full_name_slug, limit=50):
+def load_spec_ranking(self, boss_id, spec_id, limit=50):
     self.update_state(state="STARTED")
 
+    ##############
     # Get
-    spec = WowSpec.get(full_name_slug=spec_full_name_slug)
-    boss = RaidBoss.get(id=boss_id)
+    # FIXME
+
+    boss = RaidBoss.query.options(
+        sa.orm.joinedload(RaidBoss.zone),
+    ).get(boss_id)
+
+    spec = WowSpec.query.options(
+        sa.orm.joinedload(WowSpec.spells),
+        sa.orm.joinedload(WowSpec.wow_class),
+    ).get(spec_id)
     logger.info(f"{boss.name} vs. {spec.name} {spec.wow_class.name} start")
 
-    # run
-    spec_ranking = SpecRanking(spec, boss)
-    asyncio.run(spec_ranking.update(limit=limit))
+    # TODO: merge with existing data, and only query new
+    warcraftlogs_ranking.RankedCharacter.query.filter_by(spec=spec, boss=boss).delete()
+    db.session.commit()
 
-    logger.info(f"{boss.name} vs. {spec.name} {spec.wow_class.name} done")
+    ##############
+    # run
+    task = loader.load_spec_rankings(spec=spec, boss=boss, limit=limit)
+    players = asyncio.run(task)
+    logger.info(f"{boss.name} vs. {spec.name} {spec.wow_class.name} query done")
+
+    ##############
+    # Add to DB
+    all_casts = utils.flatten(player.casts for player in players)
+    db.session.bulk_save_objects(players)
+    db.session.bulk_save_objects(all_casts)
+    db.session.commit()
+    logger.info(f"{boss.name} vs. {spec.name} {spec.wow_class.name} added to DB!")
 
 
 @celery.task(bind=True, name="load_report")

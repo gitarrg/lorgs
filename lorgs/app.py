@@ -7,37 +7,14 @@ import os
 # IMPORT THIRD PARTY LIBRARIES
 import flask
 
+
 # IMPORT LOCAL LIBRARIES
+from lorgs import db
+from lorgs import utils
+from lorgs import tasks
 from lorgs.routes import api
 from lorgs.routes import views
-from lorgs import utils
-from lorgs import cache
-from lorgs import models
-from lorgs.logger import logger
-
-
-def _load_spell_icons():
-    """Init Script to load spell icons and names from the DB."""
-    logger.info("[load spell icons] start")
-    spell_infos = cache.Cache.get("spell_infos") or []
-    if not spell_infos:
-        logger.warning("SPELL INFO NOT FOUND!")
-        return
-
-    spell_info_by_id = {info.pop("id"): info for info in spell_infos}
-
-    # attach data to spells
-    for spell in models.WowSpell.all:
-        spell_info = spell_info_by_id.get(spell.spell_id, {})
-        if not spell_info:
-            logger.warning("No Spell Info for: %s", spell.spell_id)
-            continue
-
-        # check for existing values so we keep manual overwrites
-        spell.spell_name = spell.spell_name or spell_info.get("name")
-        spell.icon_name = spell.icon_name or spell_info.get("icon")
-
-    logger.info("[load spell icons] done")
+# from lorgs import celery
 
 
 def create_app():
@@ -64,6 +41,8 @@ def create_app():
     app.register_blueprint(api.BP, url_prefix="/api")
 
     # init scripts
-    _load_spell_icons()
+    db.init_flask_app(app)
+    # celery.init_celery(app)
+
 
     return app

@@ -27,12 +27,6 @@ class MetaInstanceRegistry(type):
 class IconPathMixin:
     """docstring for img_path_mixin"""
 
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.icon_name = ""
-
     @property
     def icon_path(self):
         if not self.icon_name:

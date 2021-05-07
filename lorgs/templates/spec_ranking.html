@@ -49,7 +49,7 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
     <!-- Player Names -->
     <div class="player_names_container spec_ranking float-left">
         <div style="height: 32px"></div>
-        {% for player in players if true or player.casts %}
+        {% for player in players %}
             {{ player_name(player, loop.index) }}
         {% endfor %}
     </div>
@@ -60,7 +60,7 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
 
         <div class="player_timeline_scroll_y">
         {% set inline_killtime=True %}
-        {% for player in players if player.casts %}
+        {% for player in players %}
             {% set fight=player.fight %}
             {% include "elements/player_timeline.html" %}
         {% endfor %}
