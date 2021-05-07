@@ -6,7 +6,7 @@ full_path=$(realpath $0)
 dir_path=$(dirname $full_path)
 
 
-python $dir_path/delete_all.py
+# python $dir_path/delete_all.py
 
 
 python $dir_path/init_tables.py
