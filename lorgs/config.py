@@ -1,5 +1,7 @@
 # pylint: disable=too-few-public-methods
 
+import os
+
 class BaseConfig:
     """Default Config"""
 
