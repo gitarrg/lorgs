@@ -9,7 +9,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
 
     <!-- bootstrap theme: darkly -->
-    <!-- <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/darkly/bootstrap.min.css" rel="stylesheet"> -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/darkly/bootstrap.min.css" integrity="sha384-nNK9n28pDUDDgIiIqZ/MiyO3F4/9vsMtReZK39klb/MtkZI3/LtjSjlmyVPS3KdN" crossorigin="anonymous">
 
     <!-- font-awesome -->
@@ -19,7 +18,9 @@
     <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='_generated/style.css')}}">
     <script src="{{url_for('static',filename='utils.js')}}"></script>
 
-    <!-- Google -->
+    <link rel="shortcut icon" href="{{ url_for('ui.static', filename='images/favicon.png') }}">
+
+    <!-- Google
     <script async src="https://www.googletagmanager.com/gtag/js?id={{GOOGLE_ANALYTICS_ID}}"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -27,6 +28,7 @@
         gtag("js", new Date());
         gtag("config", "{{GOOGLE_ANALYTICS_ID}}");
     </script>
+    -->
 
     {% block head %}{% endblock %}
 </head>
