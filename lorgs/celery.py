@@ -28,5 +28,5 @@ celery = celery_.Celery(  # pylint: disable=invalid-name
     broker=CELERY_BROKER_URL,
     backend=CELERY_RESULT_BACKEND,
     task_cls=CeleryTask,
-    # include=["lorgs.tasks"]
+    include=["lorgs.tasks"]
 )
