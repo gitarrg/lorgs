@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 
-# IMPORT THIRD PARTY LIBRARIES
-import dotenv
-dotenv.load_dotenv() # pylint: disable=wrong-import-position
-
+# IMPORT LOCAL LIBRARIES
 from lorgs.app import create_app
 from lorgs.db import db
 from lorgs.models.encounters import RaidBoss
@@ -14,6 +11,8 @@ from lorgs.models.specs import WowSpec
 from lorgs.models.specs import WowSpec
 from lorgs.models.specs import WowSpell
 
+
+# TODO: this needs update
 
 def main():
     app = create_app()

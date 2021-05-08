@@ -1,12 +1,6 @@
 #!/usr/bin/env python
 """Models for Raids and RaidBosses."""
 
-# IMPORT STANDARD LIBRARIES
-
-# IMPORT THIRD PARTY LIBRARIES
-import dotenv
-dotenv.load_dotenv() # pylint: disable=wrong-import-position
-
 # IMPORT LOCAL LIBRARIES
 from lorgs import db
 from lorgs.models.encounters import RaidZone, RaidBoss

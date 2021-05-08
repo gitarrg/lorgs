@@ -3,10 +3,6 @@
 
 # pylint: disable=line-too-long
 
-# IMPORT THIRD PARTY LIBRARIES
-import dotenv
-dotenv.load_dotenv() # pylint: disable=wrong-import-position
-
 # IMPORT LOCAL LIBRARIES
 from lorgs import db
 from lorgs.models.specs import WowClass

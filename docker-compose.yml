@@ -52,7 +52,7 @@ services:
     ports:
     - 3306:3306
     volumes:
-      - data-db:/var/lib/mysql/data
+      - data-db:/var/lib/mysql
 
 
 volumes:

@@ -1,0 +1,19 @@
+# run this via:
+# >>> docker-compose -f docker-compose.yml -f docker-compose.DEV.yml up --build
+
+version: '3.7'
+
+services:
+
+  db-ui:  # DB UI
+    image: adminer
+    ports:
+      - 5011:8080
+
+
+volumes:
+  data-db:
+
+# docker run -it --network="host" windok/redis-browser bash
+# docker run --rm -p 8081:8081 --env REDIS_HOST=lorgs-redis rediscommander/redis-commander
+
