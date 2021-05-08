@@ -4,7 +4,6 @@ from operator import attrgetter
 import datetime
 import itertools
 import re
-import weakref
 import arrow
 
 

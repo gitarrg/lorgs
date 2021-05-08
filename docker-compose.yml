@@ -1,106 +1,63 @@
 version: '3.7'
+
+x-env: &env
+  env_file:
+    - .env
+  environment:
+    REDIS_URL: redis://redis:6379
+    SQLALCHEMY_DATABASE_URI: mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db/${MYSQL_DATABASE}
+
+
+x-pybase: &pybase # shared config for all main python services
+  build: lorgs
+  # volumes:
+  #   - ./lorgs:/app/lorgs
+  depends_on:
+    - redis
+    - db
+
+
 services:
 
-  ###########
-  # Flask
 
   web:
-    build: .
-    # command: echo "none"
+    <<: *pybase
+    <<: *env
     command: gunicorn
       --bind 0.0.0.0:5000
+      "lorgs.app:create_app()"
       --worker-tmp-dir /dev/shm
       --workers=4
-      "lorgs.app:create_app()"
     ports:
-      - "8080:5000"
-    env_file:
-      - .env
-    environment:
-      # dev env
-      # FLASK_APP: "lorgs/app:create_app()"
-      # FLASK_ENV: development
-      # DEBUG: "true"
-      REDIS_URL: redis://redis:6379
-      SQLALCHEMY_DATABASE_URI: mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db/${MYSQL_DATABASE}
-    # volumes:
-    #   - ./lorgs:/app/lorgs
-    depends_on:
-      - redis
-      - db
+      - "${PORT:-5010}:5000"
 
-  ###########
-  # celery_worker
 
   celery_worker:
-    build: .
-    command: echo "none"
-    # command: celery
-    #   --app=lorgs.celery
-    #   worker
-    #   --loglevel=INFO
-    #   --concurrency=16
-    env_file:
-      - .env
-    environment:
-      REDIS_URL: redis://redis:6379
-      SQLALCHEMY_DATABASE_URI: mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db/${MYSQL_DATABASE}
-    depends_on:
-      - redis
-      - db
+    <<: *pybase
+    <<: *env
+    command: celery
+      --app=lorgs.celery
+      worker
+      --loglevel=INFO
+      --concurrency=4
 
-  ###########
-  # Redis
 
   redis:
     image: redis
-    ports:
-    - "6379:6379"
 
-  ###########
-  # DB
 
   db:
     build: db
-    env_file:
-      - .env
+    <<: *env
     ports:
-    - 3308:3306
+    - 3306:3306
     volumes:
       - data-db:/var/lib/mysql/data
-
-  ###########
-  # Adminer
-
-  adminer:
-    image: adminer
-    ports:
-    - 5021:8080
-    depends_on:
-    - db
 
 
 volumes:
   data-db:
 
-# Adminer:
-# >>> docker run-d -p 5015:8080 adminer
-# docker run --link some_database:db -p 8080:8080 adminer
-  # celery_dashboard:
-  #   build: .
-  #   command:  flower --app=lorgs.tasks.celery --port=5555 --broker=redis://redis:6379/0
-  #   ports:
-  #     - 5556:5555
-  #   environment:
-  #     - FLASK_DEBUG=1
-  #   depends_on:
-  #     - web
-  #     - redis
-  #     - celery_worker
-
 # docker run -it --network="host" windok/redis-browser bash
-
-
-#
 # docker run --rm -p 8081:8081 --env REDIS_HOST=lorgs-redis rediscommander/redis-commander
 

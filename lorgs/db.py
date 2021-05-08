@@ -6,22 +6,21 @@ from contextlib import contextmanager
 
 # IMPORT THIRD PARTY LIBRARIES
 import sqlalchemy
-import sqlalchemy.orm
-import sqlalchemy.ext.declarative
+from sqlalchemy import orm
+from sqlalchemy.ext.declarative import declarative_base
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.logger import logger
 
 
-URI = os.getenv("SQLALCHEMY_DATABASE_URI") or os.getenv("CLEARDB_DATABASE_URL")
+URI = os.getenv("SQLALCHEMY_DATABASE_URI") or "sqlite://"
 
 engine = sqlalchemy.create_engine(URI, pool_recycle=240)
-factory = sqlalchemy.orm.sessionmaker(bind=engine, autoflush=True)
-session = sqlalchemy.orm.scoped_session(factory)
+factory = orm.sessionmaker(bind=engine, autoflush=True)
+session = orm.scoped_session(factory)
 
-Base = sqlalchemy.ext.declarative.declarative_base()
+Base = declarative_base()
 Base.query = session.query_property()
-
 
 # for debugging
 _QUERY_COUNT = 0

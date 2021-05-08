@@ -7,14 +7,11 @@ import os
 # IMPORT THIRD PARTY LIBRARIES
 import flask
 
-
 # IMPORT LOCAL LIBRARIES
 from lorgs import db
 from lorgs import utils
-from lorgs import tasks
 from lorgs.routes import api
 from lorgs.routes import views
-# from lorgs import celery
 
 
 def create_app():
@@ -42,7 +39,5 @@ def create_app():
 
     # init scripts
     db.init_flask_app(app)
-    # celery.init_celery(app)
-
 
     return app

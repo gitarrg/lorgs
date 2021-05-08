@@ -7,12 +7,12 @@ import os
 
 # IMPORT THIRD PARTY LIBRARIES
 import flask
-from celery.result import AsyncResult
+# from celery.result import AsyncResult
 
 # IMPORT LOCAL LIBRARIES
 # from lorgs.models import loader
 # from lorgs import data
-from lorgs import tasks
+# from lorgs import tasks
 # from lorgs.cache import Cache
 from lorgs.logger import logger
 # from lorgs.models import Report
