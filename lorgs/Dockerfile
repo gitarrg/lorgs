@@ -11,6 +11,7 @@ COPY . /app/lorgs
 WORKDIR /app
 
 # Build SASS
+RUN mkdir p "lorgs/static/_generated"
 CMD pysassc --style=compact "lorgs/templates/scss/main.scss" "lorgs/static/_generated/style.css"
 
 CMD ["flask", "run", "--host=0.0.0.0"]
