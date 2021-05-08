@@ -9,7 +9,7 @@ x-env: &env
 
 
 x-pybase: &pybase # shared config for all main python services
-  build: lorgs
+  image: lorgs
   # volumes:
   #   - ./lorgs:/app/lorgs
   depends_on:
@@ -23,6 +23,10 @@ services:
   web:
     <<: *pybase
     <<: *env
+    build:
+      context: lorgs
+      dockerfile: Dockerfile
+
     command: gunicorn
       --bind 0.0.0.0:5000
       "lorgs.app:create_app()"
@@ -40,6 +44,8 @@ services:
       worker
       --loglevel=INFO
       --concurrency=4
+    depends_on:
+      - web
 
   redis:
     image: redis
