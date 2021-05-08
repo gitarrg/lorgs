@@ -13,7 +13,7 @@ services:
       --workers=4
       "lorgs.app:create_app()"
     ports:
-      - "5010:5000"
+      - "8080:5000"
     env_file:
       - .env
     environment:
@@ -34,11 +34,12 @@ services:
 
   celery_worker:
     build: .
-    command: celery
-      --app=lorgs.celery
-      worker
-      --loglevel=INFO
-      --concurrency=16
+    command: echo "none"
+    # command: celery
+    #   --app=lorgs.celery
+    #   worker
+    #   --loglevel=INFO
+    #   --concurrency=16
     env_file:
       - .env
     environment:
@@ -60,7 +61,7 @@ services:
   # DB
 
   db:
-    image: mariadb
+    build: db
     env_file:
       - .env
     ports:
