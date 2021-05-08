@@ -41,7 +41,6 @@ services:
       --loglevel=INFO
       --concurrency=4
 
-
   redis:
     image: redis
 
