@@ -7,8 +7,7 @@ dir_path=$(dirname $full_path)
 
 
 # python $dir_path/delete_all.py
-
-
+export PYTHONPATH=.  # adds current dir, so we can import
 python $dir_path/init_tables.py
 python $dir_path/init_encounters.py
 python $dir_path/init_specs.py

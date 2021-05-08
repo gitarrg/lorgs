@@ -15,10 +15,7 @@ from lorgs.logger import logger
 
 URI = os.getenv("SQLALCHEMY_DATABASE_URI") or os.getenv("CLEARDB_DATABASE_URL")
 
-
-engine = sqlalchemy.create_engine(URI, pool_recycle=45)
-# on heroku connections last max 60sec.. so we need to recycle fast
-
+engine = sqlalchemy.create_engine(URI, pool_recycle=240)
 factory = sqlalchemy.orm.sessionmaker(bind=engine, autoflush=True)
 session = sqlalchemy.orm.scoped_session(factory)
 
@@ -58,6 +55,5 @@ def init_flask_app(app):
     """Add the listener to remove sessions on the end of a request."""
     @app.teardown_appcontext
     def shutdown_session(response_or_exc):
-        logger.info("shutdown_session!!!")
         session.remove()
         return response_or_exc

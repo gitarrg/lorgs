@@ -11,6 +11,7 @@ import sqlalchemy as sa
 # IMPORT LOCAL LIBS
 from lorgs import db
 from lorgs import forms
+from lorgs.logger import logger
 from lorgs import models
 from lorgs import tasks
 from lorgs import utils
@@ -106,6 +107,8 @@ def index():
 @BP.route("/spec_ranking/<int:spec_id>/<int:boss_id>")
 def spec_ranking(spec_id, boss_id):
 
+    logger.info("spec_ranking 1")
+
     # Inputs
     spec = models.WowSpec.query.get(spec_id)
     boss = encounters.RaidBoss.query.get(boss_id)
@@ -115,6 +118,7 @@ def spec_ranking(spec_id, boss_id):
             "spec": {"slug:": spec_id, "str": str(spec)},
             "boss": {"slug:": boss_id, "str": str(boss)},
         }
+    logger.info("spec_ranking 2")
 
     ranked_chars = warcraftlogs_ranking.RankedCharacter.query
     ranked_chars = ranked_chars.filter_by(spec=spec, boss=boss)
@@ -127,12 +131,14 @@ def spec_ranking(spec_id, boss_id):
         sa.orm.joinedload("casts.spell"),
     )
     ranked_chars = ranked_chars.all()
+    logger.info("spec_ranking 3")
 
     # preprocess some data
     spells_used = utils.flatten(char.spells_used for char in ranked_chars)
     spells_used = utils.uniqify(spells_used, key=lambda spell: spell)
     timeline_duration = max(char.fight_duration for char in ranked_chars) if ranked_chars else 0
 
+    logger.info("spec_ranking 4")
     # Return
     kwargs = {}
     kwargs["spec"] = spec
@@ -140,7 +146,10 @@ def spec_ranking(spec_id, boss_id):
     kwargs["players"] = ranked_chars
     kwargs["all_spells"] = spells_used
     kwargs["timeline_duration"] = timeline_duration
-    return flask.render_template("spec_ranking.html", **kwargs, **SHARED_DATA)
+    logger.info("spec_ranking 5")
+    html = flask.render_template("spec_ranking.html", **kwargs, **SHARED_DATA)
+    logger.info("spec_ranking 6")
+    return html
 
 
 ################################################################################

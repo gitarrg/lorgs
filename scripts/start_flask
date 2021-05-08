@@ -8,7 +8,7 @@ set +a
 
 
 export FLASK_ENV=development
-export DEBUG=true
+# export DEBUG=true
 export LORGS_CONFIG_NAME=lorgs.config.DevelopmentConfig
 
 export FLASK_APP="lorgs/app:create_app()"
