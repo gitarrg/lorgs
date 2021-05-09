@@ -1,6 +1,7 @@
 """Views/Routes for the UI/Frontend."""
 
 import re
+import time
 from collections import defaultdict
 
 # IMPORT THIRD PARTY LIBS
@@ -108,6 +109,7 @@ def index():
 def spec_ranking(spec_id, boss_id):
 
     logger.info("spec_ranking 1")
+    t1 = time.time()
 
     # Inputs
     spec = specs.WowSpec.query.get(spec_id)
@@ -118,10 +120,12 @@ def spec_ranking(spec_id, boss_id):
             "spec": {"slug:": spec_id, "str": str(spec)},
             "boss": {"slug:": boss_id, "str": str(boss)},
         }
-    logger.info("spec_ranking 2")
+    t2 = time.time()
+    logger.info("spec_ranking | Q1: %6.02f", (t2-t1)*1000)
+
 
     ranked_chars = warcraftlogs_ranking.RankedCharacter.query
-    ranked_chars = ranked_chars.filter_by(spec=spec, boss=boss)
+    ranked_chars = ranked_chars.filter_by(spec_id=spec_id, boss_id=boss_id)
     ranked_chars = ranked_chars.order_by(warcraftlogs_ranking.RankedCharacter.amount.desc())
     ranked_chars = ranked_chars.limit(50)
     ranked_chars = ranked_chars.options(
@@ -131,14 +135,15 @@ def spec_ranking(spec_id, boss_id):
         sa.orm.joinedload("casts.spell"),
     )
     ranked_chars = ranked_chars.all()
-    logger.info("spec_ranking 3")
+
+    t3 = time.time()
+    logger.info("spec_ranking | Q1: %6.02f", (t3-t2)*1000)
 
     # preprocess some data
     spells_used = utils.flatten(char.spells_used for char in ranked_chars)
     spells_used = utils.uniqify(spells_used, key=lambda spell: spell)
     timeline_duration = max(char.fight_duration for char in ranked_chars) if ranked_chars else 0
 
-    logger.info("spec_ranking 4")
     # Return
     kwargs = {}
     kwargs["spec"] = spec
@@ -146,10 +151,7 @@ def spec_ranking(spec_id, boss_id):
     kwargs["players"] = ranked_chars
     kwargs["all_spells"] = spells_used
     kwargs["timeline_duration"] = timeline_duration
-    logger.info("spec_ranking 5")
-    html = flask.render_template("spec_ranking.html", **kwargs, **SHARED_DATA)
-    logger.info("spec_ranking 6")
-    return html
+    return flask.render_template("spec_ranking.html", **kwargs, **SHARED_DATA)
 
 
 ################################################################################
