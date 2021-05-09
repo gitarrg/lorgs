@@ -22,6 +22,7 @@ session = orm.scoped_session(factory)
 Base = declarative_base()
 Base.query = session.query_property()
 
+
 # for debugging
 _QUERY_COUNT = 0
 def count_queries(*args, **kwargs):

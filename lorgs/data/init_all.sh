@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 
 
+echo "sourcing .env"
+set -a
+source .env
+set +a
+
 # get current path
 full_path=$(realpath $0)
 dir_path=$(dirname $full_path)
-
 
 # python $dir_path/delete_all.py
 export PYTHONPATH=.  # adds current dir, so we can import

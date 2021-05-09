@@ -1,5 +1,6 @@
 version: '3.7'
 
+# common variables
 x-env: &env
   env_file:
     - .env
@@ -8,59 +9,62 @@ x-env: &env
     SQLALCHEMY_DATABASE_URI: postgresql://${MYSQL_USER}:${MYSQL_PASSWORD}@db/${MYSQL_DATABASE}
 
 
-x-pybase: &pybase # shared config for all main python services
-  image: lorgs
-  # volumes:
-  #   - ./lorgs:/app/lorgs
-  depends_on:
-    - redis
-    - db
-
-
 services:
 
+  nginx:
+    build: ./nginx
+    ports:
+      - 80:80
+    depends_on:
+      - web
+    volumes:
+      - ./lorgs:/data/lorgs
 
+  # main web app (flask)
   web:
-    <<: *pybase
     <<: *env
+    image: lorgs
     build:
       context: lorgs
       dockerfile: Dockerfile
-
     command: gunicorn
       --bind 0.0.0.0:5000
       "lorgs.app:create_app()"
       --worker-tmp-dir /dev/shm
       --workers=4
     ports:
-      - "${PORT:-5010}:5000"
+      - "${PORT:-5010}:5000"  # todo: change to expose to only expose internal
+    # expose:
+    # - "${PORT:-5010}"
+
+    depends_on:
+      - db
+      - redis
 
 
-  celery_worker:
-    <<: *pybase
+  # background worker (celery)
+  worker:
     <<: *env
+    image: lorgs
     command: celery
       --app=lorgs.celery
       worker
       --loglevel=INFO
       --concurrency=4
     depends_on:
+      - db
+      - redis
       - web
 
+  # redis
   redis:
     image: redis
 
 
-  # db:
-  #   build: db
-  #   <<: *env
-  #   ports:
-  #   - 3306:3306
-  #   volumes:
-  #     - data-db:/var/lib/mysql
+  # database
   db:
-    image: postgres
-    # restart: always
+    image: postgres:13.2-alpine
+    restart: always
     environment:
       POSTGRES_USER: ${MYSQL_USER}
       POSTGRES_PASSWORD: ${MYSQL_PASSWORD}
@@ -73,7 +77,4 @@ services:
 
 volumes:
   data-db:
-
-# docker run -it --network="host" windok/redis-browser bash
-# docker run --rm -p 8081:8081 --env REDIS_HOST=lorgs-redis rediscommander/redis-commander
 
