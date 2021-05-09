@@ -5,11 +5,17 @@ version: '3.7'
 
 services:
 
+  web:
+    command: echo "Hey!"
+
   db-ui:  # DB UI
     image: adminer
     ports:
       - 5011:8080
 
+  redis:
+    ports:
+      - 6379:6379
 
 volumes:
   data-db:

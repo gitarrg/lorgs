@@ -24,10 +24,10 @@ from lorgs.models.specs import WowClass
 from lorgs.models.specs import WowSpec
 from lorgs.models.specs import WowSpec
 from lorgs.models.specs import WowSpell
-from lorgs.models.warcraftlogs import Cast
-from lorgs.models.warcraftlogs import Fight
-from lorgs.models.warcraftlogs import Player
-from lorgs.models.warcraftlogs import Report
+# from lorgs.models.warcraftlogs import Cast
+# from lorgs.models.warcraftlogs import Fight
+# from lorgs.models.warcraftlogs import Player
+# from lorgs.models.warcraftlogs import Report
 
 # from lorgs.data import SPELLS
 

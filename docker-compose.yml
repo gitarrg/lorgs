@@ -5,7 +5,7 @@ x-env: &env
     - .env
   environment:
     REDIS_URL: redis://redis:6379
-    SQLALCHEMY_DATABASE_URI: mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db/${MYSQL_DATABASE}
+    SQLALCHEMY_DATABASE_URI: postgresql://${MYSQL_USER}:${MYSQL_PASSWORD}@db/${MYSQL_DATABASE}
 
 
 x-pybase: &pybase # shared config for all main python services
@@ -51,13 +51,24 @@ services:
     image: redis
 
 
+  # db:
+  #   build: db
+  #   <<: *env
+  #   ports:
+  #   - 3306:3306
+  #   volumes:
+  #     - data-db:/var/lib/mysql
   db:
-    build: db
-    <<: *env
+    image: postgres
+    # restart: always
+    environment:
+      POSTGRES_USER: ${MYSQL_USER}
+      POSTGRES_PASSWORD: ${MYSQL_PASSWORD}
+      POSTGRES_DB: ${MYSQL_DATABASE}
     ports:
-    - 3306:3306
+    - 5432:5432
     volumes:
-      - data-db:/var/lib/mysql
+      - data-db:/var/lib/postgresql/data
 
 
 volumes:

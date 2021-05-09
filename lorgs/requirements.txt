@@ -18,3 +18,6 @@ celery==4.4.7
 PyMySQL==1.0
 # # https://www.tutorialguruji.com/dbms/retrieving-data-from-rds-gives-attributeerror-sqlalchemy-cimmutabledict-immutabledict-object-has-no-attribute-setdefault/
 SQLAlchemy<1.4
+
+psycopg2-binary==2.8.6
+

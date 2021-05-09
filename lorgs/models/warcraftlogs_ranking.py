@@ -30,6 +30,7 @@ from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
 from lorgs import db
 # from lorgs import utils
+from sqlalchemy.dialects import postgresql as pg
 
 
 
@@ -37,7 +38,7 @@ class RankedCharacterCast(warcraftlogs_base.BaseCast):
 
     __tablename__ = "ranked_character_cast"
 
-    player_uuid = sa.Column(sa.CHAR(32), sa.ForeignKey("ranked_character.uuid", ondelete="cascade"))
+    player_uuid = sa.Column(pg.UUID(), sa.ForeignKey("ranked_character.uuid", ondelete="cascade"))
     player = sa.orm.relationship("RankedCharacter", back_populates="casts")
 
 
@@ -46,7 +47,7 @@ class RankedCharacter(db.Base):
 
     __tablename__ = "ranked_character"
 
-    uuid = sa.Column(sa.CHAR(32), primary_key=True)
+    uuid = sa.Column(pg.UUID(), primary_key=True)
 
     spec_id = sa.Column(sa.Integer, sa.ForeignKey("wow_spec.id"))
     spec = sa.orm.relationship("WowSpec")

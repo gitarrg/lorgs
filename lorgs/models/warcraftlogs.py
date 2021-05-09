@@ -27,6 +27,8 @@ from lorgs import utils
 # from lorgs.models.specs import WowSpec
 # from lorgs.models.specs import WowSpell
 
+raise ValueError("Dont import me")
+
 
 class Report(db.Base):
     """docstring for Fight"""
@@ -35,7 +37,7 @@ class Report(db.Base):
 
     # attributes
     report_id = sa.Column(sa.String(64), primary_key=True)
-    start_time = sa.Column(sa.BigInteger, default=0)
+    start_time = sa.Column(sa.BigInteger(), default=0)
     title = sa.Column(sa.Unicode(128))
 
     # sa.orm.relationships
@@ -48,6 +50,14 @@ class Report(db.Base):
         cascade="all,delete,delete-orphan",
         lazy="joined"
     )
+
+    players = sa.orm.relationship(
+        "Player",
+        back_populates="report",
+        cascade="all,delete,delete-orphan",
+        lazy="dynamic"
+    )
+
 
     """
     def __init__(self, report_id: str):
@@ -94,7 +104,7 @@ class Fight(db.Base):
 
     # attributes
     # id = sa.Column(sa.Integer, primary_key=True)
-    fight_id = sa.Column(sa.Integer, primary_key=True)
+    fight_id = sa.Column(sa.Integer(), primary_key=True)
     start_time = sa.Column(sa.BigInteger)
     end_time = sa.Column(sa.BigInteger)
     percent = sa.Column(sa.Float, default=0)
@@ -103,7 +113,7 @@ class Fight(db.Base):
     report_id = sa.Column(sa.String(64), sa.ForeignKey("report.report_id", ondelete="cascade"), primary_key=True)
     report = sa.orm.relationship("Report", back_populates="fights")
 
-    boss_id = sa.Column(sa.Integer, sa.ForeignKey("raid_boss.id"))
+    boss_id = sa.Column(sa.Integer(), sa.ForeignKey("raid_boss.id"))
     boss = sa.orm.relationship("RaidBoss")
 
     # children
@@ -170,14 +180,17 @@ class Player(db.Base):
     """
     __tablename__ = "report_player"
 
-    id = sa.Column(sa.Integer, primary_key=True)
+    id = sa.Column(sa.Integer(), primary_key=True)
 
     # the actual player
-    source_id = sa.Column(sa.Integer)  # TODO: rename?
+    source_id = sa.Column(sa.Integer())  # TODO: rename?
     name = sa.Column(sa.Unicode(12)) # names can be max 12 chars
     total = sa.Column(sa.Integer)
 
-    fight_id = sa.Column(sa.Integer, sa.ForeignKey("report_fight.fight_id", ondelete="cascade"))
+    report_id = sa.Column(sa.String(64))
+    report = sa.orm.relationship("Report", sa.ForeignKey("report.report_id", ondelete="cascade"), back_populates="players")
+
+    fight_id = sa.Column(sa.Integer)
     fight = sa.orm.relationship("Fight", back_populates="players")
 
     casts = sa.orm.relationship(
@@ -191,6 +204,14 @@ class Player(db.Base):
     spec = sa.orm.relationship("WowSpec")
     spec_id = sa.Column(sa.Integer, sa.ForeignKey("wow_spec.id"))
 
+    __table_args__ = (
+        sa.ForeignKeyConstraint(
+            [report_id, fight_id],
+            [Fight.report_id, Fight.fight_id],
+            ondelete="cascade",
+        ),
+        {}
+    )
 
     """
     def __init__(self, source_id=0, name="", total=0, **kwargs):
@@ -234,7 +255,7 @@ class Player(db.Base):
             "casts": [cast.as_dict() for cast in self.casts]
         }
 
-    @property
+@property
     def report_url(self):
         return f"{self.fight.report_url}&source={self.source_id}"
 
@@ -259,7 +280,7 @@ class Cast(db.Base):
     id = sa.Column(sa.Integer, primary_key=True)
     timestamp = sa.Column(sa.Integer)
 
-    player_id = sa.Column(sa.Integer, sa.ForeignKey(Player.id, ondelete="cascade"))
+    player_id = sa.Column(sa.Integer, sa.ForeignKey("report_player.id", ondelete="cascade"))
     player = sa.orm.relationship("Player", back_populates="casts")
 
     # parent player

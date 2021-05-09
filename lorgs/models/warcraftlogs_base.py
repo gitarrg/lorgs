@@ -3,6 +3,7 @@ import uuid
 
 # IMPORT THIRD PARTY LIBRARIES
 import sqlalchemy as sa
+from sqlalchemy.dialects import postgresql as pg
 # from sqlalchemy import Column, ForeignKey
 # from sqlalchemy import Integer, String, BigInteger, Unicode, Float
 # from sqlalchemy.orm import relationship
@@ -14,7 +15,8 @@ from lorgs import db
 
 
 def generate_uuid():
-    return str(uuid.uuid4()).replace("-", "")
+    return str(uuid.uuid4())
+    # return str(uuid.uuid4()).replace("-", "")
 
 
 class BaseCast(db.Base):
@@ -22,8 +24,8 @@ class BaseCast(db.Base):
 
     __abstract__ = True
 
-    uuid = sa.Column(sa.CHAR(32), primary_key=True, default=generate_uuid)
-    timestamp = sa.Column(sa.Integer)
+    uuid = sa.Column(pg.UUID(), primary_key=True, default=generate_uuid)
+    timestamp = sa.Column(sa.Integer())
 
     # Need to declate the ForeignKey & Relationship as @declared_attr
     # see: https://docs.sqlalchemy.org/en/13/orm/extensions/declarative/mixins.html#mixing-in-relationships

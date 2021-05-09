@@ -14,11 +14,15 @@ class WowRole(db.Base, base.IconPathMixin):
 
     __tablename__ = "wow_role"
 
-    id = sa.Column(sa.Integer, primary_key=True)
+    id = sa.Column(sa.Integer(), primary_key=True)
     code = sa.Column(sa.String(4))
     name = sa.Column(sa.String(8))
 
     specs = sa.orm.relationship("WowSpec")
+
+    __mapper_args__ = {
+        "order_by" : id
+    }
 
     @sa.orm.reconstructor
     def init_on_load(self):
@@ -45,7 +49,7 @@ class WowClass(db.Base):
 
     __tablename__ = "wow_class"
 
-    id = sa.Column(sa.Integer, primary_key=True, autoincrement=False)
+    id = sa.Column(sa.Integer(), primary_key=True, autoincrement=False)
     name = sa.Column(sa.String(16))
     color = sa.Column(sa.String(16))
 
@@ -82,9 +86,9 @@ class SpecSpells(db.Base):
     spell_id = sa.Column(sa.Integer, sa.ForeignKey("wow_spell.spell_id", ondelete="cascade"), primary_key=True)
     group_id = sa.Column(sa.Integer, sa.ForeignKey("wow_spec.id"))
 
-    spec = sa.orm.relationship("WowSpec", foreign_keys=spec_id, back_populates="spells", lazy="joined")
-    spell = sa.orm.relationship("WowSpell", foreign_keys=spell_id, back_populates="specs", lazy="joined")
-    group = sa.orm.relationship("WowSpec", foreign_keys=group_id, lazy="joined")
+    spec = sa.orm.relationship("WowSpec", foreign_keys=[spec_id], back_populates="spells", lazy="joined")
+    spell = sa.orm.relationship("WowSpell", foreign_keys=[spell_id], back_populates="specs", lazy="joined")
+    group = sa.orm.relationship("WowSpec", foreign_keys=[group_id], lazy="joined")
 
 
 class WowSpec(db.Base, base.IconPathMixin):
@@ -92,17 +96,17 @@ class WowSpec(db.Base, base.IconPathMixin):
 
     __tablename__ = "wow_spec"
 
-    id = sa.Column(sa.Integer, primary_key=True, autoincrement=False)
+    id = sa.Column(sa.Integer(), primary_key=True, autoincrement=False)
     name = sa.Column(sa.String(16))
     short_name = sa.Column(sa.String(16))
 
     role = sa.orm.relationship("WowRole", back_populates="specs", lazy="joined")
-    role_id = sa.Column(sa.Integer, sa.ForeignKey(WowRole.id))
+    role_id = sa.Column(sa.Integer, sa.ForeignKey("wow_role.id"))
 
     supported = sa.Column(sa.Boolean, default=True)
 
     wow_class = sa.orm.relationship("WowClass", back_populates="specs", lazy="joined")
-    wow_class_id = sa.Column(sa.Integer, sa.ForeignKey(WowClass.id, ondelete="cascade"))
+    wow_class_id = sa.Column(sa.Integer, sa.ForeignKey("wow_class.id", ondelete="cascade"))
 
     spells = sa.orm.relationship("SpecSpells", foreign_keys="SpecSpells.spec_id", back_populates="spec")
 
@@ -123,6 +127,7 @@ class WowSpec(db.Base, base.IconPathMixin):
         # spell.color = kwargs.get("color")
         # kwargs["group"] = kwargs.get("group") or self
         # kwargs.pop("group")
+        # kwargs.pop("wowhead_data", "")  # TODO
         # kwargs.pop("wowhead_data", "")  # TODO
         # spec  = kwargs.get("spec") or self
         # kwargs["spec_id"] = spec.name
@@ -156,17 +161,17 @@ class WowSpell(db.Base):
 
     __tablename__ = "wow_spell"
 
-    spell_id = sa.Column(sa.Integer, primary_key=True, autoincrement=False)
+    spell_id = sa.Column(sa.Integer(), primary_key=True, autoincrement=False)
     spell_name = sa.Column(sa.String(64))
     wowhead_data = sa.Column(sa.String(128))
     icon_name = sa.Column(sa.String(128))
-    duration = sa.Column(sa.Integer, default=0)
-    cooldown = sa.Column(sa.Integer, default=0)
+    duration = sa.Column(sa.Integer(), default=0)
+    cooldown = sa.Column(sa.Integer(), default=0)
 
     # group = "todo"
     # group = {"class_name_slug": "paladin"} # TODO!
     color = sa.Column(sa.String(32))
-    show = sa.Column(sa.Boolean, default=True)
+    show = sa.Column(sa.Boolean(), default=True)
 
     specs = sa.orm.relationship("SpecSpells", back_populates="spell", lazy="joined")
 

@@ -38,7 +38,7 @@ def debug_task(self):
 
 @celery.task(bind=True, name="load_spec_ranking")
 def load_spec_ranking(self, boss_id, spec_id, limit=50):
-    self.update_state(state="STARTED")
+    # self.update_state(state="STARTED")
 
     ##############
     # Get

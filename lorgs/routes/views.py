@@ -12,13 +12,13 @@ import sqlalchemy as sa
 from lorgs import db
 from lorgs import forms
 from lorgs.logger import logger
-from lorgs import models
+# from lorgs import models
 from lorgs import tasks
 from lorgs import utils
 from lorgs.cache import Cache
 from lorgs.models import encounters
 from lorgs.models import specs
-from lorgs.models import warcraftlogs
+# from lorgs.models import warcraftlogs
 from lorgs.models import warcraftlogs_ranking
 
 
@@ -110,7 +110,7 @@ def spec_ranking(spec_id, boss_id):
     logger.info("spec_ranking 1")
 
     # Inputs
-    spec = models.WowSpec.query.get(spec_id)
+    spec = specs.WowSpec.query.get(spec_id)
     boss = encounters.RaidBoss.query.get(boss_id)
     if not (spec and boss):
         # TODO: add proper error message
