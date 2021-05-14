@@ -10,8 +10,11 @@ from lorgs import db
 
 
 # make sure these are set
-CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL") or os.getenv("REDISCLOUD_URL") or os.getenv("REDIS_URL") or "redis://localhost:6379"
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL") or os.getenv("REDIS_URL") or "redis://localhost:6379"
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND") or CELERY_BROKER_URL
+
+# it ignores the argument for some reason..  /shrug
+os.environ["CELERY_RESULT_BACKEND"] = CELERY_RESULT_BACKEND
 
 
 class CeleryTask(celery_.Task):
@@ -26,7 +29,9 @@ class CeleryTask(celery_.Task):
 celery = celery_.Celery(  # pylint: disable=invalid-name
     "lorgs_celery",
     broker=CELERY_BROKER_URL,
-    backend=CELERY_RESULT_BACKEND,
+    # backend=CELERY_RESULT_BACKEND,
     task_cls=CeleryTask,
     include=["lorgs.tasks"]
 )
+
+celery.conf.result_backend = CELERY_RESULT_BACKEND

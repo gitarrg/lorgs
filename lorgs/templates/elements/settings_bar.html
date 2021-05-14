@@ -12,7 +12,7 @@
 
 
     {% for spec, group_spells in all_spells|groupby("group") %}
-    {% set group_name = spec.name_short %}
+    {% set group_name = spec.short_name %}
     <div class="{{"mr-2" if not loop.last}}">
         {% set group_checked = spec.wow_class.name_slug != "other" %}
 
@@ -21,8 +21,7 @@
         </div>
 
         <div class="bg-dark p-1 rounded border">
-            {% for specspell in group_spells %}
-            {% set spell = specspell.spell %}
+            {% for spell in group_spells %}
             <a href="#a" data-wowhead="{{spell.wowhead_data}}">
                 <img class="button icon-s rounded wow-class-border-{{spec.wow_class.name_slug}} {{"disabled" if not spell.show}}" src="{{spell.icon_path}}" data-toggle="tooltip" data-spell_id={{spell.spell_id}} data-spell_group={{group_name}}>
             </a>

@@ -35,7 +35,7 @@ Lorgs: Report: {{report.report_id}}
 <div class="settings_display d-flex flex-row">
 
     <!-- Players -->
-    {% for role, players in report.players|groupby("spec.role") %}
+    {% for role, players in unique_players|groupby("spec.role") %}
     <div class="mr-2">
 
         <small class="settings_display_role clear-both text-muted" data-role={{role.code}}>{{role.name}}</small>
@@ -61,7 +61,7 @@ Lorgs: Report: {{report.report_id}}
         <small id=settings_display_pull_header class="clear-both text-muted">Fights/Pulls</small>
 
         <div class="bg-dark rounded border d-flex flex-wrap">
-        {% for fight in report.fights %}
+        {% for fight in report.fights|sort(attribute="fight_id") %}
             <div class="settings_display_pull rounded p-1 m-1 text-center" style="width: 6rem" data-fight_id={{fight.fight_id}}>
                 {{fight.fight_id}} <span class="text-muted">({{fight.duration|format_time}})</span>
                 <div class="fight_percentage_bg">
@@ -89,9 +89,9 @@ Lorgs: Report: {{report.report_id}}
             <div class="player_names_container report float-left">
                 <div style="height: 32px"></div>
 
-                {% for fight in report.fights %}
+                {% for fight in report.fights|sort(attribute="fight_id") %}
                     <div class="fight-container" data-fight_id={{fight.fight_id}}>
-                        <small>#{{fight.fight_id}} ({{fight.duration|format_time}}) {{fight.percent}}% </small>
+                        {# <small>#{{fight.fight_id}} ({{fight.duration|format_time}}) {{fight.percent}}% </small> #}
                         {% for player in fight.players|sort(attribute="spec.role,spec.name,name") %}
                             {{ player_name(player) }}
                         {% endfor %}
@@ -105,10 +105,10 @@ Lorgs: Report: {{report.report_id}}
 
                 {% include "elements/timeline_ruler.html" %}
 
-                {% for fight in report.fights %}
+                {% for fight in report.fights|sort(attribute="fight_id") %}
 
                     <div class="timeline-fight" data-fight_id={{fight.fight_id}}>
-                        <small>&nbsp;</small>
+                        {# <small>&nbsp;</small> #}
 
                         {% for player in fight.players|sort(attribute="spec.role,spec.name,name") %}
                             {% set inline_killtime=loop.first %}

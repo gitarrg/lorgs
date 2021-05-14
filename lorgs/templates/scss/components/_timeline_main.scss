@@ -35,3 +35,31 @@
     cursor: grab;
     position: relative;
 }
+
+
+// additionals
+
+.player_timeline {
+
+    .player_death {
+        position: absolute;
+        height: $timeline-height-cast;
+        // width: 2px;
+        border-left: 3px solid #f00;
+        // background-color: #f00;
+        padding-left: 8px;
+
+        i {
+            color: #bb3434;
+            padding-right: 4px;
+        }
+
+
+        a {
+            width: 24px;
+            display: inline-block;
+        }
+
+
+    }
+}

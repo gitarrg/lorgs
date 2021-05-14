@@ -15,12 +15,14 @@ from lorgs import forms
 from lorgs.logger import logger
 # from lorgs import models
 from lorgs import tasks
+from lorgs import data
 from lorgs import utils
 from lorgs.cache import Cache
 from lorgs.models import encounters
 from lorgs.models import specs
 # from lorgs.models import warcraftlogs
 from lorgs.models import warcraftlogs_ranking
+# from lorgs.models import warcraftlogs_report
 
 
 DEFAULT_BOSS_ID = 2407 # Sire Denathrius
@@ -61,7 +63,9 @@ def add_shared_variables():
 
 @BP.before_app_first_request
 def load_shared_data():
+    return
 
+    """
     roles = specs.WowRole.query
     roles = roles.filter(specs.WowRole.id < 1000)
     roles = roles.options(sa.orm.joinedload(specs.WowRole.specs))
@@ -73,6 +77,7 @@ def load_shared_data():
     bosses = bosses.options(sa.orm.joinedload(encounters.RaidBoss.zone))
     bosses = bosses.all()
     SHARED_DATA["bosses"] = bosses
+    """
 
 
 ################################################################################
@@ -85,17 +90,9 @@ def load_shared_data():
 @BP.route("/")
 def index():
     """Render the main index page."""
-    # query some data
-    roles = specs.WowRole.query
-    roles = roles.filter(specs.WowRole.id < 1000)
-    roles = roles.options(sa.orm.joinedload(specs.WowRole.specs))
-    roles = roles.all()
-    boss = encounters.RaidBoss.query.get(DEFAULT_BOSS_ID)
-
-    # render our template
     kwargs = {}
-    kwargs["boss"] = boss
-    kwargs["roles"] = roles
+    kwargs["boss"] = encounters.RaidBoss.get(id=DEFAULT_BOSS_ID)
+    kwargs["roles"] = data.ROLES
     return flask.render_template("index.html", **kwargs)
 
 
@@ -105,52 +102,30 @@ def index():
 #
 ################################################################################
 
-@BP.route("/spec_ranking/<int:spec_id>/<int:boss_id>")
-def spec_ranking(spec_id, boss_id):
-
-    logger.info("spec_ranking 1")
-    t1 = time.time()
+@BP.route("/spec_ranking/<string:spec_slug>/<string:boss_slug>")
+def spec_ranking(spec_slug, boss_slug):
 
     # Inputs
-    spec = specs.WowSpec.query.get(spec_id)
-    boss = encounters.RaidBoss.query.get(boss_id)
-    if not (spec and boss):
-        # TODO: add proper error message
-        return {
-            "spec": {"slug:": spec_id, "str": str(spec)},
-            "boss": {"slug:": boss_id, "str": str(boss)},
-        }
-    t2 = time.time()
-    logger.info("spec_ranking | Q1: %6.02f", (t2-t1)*1000)
-
-
-    ranked_chars = warcraftlogs_ranking.RankedCharacter.query
-    ranked_chars = ranked_chars.filter_by(spec_id=spec_id, boss_id=boss_id)
-    ranked_chars = ranked_chars.order_by(warcraftlogs_ranking.RankedCharacter.amount.desc())
-    ranked_chars = ranked_chars.limit(50)
-    ranked_chars = ranked_chars.options(
-        sa.orm.joinedload("spec"),
-        sa.orm.joinedload("spec.wow_class"),
-        sa.orm.joinedload("casts"),
-        sa.orm.joinedload("casts.spell"),
-    )
-    ranked_chars = ranked_chars.all()
-
-    t3 = time.time()
-    logger.info("spec_ranking | Q1: %6.02f", (t3-t2)*1000)
+    # limit = flask.request.args.get("limit", default=50, type=int)
+    spec_ranking = warcraftlogs_ranking.SpecRanking.objects(boss_slug=boss_slug, spec_slug=spec_slug).first()
+    if not spec_ranking:
+        flask.abort(404, description="Invalid Spec or Boss")
 
     # preprocess some data
-    spells_used = utils.flatten(char.spells_used for char in ranked_chars)
+    spells_used = utils.flatten(player.spells_used for player in spec_ranking.players)
     spells_used = utils.uniqify(spells_used, key=lambda spell: spell)
-    timeline_duration = max(char.fight_duration for char in ranked_chars) if ranked_chars else 0
+    timeline_duration = max(fight.duration for fight in spec_ranking.fights) if spec_ranking.fights else 0
 
     # Return
     kwargs = {}
-    kwargs["spec"] = spec
-    kwargs["boss"] = boss
-    kwargs["players"] = ranked_chars
+    kwargs["spec"] = spec_ranking.spec
+    kwargs["boss"] = spec_ranking.boss
+    kwargs["players"] = spec_ranking.players
     kwargs["all_spells"] = spells_used
     kwargs["timeline_duration"] = timeline_duration
+
+    kwargs["bosses"] = data.CASTLE_NATHRIA.bosses # encounters.RaidBoss.all
+
     return flask.render_template("spec_ranking.html", **kwargs, **SHARED_DATA)
 
 
@@ -160,8 +135,9 @@ def spec_ranking(spec_id, boss_id):
 #
 ################################################################################
 
-
+'''
 @BP.route("/report", methods=['GET', 'POST'])
+@BP.route("/reports", methods=['GET', 'POST'])
 def report_index():
     form = forms.CustomReportForm()
     if form.validate_on_submit():
@@ -191,41 +167,32 @@ def report_load(report_id):
 @BP.route("/report/<string:report_id>")
 def report(report_id):
 
+    # query them all into memory
+    all_spells = specs.WowSpell.query.all()
 
-    report = warcraftlogs.Report.query
+    report = warcraftlogs_report.Report.query
     report = report.options(
-        sa.orm.joinedload(warcraftlogs.Report.fights),
+        sa.orm.joinedload("fights"),
         sa.orm.joinedload("fights.boss"),
         sa.orm.joinedload("fights.players"),
         sa.orm.joinedload("fights.players.spec"),
-        sa.orm.joinedload("fights.players.casts"),
-        sa.orm.joinedload("fights.players.casts.spell"),
-        # db.joinedload("fights.players.casts.player"),
-        # db.joinedload("fights.players.casts.player.fight"),
     )
     report = report.get(report_id)
+
     if not report:
-        return flask.redirect(flask.url_for("ui.report_load", report_id=report_id))
+        flask.abort(404, description="Report not found")
+        # return flask.redirect(flask.url_for("ui.report_load", report_id=report_id))
 
-    bosses = encounters.RaidBoss.query.filter_by(zone_id=report.zone_id).all()
-
-    all_players = utils.flatten([fight.players for fight in report.fights])
-
-    specs = [player.spec for player in all_players]
-    specs = list(set(specs))
-
-    # TODO: check which spells are actually used
-    used_spells = [(spec, spec.spells) for spec in specs]
-    used_spells = sorted(used_spells)
-    # used_spells = utils.uniqify(used_spells, key=lambda spell: (spell.group, spell.spell_id))
+    players = utils.uniqify(report.players, key=lambda player: player.source_id)
+    used_spells = utils.flatten(player.used_spells for player in players)
+    used_spells = utils.uniqify(used_spells, key=lambda spell: (spell.spell_id, spell.group))
 
     kwargs = {
         "report": report,
+
+        "unique_players": players,
         "all_spells": used_spells,
         "timeline_duration": max(f.duration for f in report.fights) if report.fights else 0,
-
-        # Data for Nav
-        # "roles": [],
-        # "bosses": bosses
     }
     return flask.render_template("report.html", **kwargs)
+'''

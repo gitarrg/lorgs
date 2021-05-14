@@ -1,56 +1,34 @@
-
 """Models for Warcraftlog-Reports/Fights/Actors."""
 
-# pylint: disable=too-few-public-methods
-# pylint: disable=maybe-no-member
-
-# IMPORT STANRD LIBRARIES
-# import datetime
-# import arrow
-# import textwrap
-
+# IMPORT STANDARD LIBRARIES
+import uuid
+import datetime
 
 # IMPORT THIRD PARTY LIBRARIES
+import mongoengine as me
 import sqlalchemy as sa
-
-# IMPORT LOCAL LIBRARIES
-from lorgs import utils
-from lorgs.logger import logger
-
-# from lorgs.models import base
-# from lorgs.cache import Cache
-# from lorgs.models.specs import WowClass
-# from lorgs.models.specs import WowSpec
-# from lorgs.models.specs import WowSpell
-# from lorgs.models.encounters import RaidZone
-# from lorgs.models.encounters import RaidBoss
-# from lorgs.client import WarcraftlogsClient
-
-# from lorgs.models import warcraftlogs
-from lorgs.models import warcraftlogs_base
-from lorgs import db
-# from lorgs import utils
 from sqlalchemy.dialects import postgresql as pg
 
-
-
-class RankedCharacterCast(warcraftlogs_base.BaseCast):
-
-    __tablename__ = "ranked_character_cast"
-
-    player_uuid = sa.Column(pg.UUID(), sa.ForeignKey("ranked_character.uuid", ondelete="cascade"))
-    player = sa.orm.relationship("RankedCharacter", back_populates="casts")
-
+# IMPORT LOCAL LIBRARIES
+from lorgs import db
+from lorgs import data
+from lorgs import utils
+from lorgs.logger import logger
+from lorgs.models import warcraftlogs_base
+from lorgs.models import encounters
+from lorgs.models import encounters
+from lorgs.models.specs import WowSpec
+'''
 
 class RankedCharacter(db.Base):
-    """docstring for RankedCharacter"""
+    """A Character/Player in the top logs."""
 
     __tablename__ = "ranked_character"
 
-    uuid = sa.Column(pg.UUID(), primary_key=True)
+    uuid = sa.Column(pg.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
     spec_id = sa.Column(sa.Integer, sa.ForeignKey("wow_spec.id"))
-    spec = sa.orm.relationship("WowSpec")
+    spec = sa.orm.relationship("WowSpec", lazy="joined")
 
     boss_id = sa.Column(sa.Integer, sa.ForeignKey("raid_boss.id"))
     boss = sa.orm.relationship("RaidBoss")
@@ -59,28 +37,28 @@ class RankedCharacter(db.Base):
     fight_id = sa.Column(sa.Integer)
     player_name = sa.Column(sa.Unicode(128))
     name = sa.orm.synonym("player_name")
-
-    fight_time_start = sa.Column(sa.BigInteger)
-    fight_time_end = sa.Column(sa.BigInteger)
     amount = sa.Column(sa.Float, default=0)
     total = sa.orm.synonym("amount")
 
-    casts = sa.orm.relationship(
-        "RankedCharacterCast",
-        back_populates="player",
-        cascade="all,save-update,delete"
-    )
+    fight_time_start = sa.Column(sa.BigInteger, default=0)
+    fight_time_end = sa.Column(sa.BigInteger, default=0)
+    fight_duration = sa.orm.column_property(fight_time_end - fight_time_start)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # make sure to generate a uuid on object created,
-        # so we can use it pre-commit to setup relationships
-        self.uuid = warcraftlogs_base.generate_uuid()
+    cast_data = sa.Column(pg.ARRAY(sa.Integer, dimensions=2), default=[])
 
     def __repr__(self):
-        amount = utils.format_big_number(self.amount)
-        return f"RankedCharacter({self.player_name}, amount={amount})"
+        amount = utils.format_big_number(self.amount or 0)
+        return f"RankedCharacter({self.name}, amount={amount})"
+
+    def as_dict(self):
+
+        return {
+            "name": self.name,
+            "amount": self.amount,
+            "fight": self.fight,
+            "casts": [cast.as_dict() for cast in self.casts]
+        }
+
 
     @property
     def report_url(self):
@@ -91,20 +69,25 @@ class RankedCharacter(db.Base):
         )
 
     @property
-    def fight_duration(self):
-        return self.fight_time_end - self.fight_time_start
-
-    @property
     def fight(self):
         return {
             "duration": self.fight_duration,
         }
 
     @property
-    def spells_used(self):
-        """Only the spells this player has used in this fight."""
-        used_spell_ids = set(cast.spell_id for cast in self.casts)
-        return [spell for spell in self.spec.spells if spell.spell_id in used_spell_ids]
+    def casts(self):
+        cast_data = self.cast_data or []
+        return [warcraftlogs_base.Cast(timestamp, spell_id) for timestamp, spell_id in cast_data]
+
+
+
+    @property
+    def lifetime(self):
+        return self.fight_duration
+
+    #################################
+    # Query Helpers
+    #
 
     def _get_casts_query(self):
         table_query_args = f"fightIDs: {self.fight_id}, startTime: {self.fight_time_start}, endTime: {self.fight_time_end}"
@@ -129,75 +112,119 @@ class RankedCharacter(db.Base):
             logger.warning("casts_data is empty")
             return
 
+        self.cast_data = self.cast_data or []
+
         for cast_data in casts_data:
             # skip "begincast" events
             if cast_data.get("type") != "cast":
                 continue
 
-            cast = RankedCharacterCast()
-            # cast.player = self
-            cast.player_uuid = self.uuid
-            cast.timestamp = cast_data["timestamp"]
-            cast.spell_id = cast_data["abilityGameID"]
+            spell_id = cast_data["abilityGameID"]
+            timestamp = cast_data["timestamp"] - self.fight_time_start
+            self.cast_data.append([timestamp, spell_id])
 
-            # offset the timestamp (saves us some work later)
-            cast.timestamp -= self.fight_time_start
-            self.casts.append(cast)
+'''
 
 
-class SpecRanking(db.Base):
+class SpecRanking(me.Document, warcraftlogs_base.wclclient_mixin):
 
-    __tablename__ = "spec_ranking"
+    spec_slug = me.StringField(required=True)
+    boss_slug = me.StringField(required=True)
 
-    # TODO:
-    # >>> This is not used anywhere?
+    updated = me.DateTimeField()
 
-    spec_id = sa.Column(sa.Integer, sa.ForeignKey("wow_spec.id"), primary_key=True)
-    boss_id = sa.Column(sa.Integer, sa.ForeignKey("raid_boss.id"), primary_key=True)
+    reports = me.ListField(me.EmbeddedDocumentField(warcraftlogs_base.Report))
 
-    boss = sa.orm.relationship("RaidBoss")
+    meta = {
+        'indexes': [
+            ("boss_slug", "spec_slug"),
+            "spec_slug",
+            "boss_slug",
+        ]
+    }
 
-    # last_update = sa.Column(db.Integer)
-    characters = sa.orm.relationship("RaidBoss")
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-    def __init__(self, spec, boss):
-        self.last_update = 0
-        self.spec = spec
-        self.boss = boss
-        # self.cache_key = f"spec_ranking/{self.spec.full_name_slug}/{self.boss.name_slug}"
-        self.reports = []
+        self.spec = WowSpec.get(full_name_slug=self.spec_slug)
+        self.boss = encounters.RaidBoss.get(name_slug=self.boss_slug)
 
-    def __repr__(self):
-        return f"<SpecRanking({self.spec.full_name} vs {self.boss.name})>"
+    @property
+    def fights(self):
+        return utils.flatten(report.fights for report in self.reports)
 
-    def as_dict(self):
-        return {
-            "spec": self.spec.full_name_slug,
-            "boss": self.boss.as_dict(),
+    @property
+    def players(self):
+        return utils.flatten(fight.players for fight in self.fights)
 
-            "last_update": self.last_update,
-            "reports": [report.as_dict() for report in self.reports]
-        }
+    async def load(self, limit=50):
+        """Get Top Ranks for a given boss and spec."""
+        logger.info(f"{self.boss.name} vs. {self.spec.name} {self.spec.wow_class.name} START")
 
-    """
-    async def update(self, limit=50, force=True):
-        from lorgs.models import loader
+        # Build and run the query
+        query = f"""\
+        worldData
+        {{
+            encounter(id: {self.boss.id})
+            {{
+                characterRankings(
+                    className: "{self.spec.wow_class.name_slug_cap}",
+                    specName: "{self.spec.name_slug_cap}",
+                    metric: {self.spec.role.metric},
+                    includeCombatantInfo: false,
+                    serverRegion: "EU",
+                )
+            }}
+        }}
+        """
 
-        players = await loader.load_char_rankings(boss=self.boss, spec=self.spec, limit=limit)
+        query_result = await self.client.query(query)
+        query_result = query_result.get("worldData", {}).get("encounter", {}).get("characterRankings", {})
 
-        self.reports = [player.fight.report for player in players]
-        self.last_update = arrow.utcnow().timestamp()
-        self.save()
+        rankings = query_result.get("rankings", [])
+        if limit:
+            rankings = rankings[:limit]
 
-    def save(self):
-        Cache.set(self.cache_key, self.as_dict())
+        # not even needed? because we filter by name
+        # logger.debug(f"{boss.name} vs. {spec.name} {spec.wow_class.name} load source ids")
+        # await load_char_rankings_source_ids(rankings)
 
-    def load(self):
+        for ranking_data in rankings:
+            report_data = ranking_data.get("report", {})
 
-        data = Cache.get(self.cache_key) or {}
+            # skip hidden reports
+            if ranking_data.get("hidden"):
+                continue
 
-        self.last_update = data.get("last_update") or self.last_update
-        for report_data in data.get("reports", []):
-            report = Report.from_dict(report_data)
+            ################
+            # Report
+            report = warcraftlogs_base.Report()
+            report.report_id = report_data.get("code", 0)
+            report.start_time = report_data.get("startTime", 0)
             self.reports.append(report)
-    """
+
+            ################
+            # Fight
+            fight = report.add_fight()
+            fight.fight_id = report_data.get("fightID")
+            fight.start_time = ranking_data.get("startTime", 0) - report.start_time
+            fight.end_time = fight.start_time + ranking_data.get("duration", 0)
+
+            ################
+            # Player
+            player = fight.add_player()
+            player.spec = self.spec
+            player.spec_slug = self.spec_slug
+            player.source_id = -1 # TODO
+            player.name = ranking_data.get("name")
+            player.total = ranking_data.get("amount", 0)
+
+        ########################
+        # load casts
+        #
+        logger.info(f"{self.boss.name} vs. {self.spec.name} {self.spec.wow_class.name} load casts")
+        for i, chunk in enumerate(utils.chunks(self.fights, 50)): # load in chunks of 50 each
+            # logger.info(f"{boss.name} vs. {spec.name} {spec.wow_class.name} load casts | chunk {i}")
+            await warcraftlogs_base.Fight.load_many(chunk)
+
+        self.updated = datetime.datetime.utcnow()

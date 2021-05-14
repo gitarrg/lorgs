@@ -57,6 +57,11 @@ def shrink_text(text):
     return re.sub(r"\s+", " ", text)
 
 
+class staticproperty(property):
+    def __get__(self, cls, owner):
+        return self.fget.__get__(None, owner)()
+
+
 def as_list(func):
     """Wrap a Generator to return a list."""
     @wraps(func)

@@ -1,0 +1,274 @@
+{
+    "740": {
+        "icon": "spell_nature_tranquility.jpg",
+        "name": "Tranquility"
+    },
+    "1122": {
+        "icon": "spell_shadow_summoninfernal.jpg",
+        "name": "Summon Infernal"
+    },
+    "1719": {
+        "icon": "warrior_talent_icon_innerrage.jpg",
+        "name": "Recklessness"
+    },
+    "10060": {
+        "icon": "spell_holy_powerinfusion.jpg",
+        "name": "Power Infusion"
+    },
+    "16191": {
+        "icon": "spell_frost_summonwaterelemental.jpg",
+        "name": "Mana Tide Totem"
+    },
+    "19574": {
+        "icon": "ability_druid_ferociousbite.jpg",
+        "name": "Bestial Wrath"
+    },
+    "29166": {
+        "icon": "spell_nature_lightning.jpg",
+        "name": "Innervate"
+    },
+    "31821": {
+        "icon": "spell_holy_auramastery.jpg",
+        "name": "Aura Mastery"
+    },
+    "31884": {
+        "icon": "spell_holy_avenginewrath.jpg",
+        "name": "Avenging Wrath"
+    },
+    "33891": {
+        "icon": "ability_druid_improvedtreeform.jpg",
+        "name": "Incarnation: Tree of Life"
+    },
+    "42650": {
+        "icon": "spell_deathknight_armyofthedead.jpg",
+        "name": "Army of the Dead"
+    },
+    "46924": {
+        "icon": "ability_warrior_bladestorm.jpg",
+        "name": "Bladestorm"
+    },
+    "47536": {
+        "icon": "spell_holy_rapture.jpg",
+        "name": "Rapture"
+    },
+    "51052": {
+        "icon": "spell_deathknight_antimagiczone.jpg",
+        "name": "Anti-Magic Zone"
+    },
+    "51533": {
+        "icon": "spell_shaman_feralspirit.jpg",
+        "name": "Feral Spirit"
+    },
+    "62618": {
+        "icon": "spell_holy_powerwordbarrier.jpg",
+        "name": "Power Word: Barrier"
+    },
+    "64843": {
+        "icon": "spell_holy_divinehymn.jpg",
+        "name": "Divine Hymn"
+    },
+    "97462": {
+        "icon": "ability_warrior_rallyingcry.jpg",
+        "name": "Rallying Cry"
+    },
+    "98008": {
+        "icon": "spell_shaman_spiritlink.jpg",
+        "name": "Spirit Link Totem"
+    },
+    "102560": {
+        "icon": "spell_druid_incarnation.jpg",
+        "name": "Incarnation: Chosen of Elune"
+    },
+    "108280": {
+        "icon": "ability_shaman_healingtide.jpg",
+        "name": "Healing Tide Totem"
+    },
+    "109964": {
+        "icon": "ability_shaman_astralshift.jpg",
+        "name": "Spirit Shell"
+    },
+    "111898": {
+        "icon": "spell_shadow_summonfelguard.jpg",
+        "name": "Grimoire: Felguard"
+    },
+    "113858": {
+        "icon": "spell_warlock_soulburn.jpg",
+        "name": "Dark Soul: Instability"
+    },
+    "113860": {
+        "icon": "spell_warlock_soulburn.jpg",
+        "name": "Dark Soul: Misery"
+    },
+    "114051": {
+        "icon": "spell_fire_elementaldevastation.jpg",
+        "name": "Ascendance"
+    },
+    "114052": {
+        "icon": "spell_fire_elementaldevastation.jpg",
+        "name": "Ascendance"
+    },
+    "115203": {
+        "icon": "ability_monk_fortifyingale_new.jpg",
+        "name": "Fortifying Brew"
+    },
+    "115310": {
+        "icon": "spell_monk_revival.jpg",
+        "name": "Revival"
+    },
+    "123904": {
+        "icon": "ability_monk_summontigerstatue.jpg",
+        "name": "Invoke Xuen, the White Tiger"
+    },
+    "137639": {
+        "icon": "spell_nature_giftofthewild.jpg",
+        "name": "Storm, Earth, and Fire"
+    },
+    "153561": {
+        "icon": "spell_mage_meteor.jpg",
+        "name": "Meteor"
+    },
+    "190319": {
+        "icon": "spell_fire_sealoffire.jpg",
+        "name": "Combustion"
+    },
+    "191634": {
+        "icon": "ability_thunderking_lightningwhip.jpg",
+        "name": "Stormkeeper"
+    },
+    "193530": {
+        "icon": "spell_nature_protectionformnature.jpg",
+        "name": "Aspect of the Wild"
+    },
+    "194223": {
+        "icon": "spell_nature_natureguardian.jpg",
+        "name": "Celestial Alignment"
+    },
+    "196555": {
+        "icon": "spell_warlock_demonsoul.jpg",
+        "name": "Netherwalk"
+    },
+    "196718": {
+        "icon": "ability_demonhunter_darkness.jpg",
+        "name": "Darkness"
+    },
+    "197721": {
+        "icon": "spell_druid_wildburst.jpg",
+        "name": "Flourish"
+    },
+    "198067": {
+        "icon": "spell_fire_elemental_totem.jpg",
+        "name": "Fire Elemental"
+    },
+    "200166": {
+        "icon": "spell_frost_stun.jpg",
+        "name": "Metamorphosis"
+    },
+    "200183": {
+        "icon": "ability_priest_ascension.jpg",
+        "name": "Apotheosis"
+    },
+    "202770": {
+        "icon": "ability_druid_dreamstate.jpg",
+        "name": "Fury of Elune"
+    },
+    "205179": {
+        "icon": "inv_enchant_voidsphere.jpg",
+        "name": "Phantom Singularity"
+    },
+    "205180": {
+        "icon": "inv_beholderwarlock.jpg",
+        "name": "Summon Darkglare"
+    },
+    "205636": {
+        "icon": "ability_druid_forceofnature.jpg",
+        "name": "Force of Nature"
+    },
+    "207399": {
+        "icon": "spell_nature_reincarnation.jpg",
+        "name": "Ancestral Protection Totem"
+    },
+    "246287": {
+        "icon": "spell_holy_divineillumination.jpg",
+        "name": "Evangelism"
+    },
+    "265187": {
+        "icon": "inv_summondemonictyrant.jpg",
+        "name": "Summon Demonic Tyrant"
+    },
+    "265202": {
+        "icon": "ability_priest_archangel.jpg",
+        "name": "Holy Word: Salvation"
+    },
+    "267217": {
+        "icon": "inv_netherportal.jpg",
+        "name": "Nether Portal"
+    },
+    "275699": {
+        "icon": "artifactability_unholydeathknight_deathsembrace.jpg",
+        "name": "Apocalypse"
+    },
+    "288613": {
+        "icon": "ability_trueshot.jpg",
+        "name": "Trueshot"
+    },
+    "304971": {
+        "icon": "ability_bastion_paladin.jpg",
+        "name": "Divine Toll"
+    },
+    "306830": {
+        "icon": "ability_bastion_demonhunter.jpg",
+        "name": "Elysian Decree"
+    },
+    "310454": {
+        "icon": "ability_bastion_monk.jpg",
+        "name": "Weapons of Order"
+    },
+    "314791": {
+        "icon": "ability_ardenweald_mage.jpg",
+        "name": "Shifting Power"
+    },
+    "316958": {
+        "icon": "ability_revendreth_paladin.jpg",
+        "name": "Ashen Hallow"
+    },
+    "317009": {
+        "icon": "ability_revendreth_demonhunter.jpg",
+        "name": "Sinful Brand"
+    },
+    "320674": {
+        "icon": "ability_revendreth_shaman.jpg",
+        "name": "Chain Harvest"
+    },
+    "322109": {
+        "icon": "ability_monk_touchofdeath.jpg",
+        "name": "Touch of Death"
+    },
+    "322118": {
+        "icon": "ability_monk_dragonkick.jpg",
+        "name": "Invoke Yu'lon, the Jade Serpent"
+    },
+    "323639": {
+        "icon": "ability_ardenweald_demonhunter.jpg",
+        "name": "The Hunt"
+    },
+    "323764": {
+        "icon": "ability_ardenweald_druid.jpg",
+        "name": "Convoke the Spirits"
+    },
+    "325197": {
+        "icon": "inv_pet_cranegod.jpg",
+        "name": "Invoke Chi-Ji, the Red Crane"
+    },
+    "325640": {
+        "icon": "ability_ardenweald_warlock.jpg",
+        "name": "Soul Rot"
+    },
+    "325886": {
+        "icon": "ability_ardenweald_warrior.jpg",
+        "name": "Ancient Aftershock"
+    },
+    "328231": {
+        "icon": "ability_ardenweald_hunter.jpg",
+        "name": "Wild Spirits"
+    }
+}

@@ -44,17 +44,3 @@ class Model(IconPathMixin, metaclass=MetaInstanceRegistry):
     @classmethod
     def get(cls, **kwargs):
         return utils.get(cls.all, **kwargs)
-
-
-    def as_dict(self):
-        raise NotImplementedError(self)
-
-    # todo: do we need this?
-    toJSON = as_dict
-
-    def __getstate__(self):
-        return self.as_dict()
-
-    def __setstate__(self, newstate):
-        print("__setstate__", self)
-        raise NotImplementedError(self)

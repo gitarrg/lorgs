@@ -5,21 +5,67 @@ import os
 from contextlib import contextmanager
 
 # IMPORT THIRD PARTY LIBRARIES
+import logging
+from pymongo import monitoring
+from mongoengine import *
+
 import sqlalchemy
 from sqlalchemy import orm
 from sqlalchemy.ext.declarative import declarative_base
 
 # IMPORT LOCAL LIBRARIES
+from lorgs import utils
 from lorgs.logger import logger
 
 
-URI = os.getenv("SQLALCHEMY_DATABASE_URI") or "sqlite://"
+import mongoengine as me
+
+
+
+log = logging.getLogger()
+log.setLevel(logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
+
+
+class CommandLogger(monitoring.CommandListener):
+
+    def started(self, event):
+        log.debug("{0.command_name} start".format(event))
+
+    def succeeded(self, event):
+        log.debug("{0.command_name} succeeded in {0.duration_micros:g}μs".format(event))
+
+    def failed(self, event):
+        log.debug("{0.command_name} failed in {0.duration_micros:g}μs".format(event))
+
+monitoring.register(CommandLogger())
+
+
+URI = os.getenv("MONGO_URI")
+me.connect(host=URI)
+
+
+
+################################################################################
+################################################################################
+################################################################################
+'''
+URI = os.getenv("SQLALCHEMY_DATABASE_URI") or "postgresql://"
 
 engine = sqlalchemy.create_engine(URI, pool_recycle=240)
 factory = orm.sessionmaker(bind=engine, autoflush=True)
 session = orm.scoped_session(factory)
 
-Base = declarative_base()
+
+class BaseModel:
+
+    @classmethod
+    def get(cls, **kwargs):
+        return utils.get(cls.query.all(), **kwargs)
+
+
+
+Base = declarative_base(cls=BaseModel)
 Base.query = session.query_property()
 
 
@@ -31,8 +77,7 @@ def count_queries(*args, **kwargs):
     logger.info("QUERY COUNT: %d", _QUERY_COUNT)
 
 # if DEBUG
-# sqlalchemy.event.listen(Engine, "before_cursor_execute", count_queries)
-
+# sqlalchemy.event.listen(engine, "before_cursor_execute", count_queries)
 
 @contextmanager
 def session_context(commit=True):
@@ -57,3 +102,5 @@ def init_flask_app(app):
     def shutdown_session(response_or_exc):
         session.remove()
         return response_or_exc
+
+'''

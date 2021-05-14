@@ -5,21 +5,17 @@ version: '3.7'
 
 services:
 
-  web:
-    command: echo "Hey!"
+  # web:
+  #   command: echo "disabled"  # disable this, so we can run flask local
 
-  db-ui:  # DB UI
+  # DB UI
+  db-ui:
+    # command: echo "disabled"  # disable this, so we can run flask local
     image: adminer
     ports:
       - 5011:8080
 
   redis:
     ports:
-      - 6379:6379
-
-volumes:
-  data-db:
-
-# docker run -it --network="host" windok/redis-browser bash
-# docker run --rm -p 8081:8081 --env REDIS_HOST=lorgs-redis rediscommander/redis-commander
+      - 6379:6379 # expose the redis port, so we can connect locally
 

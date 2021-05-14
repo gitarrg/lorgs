@@ -8,15 +8,14 @@ import sqlalchemy as sa
 
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import utils
 from lorgs.celery import celery
-from lorgs.cache import Cache
 from lorgs import db
 from lorgs.logger import logger
 from lorgs.models import loader
 from lorgs.models import warcraftlogs_ranking
 from lorgs.models.encounters import RaidBoss
 from lorgs.models.specs import WowSpec
+# from lorgs.models.warcraftlogs_report import Report
 
 
 @celery.task(bind=True, name="debug_task")
@@ -66,10 +65,10 @@ def load_spec_ranking(self, boss_id, spec_id, limit=50):
 
     ##############
     # Add to DB
-    all_casts = utils.flatten(player.casts for player in players)
+    # all_casts = utils.flatten(player.casts for player in players)
     db.session.bulk_save_objects(players)
-    db.session.bulk_save_objects(all_casts)
     db.session.commit()
+    # db.session.bulk_save_objects(all_casts)
     logger.info(f"{boss.name} vs. {spec.name} {spec.wow_class.name} added to DB!")
 
 
@@ -77,8 +76,15 @@ def load_spec_ranking(self, boss_id, spec_id, limit=50):
 def load_report(self, report_id):
     self.update_state(state="STARTED")
 
-    report = Report(report_id=report_id)
-    self.update_state(state="PROGRESS")
-    asyncio.run(loader.load_report(report))
+    # get report
+    report = Report.query.get(report_id) or Report(report_id=report_id)
 
-    Cache.set(f"report/{report_id}", report.as_dict())
+    # load report
+    self.update_state(state="PROGRESS")
+    asyncio.run(report.load())
+
+    # save to DB
+    db.session.add(report)
+    db.session.commit()
+
+    self.update_state(state="DONE")

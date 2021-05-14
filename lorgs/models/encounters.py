@@ -1,29 +1,20 @@
 """Models for Raids and RaidBosses."""
 # pylint: disable=too-few-public-methods
 
-# IMPORT THIRD PARTY LIBRARIES
-import sqlalchemy as sa
-
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
-from lorgs import db
 from lorgs.models import base
 
 
-class RaidZone(db.Base):
+class RaidZone(base.Model):
     """A raid zone in the Game."""
 
-    __tablename__ = "raid_zone"
+    def __init__(self, id, name):
+        self.id = id
+        self.name = name
+        self.bosses = []
 
-    id = sa.Column(sa.Integer, primary_key=True)
-    name = sa.Column(sa.String(128))
-
-    bosses = sa.orm.relationship(
-        "RaidBoss",
-        back_populates="zone",
-        cascade="all,save-update,delete",
-        # lazy="joined"
-    )
+        self.name_slug = utils.slug(self.name, space="-")
 
     def __repr__(self):
         return f"<RaidZone(id={self.id} name={self.name})>"
@@ -34,27 +25,22 @@ class RaidZone(db.Base):
             "name": self.name,
         }
 
-    @property
-    def name_slug(self):
-        return utils.slug(self.name, space="-")
+    def add_boss(self, **kwargs):
+        boss = RaidBoss(zone=self, **kwargs)
+        self.bosses.append(boss)
+        return boss
 
 
-class RaidBoss(db.Base, base.IconPathMixin):
+class RaidBoss(base.Model):
     """A raid boss in the Game."""
 
-    __tablename__ = "raid_boss"
+    def __init__(self, zone, id, name):
+        self.id = id
+        self.zone = zone
+        self.name = name
 
-    id = sa.Column(sa.Integer, primary_key=True)
-
-    zone = sa.orm.relationship("RaidZone", back_populates="bosses")
-    zone_id = sa.Column(sa.Integer, sa.ForeignKey("raid_zone.id", ondelete="cascade"))
-
-    order = sa.Column(sa.Integer)
-    name = sa.Column(sa.String(128))
-
-    __mapper_args__ = {
-        "order_by" : order
-    }
+        self.name_slug = utils.slug(self.name, space="-")
+        self.icon_name = f"bosses/{self.zone.name_slug}/{self.name_slug}.jpg"
 
     def __repr__(self):
         return f"<RaidBoss(id={self.id} name={self.name})>"
@@ -63,13 +49,5 @@ class RaidBoss(db.Base, base.IconPathMixin):
         return {
             "id": self.id,
             "name": self.name,
-            "name_slug": self.name_slug,
+            # "name_slug": self.name_slug,
         }
-
-    @property
-    def name_slug(self):
-        return utils.slug(self.name, space="-")
-
-    @property
-    def icon_name(self):
-        return f"bosses/{self.zone.name_slug}/{self.name_slug}.jpg"

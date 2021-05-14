@@ -11,14 +11,14 @@ x-env: &env
 
 services:
 
-  nginx:
-    build: ./nginx
-    ports:
-      - 80:80
-    depends_on:
-      - web
-    volumes:
-      - ./lorgs:/data/lorgs
+  # nginx:
+  #   build: ./nginx
+  #   ports:
+  #     - 80:80
+  #   depends_on:
+  #     - web
+  #   volumes:
+  #     - ./lorgs:/data/lorgs
 
   # main web app (flask)
   web:

@@ -42,30 +42,6 @@ WCL_CLIENT = WarcraftlogsClient.get_instance()
 ################################################################################
 
 
-@utils.as_list
-def load_player_casts(player, casts_data):
-    """Process the result of a casts-query to create Cast objects."""
-    if not casts_data:
-        logger.warning("casts_data is empty")
-        return
-
-    for cast_data in casts_data:
-        if cast_data.get("sourceID") != player.source_id:
-            continue
-
-        # skip "begincast" events
-        if cast_data.get("type") != "cast":
-            continue
-
-        cast = Cast()
-        cast.player_id = player.id
-        cast.timestamp = cast_data["timestamp"]
-        cast.spell_id = cast_data["abilityGameID"]
-
-        # offset the timestamp (saves us some work later)
-        cast.timestamp -= player.fight.start_time
-        yield cast
-
 
 ################################################################################
 #
@@ -73,127 +49,13 @@ def load_player_casts(player, casts_data):
 #
 ################################################################################
 
-@utils.as_list
-def load_fight_players(fight, players_data):
-    if not players_data:
-        logger.warning("players_data is empty")
-        return
-
-    total_damage = players_data.get("damageDone", [])
-    total_healing = players_data.get("healingDone", [])
-
-    # player_by_id = {}  # TODO: add to FightClass
-    for composition_data in players_data.get("composition", []):
-
-        spec_data = composition_data.get("specs", [])
-        if not spec_data:
-            logger.warning("Player has no spec: %s", composition_data.get("name"))
-            continue
-
-        spec_data = spec_data[0]
-        spec_name = spec_data.get("spec")
-
-        class_name = composition_data.get("type")
-        class_names = {}
-        class_names["DemonHunter"] = "Demon Hunter"
-        class_names["DeathKnight"] = "Death Knight"
-        class_name = class_names.get(class_name) or class_name
-
-        wow_class = WowClass.get(name=class_name)
-        if not wow_class:
-            logger.warning("Unknown Class: %s", class_name)
-            continue
-
-        # spec = WowSpec.query
-        # spec = spec.join(WowSpec.wow_class) # join the class so we can filter
-        # spec = spec.filter(WowClass.name == class_name)
-        # spec = spec.filter(WowSpec.name == spec_name)
-        # spec = spec.first()
-
-        spec_names = {}
-        spec_names["BeastMastery"] = "Beast Mastery"
-        spec_name = spec_names.get(spec_name) or spec_name
-
-        spec = WowSpec.get(wow_class=wow_class, name=spec_name)
-        if not spec:
-            logger.warning("Unknown Spec: %s", spec_name)
-            continue
-
-        # Get Total Damage or Healing
-        spec_role = spec_data.get("role")
-        total_data = total_healing if spec_role == "healer" else total_damage
-        for data in total_data:
-            if data.get("id", -1) == composition_data.get("id"):
-                total = data.get("total", 0) / (fight.duration / 1000)
-                break
-        else:
-            total = 0
-
-        # create and return yield player object
-        player = Player()
-        player.spec = spec
-        player.report_id = fight.report_id
-        player.fight_id = fight.fight_id
-        player.source_id = composition_data.get("id")
-
-        # player.spec = spec
-        player.name = composition_data.get("name")
-        player.total = total
-        yield player
-
-
 ################################################################################
 #
 #   FIGHTS
 #
 ################################################################################
 
-def fight_data_query(fight, spells=None):
-    """Construct the Query to fetch all info in a Fight.
 
-    Args:
-        fight(<Fight>): the fight we want to fetch
-        spells[list(Spell)]: the spells we want to fetch (queries all spells if None)
-
-    Returns:
-        str: the constructed query string
-
-    """
-
-    def spell_ids(spells):
-        spells = sorted(spell.spell_id for spell in spells)
-        return ",".join(str(i) for i in spells)
-
-    table_query_args = f"fightIDs: {fight.fight_id}, startTime: {fight.start_time}, endTime: {fight.end_time}"
-
-    # Build Players Query (if needed)
-    if fight.players:
-        player_query = ""
-
-        # Build Casts Filter
-        casts_filters = [
-            f"(source.name='{player.name}' and ability.id in ({spell_ids(player.spec.spells)}))"
-            for player in fight.players
-        ]
-        casts_filter = " or ".join(casts_filters)
-
-    else: # no player --> we need to fetch them
-        all_spells = WowSpell.query.all()
-        player_query = f"players: table({table_query_args}, dataType: Summary)"
-        casts_filter = f"ability.id in ({spell_ids(spells or all_spells)})"
-
-    logger.debug("player_query: %s", player_query)
-    logger.debug("casts_filter: %s", casts_filter)
-
-    casts_query = f"casts: events({table_query_args}, dataType: Casts, filterExpression: \"{casts_filter}\") {{data}}"
-    return textwrap.dedent(f"""\
-    reportData {{
-        report(code: "{fight.report.report_id}") {{
-            {player_query}
-            {casts_query}
-        }}
-    }}
-    """)
 
 
 async def load_fights(fights):
@@ -215,103 +77,11 @@ async def load_fights(fights):
         players_data = report_data.get("players", {}).get("data", {})
         casts_data = report_data.get("casts", {}).get("data", [])
 
-        if not fight.players: # only if they arn't loaded yet
-            fight.players = load_fight_players(fight, players_data)
-
         for player in fight.players:
             player.casts = load_player_casts(player, casts_data)
 
     logger.debug("load_fights end")
 
-
-################################################################################
-#
-#   REPORTS
-#
-################################################################################
-
-async def load_report_info(report, fight_ids=None):
-    """Fetch all fights in this report.
-
-    Args:
-        report(<Report>): the report
-
-        fight_ids(list[int], optional): list of fights to load.
-            loads all fights, if not specified.
-
-    """
-    query = f"""
-    reportData
-    {{
-        report(code: "{report.report_id}")
-        {{
-            title
-            zone {{name id}}
-            startTime
-
-            # masterData
-            # {{
-            #     actors(type: "Player")
-            #     {{
-            #         name
-            #         id
-            #     }}
-            # }}
-
-            fights(fightIDs: {fight_ids or []})
-            {{
-                id
-                encounterID
-                startTime
-                endTime
-                fightPercentage
-                # kill
-            }}
-        }}
-    }}
-    """
-    data = await WCL_CLIENT.query(query)
-    report_data = data.get("reportData", {}).get("report", {})
-
-    # Update the Report itself
-    report.title = report_data.get("title", "")
-    report.start_time = report_data.get("startTime", 0)
-    report.zone_id = report_data.get("zone", {}).get("id")
-
-    # Update the Fights in this report
-    for fight_data in report_data.get("fights", []):
-
-        boss_id = fight_data.get("encounterID")
-        if not boss_id:
-            continue
-
-        # Get the fight
-        fight = Fight()
-        fight.report = report
-        fight.report_id = report.report_id
-        fight.fight_id = fight_data.get("id")
-        fight.start_time = fight_data.get("startTime", 0)
-        fight.end_time = fight_data.get("endTime", 0)
-        fight.boss_id = boss_id
-        fight.percent = fight_data.get("fightPercentage")
-
-
-async def load_report(report):
-    """Load a single Report.
-
-    Args:
-        report(<Report>): the report to load.
-
-    """
-    logger.info(f"{report} | start")
-    if not report.fights:
-        logger.info(f"{report} | load info")
-        await load_report_info(report)
-
-    logger.info(f"{report} | load fights")
-    fights_to_load = [fight for fight in report.fights if not fight.players]
-    await load_fights(fights_to_load)
-    return report
 
 
 ################################################################################
@@ -515,10 +285,3 @@ async def load_spec_rankings(boss, spec, difficulty=5, limit=50):
         await load_ranking_casts(chunk)
 
     return players
-
-    ########################
-    # add to DB (handle in calling code?)
-    #
-    db.session.bulk_save_objects(players)
-    all_casts = utils.flatten(player.casts for player in players)
-    db.session.bulk_save_objects(all_casts)

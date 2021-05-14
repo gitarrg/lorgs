@@ -12,6 +12,7 @@ from lorgs import db
 from lorgs import utils
 from lorgs.routes import api
 from lorgs.routes import views
+from lorgs.routes import admin
 
 
 def create_app():
@@ -36,8 +37,9 @@ def create_app():
     # Blueprints
     app.register_blueprint(views.BP, url_prefix="/")
     app.register_blueprint(api.BP, url_prefix="/api")
+    app.register_blueprint(admin.BP, url_prefix="/admin")
 
     # init scripts
-    db.init_flask_app(app)
+    # db.init_flask_app(app)
 
     return app
