@@ -1,10 +1,17 @@
 steps:
 
-- name: "bash"
-  args: ["pysassc", "--style=compact", lorgs/templates/scss/main.scss", "lorgs/static/_generated/style.css"]
 
+# Build SCSS
+- name: "python:3"
+  entrypoint: python3
+  args: ["-m", "pip", "install", "-t", ".", "-r", "requirements.txt"]
+- name: 'python:3'
+  args: ["-m", "pysassc", "--style=compact", lorgs/templates/scss/main.scss", "lorgs/static/_generated/style.css"]
+
+
+# Deplyo the APP
 - name: "gcr.io/cloud-builders/gcloud"
   args: ["app", "deploy"]
+  timeout: "1600s"
 
-timeout: "1600s"
 
