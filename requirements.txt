@@ -4,22 +4,25 @@ arrow==1.1
 
 cached-property==1.5.2
 
-# python-dotenv==0.17.1
+python-dotenv==0.17.1
 
 # to build scss
 pysass==0.1.0
-redis==3.5.3
+# redis==3.5.3
 
 gunicorn==20.1.0
 Flask==1.1
 Flask-WTF==0.14.3
 
 # cant use 5. due to flower
-celery==4.4.7
+# celery==4.4.7
 
-PyMySQL==1.0
+# PyMySQL==1.0
 # # https://www.tutorialguruji.com/dbms/retrieving-data-from-rds-gives-attributeerror-sqlalchemy-cimmutabledict-immutabledict-object-has-no-attribute-setdefault/
-SQLAlchemy<1.4
+# SQLAlchemy<1.4
+# psycopg2-binary==2.8.6
 
-psycopg2-binary==2.8.6
-
+mongoengine==0.23.1
+dnspython==2.1.0
+redis==3.5.3
+celery==4.4.7

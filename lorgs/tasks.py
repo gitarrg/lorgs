@@ -4,17 +4,15 @@ import asyncio
 
 # IMPORT THIRD PARTY LIBRARIES
 # from celery import Celery
-import sqlalchemy as sa
-
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.celery import celery
 from lorgs import db
 from lorgs.logger import logger
-from lorgs.models import loader
+# from lorgs.models import loader
 from lorgs.models import warcraftlogs_ranking
-from lorgs.models.encounters import RaidBoss
-from lorgs.models.specs import WowSpec
+# from lorgs.models.encounters import RaidBoss
+# from lorgs.models.specs import WowSpec
 # from lorgs.models.warcraftlogs_report import Report
 
 
@@ -36,40 +34,30 @@ def debug_task(self):
 
 
 @celery.task(bind=True, name="load_spec_ranking")
-def load_spec_ranking(self, boss_id, spec_id, limit=50):
+def load_spec_ranking(self, boss_slug, spec_slug, limit=50):
     # self.update_state(state="STARTED")
 
     ##############
     # Get
-    # FIXME
-
-    boss = RaidBoss.query.options(
-        sa.orm.joinedload(RaidBoss.zone),
-    ).get(boss_id)
-
-    spec = WowSpec.query.options(
-        sa.orm.joinedload(WowSpec.spells),
-        sa.orm.joinedload(WowSpec.wow_class),
-    ).get(spec_id)
-    logger.info(f"{boss.name} vs. {spec.name} {spec.wow_class.name} start")
-
-    # TODO: merge with existing data, and only query new
-    warcraftlogs_ranking.RankedCharacter.query.filter_by(spec=spec, boss=boss).delete()
-    db.session.commit()
+    ranking = warcraftlogs_ranking.SpecRanking.objects(boss_slug=boss_slug, spec_slug=spec_slug).first()
+    ranking = ranking or warcraftlogs_ranking.SpecRanking(boss_slug=boss_slug, spec_slug=spec_slug)
 
     ##############
     # run
-    task = loader.load_spec_rankings(spec=spec, boss=boss, limit=limit)
-    players = asyncio.run(task)
-    logger.info(f"{boss.name} vs. {spec.name} {spec.wow_class.name} query done")
+    task = ranking.load(limit=limit)
+    asyncio.run(task)
+
+    logger.info(f"{ranking.boss.name} vs. {ranking.spec.name} {ranking.spec.wow_class.name} query done")
 
     ##############
-    # Add to DB
-    # all_casts = utils.flatten(player.casts for player in players)
-    db.session.bulk_save_objects(players)
-    db.session.commit()
+    # Save
+
+    print("!!!!! ranking", len(ranking.reports))
+
+    ranking.save()
+
     # db.session.bulk_save_objects(all_casts)
-    logger.info(f"{boss.name} vs. {spec.name} {spec.wow_class.name} added to DB!")
+    logger.info(f"{ranking.boss.name} vs. {ranking.spec.name} {ranking.spec.wow_class.name} saved to DB!")
 
 
 @celery.task(bind=True, name="load_report")

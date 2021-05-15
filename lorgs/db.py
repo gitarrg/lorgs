@@ -2,46 +2,44 @@
 
 # IMPORT STANDARD LIBRARIES
 import os
-from contextlib import contextmanager
+# from contextlib import contextmanager
 
 # IMPORT THIRD PARTY LIBRARIES
-import logging
 from pymongo import monitoring
-from mongoengine import *
+# from mongoengine import *
+import mongoengine as me
 
-import sqlalchemy
-from sqlalchemy import orm
-from sqlalchemy.ext.declarative import declarative_base
+# import sqlalchemy
+# from sqlalchemy import orm
+# from sqlalchemy.ext.declarative import declarative_base
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import utils
+# from lorgs import utils
 from lorgs.logger import logger
 
 
-import mongoengine as me
-
-
-
-log = logging.getLogger()
-log.setLevel(logging.DEBUG)
-logging.basicConfig(level=logging.DEBUG)
+# log = logging.getLogger()
+# log.setLevel(logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG)
 
 
 class CommandLogger(monitoring.CommandListener):
 
     def started(self, event):
-        log.debug("{0.command_name} start".format(event))
+        logger.debug("{0.command_name} start".format(event))
 
     def succeeded(self, event):
-        log.debug("{0.command_name} succeeded in {0.duration_micros:g}μs".format(event))
+        logger.debug("{0.command_name} succeeded in {0.duration_micros:g}μs".format(event))
 
     def failed(self, event):
-        log.debug("{0.command_name} failed in {0.duration_micros:g}μs".format(event))
+        logger.debug("{0.command_name} failed in {0.duration_micros:g}μs".format(event))
+
 
 monitoring.register(CommandLogger())
 
 
 URI = os.getenv("MONGO_URI")
+logger.warning("CONNECT TO MONGO_URI: %s", URI)
 me.connect(host=URI)
 
 

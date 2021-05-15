@@ -1,19 +1,15 @@
 """Views/Routes for some debugging/admin stuff."""
 
-import re
-from collections import defaultdict
-
 # IMPORT THIRD PARTY LIBS
-from sqlalchemy.sql import func
 import flask
-import sqlalchemy as sa
 
 # IMPORT LOCAL LIBS
 from lorgs import db
-from lorgs import forms
-from lorgs import models
-from lorgs import tasks
-from lorgs import utils
+# from lorgs import forms
+# from lorgs import models
+# from lorgs import tasks
+# from lorgs import utils
+from lorgs import data
 # from lorgs.cache import Cache
 from lorgs.models import encounters
 from lorgs.models import specs
@@ -34,39 +30,14 @@ SHARED_DATA = {}
 
 @BP.route("/")
 def index():
-    kwargs = {}
-
-    # spec rankings
-    ranked_chars = (
-        db.session.query(
-            specs.WowSpec.id,
-            encounters.RaidBoss.id,
-            func.count(warcraftlogs_ranking.RankedCharacter.uuid),
-        )
-        .join(
-            encounters.RaidBoss,
-            specs.WowSpec,
-        )
-        .group_by(
-            warcraftlogs_ranking.RankedCharacter.spec_id,
-            warcraftlogs_ranking.RankedCharacter.boss_id,
-        )
-        .all()
-    )
-
-    kwargs["spec_rankings"] = [] # {(s, b): c for s, b, c in ranked_chars}
-    kwargs["spells"] = list(specs.SpecSpells.query.all())
-
-    kwargs["data"] = None
-    # kwargs["specs"] = data.SPECS
-    return flask.render_template("admin.html", **kwargs, **SHARED_DATA)
+    flask.abort(401, description="sorry.. no admin page for you")
 
 
 @BP.route("/spells")
 def spells():
     kwargs = {}
-    kwargs["specs"] = specs.WowSpec.query.all()
-    kwargs["spells"] = specs.SpecSpells.query.all()
+    kwargs["specs"] = data.SPECS
+    # kwargs["spells"] = specs.SpecSpells.query.all()
     return flask.render_template("admin/admin_spells.html", **kwargs)
 
 

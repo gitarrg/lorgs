@@ -29,15 +29,15 @@ Lorgs: Crazy Admin Page
 
                 {% for spell in spec.spells|sort(attribute="group") %}
                     <tr>
-                        <td><a href="https://www.wowhead.com/{{spell.spell.wowhead_data}}" target="_blank" data-wowhead="{{spell.spell.wowhead_data}}"><img class="icon-s rounded wow-class-border-{{spell.spec.wow_class.name_slug}} " src="{{spell.spell.icon_path}}"></a></td>
-                        <td><a href="https://www.wowhead.com/{{spell.spell.wowhead_data}}" target="_blank" data-wowhead="{{spell.spell.wowhead_data}}">{{spell.spell.spell_id}}</a></td>
-                        <td><a href="https://www.wowhead.com/{{spell.spell.wowhead_data}}" target="_blank" data-wowhead="{{spell.spell.wowhead_data}}">{{spell.spell.spell_name}}</a></td>
+                        <td><a href="https://www.wowhead.com/{{spell.wowhead_data}}" target="_blank" data-wowhead="{{spell.wowhead_data}}"><img class="icon-s rounded wow-class-border-{{spell.spec.wow_class.name_slug}} " src="{{spell.icon_path}}"></a></td>
+                        <td><a href="https://www.wowhead.com/{{spell.wowhead_data}}" target="_blank" data-wowhead="{{spell.wowhead_data}}">{{spell.spell_id}}</a></td>
+                        <td><a href="https://www.wowhead.com/{{spell.wowhead_data}}" target="_blank" data-wowhead="{{spell.wowhead_data}}">{{spell.name}}</a></td>
 
                         <td class="wow-class-{{spell.group.wow_class.name_slug}}">
                             <img class="icon-s rounded shadow wow-class-border-{{spell.group.wow_class.name_slug}}" src="{{spell.group.icon_path}}">
                             {{spell.group.name}}
                         </td>
-                        <td style="background-color: {{spell.spell.color}}">{{spell.spell.color}}</td>
+                        <td style="background-color: {{spell.color}}">{{spell.color}}</td>
                     </tr>
                 {% endfor %}
 

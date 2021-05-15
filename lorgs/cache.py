@@ -11,7 +11,7 @@ import redis
 from lorgs.logger import logger
 
 
-REDIS_URL = os.getenv("REDISCLOUD_URL") or os.getenv("REDIS_URL") or "redis://localhost:6379"
+REDIS_URL = os.getenv("REDIS_URL") or "redis://localhost:6379"
 
 
 class RedisJsonCache:
@@ -20,12 +20,16 @@ class RedisJsonCache:
         super().__init__()
         self.client = redis.StrictRedis.from_url(url)
 
+        self.keys = self.client.keys
+
     def set(self, key, data, timeout=None):
         self.client.set(key, json.dumps(data), ex=timeout)
 
     def get(self, key):
         data = self.client.get(key)
         return json.loads(data) if data else None
+
+
 
 
 Cache = RedisJsonCache()

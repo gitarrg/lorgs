@@ -1,25 +1,19 @@
 """Views/Routes for the UI/Frontend."""
 
-import re
-import time
-from collections import defaultdict
-
 # IMPORT THIRD PARTY LIBS
-from sqlalchemy.sql import func
 import flask
-import sqlalchemy as sa
 
 # IMPORT LOCAL LIBS
-from lorgs import db
-from lorgs import forms
-from lorgs.logger import logger
+# from lorgs import db
+# from lorgs import forms
+# from lorgs.logger import logger
 # from lorgs import models
-from lorgs import tasks
+# from lorgs import tasks
 from lorgs import data
 from lorgs import utils
-from lorgs.cache import Cache
+# from lorgs.cache import Cache
 from lorgs.models import encounters
-from lorgs.models import specs
+# from lorgs.models import specs
 # from lorgs.models import warcraftlogs
 from lorgs.models import warcraftlogs_ranking
 # from lorgs.models import warcraftlogs_report
@@ -124,6 +118,7 @@ def spec_ranking(spec_slug, boss_slug):
     kwargs["all_spells"] = spells_used
     kwargs["timeline_duration"] = timeline_duration
 
+    kwargs["roles"] = data.ROLES
     kwargs["bosses"] = data.CASTLE_NATHRIA.bosses # encounters.RaidBoss.all
 
     return flask.render_template("spec_ranking.html", **kwargs, **SHARED_DATA)

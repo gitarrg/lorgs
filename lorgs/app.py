@@ -9,6 +9,7 @@ import flask
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import db
+from lorgs import data
 from lorgs import utils
 from lorgs.routes import api
 from lorgs.routes import views

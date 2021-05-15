@@ -4,13 +4,6 @@ import textwrap
 import abc
 
 # IMPORT THIRD PARTY LIBRARIES
-import sqlalchemy as sa
-# from sqlalchemy.dialects import postgresql as pg
-# from sqlalchemy import Column, ForeignKey
-# from sqlalchemy import Integer, String, BigInteger, Unicode, Float
-# from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.dialects import postgresql as pg
 import mongoengine as me
 
 # IMPORT LOCAL LIBRARIES
@@ -38,7 +31,6 @@ class wclclient_mixin:
     @classmethod
     async def load_many(cls, objects):
         queries = [obj.get_query() for obj in objects]
-        print(queries)
 
 
 class Death:
@@ -318,8 +310,6 @@ class Fight(me.EmbeddedDocument, wclclient_mixin):
     async def load_many(cls, fights, filters=()):
 
         queries = [fight.get_query(filters) for fight in fights]
-        for query in queries:
-            print(query)
 
         data = await cls.client.multiquery(queries)
 

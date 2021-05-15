@@ -16,3 +16,6 @@ CASTLE_NATHRIA.add_boss(id=2412, name="The Council of Blood")
 CASTLE_NATHRIA.add_boss(id=2399, name="Sludgefist")
 CASTLE_NATHRIA.add_boss(id=2417, name="Stone Legion Generals")
 CASTLE_NATHRIA.add_boss(id=2407, name="Sire Denathrius")
+
+
+CASTLE_NATHRIA_BOSSES = CASTLE_NATHRIA.bosses

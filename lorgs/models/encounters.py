@@ -40,7 +40,7 @@ class RaidBoss(base.Model):
         self.name = name
 
         self.name_slug = utils.slug(self.name, space="-")
-        self.icon_name = f"bosses/{self.zone.name_slug}/{self.name_slug}.jpg"
+        self.icon = f"bosses/{self.zone.name_slug}/{self.name_slug}.jpg"
 
     def __repr__(self):
         return f"<RaidBoss(id={self.id} name={self.name})>"

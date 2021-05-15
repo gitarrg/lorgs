@@ -3,18 +3,18 @@
 # IMPORT STANDARD LIBRARIES
 # import asyncio
 import datetime
-import os
+# import os
 import time
 
 # IMPORT THIRD PARTY LIBRARIES
 import flask
-import sqlalchemy as sa
-from celery.result import AsyncResult
+# import sqlalchemy as sa
+# from celery.result import AsyncResult
 
 # IMPORT LOCAL LIBRARIES
 # from lorgs.models import loader
 # from lorgs import data
-from lorgs import tasks
+# from lorgs import tasks
 # from lorgs.cache import Cache
 from lorgs.logger import logger
 # from lorgs.models import Report
@@ -22,8 +22,7 @@ from lorgs.models import specs
 # from lorgs.models import warcraftlogs_report
 from lorgs.models import warcraftlogs_ranking
 
-
-from lorgs import celery
+# from lorgs import celery
 
 
 BP = flask.Blueprint("api", __name__, cli_group=None)
@@ -84,18 +83,66 @@ def load_spec_rankings(spec_id, boss_id):
     return {"task": new_task.id}
 
 
-@BP.route("/spec_ranking/<string:spec_slug>/<int:boss_id>")
-def spec_ranking(spec_slug, boss_id):
+@BP.route("/spec_ranking/<string:spec_slug>/<string:boss_slug>")
+def spec_ranking(spec_slug, boss_slug):
 
     # limit = flask.request.args.get("limit", default=50, type=int)
 
-    # query them all into memory
-    spec_ranking = warcraftlogs_ranking.SpecRanking.objects(boss_id=boss_id, spec_slug=spec_slug).first()
+    t1 = time.time()
 
+    # query them all into memory
+    spec_ranking = warcraftlogs_ranking.SpecRanking.objects(boss_slug=boss_slug, spec_slug=spec_slug).first()
+    spec_ranking = spec_ranking or warcraftlogs_ranking.SpecRanking(boss_slug=boss_slug, spec_slug=spec_slug)
+
+    t2 = time.time()
+
+    players = [player.as_dict() for player in spec_ranking.players]
+
+    t3 = time.time()
+
+    t21 = (t2-t1) * 1000
+    t32 = (t3-t2) * 1000
 
     return {
-        "players": [player.as_dict() for player in spec_ranking.players]
+        "players": players,
+
+        "times": {
+            "t1": t1,
+            "t2": t2,
+            "t3": t3,
+            "t2-t1": f"{t21:.3}ms",
+            "t3-t2": f"{t32:.3}ms",
+        }
+
     }
+
+
+@BP.route("/spec_ranking_test/<string:spec_slug>/<string:boss_slug>")
+def spec_ranking_test(spec_slug, boss_slug):
+    count = flask.request.args.get("count", default=10, type=int)
+
+    results = []
+    for i in range(count):
+
+        t1 = time.time()
+
+        # query them all into memory
+        spec_ranking = warcraftlogs_ranking.SpecRanking.objects(boss_slug=boss_slug, spec_slug=spec_slug).first()
+        spec_ranking = spec_ranking or warcraftlogs_ranking.SpecRanking(boss_slug=boss_slug, spec_slug=spec_slug)
+
+        t2 = time.time()
+        results.append((t2-t1) * 1000)
+
+    return {
+        "results": results,
+        "avg": sum(results) / count,
+        "min": min(results),
+        "max": max(results),
+    }
+
+
+
+
 
 
 ###############################################################################

@@ -1,13 +1,13 @@
 """Models for Warcraftlog-Reports/Fights/Actors."""
 
 # IMPORT STANDARD LIBRARIES
-import uuid
+# import uuid
 import datetime
 
 # IMPORT THIRD PARTY LIBRARIES
 import mongoengine as me
-import sqlalchemy as sa
-from sqlalchemy.dialects import postgresql as pg
+# import sqlalchemy as sa
+# from sqlalchemy.dialects import postgresql as pg
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import db
@@ -15,7 +15,6 @@ from lorgs import data
 from lorgs import utils
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
-from lorgs.models import encounters
 from lorgs.models import encounters
 from lorgs.models.specs import WowSpec
 '''
@@ -131,7 +130,7 @@ class SpecRanking(me.Document, warcraftlogs_base.wclclient_mixin):
     spec_slug = me.StringField(required=True)
     boss_slug = me.StringField(required=True)
 
-    updated = me.DateTimeField()
+    updated = me.DateTimeField(default=datetime.datetime.utcnow)
 
     reports = me.ListField(me.EmbeddedDocumentField(warcraftlogs_base.Report))
 
@@ -149,6 +148,10 @@ class SpecRanking(me.Document, warcraftlogs_base.wclclient_mixin):
         self.spec = WowSpec.get(full_name_slug=self.spec_slug)
         self.boss = encounters.RaidBoss.get(name_slug=self.boss_slug)
 
+    ##########################
+    # Attributes
+    #
+
     @property
     def fights(self):
         return utils.flatten(report.fights for report in self.reports)
@@ -157,9 +160,13 @@ class SpecRanking(me.Document, warcraftlogs_base.wclclient_mixin):
     def players(self):
         return utils.flatten(fight.players for fight in self.fights)
 
+    ##########################
+    # Methods
+    #
+
     async def load(self, limit=50):
         """Get Top Ranks for a given boss and spec."""
-        logger.info(f"{self.boss.name} vs. {self.spec.name} {self.spec.wow_class.name} START")
+        logger.info(f"{self.boss.name} vs. {self.spec.name} {self.spec.wow_class.name} START | limit={limit}")
 
         # Build and run the query
         query = f"""\
@@ -177,7 +184,6 @@ class SpecRanking(me.Document, warcraftlogs_base.wclclient_mixin):
             }}
         }}
         """
-
         query_result = await self.client.query(query)
         query_result = query_result.get("worldData", {}).get("encounter", {}).get("characterRankings", {})
 
@@ -188,6 +194,8 @@ class SpecRanking(me.Document, warcraftlogs_base.wclclient_mixin):
         # not even needed? because we filter by name
         # logger.debug(f"{boss.name} vs. {spec.name} {spec.wow_class.name} load source ids")
         # await load_char_rankings_source_ids(rankings)
+
+        self.reports = []
 
         for ranking_data in rankings:
             report_data = ranking_data.get("report", {})

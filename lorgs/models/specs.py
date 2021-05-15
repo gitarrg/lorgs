@@ -1,7 +1,4 @@
 """Models for Classes, Specs, Spells and Roles."""
-# pylint: disable=no-member
-
-import sqlalchemy as sa
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
@@ -16,14 +13,14 @@ class WowRole(base.Model):
         self.name = name
         self.code = code or name.lower()
 
-        self.icon_name = f"roles/{self.name.lower()}.jpg"
+        self.icon = f"roles/{self.name.lower()}.jpg"
         self.specs = []
 
     def __repr__(self):
         return f"<Role({self.name})>"
 
     def __lt__(self, other):
-        return self.id < other.id
+        return self.code < other.code
 
     @property
     def metric(self):
@@ -55,28 +52,10 @@ class WowClass(base.Model):
             spec.add_spell(**kwargs)
 
 
-"""
-class SpecSpells():
-
-    __tablename__ = "spec_spells"
-
-    spec_id = sa.Column(sa.Integer, sa.ForeignKey("wow_spec.id", ondelete="cascade"), primary_key=True)
-    spell_id = sa.Column(sa.Integer, sa.ForeignKey("wow_spell.spell_id", ondelete="cascade"), primary_key=True)
-    group_id = sa.Column(sa.Integer, sa.ForeignKey("wow_spec.id"))
-
-    spec = sa.orm.relationship("WowSpec", foreign_keys=[spec_id], back_populates="spells", lazy="joined")
-    spell = sa.orm.relationship("WowSpell", foreign_keys=[spell_id], back_populates="specs", lazy="joined")
-    group = sa.orm.relationship("WowSpec", foreign_keys=[group_id], lazy="joined")
-
-    def __repr__(self):
-        return f"<SpecSpells(spell={self.spell_id}, group={self.group.name})>"
-"""
-
-
 class WowSpec(base.Model):
     """docstring for Spec"""
 
-    def __init__(self, id, wow_class, name, role="dps", short_name=""):
+    def __init__(self, wow_class, name, role=None, short_name=""):
         super().__init__()
         # self.id = id
         self.name = name
@@ -105,7 +84,7 @@ class WowSpec(base.Model):
         # str: Spec Name without spaces, but still capCase.. eg.: "BeastMastery"
         self.name_slug_cap = self.name.replace(" ", "")
 
-        self.icon_name = f"specs/{self.full_name_slug}.jpg"
+        self.icon = f"specs/{self.full_name_slug}.jpg"
 
 
     def __repr__(self):
@@ -119,34 +98,13 @@ class WowSpec(base.Model):
     #
 
     def add_spell(self, **kwargs):
-
-        # if spell_id in [spell.spell_id for spell in self.spells]:
-        #     return
         kwargs.setdefault("color", self.wow_class.color)
         kwargs.setdefault("group", self)
-        # group = kwargs.pop("group", self)
-        # spell.color = kwargs.get("color")
-        # kwargs["group"] = kwargs.get("group") or self
-        # kwargs.pop("group")
-        # kwargs.pop("wowhead_data", "")  # TODO
-        # kwargs.pop("wowhead_data", "")  # TODO
-        # spec  = kwargs.get("spec") or self
-        # kwargs["spec_id"] = spec.name
-        # spell_id = kwargs["spell_id"]
+
         spell = WowSpell(**kwargs)
+        spell.spec = self
         self.spells.append(spell)
-        """
-        if not spell:
-            spell = WowSpell(spell_id=spell_id, **kwargs)
-            # db.session.add(spell)
 
-        ss = SpecSpells()
-        ss.spec = self
-        ss.group = group
-        ss.spell = spell
-
-        self.spells.append(ss)
-        """
         return spell
 
 
@@ -157,15 +115,14 @@ class WowSpell(base.Model):
     ICON_ROOT = "https://wow.zamimg.com/images/wow/icons/medium"
 
     def __init__(self, spell_id: int, cooldown: int = 0, duration: int = 0, **kwargs):
-        super().__init__()
-
         self.spell_id = spell_id
         self.cooldown = cooldown
         self.duration = duration
 
-        self.icon_name = ""
-        self.spell_name = ""
-        self.show = True
+        self.spec = None
+        self.icon = kwargs.get("icon") or ""
+        self.name = kwargs.get("name") or ""
+        self.show = kwargs.get("show") or True
         self.color = kwargs.get("color") or ""
         self.group = kwargs.get("group")
 
@@ -183,12 +140,12 @@ class WowSpell(base.Model):
 
         return {
             "spell_id": self.spell_id,
-            "spell_name": self.spell_name,
             "duration": self.duration,
             "cooldown": self.cooldown,
 
             # display attributes
-            "icon_name": self.icon_name,
+            "name": self.name,
+            "icon": self.icon,
             "color": self.color,
             "show": self.show,
         }
@@ -197,7 +154,6 @@ class WowSpell(base.Model):
     def icon_path(self):
         """str: url to the image path."""
         # for overwrites with custom images
-        if self.icon_name.startswith("/"):
-            return self.icon_name
-
-        return f"{self.ICON_ROOT}/{self.icon_name}"
+        if self.icon.startswith("/"):
+            return self.icon
+        return f"{self.ICON_ROOT}/{self.icon}"

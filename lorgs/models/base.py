@@ -23,15 +23,14 @@ class MetaInstanceRegistry(type):
         return instance
 
 
-
 class IconPathMixin:
     """docstring for img_path_mixin"""
 
     @property
     def icon_path(self):
-        if not self.icon_name:
+        if not self.icon:
             return ""
-        return f"/static/images/{self.icon_name}"
+        return f"/static/images/{self.icon}"
 
 
 class Model(IconPathMixin, metaclass=MetaInstanceRegistry):

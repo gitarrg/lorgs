@@ -2,7 +2,7 @@
 """Warcaftlogs API Client."""
 
 # IMPORT STANDARD LIBRARIES
-import asyncio
+# import asyncio
 import hashlib
 import os
 
@@ -10,8 +10,8 @@ import os
 import aiohttp
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import models
-from lorgs import utils
+# from lorgs import models
+# from lorgs import utils
 from lorgs.cache import Cache
 from lorgs.logger import logger
 

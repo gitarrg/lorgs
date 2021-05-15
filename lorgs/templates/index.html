@@ -42,7 +42,7 @@
                         {% for spec in role.specs %}
                         <div class="parse_spec_link">
                             {% if spec.supported %}
-                            <a href="{{url_for('ui.spec_ranking', spec_slug=spec.full_name_slug, boss_id=boss.id)}}" data-toggle="tooltip" title="{{spec.full_name}}">
+                            <a href="{{url_for('ui.spec_ranking', spec_slug=spec.full_name_slug, boss_slug=boss.name_slug)}}" data-toggle="tooltip" title="{{spec.full_name}}">
                             {% else %}
                             <a class="disabled" href="#" data-toggle="tooltip" title="{{spec.full_name}} (not supported yet)">
                             {% endif %}

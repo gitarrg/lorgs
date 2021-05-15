@@ -17,6 +17,7 @@ CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND") or CELERY_BROKER_URL
 os.environ["CELERY_RESULT_BACKEND"] = CELERY_RESULT_BACKEND
 
 
+'''
 class CeleryTask(celery_.Task):
     """Custom TaskClass to ensure we close our database sessions when the tasks ends."""
 
@@ -24,13 +25,14 @@ class CeleryTask(celery_.Task):
         """Remove and DB Sessions."""
         db.session.remove()
         return super().after_return(*args, **kwargs)
+'''
 
 
 celery = celery_.Celery(  # pylint: disable=invalid-name
     "lorgs_celery",
     broker=CELERY_BROKER_URL,
     # backend=CELERY_RESULT_BACKEND,
-    task_cls=CeleryTask,
+    # task_cls=CeleryTask,
     include=["lorgs.tasks"]
 )
 
