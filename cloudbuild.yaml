@@ -1,4 +1,10 @@
 steps:
+
+- name: "bash"
+  args: ["pysassc", "--style=compact", lorgs/templates/scss/main.scss", "lorgs/static/_generated/style.css"]
+
 - name: "gcr.io/cloud-builders/gcloud"
   args: ["app", "deploy"]
+
 timeout: "1600s"
+
