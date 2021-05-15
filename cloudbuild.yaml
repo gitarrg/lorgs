@@ -1,10 +1,9 @@
 steps:
 
-
 # Build SCSS
 - name: "python:3"
   entrypoint: python3
-  args: ["-m", "pip", "install", "-t", , ".", pysass"]
+  args: ["-m", "pip", "install", "-t", ".", pysass"]
 - name: "python:3"
   entrypoint: 'mkdir'
   args: ["-p", "lorgs/static/_generated"]
