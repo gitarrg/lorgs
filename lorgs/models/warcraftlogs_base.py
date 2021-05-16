@@ -24,7 +24,7 @@ class wclclient_mixin:
         return WarcraftlogsClient.get_instance()
 
     @abc.abstractmethod
-    def get_query(self):
+    def get_query(self, filters=None):
         """Get the Query string to fetch all information for this object."""
         return ""
 
@@ -69,7 +69,7 @@ class Cast(me.EmbeddedDocument):
     def as_dict(self):
         return {
             "timestamp": self.timestamp,
-            "spell_id": self.spell.spell_id if self.spell else 0,
+            "spell_id": self.spell_id,
         }
 
 
@@ -192,6 +192,19 @@ class Fight(me.EmbeddedDocument, wclclient_mixin):
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.fight_id}, players={len(self.players)})"
 
+    def as_dict(self):
+        return {
+            "fight_id": self.fight_id,
+
+            "start_time": self.start_time,
+            "end_time": self.end_time,
+            "duration": self.duration,
+
+            "report_url": self.report_url,
+            "num_players": len(self.players),
+            "players": [player.as_dict() for player in self.players]
+        }
+
     ##########################
     # Attributes
 
@@ -216,11 +229,11 @@ class Fight(me.EmbeddedDocument, wclclient_mixin):
     #################################
     # Query Helpers
     #
-    def get_query(self, filters=()):
+    def get_query(self, filters=None):
         table_query_args = f"fightIDs: {self.fight_id}, startTime: {self.start_time}, endTime: {self.end_time}"
 
         # spell_ids = ",".join(str(spell.spell_id) for spell in self.spec.spells)
-        filters = list(filters)
+        filters = list(filters or [])
 
         if not self.players:
             player_query = f"players: table({table_query_args}, dataType: Summary)"
@@ -282,8 +295,9 @@ class Fight(me.EmbeddedDocument, wclclient_mixin):
 
             # create and return yield player object
             player = Player()
-            # player.fight = self
-            # player.spec = spec
+            player.fight = self
+            player.spec = spec
+            player.spec_slug = spec.full_name_slug
             player.source_id = composition_data.get("id")
             player.name = composition_data.get("name")
             player.total = total
@@ -304,17 +318,25 @@ class Fight(me.EmbeddedDocument, wclclient_mixin):
             player.process_casts_data(casts_data)
 
         # filter out players with no casts
-        # self.players = [player for player in self.players if player.casts]
+        self.players = [player for player in self.players if player.casts]
 
     @classmethod
-    async def load_many(cls, fights, filters=()):
+    async def load_many(cls, fights, filters=None, chunk_size=0):
+        """Load multiple fights at once.
 
-        queries = [fight.get_query(filters) for fight in fights]
+        Args:
+            fights(list[Fights]): the fights to load
+            filters(list[str], optional): extra argument used to filter fight casts
+            chunks_size[int, optional]: load in chunks of this size.
 
-        data = await cls.client.multiquery(queries)
+        """
+        for fights_chunk in utils.chunks(fights, chunk_size):
 
-        for fight, fight_data in zip(fights, data):
-            fight.process_query_result(fight_data)
+            queries = [fight.get_query(filters or []) for fight in fights_chunk]
+            data = await cls.client.multiquery(queries)
+
+            for fight, fight_data in zip(fights_chunk, data):
+                fight.process_query_result(fight_data)
 
 
 class Report(me.EmbeddedDocument, wclclient_mixin):
@@ -332,20 +354,30 @@ class Report(me.EmbeddedDocument, wclclient_mixin):
     def __str__(self):
         return f"<BaseReport({self.report_id}, num_fights={len(self.fights)})>"
 
+    def as_dict(self):
+        return {
+            "code": self.report_id,
+            "start_time": self.start_time,
+            "num_fights": len(self.fights),
+            "fights": [fight.as_dict() for fight in self.fights]
+        }
+
     ##########################
     # Attributes
     #
-
     @property
     def players(self):
         return utils.flatten(fight.players for fight in self.fights)
+
+    @property
+    def report_url(self):
+        return f"https://warcraftlogs.com/reports/{self.report_id}/"
 
     ##########################
     # Methods
     #
 
     def add_fight(self, **kwargs):
-
         fight = Fight(**kwargs)
         fight.report = self
         self.fights.append(fight)

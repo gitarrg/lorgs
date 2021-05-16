@@ -21,6 +21,7 @@ from lorgs.logger import logger
 from lorgs.models import specs
 # from lorgs.models import warcraftlogs_report
 from lorgs.models import warcraftlogs_ranking
+from lorgs.models import warcraftlogs_comps
 
 # from lorgs import celery
 
@@ -141,8 +142,30 @@ def spec_ranking_test(spec_slug, boss_slug):
     }
 
 
+###############################################################################
+#
+#       Comps
+#
+###############################################################################
+
+@BP.route("/comp_ranking/<string:name>")
+def comp(name):
+    comp = warcraftlogs_comps.CompConfig.objects(name=name).first()
+    if not comp:
+        flask.abort(404, description="Comp not found")
+
+    return comp.as_dict()
 
 
+@BP.route("/comp_ranking/<string:comp_name>/<string:boss_slug>")
+def comp_ranking(comp_name, boss_slug):
+    comp_ranking = warcraftlogs_comps.CompRating.get_or_create(comp=comp_name, boss_slug=boss_slug)
+    return {
+        "comp": comp_ranking.comp.name,
+        "updated": comp_ranking.updated,
+        "num_reports": len(comp_ranking.reports),
+        "reports": [report.as_dict() for report in comp_ranking.reports]
+    }
 
 
 ###############################################################################

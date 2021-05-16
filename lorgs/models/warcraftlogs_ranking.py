@@ -207,7 +207,7 @@ class SpecRanking(me.Document, warcraftlogs_base.wclclient_mixin):
             ################
             # Report
             report = warcraftlogs_base.Report()
-            report.report_id = report_data.get("code", 0)
+            report.report_id = report_data.get("code", "")
             report.start_time = report_data.get("startTime", 0)
             self.reports.append(report)
 

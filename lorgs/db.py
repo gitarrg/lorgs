@@ -39,7 +39,7 @@ monitoring.register(CommandLogger())
 
 
 URI = os.getenv("MONGO_URI")
-logger.warning("CONNECT TO MONGO_URI: %s", URI)
+# logger.warning("CONNECT TO MONGO_URI: %s", URI)
 me.connect(host=URI)
 
 

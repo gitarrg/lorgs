@@ -46,20 +46,21 @@ CLASSES = list(WowClass.all)
 #
 #   SPECS
 #
+################################################################################
 
 WARRIOR_ARMS          = WowSpec(role=MDPS, wow_class=WARRIOR,      name="Arms")
 WARRIOR_FURY          = WowSpec(role=MDPS, wow_class=WARRIOR,      name="Fury")
-WARRIOR_PROT          = WowSpec(role=TANK, wow_class=WARRIOR,      name="Protection")
+WARRIOR_PROT          = WowSpec(role=TANK, wow_class=WARRIOR,      name="Protection",    short_name="Prot")
 PALADIN_HOLY          = WowSpec(role=HEAL, wow_class=PALADIN,      name="Holy")
-PALADIN_PROTECTION    = WowSpec(role=TANK, wow_class=PALADIN,      name="Protection")
-PALADIN_RETRIBUTION   = WowSpec(role=MDPS, wow_class=PALADIN,      name="Retribution")
+PALADIN_PROTECTION    = WowSpec(role=TANK, wow_class=PALADIN,      name="Protection",    short_name="Prot")
+PALADIN_RETRIBUTION   = WowSpec(role=MDPS, wow_class=PALADIN,      name="Retribution",   short_name="Ret")
 HUNTER_BEASTMASTERY   = WowSpec(role=RDPS, wow_class=HUNTER,       name="Beastmastery")
 HUNTER_MARKSMANSHIP   = WowSpec(role=RDPS, wow_class=HUNTER,       name="Marksmanship")
 HUNTER_SURVIVAL       = WowSpec(role=MDPS, wow_class=HUNTER,       name="Survival")
-ROGUE_ASSASSINATION   = WowSpec(role=MDPS, wow_class=ROGUE,        name="Assassination")
+ROGUE_ASSASSINATION   = WowSpec(role=MDPS, wow_class=ROGUE,        name="Assassination", short_name="Assa")
 ROGUE_OUTLAW          = WowSpec(role=MDPS, wow_class=ROGUE,        name="Outlaw")
 ROGUE_SUBTLETY        = WowSpec(role=MDPS, wow_class=ROGUE,        name="Subtlety")
-PRIEST_DISCIPLINE     = WowSpec(role=HEAL, wow_class=PRIEST,       name="Discipline")
+PRIEST_DISCIPLINE     = WowSpec(role=HEAL, wow_class=PRIEST,       name="Discipline",    short_name="Disc")
 PRIEST_HOLY           = WowSpec(role=HEAL, wow_class=PRIEST,       name="Holy")
 PRIEST_SHADOW         = WowSpec(role=RDPS, wow_class=PRIEST,       name="Shadow")
 DEATHKNIGHT_BLOOD     = WowSpec(role=TANK, wow_class=DEATHKNIGHT,  name="Blood")
@@ -67,20 +68,20 @@ DEATHKNIGHT_FROST     = WowSpec(role=MDPS, wow_class=DEATHKNIGHT,  name="Frost")
 DEATHKNIGHT_UNHOLY    = WowSpec(role=MDPS, wow_class=DEATHKNIGHT,  name="Unholy")
 SHAMAN_ELEMENTAL      = WowSpec(role=RDPS, wow_class=SHAMAN,       name="Elemental")
 SHAMAN_ENHANCEMENT    = WowSpec(role=MDPS, wow_class=SHAMAN,       name="Enhancement")
-SHAMAN_RESTORATION    = WowSpec(role=HEAL, wow_class=SHAMAN,       name="Restoration")
+SHAMAN_RESTORATION    = WowSpec(role=HEAL, wow_class=SHAMAN,       name="Restoration",   short_name="Resto")
 MAGE_ARCANE           = WowSpec(role=RDPS, wow_class=MAGE,         name="Arcane")
 MAGE_FIRE             = WowSpec(role=RDPS, wow_class=MAGE,         name="Fire")
 MAGE_FROST            = WowSpec(role=RDPS, wow_class=MAGE,         name="Frost")
-WARLOCK_AFFLICTION    = WowSpec(role=RDPS, wow_class=WARLOCK,      name="Affliction")
-WARLOCK_DEMONOLOGY    = WowSpec(role=RDPS, wow_class=WARLOCK,      name="Demonology")
-WARLOCK_DESTRUCTION   = WowSpec(role=RDPS, wow_class=WARLOCK,      name="Destruction")
+WARLOCK_AFFLICTION    = WowSpec(role=RDPS, wow_class=WARLOCK,      name="Affliction",    short_name="Aff")
+WARLOCK_DEMONOLOGY    = WowSpec(role=RDPS, wow_class=WARLOCK,      name="Demonology",    short_name="Demo")
+WARLOCK_DESTRUCTION   = WowSpec(role=RDPS, wow_class=WARLOCK,      name="Destruction",   short_name="Destro")
 MONK_BREWMASTER       = WowSpec(role=TANK, wow_class=MONK,         name="Brewmaster")
 MONK_MISTWEAVER       = WowSpec(role=HEAL, wow_class=MONK,         name="Mistweaver")
 MONK_WINDWALKER       = WowSpec(role=MDPS, wow_class=MONK,         name="Windwalker")
 DRUID_BALANCE         = WowSpec(role=RDPS, wow_class=DRUID,        name="Balance")
 DRUID_FERAL           = WowSpec(role=MDPS, wow_class=DRUID,        name="Feral")
 DRUID_GUARDIAN        = WowSpec(role=TANK, wow_class=DRUID,        name="Guardian")
-DRUID_RESTORATION     = WowSpec(role=HEAL, wow_class=DRUID,        name="Restoration")
+DRUID_RESTORATION     = WowSpec(role=HEAL, wow_class=DRUID,        name="Restoration",   short_name="Resto")
 DEMONHUNTER_HAVOC     = WowSpec(role=MDPS, wow_class=DEMONHUNTER,  name="Havoc")
 DEMONHUNTER_VENGEANCE = WowSpec(role=TANK, wow_class=DEMONHUNTER,  name="Vengeance")
 
@@ -88,16 +89,6 @@ SPECS = list(WowSpec.all)
 
 for spec in WowSpec.all:
     spec.role.specs.append(spec)
-
-
-WARRIOR_PROT.short_name        = "Prot"
-PALADIN_PROTECTION.short_name  = "Prot"
-PALADIN_RETRIBUTION.short_name = "Ret"
-ROGUE_ASSASSINATION.short_name = "Assa"
-PRIEST_DISCIPLINE.short_name   = "Disc"
-SHAMAN_RESTORATION.short_name  = "Resto"
-WARLOCK_AFFLICTION.short_name  = "Aff"
-WARLOCK_DEMONOLOGY.short_name  = "Demo"
 
 # sorry guys...
 WARRIOR_PROT.supported = False
@@ -312,4 +303,5 @@ ALL_SPELLS = list(WowSpell.all)
 
 
 for spell in ALL_SPELLS:
-    spell.show = spell.group.role is not ROLE_ITEM
+    if spell.group.role is ROLE_ITEM:
+        spell.show = False

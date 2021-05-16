@@ -31,9 +31,10 @@ class WowRole(base.Model):
 class WowClass(base.Model):
     """A playable class in wow."""
 
-    def __init__(self, id, name, color=""):
+    def __init__(self, id: int, name: str, color: str=""):
 
-        # self.id = id # TODO: check if needed?
+        # int: class id, mostly used for sorting
+        self.id = id
         self.name = name
         self.color = color
         self.specs = []
@@ -47,6 +48,9 @@ class WowClass(base.Model):
     def __repr__(self):
         return f"<Class(name='{self.name}')>"
 
+    def __lt__(self, other):
+        return self.id < other.id
+
     def add_spell(self, **kwargs):
         for spec in self.specs:
             spec.add_spell(**kwargs)
@@ -55,7 +59,7 @@ class WowClass(base.Model):
 class WowSpec(base.Model):
     """docstring for Spec"""
 
-    def __init__(self, wow_class, name, role=None, short_name=""):
+    def __init__(self, wow_class: WowClass, name: str, role: WowRole, short_name: str = ""):
         super().__init__()
         # self.id = id
         self.name = name
@@ -91,7 +95,11 @@ class WowSpec(base.Model):
         return f"<Spec({self.full_name})>"
 
     def __lt__(self, other):
-        return (self.role, self.name) < (other.role, other.name)
+
+        def sort_key(obj):
+            return (obj.role, obj.wow_class, obj.name)
+
+        return sort_key(self) < sort_key(other)
 
     ##########################
     # Methods
@@ -114,7 +122,7 @@ class WowSpell(base.Model):
     # yoink
     ICON_ROOT = "https://wow.zamimg.com/images/wow/icons/medium"
 
-    def __init__(self, spell_id: int, cooldown: int = 0, duration: int = 0, **kwargs):
+    def __init__(self, spell_id: int, cooldown: int = 0, duration: int = 0, show: bool = True, **kwargs):
         self.spell_id = spell_id
         self.cooldown = cooldown
         self.duration = duration
@@ -122,7 +130,7 @@ class WowSpell(base.Model):
         self.spec = None
         self.icon = kwargs.get("icon") or ""
         self.name = kwargs.get("name") or ""
-        self.show = kwargs.get("show") or True
+        self.show = show
         self.color = kwargs.get("color") or ""
         self.group = kwargs.get("group")
 

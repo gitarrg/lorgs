@@ -1,5 +1,5 @@
-{% set fight_duration = fight.duration / 250 %}
-<div class="player_timeline" style="width: {{fight_duration + 100}}px" data-source_id={{player.source_id}}>
+{% set fight = fight or player.fight %}
+<div class="player_timeline" style="width: {{100 + (fight.duration / 250) }}px" data-source_id={{player.source_id}}>
 
     <!-- Casts -->
     <div class="cast_container inner_shadow" style="width: {{player.lifetime/250}}px">
@@ -40,7 +40,7 @@
 
     {% else %}
         {% if inline_killtime %}
-        <div class="fight_killtime">
+        <div class="fight_killtime" style="left: {{ fight.duration / 250 }}px">
             <i class="fas fa-skull-crossbones"></i> {{fight.duration|format_time}}
         </div>
         {% endif %}

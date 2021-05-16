@@ -1,0 +1,97 @@
+
+
+{% macro header(boss, comp) -%}
+<h1 class="m-0">
+    <a href="comp.report_url__TODO" target="_blank">
+        <img class="icon-l rounded shadow border-white" src="{{boss.icon_path}}" alt="{{boss.name}}" target="_blank">
+        <span>{{boss.name}}</span>
+        <span>vs</span>
+
+        {% for spec in comp.specs %}
+            <img class="icon-l rounded shadow wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.icon_path}}">
+            <span class="wow-class-{{spec.wow_class.name_slug}}">{{spec.short_name}}</span>
+            {% if not loop.last %}
+                <span> </span>
+            {% endif %}
+        {% endfor %}
+
+    </a>
+</h1>
+{%- endmacro %}
+
+
+{% extends "base.html" %}
+
+{% block title %}
+Lorgs: {{boss.name}}
+{% endblock %}
+
+
+{% block header %}
+<div class="mt-3 flex-row d-flex flex-wrap-reverse">
+    <div class="mb-2">
+    {{ header(boss, comp) }}
+    </div>
+
+    <div class="ml-auto mb-2">
+        {% include "elements/comp_ranking_nav.html" %}
+    </div>
+
+</div>
+{% endblock %}
+
+
+{% block content %}
+<div class="mb-2">
+    {% include "elements/settings_bar.html" %}
+</div>
+
+
+{% from "elements/timeline_player_name.html" import player_name with context %}
+{% from "elements/timeline_ruler.html" import timeline_ruler %}
+{% from "elements/timeline_killtime.html" import killtime %}
+
+
+<!-- TIMELINES -->
+<div class="p-2 bg-dark rounded border">
+
+    <!-- Player Names -->
+    <div class="player_names_container spec_ranking float-left">
+    {% for report in reports %}
+        {% for fight in report.fights %}
+            <div style="height: 30px"></div>  {# space for the timeline ruler #}
+            {% for player in report.players|sort(attribute="spec.role,spec.name,name") %}
+                {{ player_name(player) }}
+            {% endfor %} {# for player #}
+        {% endfor %} {# for fights #}
+    {% endfor %} {# for report #}
+    </div>
+
+    <!-- Casts -->
+    <div class="player_timelines_container">
+
+        <div class="timeline_cursor" style="left: 10px;">
+            <div class="timeline_cursor_handle">0:00</div>
+        </div>
+
+        {% for report in reports %}
+            {% for fight in report.fights %}
+
+                {# timeline ruler and killtime #}
+                {{ timeline_ruler(fight.duration) }}
+                {% for player in fight.players|sort(attribute="spec.role,spec.name,name") %}
+                    {% include "elements/player_timeline.html" %}
+                {% endfor %} {# for player #}
+            {% endfor %} {# for fights #}
+        {% endfor %} {# for report #}
+    </div>
+</div>
+{% endblock %}
+
+
+<!-- Content Scripts -->
+{% block scripts %}
+<script src="{{url_for('static',filename='spells.js')}}"></script>
+<script src="{{url_for('static',filename='timeline.js')}}"></script>
+{{ super() }}
+{% endblock %}

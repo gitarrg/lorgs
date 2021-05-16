@@ -9,6 +9,10 @@ import arrow
 
 def chunks(lst, n):
     """Yield successive n-sized chunks from lst."""
+    if n <= 0: # special case to allow unchucked
+        yield lst
+        return
+
     for i in range(0, len(lst), n):
         yield lst[i:i + n]
 

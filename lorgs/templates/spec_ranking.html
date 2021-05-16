@@ -40,8 +40,8 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
     {% include "elements/settings_bar.html" %}
 </div>
 
-
 {% from "elements/timeline_player_name.html" import player_name with context %}
+{% from "elements/timeline_ruler.html" import timeline_ruler %}
 
 <!-- TIMELINES -->
 <div class="p-2 bg-dark rounded border">
@@ -55,8 +55,11 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
     </div>
 
     <div class="player_timelines_container">
-        {% include "elements/timeline_ruler.html" %}
-        <div class="timeline_cursor" style="left: 10px;"><div class="timeline_cursor_handle">0:00</div></div>
+        {{ timeline_ruler(timeline_duration, show_killtime=False) }}
+
+        <div class="timeline_cursor" style="left: 10px;">
+            <div class="timeline_cursor_handle">0:00</div>
+        </div>
 
         <div class="player_timeline_scroll_y">
         {% set inline_killtime=True %}

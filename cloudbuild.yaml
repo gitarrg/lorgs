@@ -20,10 +20,3 @@ steps:
 - name: "gcr.io/cloud-builders/gcloud"
   args: ["app", "deploy"]
   timeout: "1600s"
-  env:
-  - 'LORGS_CONFIG_NAME=lorgs.config.ProductionConfig'
-  - 'WCL_CLIENT_ID=${_WCL_CLIENT_ID}'
-  - 'WCL_CLIENT_SECRET=${_WCL_CLIENT_SECRET}'
-  - 'MONGO_URI=${_MONGO_URI}'
-  - 'REDIS_URL=${_REDIS_URL}'
-

@@ -1,9 +1,26 @@
+{#
+Macro to create the timeline ruler part,
+which is usually shown at the top or bottom of a timeline.
+#}
+
+{% macro timeline_ruler(duration, show_killtime=True) -%}
 <div class="timeline_ruler">
-    {% for i in range(0, timeline_duration, 10*1000) -%}
-    <div class="timeline_tick">
-        {%- if i % 30000 == 0 -%}
-        <div class="timeline_timestamp">{{ i|format_time }}</div>
-        {%- endif -%}
+
+    <div class="timeline_ruler__tick_container" style="width: {{duration/250}}px">
+        {% for i in range(0, duration, 10*1000) -%}
+        <div class="timeline_tick">
+            {%- if i % 30000 == 0 -%}
+            <div class="timeline_timestamp">{{ i|format_time }}</div>
+            {%- endif -%}
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
+
+    {# show killtime (or wipetime) #}
+    {% if show_killtime %}
+    <div class="timeline_killtime" style="left: {{duration/250}}px">
+        {{duration|format_time}}
+    </div>
+    {% endif %}
 </div>
+{%- endmacro %}

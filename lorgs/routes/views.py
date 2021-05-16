@@ -16,6 +16,7 @@ from lorgs.models import encounters
 # from lorgs.models import specs
 # from lorgs.models import warcraftlogs
 from lorgs.models import warcraftlogs_ranking
+from lorgs.models import warcraftlogs_comps
 # from lorgs.models import warcraftlogs_report
 
 
@@ -55,25 +56,6 @@ def add_shared_variables():
     }
 
 
-@BP.before_app_first_request
-def load_shared_data():
-    return
-
-    """
-    roles = specs.WowRole.query
-    roles = roles.filter(specs.WowRole.id < 1000)
-    roles = roles.options(sa.orm.joinedload(specs.WowRole.specs))
-    roles = roles.all()
-    SHARED_DATA["roles"] = roles
-    SHARED_DATA["specs"] = utils.flatten(role.specs for role in roles)
-
-    bosses = encounters.RaidBoss.query
-    bosses = bosses.options(sa.orm.joinedload(encounters.RaidBoss.zone))
-    bosses = bosses.all()
-    SHARED_DATA["bosses"] = bosses
-    """
-
-
 ################################################################################
 #
 #   GLOBAL
@@ -87,6 +69,9 @@ def index():
     kwargs = {}
     kwargs["boss"] = encounters.RaidBoss.get(id=DEFAULT_BOSS_ID)
     kwargs["roles"] = data.ROLES
+
+    kwargs["comps"] = warcraftlogs_comps.CompConfig.objects
+
     return flask.render_template("index.html", **kwargs)
 
 
@@ -121,7 +106,31 @@ def spec_ranking(spec_slug, boss_slug):
     kwargs["roles"] = data.ROLES
     kwargs["bosses"] = data.CASTLE_NATHRIA.bosses # encounters.RaidBoss.all
 
-    return flask.render_template("spec_ranking.html", **kwargs, **SHARED_DATA)
+    return flask.render_template("spec_ranking.html", **kwargs)
+
+################################################################################
+#
+#   COMPS
+#
+################################################################################
+
+
+@BP.route("/comp_ranking/<string:comp_name>/<string:boss_slug>")
+def comp_ranking(comp_name, boss_slug):
+    comp_ranking = warcraftlogs_comps.CompRating.get_or_create(comp=comp_name, boss_slug=boss_slug)
+
+    kwargs = {}
+    kwargs["comp"] = comp_ranking.comp
+    kwargs["boss"] = comp_ranking.boss
+    kwargs["reports"] = comp_ranking.reports
+
+    kwargs["all_spells"] = comp_ranking.spells_used
+    kwargs["timeline_duration"] = 0
+
+    kwargs["roles"] = data.ROLES
+    kwargs["bosses"] = data.CASTLE_NATHRIA.bosses
+
+    return flask.render_template("comp_ranking.html", **kwargs)
 
 
 ################################################################################

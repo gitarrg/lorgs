@@ -61,39 +61,26 @@
 
         <div class="mb-3" style="clear: both"></div>
 
-        {#
         <h3>Top Reports by Comp:</h3>
 
         <div class="bg-dark rounded border p-2">
             <table>
-                {% for comp in wow_data.HEAL_COMPS %}
-                <tr>
-                    {% if loop.first %}
-                    <td rowspan="{{loop.length}}">
-                        <img class="icon-m rounded border border-black" src="static/images/roles/healer.jpg">
-                    </td>
-                    <td rowspan="{{loop.length}}" style="width: 8rem;margin-right: 2rem">
-                        <span>Healers:</span>
-                    </td>
-                    {% endif %}
+                {% for comp in comps %}
 
-                    <td>
-                        <a href="comps_heal_{{comp.name}}.html">
-                        {% for spec in comp.specs %}
-                            <img class="icon-spec icon-s rounded wow-class-border-{{spec.class_name_slug}}" src="static/images/specs/{{spec.full_name_slug}}.jpg">
-                                <span class="wow-class-{{spec.class_name_slug}}">{{spec.short_name}}
-                                {% if not loop.last %}
-                                &nbsp;
-                                {% endif %}
-                                </span>
-                        {% endfor %}
-                        </a>
-                    </td>
+                <tr>
+                    <a href="{{url_for('ui.comp_ranking', comp_name=comp.name, boss_slug=boss.name_slug)}}">
+                    {% for spec in comp.specs %}
+                        <img class="icon-spec icon-s rounded wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.icon_path}}">
+                        <span class="wow-class-{{spec.wow_class.name_slug}}">{{spec.short_name}}</span>
+                        {% if not loop.last %}&nbsp;{% endif %}
+                    {% endfor %}
+                    </a>
                 </tr>
-                {% endfor %}
+
+                {% endfor %} {# for comps #}
+
             </table>
         </div>
-        #}
     </div>
 </div>
 {% endblock %}
