@@ -1,4 +1,8 @@
-
+{% from "elements/timeline_player_name.html" import player_name %}
+{% from "elements/timeline_player_name.html" import boss_name %}
+{% from "elements/timeline_ruler.html" import timeline_ruler %}
+{% from "elements/timeline_killtime.html" import killtime %}
+{% from "elements/timeline_casts.html" import player_timeline %}
 
 
 {% macro header_boss(boss, spec) -%}
@@ -13,14 +17,19 @@
 </h1>
 {%- endmacro %}
 
-
+{##############################################################################}
 
 {% extends "base.html" %}
+
+{##############################################################################}
+{# TITLE #}
 
 {%- block title %}
 Lorgs: {{spec.full_name}} vs. {{boss.name}}
 {%- endblock -%}
 
+{##############################################################################}
+{# HEADER #}
 
 {% block header -%}
 <div class="mt-3 flex-row d-flex flex-wrap-reverse">
@@ -34,40 +43,48 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
 </div>
 {% endblock %}
 
+{##############################################################################}
+{# CONTENT #}
 
 {% block content -%}
 <div class="mb-2">
-    {% include "elements/settings_bar.html" %}
+    {% with boss=None %}
+        {% include "elements/settings_bar.html" %}
+    {% endwith %}
 </div>
 
-{% from "elements/timeline_player_name.html" import player_name with context %}
-{% from "elements/timeline_ruler.html" import timeline_ruler %}
 
 <!-- TIMELINES -->
 <div class="p-2 bg-dark rounded border">
 
     <!-- Player Names -->
     <div class="player_names_container spec_ranking float-left">
-        <div style="height: 32px"></div>
+        <div class="timeline_ruler_playerholder"></div>
+        {# Boss #}
+        {% if boss_actor %}
+        {{ boss_name(boss_actor) }}
+        {% endif %}
+
+        {# Players #}
         {% for player in players %}
             {{ player_name(player, loop.index) }}
         {% endfor %}
     </div>
 
     <div class="player_timelines_container">
-        {{ timeline_ruler(timeline_duration, show_killtime=False) }}
+        {{ timeline_ruler(timeline_duration) }}
+        {% include "elements/timeline_cursor.html" %}
 
-        <div class="timeline_cursor" style="left: 10px;">
-            <div class="timeline_cursor_handle">0:00</div>
-        </div>
 
-        <div class="player_timeline_scroll_y">
-        {% set inline_killtime=True %}
+        {# Boss #}
+        {% if boss_actor %}
+        {{ player_timeline(boss_actor) }}
+        {% endif %}
+
+        {# Players #}
         {% for player in players %}
-            {% set fight=player.fight %}
-            {% include "elements/player_timeline.html" %}
-        {% endfor %}
-        </div>
+            {{ player_timeline(player) }}
+        {%- endfor %}
     </div>
 
 
@@ -75,7 +92,7 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
 </div>
 {% endblock %}
 
-
+{##############################################################################}
 
 <!-- Content Scripts -->
 {% block scripts %}

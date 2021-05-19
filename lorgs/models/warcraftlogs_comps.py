@@ -12,6 +12,7 @@ from lorgs import utils
 from lorgs.models.specs import WowSpec
 from lorgs.models import warcraftlogs_base
 from lorgs.models import encounters
+from lorgs.models import warcraftlogs_report
 
 
 class CompRating(me.Document, warcraftlogs_base.wclclient_mixin):
@@ -23,11 +24,7 @@ class CompRating(me.Document, warcraftlogs_base.wclclient_mixin):
 
     updated = me.DateTimeField(default=datetime.datetime.utcnow)
 
-    reports = me.ListField(me.EmbeddedDocumentField(warcraftlogs_base.Report))
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.boss = encounters.RaidBoss.get(name_slug=self.boss_slug)
+    reports = me.ListField(me.EmbeddedDocumentField(warcraftlogs_report.Report))
 
     @classmethod
     def get_or_create(cls, **kwargs):
@@ -38,6 +35,10 @@ class CompRating(me.Document, warcraftlogs_base.wclclient_mixin):
     ##########################
     # Attributes
     #
+    @property
+    def boss(self):
+        return encounters.RaidBoss.get(name_slug=self.boss_slug)
+
     @property
     def fights(self):
         return utils.flatten(report.fights for report in self.reports)
@@ -86,14 +87,14 @@ class CompRating(me.Document, warcraftlogs_base.wclclient_mixin):
             data = await self.client.query(query)
             data = data.get("worldData", {}).get("encounter", {}).get("fightRankings", {})
 
-            load_more = data.get("hasMorePages", False) and len(self.reports) < limit
+            load_more = data.get("hasMorePages", False)
 
             for ranking_data in data.get("rankings", []):
                 report_data = ranking_data.get("report", {})
 
                 ################
                 # Report
-                report = warcraftlogs_base.Report()
+                report = warcraftlogs_report.Report()
                 report.report_id = report_data.get("code", "")
                 report.start_time = report_data.get("startTime", 0)
                 self.reports.append(report)
@@ -105,7 +106,10 @@ class CompRating(me.Document, warcraftlogs_base.wclclient_mixin):
                 fight.start_time = ranking_data.get("startTime", 0) - report.start_time
                 fight.end_time = fight.start_time + ranking_data.get("duration", 0)
 
-                # players will be loaded later
+                fight.add_boss(self.boss.id)
+
+                if len(self.reports) > limit:
+                    return
 
     async def update(self):
 
@@ -114,7 +118,7 @@ class CompRating(me.Document, warcraftlogs_base.wclclient_mixin):
 
         # fights
         fights = utils.flatten(report.fights for report in self.reports)
-        await warcraftlogs_base.Fight.load_many(fights, filters=[self.comp.casts_filter], chunk_size=25)
+        await self.load_many(fights, filters=self.comp.get_casts_filters(), chunk_size=5)
 
 
 class CompConfig(me.Document, warcraftlogs_base.wclclient_mixin):
@@ -183,6 +187,16 @@ class CompConfig(me.Document, warcraftlogs_base.wclclient_mixin):
     ##########################
     # Query
     #
+    def get_casts_filters(self):
+        spells = utils.flatten(spec.spells for spec in self.specs)
+
+        spell_ids = [spell.spell_id for spell in spells]
+        spell_ids = sorted(list(set(spell_ids)))
+        spell_ids = ",".join(str(spell_id) for spell_id in spell_ids)
+
+        return [self.casts_filter, "type='cast'", f"ability.id in ({spell_ids})"]
+
+
     async def load_reports(self, boss_slug):
 
         scr = CompRating.get_or_create(comp=self, boss_slug=boss_slug)

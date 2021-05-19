@@ -3,13 +3,15 @@
 .cast_container {
     position: relative;
     float: left;
-    height: $timeline-height;
+    height: $timeline-height - 1px;
 
-    background: #222;
     overflow-x: hidden;
 
-    border: 1px solid black;
+    /*border: 1px solid black;*/
     border-left: none;
+
+    font-size: 14px;
+    /*margin-top: 1px;*/
 }
 
 
@@ -19,9 +21,10 @@
 
 .cast {
     position: absolute;
-    z-index: 1;
-    height:  $timeline-height-cast ; // for border
+    // z-index: 1;
+    height:  $timeline-height-cast;
     // cursor: default;
+    // top: 0px;  // puts it in the middle (1px top and 1px bottom)
 }
 
 .cast_icon,

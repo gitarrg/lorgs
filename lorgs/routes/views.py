@@ -17,21 +17,8 @@ from lorgs.models import encounters
 # from lorgs.models import warcraftlogs
 from lorgs.models import warcraftlogs_ranking
 from lorgs.models import warcraftlogs_comps
+from lorgs.models import warcraftlogs_base
 # from lorgs.models import warcraftlogs_report
-
-
-DEFAULT_BOSS_ID = 2407 # Sire Denathrius
-
-
-def spec_ranking_color(i):
-    if i == 1:
-        return "text-artifact"
-    if i <= 25:
-        return "text-astounding"
-    if i <= 100:
-        return "text-legendary"
-    return "text-epic"
-
 
 
 BP = flask.Blueprint(
@@ -52,7 +39,6 @@ def add_shared_variables():
     return {
         # "wow_data": wow_data,
         "GOOGLE_ANALYTICS_ID": config["GOOGLE_ANALYTICS_ID"],
-        "spec_ranking_color": spec_ranking_color,
     }
 
 
@@ -67,7 +53,7 @@ def add_shared_variables():
 def index():
     """Render the main index page."""
     kwargs = {}
-    kwargs["boss"] = encounters.RaidBoss.get(id=DEFAULT_BOSS_ID)
+    kwargs["boss"] = data.DEFAULT_BOSS
     kwargs["roles"] = data.ROLES
 
     kwargs["comps"] = warcraftlogs_comps.CompConfig.objects
@@ -95,11 +81,20 @@ def spec_ranking(spec_slug, boss_slug):
     spells_used = utils.uniqify(spells_used, key=lambda spell: spell)
     timeline_duration = max(fight.duration for fight in spec_ranking.fights) if spec_ranking.fights else 0
 
+
+    boss_actor = None
+    for fight in spec_ranking.fights:
+        if fight.boss and fight.boss.casts:
+            boss_actor = fight.boss
+            break
+
     # Return
     kwargs = {}
     kwargs["spec"] = spec_ranking.spec
     kwargs["boss"] = spec_ranking.boss
+
     kwargs["players"] = spec_ranking.players
+    kwargs["boss_actor"] = boss_actor
     kwargs["all_spells"] = spells_used
     kwargs["timeline_duration"] = timeline_duration
 
@@ -123,9 +118,10 @@ def comp_ranking(comp_name, boss_slug):
     kwargs["comp"] = comp_ranking.comp
     kwargs["boss"] = comp_ranking.boss
     kwargs["reports"] = comp_ranking.reports
+    kwargs["fights"] = comp_ranking.fights
 
     kwargs["all_spells"] = comp_ranking.spells_used
-    kwargs["timeline_duration"] = 0
+    kwargs["timeline_duration"] = max(fight.duration for fight in comp_ranking.fights) if comp_ranking.fights else 0
 
     kwargs["roles"] = data.ROLES
     kwargs["bosses"] = data.CASTLE_NATHRIA.bosses
@@ -168,35 +164,28 @@ def report_load(report_id):
     return flask.render_template("report_loading.html", **kwargs)
 
 
+'''
 @BP.route("/report/<string:report_id>")
 def report(report_id):
 
-    # query them all into memory
-    all_spells = specs.WowSpell.query.all()
+    user_report = warcraftlogs_base.UserReport.objects(report__report_id=report_id).first()
 
-    report = warcraftlogs_report.Report.query
-    report = report.options(
-        sa.orm.joinedload("fights"),
-        sa.orm.joinedload("fights.boss"),
-        sa.orm.joinedload("fights.players"),
-        sa.orm.joinedload("fights.players.spec"),
-    )
-    report = report.get(report_id)
-
-    if not report:
+    if not user_report:
         flask.abort(404, description="Report not found")
         # return flask.redirect(flask.url_for("ui.report_load", report_id=report_id))
 
+    report = user_report.report
+
     players = utils.uniqify(report.players, key=lambda player: player.source_id)
-    used_spells = utils.flatten(player.used_spells for player in players)
-    used_spells = utils.uniqify(used_spells, key=lambda spell: (spell.spell_id, spell.group))
+    spells_used = utils.flatten(player.spells_used for player in players)
+    spells_used = utils.uniqify(spells_used, key=lambda spell: (spell.spell_id, spell.group))
+    # used_spells = []
 
     kwargs = {
         "report": report,
 
         "unique_players": players,
-        "all_spells": used_spells,
+        "all_spells": spells_used,
         "timeline_duration": max(f.duration for f in report.fights) if report.fights else 0,
     }
     return flask.render_template("report.html", **kwargs)
-'''

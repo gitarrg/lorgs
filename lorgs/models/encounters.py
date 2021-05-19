@@ -5,6 +5,8 @@
 from lorgs import utils
 from lorgs.models import base
 
+from lorgs.models.specs import WowSpell
+
 
 class RaidZone(base.Model):
     """A raid zone in the Game."""
@@ -34,6 +36,8 @@ class RaidZone(base.Model):
 class RaidBoss(base.Model):
     """A raid boss in the Game."""
 
+    wow_class = {}
+
     def __init__(self, zone, id, name):
         self.id = id
         self.zone = zone
@@ -41,6 +45,12 @@ class RaidBoss(base.Model):
 
         self.name_slug = utils.slug(self.name, space="-")
         self.icon = f"bosses/{self.zone.name_slug}/{self.name_slug}.jpg"
+
+        # spells or buffs to track
+        self.events = []
+
+        # we track them as "spells" for now
+        self.spells = []
 
     def __repr__(self):
         return f"<RaidBoss(id={self.id} name={self.name})>"
@@ -51,3 +61,14 @@ class RaidBoss(base.Model):
             "name": self.name,
             # "name_slug": self.name_slug,
         }
+
+    ##########################
+    # Methods
+    #
+    def add_event(self, **kwargs): # event_type, spell_id, name: str, icon: str, duration: int = 0):
+        event = kwargs
+        self.events.append(event)
+
+        spell = WowSpell(**kwargs)
+        spell.spec = self
+        self.spells.append(spell)

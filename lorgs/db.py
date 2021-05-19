@@ -35,7 +35,7 @@ class CommandLogger(monitoring.CommandListener):
         logger.debug("{0.command_name} failed in {0.duration_micros:g}μs".format(event))
 
 
-monitoring.register(CommandLogger())
+# monitoring.register(CommandLogger())
 
 
 URI = os.getenv("MONGO_URI")

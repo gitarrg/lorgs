@@ -10,129 +10,22 @@ import mongoengine as me
 # from sqlalchemy.dialects import postgresql as pg
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import db
-from lorgs import data
 from lorgs import utils
 from lorgs.logger import logger
-from lorgs.models import warcraftlogs_base
 from lorgs.models import encounters
+from lorgs.models import warcraftlogs_base
+from lorgs.models import warcraftlogs_report
 from lorgs.models.specs import WowSpec
-'''
-
-class RankedCharacter(db.Base):
-    """A Character/Player in the top logs."""
-
-    __tablename__ = "ranked_character"
-
-    uuid = sa.Column(pg.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-
-    spec_id = sa.Column(sa.Integer, sa.ForeignKey("wow_spec.id"))
-    spec = sa.orm.relationship("WowSpec", lazy="joined")
-
-    boss_id = sa.Column(sa.Integer, sa.ForeignKey("raid_boss.id"))
-    boss = sa.orm.relationship("RaidBoss")
-
-    report_id = sa.Column(sa.String(64))
-    fight_id = sa.Column(sa.Integer)
-    player_name = sa.Column(sa.Unicode(128))
-    name = sa.orm.synonym("player_name")
-    amount = sa.Column(sa.Float, default=0)
-    total = sa.orm.synonym("amount")
-
-    fight_time_start = sa.Column(sa.BigInteger, default=0)
-    fight_time_end = sa.Column(sa.BigInteger, default=0)
-    fight_duration = sa.orm.column_property(fight_time_end - fight_time_start)
-
-    cast_data = sa.Column(pg.ARRAY(sa.Integer, dimensions=2), default=[])
-
-    def __repr__(self):
-        amount = utils.format_big_number(self.amount or 0)
-        return f"RankedCharacter({self.name}, amount={amount})"
-
-    def as_dict(self):
-
-        return {
-            "name": self.name,
-            "amount": self.amount,
-            "fight": self.fight,
-            "casts": [cast.as_dict() for cast in self.casts]
-        }
 
 
-    @property
-    def report_url(self):
-        return (
-            f"https://www.warcraftlogs.com/reports/{self.report_id}"
-            f"#fight={self.fight_id}"
-            # f"&source={self.source_id}"  # TODO
-        )
-
-    @property
-    def fight(self):
-        return {
-            "duration": self.fight_duration,
-        }
-
-    @property
-    def casts(self):
-        cast_data = self.cast_data or []
-        return [warcraftlogs_base.Cast(timestamp, spell_id) for timestamp, spell_id in cast_data]
-
-
-
-    @property
-    def lifetime(self):
-        return self.fight_duration
-
-    #################################
-    # Query Helpers
-    #
-
-    def _get_casts_query(self):
-        table_query_args = f"fightIDs: {self.fight_id}, startTime: {self.fight_time_start}, endTime: {self.fight_time_end}"
-
-        spell_ids = ",".join(str(spell.spell_id) for spell in self.spec.spells)
-        casts_filter = f"source.name='{self.player_name}' and ability.id in ({spell_ids})"
-
-        return f"""\
-            reportData
-            {{
-                report(code: "{self.report_id}")
-                {{
-                    casts: events({table_query_args}, dataType: Casts, filterExpression: \"{casts_filter}\")
-                        {{data}}
-                }}
-            }}
-            """
-
-    def _process_casts_data(self, casts_data):
-        """Process the result of a casts-query to create Cast objects."""
-        if not casts_data:
-            logger.warning("casts_data is empty")
-            return
-
-        self.cast_data = self.cast_data or []
-
-        for cast_data in casts_data:
-            # skip "begincast" events
-            if cast_data.get("type") != "cast":
-                continue
-
-            spell_id = cast_data["abilityGameID"]
-            timestamp = cast_data["timestamp"] - self.fight_time_start
-            self.cast_data.append([timestamp, spell_id])
-
-'''
-
-
-class SpecRanking(me.Document, warcraftlogs_base.wclclient_mixin):
+class SpecRanking(warcraftlogs_base.Document):
 
     spec_slug = me.StringField(required=True)
     boss_slug = me.StringField(required=True)
 
     updated = me.DateTimeField(default=datetime.datetime.utcnow)
 
-    reports = me.ListField(me.EmbeddedDocumentField(warcraftlogs_base.Report))
+    reports = me.ListField(me.EmbeddedDocumentField(warcraftlogs_report.Report))
 
     meta = {
         'indexes': [
@@ -142,15 +35,16 @@ class SpecRanking(me.Document, warcraftlogs_base.wclclient_mixin):
         ]
     }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.spec = WowSpec.get(full_name_slug=self.spec_slug)
-        self.boss = encounters.RaidBoss.get(name_slug=self.boss_slug)
-
     ##########################
     # Attributes
     #
+    @property
+    def spec(self):
+        return WowSpec.get(full_name_slug=self.spec_slug)
+
+    @property
+    def boss(self):
+        return encounters.RaidBoss.get(name_slug=self.boss_slug)
 
     @property
     def fights(self):
@@ -161,9 +55,8 @@ class SpecRanking(me.Document, warcraftlogs_base.wclclient_mixin):
         return utils.flatten(fight.players for fight in self.fights)
 
     ##########################
-    # Methods
+    # Query
     #
-
     async def load(self, limit=50):
         """Get Top Ranks for a given boss and spec."""
         logger.info(f"{self.boss.name} vs. {self.spec.name} {self.spec.wow_class.name} START | limit={limit}")
@@ -191,9 +84,6 @@ class SpecRanking(me.Document, warcraftlogs_base.wclclient_mixin):
         if limit:
             rankings = rankings[:limit]
 
-        # not even needed? because we filter by name
-        # logger.debug(f"{boss.name} vs. {spec.name} {spec.wow_class.name} load source ids")
-        # await load_char_rankings_source_ids(rankings)
 
         self.reports = []
 
@@ -206,7 +96,7 @@ class SpecRanking(me.Document, warcraftlogs_base.wclclient_mixin):
 
             ################
             # Report
-            report = warcraftlogs_base.Report()
+            report = report = warcraftlogs_report.Report()
             report.report_id = report_data.get("code", "")
             report.start_time = report_data.get("startTime", 0)
             self.reports.append(report)
@@ -218,12 +108,14 @@ class SpecRanking(me.Document, warcraftlogs_base.wclclient_mixin):
             fight.start_time = ranking_data.get("startTime", 0) - report.start_time
             fight.end_time = fight.start_time + ranking_data.get("duration", 0)
 
+            if len(self.reports) == 1: # this is the first report
+                fight.add_boss(self.boss.id)
+
             ################
             # Player
             player = fight.add_player()
-            player.spec = self.spec
             player.spec_slug = self.spec_slug
-            player.source_id = -1 # TODO
+            player.source_id = -1
             player.name = ranking_data.get("name")
             player.total = ranking_data.get("amount", 0)
 
@@ -231,8 +123,8 @@ class SpecRanking(me.Document, warcraftlogs_base.wclclient_mixin):
         # load casts
         #
         logger.info(f"{self.boss.name} vs. {self.spec.name} {self.spec.wow_class.name} load casts")
-        for i, chunk in enumerate(utils.chunks(self.fights, 50)): # load in chunks of 50 each
-            # logger.info(f"{boss.name} vs. {spec.name} {spec.wow_class.name} load casts | chunk {i}")
-            await warcraftlogs_base.Fight.load_many(chunk)
+        # for fight in self.fights:
+        #     print(fight.get_query())
 
+        await self.load_many(self.fights)
         self.updated = datetime.datetime.utcnow()

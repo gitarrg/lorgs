@@ -3,26 +3,34 @@
         Player Names
 *********************************/
 
-.player_name {
-    width: 150px;
-    height: 30px;
+
+.player_name,
+.boss_name {
+    width: 175px;
+    height: $timeline-height;
 
     background: hsl(0, 0%, 30%);
 
     padding-right: 5px;
-    margin-bottom: 2px;
+    // margin-bottom: 2px;
 
     border: 1px solid black;
-    border-top-left-radius: 0.25rem;
-    border-bottom-left-radius: 0.25rem;
+
+    // outline: 1px solid black;
+    // border-top-left-radius: 0.25rem;
+    // border-bottom-left-radius: 0.25rem;
     overflow: hidden;
 
     position: relative;
 
+    &:hover {
+        background: hsl(0, 0%, 40%);
+    }
+
     &__spec_icon,
     &__role_icon {
-        width: 30px;
-        height: 30px;
+        width: $timeline-height;
+        height: $timeline-height;
         border-right: 1px solid black;
     }
 
@@ -30,7 +38,7 @@
     &__rank,
     &__total {
         font-size: 1.2rem;
-        font-weight: bold;
+        // font-weight: bold;
 
         position: absolute;
 
@@ -47,6 +55,25 @@
     &__total {
         right: 5px;
     }
+}
+
+
+.boss_name + .player_name,
+.player_name + .player_name,
+{
+    border-top: none;
+}
+
+
+
+.boss_name {
+    background: hsl(0, 40%, 35%);
+    color: hsl(0, 30%, 75%);
+
+    &:hover {
+        background: hsl(0, 40%, 50%);
+    }
+
 }
 
 
@@ -73,4 +100,3 @@
         }
     }
 }
-

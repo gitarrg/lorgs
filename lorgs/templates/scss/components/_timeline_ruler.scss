@@ -1,5 +1,10 @@
 /* Timeline Ruler */
 
+
+.timeline_ruler_playerholder {
+    height: $timeline-height;
+}
+
 .timeline_ruler {
     user-select: none;
     height: $timeline-height;

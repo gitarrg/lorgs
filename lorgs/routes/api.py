@@ -99,22 +99,14 @@ def spec_ranking(spec_slug, boss_slug):
 
     players = [player.as_dict() for player in spec_ranking.players]
 
-    t3 = time.time()
-
     t21 = (t2-t1) * 1000
-    t32 = (t3-t2) * 1000
 
     return {
         "players": players,
 
         "times": {
-            "t1": t1,
-            "t2": t2,
-            "t3": t3,
             "t2-t1": f"{t21:.3}ms",
-            "t3-t2": f"{t32:.3}ms",
         }
-
     }
 
 
@@ -174,6 +166,7 @@ def comp_ranking(comp_name, boss_slug):
 #
 ###############################################################################
 
+"""
 @BP.route("/load_report/<string:report_id>")
 def load_report(report_id):
     logger.info("report_id: %s | START", report_id)
@@ -213,4 +206,4 @@ def report_fight_player(report_id, fight_id, source_id):
     if not player:
         flask.abort(404, description="Fight not found")
     return player.as_dict()
-
+"""

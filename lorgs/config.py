@@ -3,10 +3,9 @@
 import os
 
 class BaseConfig:
-    """Default Config"""
+    """Default Config."""
 
     SECRET_KEY = os.environ.get("SECRET_KEY") or "giga-secret_key-nobody-will-ever-find-out"
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 ################################################################################
 
@@ -15,7 +14,6 @@ class DevelopmentConfig(BaseConfig):
 
     GOOGLE_ANALYTICS_ID = ""
     SEND_FILE_MAX_AGE_DEFAULT = 0  # for DEV. updates static files
-    SQLALCHEMY_ECHO = False
 
 
 ################################################################################

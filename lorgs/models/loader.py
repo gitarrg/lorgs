@@ -31,6 +31,8 @@ from lorgs.models.specs import WowSpell
 
 # from lorgs.data import SPELLS
 
+raise ValueError("who is importing this?")
+
 
 WCL_CLIENT = WarcraftlogsClient.get_instance()
 

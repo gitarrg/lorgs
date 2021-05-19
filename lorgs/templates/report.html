@@ -79,6 +79,11 @@ Lorgs: Report: {{report.report_id}}
 </div>
 
 
+{% from "elements/timeline_player_name.html" import player_name with context %}
+{% from "elements/timeline_player_name.html" import boss_name %}
+{% from "elements/timeline_ruler.html" import timeline_ruler %}
+{% from "elements/timeline_killtime.html" import killtime %}
+
 <div class="d-flex flex-row mt-2">
 
     <!-- TIMELINES -->
@@ -87,11 +92,16 @@ Lorgs: Report: {{report.report_id}}
 
             <!-- Player Names -->
             <div class="player_names_container report float-left">
-                <div style="height: 32px"></div>
 
                 {% for fight in report.fights|sort(attribute="fight_id") %}
                     <div class="fight-container" data-fight_id={{fight.fight_id}}>
+
+                        <div class="timeline_ruler_playerholder"></div>
+
                         {# <small>#{{fight.fight_id}} ({{fight.duration|format_time}}) {{fight.percent}}% </small> #}
+
+                        {{ boss_name(fight.boss) }}
+
                         {% for player in fight.players|sort(attribute="spec.role,spec.name,name") %}
                             {{ player_name(player) }}
                         {% endfor %}
@@ -103,13 +113,18 @@ Lorgs: Report: {{report.report_id}}
             <div class="player_timelines_container">
                 <div class="timeline_cursor" style="left: 10px;"><div class="timeline_cursor_handle">0:00</div></div>
 
-                {% include "elements/timeline_ruler.html" %}
 
                 {% for fight in report.fights|sort(attribute="fight_id") %}
 
                     <div class="timeline-fight" data-fight_id={{fight.fight_id}}>
-                        {# <small>&nbsp;</small> #}
 
+                        {{ timeline_ruler(fight.duration) }}
+
+                        {# Boss #}
+                        {% set player = fight.boss %}
+                        {% include "elements/player_timeline.html" %}
+
+                        {# Players #}
                         {% for player in fight.players|sort(attribute="spec.role,spec.name,name") %}
                             {% set inline_killtime=loop.first %}
                             {% include "elements/player_timeline.html" %}
