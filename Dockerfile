@@ -5,7 +5,7 @@ COPY requirements.txt /requirements.txt
 RUN pip install -r /requirements.txt
 
 #### CODE
-COPY . /app/lorgs
+COPY lorgs /app/lorgs
 
 #### MAIN
 WORKDIR /app

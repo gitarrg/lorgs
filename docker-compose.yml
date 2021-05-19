@@ -1,14 +1,5 @@
 version: '3.7'
 
-# common variables
-x-env: &env
-  env_file:
-    - .env
-  environment:
-    REDIS_URL: redis://redis:6379
-    SQLALCHEMY_DATABASE_URI: postgresql://${MYSQL_USER}:${MYSQL_PASSWORD}@db/${MYSQL_DATABASE}
-
-
 services:
 
   # nginx:
@@ -22,11 +13,9 @@ services:
 
   # main web app (flask)
   web:
-    <<: *env
     image: lorgs
-    build:
-      context: lorgs
-      dockerfile: Dockerfile
+    build: .
+    # command: echo "disabled"  # disable this, so we can run flask local
     command: gunicorn
       --bind 0.0.0.0:5000
       "lorgs.app:create_app()"
@@ -34,45 +23,47 @@ services:
       --workers=4
     ports:
       - "${PORT:-5010}:5000"  # todo: change to expose to only expose internal
-    # expose:
-    # - "${PORT:-5010}"
+    env_file:
+      - .env
+
+    environment:
+      REDIS_URL: redis://redis:6379
+      FLASK_APP: "lorgs/app:create_app()"
 
     depends_on:
-      - db
+      # - db
       - redis
-
 
   # background worker (celery)
-  worker:
-    <<: *env
-    image: lorgs
-    command: celery
-      --app=lorgs.celery
-      worker
-      --loglevel=INFO
-      --concurrency=4
-    depends_on:
-      - db
-      - redis
-      - web
+  # worker:
+  #   <<: *env
+  #   image: lorgs
+  #   command: celery
+  #     --app=lorgs.celery
+  #     worker
+  #     --loglevel=INFO
+  #     --concurrency=4
+  #   depends_on:
+  #     - db
+  #     - redis
+  #     - web
 
   # redis
   redis:
     image: redis
 
-
   # database
-  db:
-    image: postgres:13.2-alpine
-    restart: always
-    environment:
-      POSTGRES_USER: ${MYSQL_USER}
-      POSTGRES_PASSWORD: ${MYSQL_PASSWORD}
-      POSTGRES_DB: ${MYSQL_DATABASE}
-    ports:
-    - 5432:5432
-    volumes:
-      - data-db:/var/lib/postgresql/data
+  # db:
+  #   image: postgres:13.2-alpine
+  #   restart: always
+  #   environment:
+  #     POSTGRES_USER: ${MYSQL_USER}
+  #     POSTGRES_PASSWORD: ${MYSQL_PASSWORD}
+  #     POSTGRES_DB: ${MYSQL_DATABASE}
+  #   ports:
+  #   - 5432:5432
+  #   volumes:
+  #     - data-db:/var/lib/postgresql/data
 
 
 volumes:
