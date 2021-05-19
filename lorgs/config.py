@@ -7,6 +7,9 @@ class BaseConfig:
 
     SECRET_KEY = os.environ.get("SECRET_KEY") or "giga-secret_key-nobody-will-ever-find-out"
 
+    # pretty json (i just like them more)
+    JSONIFY_PRETTYPRINT_REGULAR = True
+
 ################################################################################
 
 class DevelopmentConfig(BaseConfig):
