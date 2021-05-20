@@ -6,11 +6,11 @@
 service: default
 runtime: python39
 
-entrypoint: gunicorn\
-  -b :$PORT\
-  --timeout=240\
-  --workers 4\
-  --worker-class uvicorn.workers.UvicornWorker\
+entrypoint: gunicorn
+  -b :$PORT
+  --timeout=240
+  --workers 4
+  --worker-class uvicorn.workers.UvicornWorker
   "lorgs.app:create_app()"
   # longer timeout for the api calls that load data
 
