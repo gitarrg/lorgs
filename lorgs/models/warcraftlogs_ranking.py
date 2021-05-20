@@ -84,7 +84,6 @@ class SpecRanking(warcraftlogs_base.Document):
         if limit:
             rankings = rankings[:limit]
 
-
         self.reports = []
 
         for ranking_data in rankings:

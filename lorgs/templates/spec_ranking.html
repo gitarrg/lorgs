@@ -48,9 +48,7 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
 
 {% block content -%}
 <div class="mb-2">
-    {% with boss=None %}
-        {% include "elements/settings_bar.html" %}
-    {% endwith %}
+    {% include "elements/settings_bar.html" %}
 </div>
 
 
@@ -61,8 +59,8 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
     <div class="player_names_container spec_ranking float-left">
         <div class="timeline_ruler_playerholder"></div>
         {# Boss #}
-        {% if boss_actor %}
-        {{ boss_name(boss_actor) }}
+        {% if boss_player %}
+        {{ boss_name(boss_player) }}
         {% endif %}
 
         {# Players #}
@@ -77,8 +75,8 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
 
 
         {# Boss #}
-        {% if boss_actor %}
-        {{ player_timeline(boss_actor) }}
+        {% if boss_player %}
+        {{ player_timeline(boss_player) }}
         {% endif %}
 
         {# Players #}
@@ -86,9 +84,6 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
             {{ player_timeline(player) }}
         {%- endfor %}
     </div>
-
-
-    <div style="clear: both"></div>
 </div>
 {% endblock %}
 

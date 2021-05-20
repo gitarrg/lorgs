@@ -77,11 +77,18 @@ def spells():
 ###############################################################################
 
 
-@BP.route("/load_spec_rankings/<int:spec_id>/<int:boss_id>")
-def load_spec_rankings(spec_id, boss_id):
+@BP.route("/load_spec_rankings/<string:spec_slug>/<string:boss_slug>")
+async def load_spec_rankings(spec_slug, boss_slug):
     limit = flask.request.args.get("limit", default=50, type=int)
-    new_task = tasks.load_spec_ranking.delay(boss_id=boss_id, spec_id=spec_id, limit=limit)
-    return {"task": new_task.id}
+
+    spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(boss_slug=boss_slug, spec_slug=spec_slug)
+    await spec_ranking.load(limit=limit)
+    spec_ranking.save()
+
+    return "done"
+
+    # new_task = tasks.load_spec_ranking.delay(boss_id=boss_id, spec_id=spec_id, limit=limit)
+    # return {"task": new_task.id}
 
 
 @BP.route("/spec_ranking/<string:spec_slug>/<string:boss_slug>")

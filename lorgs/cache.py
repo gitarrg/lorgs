@@ -29,7 +29,5 @@ class RedisJsonCache:
         data = self.client.get(key)
         return json.loads(data) if data else None
 
-
-
-
 Cache = RedisJsonCache()
+

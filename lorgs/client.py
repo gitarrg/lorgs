@@ -66,7 +66,7 @@ class WarcraftlogsClient:
 
         logger.info("NEW CLIENT: %s", self.client_id)
 
-        self.cached = True
+        self.cached = os.getenv("WCL_CACHED") or False
         self.cache = Cache
 
         self._num_queries = 0

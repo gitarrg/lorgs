@@ -2,6 +2,7 @@
 
 # IMPORT STANDARD LIBRARIES
 import datetime
+import urllib
 
 # IMPORT THIRD PARTY LIBRARIES
 import mongoengine as me
@@ -55,6 +56,18 @@ class CompRating(me.Document, warcraftlogs_base.wclclient_mixin):
         spells_used = utils.uniqify(spells_used, key=lambda spell: (spell.group, spell.spell_id))
         spells_used = sorted(spells_used, key=lambda spell: spell.group)
         return spells_used
+
+    @property
+    def report_url(self):
+
+        # search = urllib.parse.quote()
+
+        return (
+            f"https://www.warcraftlogs.com"
+            f"/zone/rankings/{self.boss.zone.id}"
+            f"#boss={self.boss.id}&metric=execution"
+            f"&search={self.comp.report_search}"
+        )
 
     ##########################
     # Query

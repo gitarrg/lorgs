@@ -48,6 +48,11 @@ def add_shared_variables():
 #
 ################################################################################
 
+@BP.errorhandler(404)
+def page_not_found(error):
+    # note that we set the 404 status explicitly
+    return flask.render_template("errors/404.html", error=error), 404
+
 
 @BP.route("/")
 def index():
@@ -55,9 +60,7 @@ def index():
     kwargs = {}
     kwargs["boss"] = data.DEFAULT_BOSS
     kwargs["roles"] = data.ROLES
-
     kwargs["comps"] = warcraftlogs_comps.CompConfig.objects
-
     return flask.render_template("index.html", **kwargs)
 
 
@@ -82,10 +85,10 @@ def spec_ranking(spec_slug, boss_slug):
     timeline_duration = max(fight.duration for fight in spec_ranking.fights) if spec_ranking.fights else 0
 
 
-    boss_actor = None
+    boss_player = None
     for fight in spec_ranking.fights:
         if fight.boss and fight.boss.casts:
-            boss_actor = fight.boss
+            boss_player = fight.boss
             break
 
     # Return
@@ -94,7 +97,7 @@ def spec_ranking(spec_slug, boss_slug):
     kwargs["boss"] = spec_ranking.boss
 
     kwargs["players"] = spec_ranking.players
-    kwargs["boss_actor"] = boss_actor
+    kwargs["boss_player"] = boss_player
     kwargs["all_spells"] = spells_used
     kwargs["timeline_duration"] = timeline_duration
 
@@ -115,11 +118,7 @@ def comp_ranking(comp_name, boss_slug):
     comp_ranking = warcraftlogs_comps.CompRating.get_or_create(comp=comp_name, boss_slug=boss_slug)
 
     kwargs = {}
-    kwargs["comp"] = comp_ranking.comp
-    kwargs["boss"] = comp_ranking.boss
-    kwargs["reports"] = comp_ranking.reports
-    kwargs["fights"] = comp_ranking.fights
-
+    kwargs["comp_ranking"] = comp_ranking
     kwargs["all_spells"] = comp_ranking.spells_used
     kwargs["timeline_duration"] = max(fight.duration for fight in comp_ranking.fights) if comp_ranking.fights else 0
 
@@ -162,9 +161,9 @@ def report_load(report_id):
     kwargs["report_id"] = report_id
     kwargs["task_id"] = task.id
     return flask.render_template("report_loading.html", **kwargs)
-
-
 '''
+
+
 @BP.route("/report/<string:report_id>")
 def report(report_id):
 
