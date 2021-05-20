@@ -5,7 +5,7 @@
 import os
 
 # IMPORT THIRD PARTY LIBRARIES
-import flask
+import quart
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import db
@@ -24,7 +24,7 @@ def create_app():
 
     """
     # Flask
-    app = flask.Flask(__name__)
+    app = quart.Quart(__name__)
     config_name = os.getenv("LORGS_CONFIG_NAME") or "lorgs.config.DevelopmentConfig"
     app.config.from_object(config_name)
 
@@ -36,11 +36,13 @@ def create_app():
     app.jinja_env.filters["format_timestamp"] = utils.format_timestamp
 
     # Blueprints
-    app.register_blueprint(views.BP, url_prefix="/")
-    app.register_blueprint(api.BP, url_prefix="/api")
-    app.register_blueprint(admin.BP, url_prefix="/admin")
+    app.register_blueprint(views.blueprint, url_prefix="/")
+    app.register_blueprint(api.blueprint, url_prefix="/api")
+    app.register_blueprint(admin.blueprint, url_prefix="/admin")
 
     # init scripts
     # db.init_flask_app(app)
 
     return app
+    # return app
+    # return app

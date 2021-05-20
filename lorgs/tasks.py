@@ -8,12 +8,16 @@ import asyncio
 # IMPORT LOCAL LIBRARIES
 from lorgs.celery import celery
 from lorgs import db
+from lorgs import data
 from lorgs.logger import logger
 # from lorgs.models import loader
 from lorgs.models import warcraftlogs_ranking
 # from lorgs.models.encounters import RaidBoss
 # from lorgs.models.specs import WowSpec
 # from lorgs.models.warcraftlogs_report import Report
+
+
+raise ValueError("Deprecated")
 
 
 @celery.task(bind=True, name="debug_task")
@@ -39,8 +43,7 @@ def load_spec_ranking(self, boss_slug, spec_slug, limit=50):
 
     ##############
     # Get
-    ranking = warcraftlogs_ranking.SpecRanking.objects(boss_slug=boss_slug, spec_slug=spec_slug).first()
-    ranking = ranking or warcraftlogs_ranking.SpecRanking(boss_slug=boss_slug, spec_slug=spec_slug)
+    ranking = warcraftlogs_ranking.SpecRanking.get_or_create(boss_slug=boss_slug, spec_slug=spec_slug)
 
     ##############
     # run

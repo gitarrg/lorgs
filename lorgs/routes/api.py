@@ -1,13 +1,13 @@
 """Endpoints related to the Backend/API."""
 
 # IMPORT STANDARD LIBRARIES
-# import asyncio
+import asyncio
 import datetime
 # import os
 import time
 
 # IMPORT THIRD PARTY LIBRARIES
-import flask
+import quart
 # import sqlalchemy as sa
 # from celery.result import AsyncResult
 
@@ -26,18 +26,32 @@ from lorgs.models import warcraftlogs_comps
 # from lorgs import celery
 
 
-BP = flask.Blueprint("api", __name__, cli_group=None)
+blueprint = quart.Blueprint("api", __name__, cli_group=None)
 
 
 ###############################################################################
 
 
-@BP.route("/ping")
+@blueprint.route("/ping")
 def ping():
     return {"reply": "Hi!", "time": datetime.datetime.utcnow().isoformat()}
 
 
-@BP.route("/task_status/<string:task_id>")
+@blueprint.route("/async_test/<int:n>")
+async def async_test(n):
+    """Quick Test for Async Performance on different webservers.
+
+    >>> seq 100 | xargs -I %d -n 1 -P 999 curl http://localhost:5010/api/async_test/%d
+    """
+    # for i in range(10):
+    print(f"async_test n={n} START")
+    await asyncio.sleep(1)
+    print(f"async_test n={n} DONE")
+
+    return "ok", 200
+
+
+@blueprint.route("/task_status/<string:task_id>")
 def task_status(task_id):
 
     task = AsyncResult(task_id)
@@ -57,15 +71,15 @@ def task_status(task_id):
 #
 ###############################################################################
 
-@BP.route("/spell/<int:spell_id>")
+@blueprint.route("/spell/<int:spell_id>")
 def spell(spell_id):
     spell = specs.WowSpell.get(spell_id=spell_id)
     if not spell:
-        flask.abort(404, description="Spell not found")
+        quart.abort(404, description="Spell not found")
     return spell.as_dict()
 
 
-@BP.route("/spells")
+@blueprint.route("/spells")
 def spells():
     return {spell.spell_id: spell.as_dict() for spell in specs.WowSpell.all}
 
@@ -77,9 +91,9 @@ def spells():
 ###############################################################################
 
 
-@BP.route("/load_spec_rankings/<string:spec_slug>/<string:boss_slug>")
+@blueprint.route("/load_spec_rankings/<string:spec_slug>/<string:boss_slug>")
 async def load_spec_rankings(spec_slug, boss_slug):
-    limit = flask.request.args.get("limit", default=50, type=int)
+    limit = quart.request.args.get("limit", default=50, type=int)
 
     spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(boss_slug=boss_slug, spec_slug=spec_slug)
     await spec_ranking.load(limit=limit)
@@ -91,10 +105,10 @@ async def load_spec_rankings(spec_slug, boss_slug):
     # return {"task": new_task.id}
 
 
-@BP.route("/spec_ranking/<string:spec_slug>/<string:boss_slug>")
+@blueprint.route("/spec_ranking/<string:spec_slug>/<string:boss_slug>")
 def spec_ranking(spec_slug, boss_slug):
 
-    # limit = flask.request.args.get("limit", default=50, type=int)
+    # limit = quart.request.args.get("limit", default=50, type=int)
 
     t1 = time.time()
 
@@ -117,9 +131,9 @@ def spec_ranking(spec_slug, boss_slug):
     }
 
 
-@BP.route("/spec_ranking_test/<string:spec_slug>/<string:boss_slug>")
+@blueprint.route("/spec_ranking_test/<string:spec_slug>/<string:boss_slug>")
 def spec_ranking_test(spec_slug, boss_slug):
-    count = flask.request.args.get("count", default=10, type=int)
+    count = quart.request.args.get("count", default=10, type=int)
 
     results = []
     for i in range(count):
@@ -147,16 +161,16 @@ def spec_ranking_test(spec_slug, boss_slug):
 #
 ###############################################################################
 
-@BP.route("/comp_ranking/<string:name>")
+@blueprint.route("/comp_ranking/<string:name>")
 def comp(name):
     comp = warcraftlogs_comps.CompConfig.objects(name=name).first()
     if not comp:
-        flask.abort(404, description="Comp not found")
+        quart.abort(404, description="Comp not found")
 
     return comp.as_dict()
 
 
-@BP.route("/comp_ranking/<string:comp_name>/<string:boss_slug>")
+@blueprint.route("/comp_ranking/<string:comp_name>/<string:boss_slug>")
 def comp_ranking(comp_name, boss_slug):
     comp_ranking = warcraftlogs_comps.CompRating.get_or_create(comp=comp_name, boss_slug=boss_slug)
     return {
@@ -174,24 +188,24 @@ def comp_ranking(comp_name, boss_slug):
 ###############################################################################
 
 """
-@BP.route("/load_report/<string:report_id>")
+@blueprint.route("/load_report/<string:report_id>")
 def load_report(report_id):
     logger.info("report_id: %s | START", report_id)
     task = tasks.load_report.delay(report_id)
     return {"task": task.id}
 
 
-@BP.route("/report/<string:report_id>")
+@blueprint.route("/report/<string:report_id>")
 def report(report_id):
 
     report = warcraftlogs_report.Report.query.get(report_id)
     if not report:
-        flask.abort(404, description="Report not found")
+        quart.abort(404, description="Report not found")
 
     return report.as_dict()
 
 
-@BP.route("/report/<string:report_id>/fight/<int:fight_id>")
+@blueprint.route("/report/<string:report_id>/fight/<int:fight_id>")
 def report_fight(report_id, fight_id):
 
     fight = warcraftlogs_report.Fight.query
@@ -199,11 +213,11 @@ def report_fight(report_id, fight_id):
     fight = fight.first()
 
     if not fight:
-        flask.abort(404, description="Fight not found")
+        quart.abort(404, description="Fight not found")
     return fight.as_dict()
 
 
-@BP.route("/report/<string:report_id>/fight/<int:fight_id>/player/<int:source_id>")
+@blueprint.route("/report/<string:report_id>/fight/<int:fight_id>/player/<int:source_id>")
 def report_fight_player(report_id, fight_id, source_id):
 
     player = warcraftlogs_report.Player.query
@@ -211,6 +225,6 @@ def report_fight_player(report_id, fight_id, source_id):
     player = player.first()
 
     if not player:
-        flask.abort(404, description="Fight not found")
+        quart.abort(404, description="Fight not found")
     return player.as_dict()
 """

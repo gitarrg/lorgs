@@ -112,6 +112,8 @@ PRIEST_SHADOW.supported = False
 MAGE_ARCANE.supported = False
 MAGE_FROST.supported = False
 
+SUPPORTED_SPECS = [spec for spec in SPECS if spec.supported]
+
 
 ################################################################################
 #

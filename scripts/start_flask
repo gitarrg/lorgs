@@ -8,11 +8,13 @@ set +a
 
 
 export FLASK_ENV=development
+export QUART_ENV=development
 # export DEBUG=true
 export LORGS_CONFIG_NAME=lorgs.config.DevelopmentConfig
 
-export FLASK_APP="lorgs/app:create_app()"
 export PORT=5010
+export FLASK_APP="lorgs/app:create_app()"
+export QUART_APP=$FLASK_APP
 
 
 # Build SASS
@@ -20,4 +22,19 @@ export PORT=5010
 
 # run flask
 export PYTHONPATH=.  # adds current dir, so we can import
-flask run --host=0.0.0.0 --port=$PORT
+
+
+# gunicorn "lorgs.app:create_app()" -b :$PORT --worker-class "eventlet" --timeout=240 --reload
+
+# uvicorn  --port $PORT --factory "lorgs.app:create_app"
+# quart run --host=0.0.0.0 --port=$PORT
+
+gunicorn -b :$PORT -k uvicorn.workers.UvicornWorker --timeout=240 "lorgs.app:create_app()"
+
+# uvicorn  --port $PORT  "lorgs.app:create_app"
+
+# pip install eventlet
+# eventlet==0.30.2
+# gunicorn example:app -w 4 -k uvicorn.workers.UvicornWorker
+
+

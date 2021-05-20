@@ -9,6 +9,8 @@ import celery as celery_
 from lorgs import db
 
 
+raise ValueError("Deprecated")
+
 # make sure these are set
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL") or os.getenv("REDIS_URL") or "redis://localhost:6379"
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND") or CELERY_BROKER_URL

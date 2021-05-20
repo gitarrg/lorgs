@@ -1,7 +1,7 @@
 """Views/Routes for some debugging/admin stuff."""
 
 # IMPORT THIRD PARTY LIBS
-import flask
+import quart
 
 # IMPORT LOCAL LIBS
 from lorgs import db
@@ -17,7 +17,7 @@ from lorgs.models import specs
 from lorgs.models import warcraftlogs_ranking
 
 
-BP = flask.Blueprint(
+blueprint = quart.Blueprint(
     "admin",
     __name__,
     template_folder="templates",
@@ -28,20 +28,20 @@ BP = flask.Blueprint(
 SHARED_DATA = {}
 
 
-@BP.route("/")
+@blueprint.route("/")
 def index():
-    flask.abort(401, description="sorry.. no admin page for you")
+    quart.abort(401, description="sorry.. no admin page for you")
 
 
-@BP.route("/spells")
+@blueprint.route("/spells")
 def spells():
     kwargs = {}
     kwargs["specs"] = data.SPECS
     # kwargs["spells"] = specs.SpecSpells.query.all()
-    return flask.render_template("admin/admin_spells.html", **kwargs)
+    return quart.render_template("admin/admin_spells.html", **kwargs)
 
 
-@BP.route("/spec_rankings")
+@blueprint.route("/spec_rankings")
 def spec_rankings():
 
 
@@ -64,4 +64,4 @@ def spec_rankings():
     kwargs["bosses"] = encounters.RaidBoss.query.all()
     kwargs["spec_rankings"] = {(s, b): c for s, b, c in ranked_chars}
 
-    return flask.render_template("admin/admin_spec_rankings.html", **kwargs)
+    return quart.render_template("admin/admin_spec_rankings.html", **kwargs)
