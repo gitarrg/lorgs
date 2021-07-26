@@ -14,7 +14,8 @@ from lorgs.models.specs import WowSpec
 from lorgs.models.specs import WowSpell
 
 
-class Death:
+'''
+class Death(me.EmbeddedDocument):
     """docstring for Cast"
 
     not used right now
@@ -34,7 +35,7 @@ class Death:
         return {
             "timestamp": self.timestamp,
         }
-
+'''
 
 class Cast(me.EmbeddedDocument):
     """docstring for Cast"""
@@ -145,6 +146,11 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
             # if self.source_id <= 0 and len(self.fight.players) == 1:
             #     self.source_id = cast_data.get("sourceID")
 
+        # Filter out same event at the same time (eg.: raid wide debuff apply)
+        self.casts = utils.uniqify(self.casts, key=lambda cast: (cast.spell_id, cast.timestamp))
+        self.casts = list(self.casts) # `utils.uniqify` returns dict values, which mongoengine doesn't like
+        # print("CASTS", self.casts)
+
 
 class Player(BaseActor):
     """A PlayerCharater in a Fight."""
@@ -153,6 +159,8 @@ class Player(BaseActor):
     name = me.StringField(max_length=12) # names can be max 12 chars
     total = me.FloatField()
     spec_slug = me.StringField(required=True)
+
+    deaths = me.ListField(me.DictField())
 
     def __str__(self):
         return f"Player(id={self.source_id} name={self.name} spec={self.spec})" # casts={len(self.casts)})"
@@ -179,6 +187,12 @@ class Player(BaseActor):
             return f"{self.fight.report_url}&source={self.source_id}"
         return f"{self.fight.report_url}"
 
+    @property
+    def lifetime(self):
+        if self.deaths:
+            return self.deaths[-1].get("deathTime", 0)
+
+        return self.fight.duration
 
     #################################
     # Query
@@ -206,6 +220,28 @@ class Player(BaseActor):
 
         return f"events({self.fight.table_query_args}, filterExpression: \"{filters}\") {{data}}"
 
+    def process_death_events(self, death_events):
+
+        ability_overwrites = {}
+        ability_overwrites[1] = {"name": "Melee", "guid": 260421, "abilityIcon": "ability_meleedamage.jpg"}
+        ability_overwrites[3] = {"name": "Fall Damage"}
+
+        for death_event in death_events:
+
+            if death_event.get("id") != self.source_id:
+                continue
+
+            death_data = {}
+            death_data["deathTime"] = death_event.get("deathTime")
+            death_data["ability"] = death_event.get("ability", {})
+
+            # Ability Overwrites
+            ability_id = death_data["ability"].get("guid")
+            if ability_id in ability_overwrites:
+                death_data["ability"] = ability_overwrites[ability_id]
+
+            self.deaths.append(death_data)
+
 
 class Boss(BaseActor):
     """A NPC/Boss in a Fight."""
@@ -226,6 +262,20 @@ class Boss(BaseActor):
         # dummy for now, to make the html templates work
         return {}  # TODO
 
+    @property
+    def percent_color(self):
+        if self.percent < 3:
+            return "astounding"
+        if self.percent < 10:
+            return "legendary"
+        if self.percent < 25:
+            return "epic"
+        if self.percent < 50:
+            return "rare"
+        if self.percent < 75:
+            return "uncommon"
+        return "common"
+
     ##########################
     # Methods
     #
@@ -237,4 +287,4 @@ class Boss(BaseActor):
         if not filters:
             return ""
 
-        return f"events({self.fight.table_query_args}, hostilityType: Enemies, filterExpression: \"{filters}\") {{data}}"
+        return f"events({self.fight.table_query_args}, filterExpression: \"{filters}\") {{data}}"

@@ -16,7 +16,6 @@ from lorgs.models.warcraftlogs_fight import Fight
 
 class Report(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
 
-
     report_id = me.StringField(primary_key=True)
     start_time = me.IntField(default=0)
 
@@ -147,7 +146,7 @@ class UserReport(me.Document):
     created = me.DateTimeField(default=datetime.datetime.utcnow)
     meta = {
         'indexes': [
-            {'fields': ['created'], 'expireAfterSeconds': 7 * 24 * 60} # expires after 1 week
+            {'fields': ['created'], 'expireAfterSeconds': 7 * 24 * 60 * 60} # expires after 1 week
         ]
     }
 

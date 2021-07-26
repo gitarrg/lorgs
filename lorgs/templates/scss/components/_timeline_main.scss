@@ -10,10 +10,7 @@
     margin-top: 1px;
 
     position: absolute;
-
 }
-
-
 
 
 /********************************
@@ -77,9 +74,9 @@
 }
 
 .player_timeline + .player_timeline {
-    // height: $timeline-height - 1px;
-    // margin-top: -1px; // to hide the border
-    border-top: none;
+    height: $timeline-height + 1px;
+    margin-top: -1px; // to hide the border
+    // border-top: none;
     // border-bottom: none;
 }
 

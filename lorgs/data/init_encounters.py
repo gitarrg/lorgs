@@ -31,11 +31,17 @@ HUNGERING_DESTROYER.add_event(event_type="cast",      spell_id=329455, duration=
 
 CASTLE_NATHRIA.add_boss(id=2402, name="Sun King's Salvation")
 
+
+
 CASTLE_NATHRIA.add_boss(id=2405, name="Artificer Xy'mox")
 
 CASTLE_NATHRIA.add_boss(id=2406, name="Lady Inerva Darkvein")
 
-CASTLE_NATHRIA.add_boss(id=2412, name="The Council of Blood")
+COUNCIL_OF_BLOOD = CASTLE_NATHRIA.add_boss(id=2412, name="The Council of Blood")
+COUNCIL_OF_BLOOD.add_event(spell_id=330959, duration=36, color="#1a86dc", name="Danse Macabre", icon="ability_rogue_shadowdance.jpg")
+COUNCIL_OF_BLOOD.add_event(spell_id=331634, duration=6, color="#6735d4", name="Dark Recital", icon="ability_warlock_soullink.jpg")
+COUNCIL_OF_BLOOD.add_event(event_type="applydebuff", spell_id=347350, duration=30, color="#d65656", name="Dancing Fever", icon="ability_deathknight_hemorrhagicfever.jpg")
+
 
 ################################################################################
 # 08: Sludgefist
@@ -70,4 +76,50 @@ SIRE_DENATHRIUS.add_event(event_type="cast", spell_id=332619, duration=3,   colo
 
 CASTLE_NATHRIA_BOSSES = CASTLE_NATHRIA.bosses
 
-DEFAULT_BOSS = SIRE_DENATHRIUS
+
+################################################################################################################################################################
+#
+#   Tier: 27 Sanctum of Domination
+#
+################################################################################################################################################################
+SANCTUM_OF_DOMINATION = RaidZone(id=28, name="Sanctum of Domination")
+
+TARRAGRUE = SANCTUM_OF_DOMINATION.add_boss(id=2423, name="The Tarragrue")
+
+EYE_OF_THE_JAILER = SANCTUM_OF_DOMINATION.add_boss(id=2433, name="The Eye of the Jailer")
+EYE_OF_THE_JAILER.add_event(event_type="cast", spell_id=349030, duration=8, color="#24c9b1", name="Titanic Death Gaze",  icon="ability_argus_deathfog.jpg")
+EYE_OF_THE_JAILER.add_event(event_type="cast", spell_id=350828, duration=2, color="#ede080", name="Deathlink",           icon="ability_felarakkoa_eyeofterrok.jpg")
+EYE_OF_THE_JAILER.add_event(event_type="applydebuff", spell_id=355240, duration=9, color="#db8823", name="Scorn & Ire",           icon="ability_xavius_darkruination.jpg")
+
+
+THE_NINE = SANCTUM_OF_DOMINATION.add_boss(id=2429, name="The Nine")
+THE_NINE.add_event(event_type="cast", spell_id=355294, duration=12, color="#a1b2cc", name="Resentment", icon="spell_animamaw_buff.jpg")
+
+
+REMNANT = SANCTUM_OF_DOMINATION.add_boss(id=2432, name="Remnant of Ner'zhul")
+REMNANT.add_event(event_type="cast", spell_id=350469, duration=10, color="#9e4cc2", name="Malevolence", icon="ability_warlock_eradication.jpg")
+REMNANT.add_event(event_type="cast", spell_id=351066, duration=0, color="#24cbd1", name="Shatter", icon="achievement_boss_lichking.jpg")
+REMNANT.add_event(event_type="cast", spell_id=351073, duration=0, color="#24cbd1", name="Malevolence", icon="inv_misc_desecrated_platechest.jpg")
+REMNANT.add_event(event_type="cast", spell_id=351067, duration=0, color="#24cbd1", name="Malevolence", icon="inv_misc_desecrated_plategloves.jpg")
+
+
+SOULRENDER = SANCTUM_OF_DOMINATION.add_boss(id=2434, name="Soulrender Dormazain")
+SOULRENDER.add_event(event_type="removedebuff", spell_id=348987, duration=9, color="#b07f6b", name="Break Shackles",           icon="inv_belt_18.jpg")
+SOULRENDER.add_event(event_type="cast", spell_id=350615, duration=0, color="#24cbd1", name="Adds", icon="inv_mawguardpet_red.jpg")
+SOULRENDER.add_event(event_type="cast", spell_id=352933, duration=30, color="#4cb840", name="Dance", icon="spell_animarevendreth_wave.jpg")
+
+
+PAINSMITH = SANCTUM_OF_DOMINATION.add_boss(id=2430, name="Painsmith Raznal")
+
+GUARDIAN = SANCTUM_OF_DOMINATION.add_boss(id=2436, name="Guardian of the First Ones")
+
+FATESCRIBE = SANCTUM_OF_DOMINATION.add_boss(id=2431, name="Fatescribe Roh-Kalo")
+
+KELTHUZAD = SANCTUM_OF_DOMINATION.add_boss(id=2422, name="Kel'Thuzad")
+
+
+SYLVANAS = SANCTUM_OF_DOMINATION.add_boss(id=2435, name="Sylvanas Windrunner")
+SYLVANAS.add_event(event_type="cast", spell_id=347741, duration=9, color="#228c89", name="Veil of Darkness",        icon="ability_argus_deathfog.jpg")
+SYLVANAS.add_event(event_type="cast", spell_id=351353, duration=9, color="#b1c4c3", name="Orbs",        icon="spell_animamaw_orb.jpg")
+
+DEFAULT_BOSS = TARRAGRUE

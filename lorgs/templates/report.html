@@ -23,7 +23,6 @@ Lorgs: Report: {{report.report_id}}
     </div>
 
 
-
     </div>
 </div>
 {% endblock %}
@@ -65,7 +64,7 @@ Lorgs: Report: {{report.report_id}}
             <div class="settings_display_pull rounded p-1 m-1 text-center" style="width: 6rem" data-fight_id={{fight.fight_id}}>
                 {{fight.fight_id}} <span class="text-muted">({{fight.duration|format_time}})</span>
                 <div class="fight_percentage_bg">
-                    <div class="fight_percentage_fg bg-{{fight.percent_color}}" style="width: {{100-fight.percent}}%"></div>
+                    <div class="fight_percentage_fg bg-{{fight.boss.percent_color}}" style="width: {{100-fight.boss.percent}}%"></div>
                 </div>
             </div>
 
@@ -83,6 +82,7 @@ Lorgs: Report: {{report.report_id}}
 {% from "elements/timeline_player_name.html" import boss_name %}
 {% from "elements/timeline_ruler.html" import timeline_ruler %}
 {% from "elements/timeline_killtime.html" import killtime %}
+{% from "elements/timeline_casts.html" import player_timeline %}
 
 <div class="d-flex flex-row mt-2">
 
@@ -100,8 +100,10 @@ Lorgs: Report: {{report.report_id}}
 
                         {# <small>#{{fight.fight_id}} ({{fight.duration|format_time}}) {{fight.percent}}% </small> #}
 
+                        {# Boss #}
                         {{ boss_name(fight.boss) }}
 
+                        {# Players #}
                         {% for player in fight.players|sort(attribute="spec.role,spec.name,name") %}
                             {{ player_name(player) }}
                         {% endfor %}
@@ -110,9 +112,10 @@ Lorgs: Report: {{report.report_id}}
 
             </div>
 
+            <!-- Casts -->
             <div class="player_timelines_container">
-                <div class="timeline_cursor" style="left: 10px;"><div class="timeline_cursor_handle">0:00</div></div>
 
+                {% include "elements/timeline_cursor.html" %}
 
                 {% for fight in report.fights|sort(attribute="fight_id") %}
 
@@ -121,14 +124,14 @@ Lorgs: Report: {{report.report_id}}
                         {{ timeline_ruler(fight.duration) }}
 
                         {# Boss #}
-                        {% set player = fight.boss %}
-                        {% include "elements/player_timeline.html" %}
+                        {%- if fight.boss %}
+                        {{ player_timeline(fight.boss, show_killtime=True) }}
+                        {%- endif %}
 
                         {# Players #}
-                        {% for player in fight.players|sort(attribute="spec.role,spec.name,name") %}
-                            {% set inline_killtime=loop.first %}
-                            {% include "elements/player_timeline.html" %}
-                        {% endfor %}
+                        {%- for player in fight.players|sort(attribute="spec.role,spec.name,name") %}
+                        {{ player_timeline(player) }}
+                        {%- endfor %} {# for player #}
                     </div>
                 {% endfor %}
             </div>

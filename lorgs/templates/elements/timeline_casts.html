@@ -45,7 +45,7 @@
 
 {% macro player_timeline(player, show_killtime=False) -%}
     {% set fight = fight or player.fight %}
-    <div class="player_timeline" style="width: {{ scale * fight.duration/1000 }}px" data-source_id={{player.source_id}} data-spec="{{player.spec.full_name_slug}}">
+    <div class="player_timeline" style="width: {{ scale * player.lifetime/1000 }}px" data-source_id={{player.source_id}} data-spec="{{player.spec.full_name_slug}}">
 
         <!-- Casts -->
         <div class="cast_container" style="width: {{scale * player.lifetime/1000}}px">
@@ -54,9 +54,9 @@
         {% endfor %}
         </div>
 
-        {% if player.death_data %}
+        {% if player.deaths %}
             <!-- Deaths -->
-            {% for death in player.death_data %}
+            {% for death in player.deaths %}
                 {{ player_death(death) }}
             {% endfor %}
 

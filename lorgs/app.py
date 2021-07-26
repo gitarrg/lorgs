@@ -5,7 +5,7 @@
 import os
 
 # IMPORT THIRD PARTY LIBRARIES
-import quart
+import flask
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import db
@@ -13,7 +13,7 @@ from lorgs import data
 from lorgs import utils
 from lorgs.routes import api
 from lorgs.routes import views
-from lorgs.routes import admin
+# from lorgs.routes import admin
 
 
 def create_app():
@@ -24,7 +24,7 @@ def create_app():
 
     """
     # Flask
-    app = quart.Quart(__name__)
+    app = flask.Flask(__name__)
     config_name = os.getenv("LORGS_CONFIG_NAME") or "lorgs.config.DevelopmentConfig"
     app.config.from_object(config_name)
 
@@ -38,11 +38,6 @@ def create_app():
     # Blueprints
     app.register_blueprint(views.blueprint, url_prefix="/")
     app.register_blueprint(api.blueprint, url_prefix="/api")
-    app.register_blueprint(admin.blueprint, url_prefix="/admin")
-
-    # init scripts
-    # db.init_flask_app(app)
+    # app.register_blueprint(admin.blueprint, url_prefix="/admin")
 
     return app
-    # return app
-    # return app

@@ -76,7 +76,7 @@ def as_list(func):
 
 def uniqify(iterable, key):
     d = {key(item): item for item in iterable}
-    return d.values()
+    return list(d.values())
 
 
 def find(predicate, seq):

@@ -7,6 +7,7 @@
 {%- endmacro %}
 
 
+
 <div class="settings_bar d-flex flex-row flex-wrap">
 
     {# Global Buttons #}
@@ -18,6 +19,18 @@
             <div id="settings_button_cooldown" class="button icon-s rounded border-white fas fa-hourglass" data-toggle="tooltip" title="cooldown"></div>
         </div>
     </div>
+
+    {# Boss Spells #}
+    {% if boss and boss.spells %}
+    <div class="mr-2">
+        <small class="clear-both wow-class-boss">Boss</small>
+        <div class="bg-dark p-1 rounded border">
+            {% for spell in boss.spells %}
+            {{ spell_button(boss, spell) }}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 
     {# Show/Hide Specs #}
     {% if comp %}
@@ -51,19 +64,6 @@
         </div>
     </div>
     {% endfor %} {# specs #}
-
-    {# Boss Spells #}
-    {% if boss and boss.spells %}
-    <div class="mr-2">
-        <small class="clear-both wow-class-boss">Boss</small>
-        <div class="bg-dark p-1 rounded border">
-            {% for spell in boss.spells %}
-            {{ spell_button(boss, spell) }}
-            {% endfor %}
-        </div>
-
-    </div>
-    {% endif %}
 </div>
 
 

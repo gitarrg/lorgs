@@ -1,11 +1,14 @@
 """Views/Routes for the UI/Frontend."""
 
+
+import re
+
 # IMPORT THIRD PARTY LIBS
-import quart
+import flask
 
 # IMPORT LOCAL LIBS
 # from lorgs import db
-# from lorgs import forms
+from lorgs import forms
 # from lorgs.logger import logger
 # from lorgs import models
 # from lorgs import tasks
@@ -18,10 +21,10 @@ from lorgs import utils
 from lorgs.models import warcraftlogs_ranking
 from lorgs.models import warcraftlogs_comps
 # from lorgs.models import warcraftlogs_base
-# from lorgs.models import warcraftlogs_report
+from lorgs.models import warcraftlogs_report
 
 
-blueprint = quart.Blueprint(
+blueprint = flask.Blueprint(
     "ui",
     __name__,
     template_folder="templates",
@@ -35,7 +38,7 @@ SHARED_DATA = {}
 
 @blueprint.app_context_processor
 def add_shared_variables():
-    config = quart.current_app.config
+    config = flask.current_app.config
     return {
         # "wow_data": wow_data,
         "GOOGLE_ANALYTICS_ID": config["GOOGLE_ANALYTICS_ID"],
@@ -49,9 +52,9 @@ def add_shared_variables():
 ################################################################################
 
 @blueprint.errorhandler(404)
-def page_not_found(error):
+async def page_not_found(error):
     # note that we set the 404 status explicitly
-    return quart.render_template("errors/404.html", error=error), 404
+    return flask.render_template("errors/404.html", error=error), 404
 
 
 @blueprint.get("/")
@@ -61,7 +64,7 @@ async def index():
     kwargs["boss"] = data.DEFAULT_BOSS
     kwargs["roles"] = data.ROLES
     kwargs["comps"] = warcraftlogs_comps.CompConfig.objects
-    return await quart.render_template("index.html", **kwargs)
+    return flask.render_template("index.html", **kwargs)
 
 
 ################################################################################
@@ -74,10 +77,10 @@ async def index():
 async def spec_ranking(spec_slug, boss_slug):
 
     # Inputs
-    # limit = quart.request.args.get("limit", default=50, type=int)
+    # limit = flask.request.args.get("limit", default=50, type=int)
     spec_ranking = warcraftlogs_ranking.SpecRanking.objects(boss_slug=boss_slug, spec_slug=spec_slug).first()
     if not spec_ranking:
-        quart.abort(404, description="Invalid Spec or Boss")
+        flask.abort(404, description="Invalid Spec or Boss")
 
     # preprocess some data
     spells_used = utils.flatten(player.spells_used for player in spec_ranking.players)
@@ -102,9 +105,9 @@ async def spec_ranking(spec_slug, boss_slug):
     kwargs["timeline_duration"] = timeline_duration
 
     kwargs["roles"] = data.ROLES
-    kwargs["bosses"] = data.CASTLE_NATHRIA.bosses # encounters.RaidBoss.all
+    kwargs["bosses"] = spec_ranking.boss.zone.bosses
 
-    return await quart.render_template("spec_ranking.html", **kwargs)
+    return flask.render_template("spec_ranking.html", **kwargs)
 
 ################################################################################
 #
@@ -125,7 +128,7 @@ async def comp_ranking(comp_name, boss_slug):
     kwargs["roles"] = data.ROLES
     kwargs["bosses"] = data.CASTLE_NATHRIA.bosses
 
-    return await quart.render_template("comp_ranking.html", **kwargs)
+    return flask.render_template("comp_ranking.html", **kwargs)
 
 
 ################################################################################
@@ -134,43 +137,46 @@ async def comp_ranking(comp_name, boss_slug):
 #
 ################################################################################
 
-'''
 @blueprint.route("/report", methods=['GET', 'POST'])
 @blueprint.route("/reports", methods=['GET', 'POST'])
-def report_index():
+async def report_index():
     form = forms.CustomReportForm()
     if form.validate_on_submit():
         link = form.report_link.data
         match = re.match(forms.WCL_LINK_REGEX, link)
         report_id = match.group("code")
 
-        report_data = Cache.get(f"report/{report_id}")
-        if not report_data:
-            return quart.redirect(quart.url_for("ui.report_load", report_id=report_id))
-        return quart.redirect(quart.url_for("ui.report", report_id=report_id))
+        user_report = warcraftlogs_report.UserReport.get_or_create(report_id=report_id)
+        # report_data = Cache.get(f"report/{report_id}")
+        # if not report_data:
+        #     return flask.redirect(flask.url_for("ui.report_load", report_id=report_id))
+        return flask.redirect(flask.url_for("ui.report", report_id=report_id))
 
     kwargs = {}
     kwargs["form"] = form
-    return quart.render_template("report_index.html", **kwargs)
+    return flask.render_template("report_index.html", **kwargs)
 
 
+'''
 @blueprint.route("/report_load/<string:report_id>")
 def report_load(report_id):
     task = tasks.load_report.delay(report_id=report_id)
     kwargs = {}
     kwargs["report_id"] = report_id
     kwargs["task_id"] = task.id
-    return quart.render_template("report_loading.html", **kwargs)
+    return flask.render_template("report_loading.html", **kwargs)
+'''
 
 
 @blueprint.route("/report/<string:report_id>")
-def report(report_id):
+async def report(report_id):
 
-    user_report = warcraftlogs_base.UserReport.objects(report__report_id=report_id).first()
+    user_report = warcraftlogs_report.UserReport.objects(report__report_id=report_id).first()
+    # user_report = warcraftlogs_report.UserReport.get_or_create(report_id=report_id)
 
     if not user_report:
-        quart.abort(404, description="Report not found")
-        # return quart.redirect(quart.url_for("ui.report_load", report_id=report_id))
+        flask.abort(404, description="Report not found")
+        # return flask.redirect(flask.url_for("ui.report_load", report_id=report_id))
 
     report = user_report.report
 
@@ -179,12 +185,17 @@ def report(report_id):
     spells_used = utils.uniqify(spells_used, key=lambda spell: (spell.spell_id, spell.group))
     # used_spells = []
 
+    boss = None
+    for fight in report.fights:
+        boss = fight.boss.raid_boss
+        break
+
     kwargs = {
         "report": report,
+        "boss": boss,
 
         "unique_players": players,
         "all_spells": spells_used,
-        "timeline_duration": max(f.duration for f in report.fights) if report.fights else 0,
+        # "timeline_duration": max(f.duration for f in report.fights) if report.fights else 0,
     }
-    return quart.render_template("report.html", **kwargs)
-'''
+    return flask.render_template("report.html", **kwargs)

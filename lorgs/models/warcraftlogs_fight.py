@@ -146,7 +146,8 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
             cast_query = "casts: "
             # TODO: this probl doesn't work with multiple players
             for player in self.players:
-                cast_query += player.get_sub_query()
+                if not player.casts:
+                    cast_query += player.get_sub_query()
 
         else:
             player_query = f"players: table({self.table_query_args}, dataType: Summary)"
@@ -160,7 +161,6 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
             boss_query = self.boss.get_sub_query()
             boss_query = f"boss: {boss_query}" if boss_query else ""
 
-
         return textwrap.dedent(f"""\
             reportData
             {{
@@ -171,7 +171,6 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
                     {boss_query}
                 }}
             }}
-
         """)
 
     def process_fight_players(self, players_data):
@@ -181,6 +180,7 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
 
         total_damage = players_data.get("damageDone", [])
         total_healing = players_data.get("healingDone", [])
+        death_events = players_data.get("deathEvents", [])
 
         for composition_data in players_data.get("composition", []):
 
@@ -214,6 +214,9 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
             player.source_id = composition_data.get("id")
             player.name = composition_data.get("name")
             player.total = total
+
+            player.process_death_events(death_events)
+
 
     def process_query_result(self, query_result):
 

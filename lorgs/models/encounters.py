@@ -66,9 +66,12 @@ class RaidBoss(base.Model):
     # Methods
     #
     def add_event(self, **kwargs): # event_type, spell_id, name: str, icon: str, duration: int = 0):
-        event = kwargs
-        self.events.append(event)
+        kwargs.setdefault("event_type", "cast")
 
+        # track the event (for query)
+        self.events.append(kwargs)
+
+        # spell instance used for UI things
         spell = WowSpell(**kwargs)
         spell.spec = self
         self.spells.append(spell)
