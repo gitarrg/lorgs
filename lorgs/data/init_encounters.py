@@ -123,3 +123,5 @@ SYLVANAS.add_event(event_type="cast", spell_id=347741, duration=9, color="#228c8
 SYLVANAS.add_event(event_type="cast", spell_id=351353, duration=9, color="#b1c4c3", name="Orbs",        icon="spell_animamaw_orb.jpg")
 
 DEFAULT_BOSS = TARRAGRUE
+
+SANCTUM_OF_DOMINATION_BOSSES = SANCTUM_OF_DOMINATION.bosses

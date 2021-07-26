@@ -196,6 +196,8 @@ SHAMAN_RESTORATION.add_spell(  spell_id=98008,  cooldown=180, duration=6,  color
 SHAMAN_RESTORATION.add_spell(  spell_id=16191,  cooldown=180, duration=8,  color=COL_MANA,  name="Mana Tide Totem",                 icon="spell_frost_summonwaterelemental.jpg",      show=False)
 SHAMAN_RESTORATION.add_spell(  spell_id=207399, cooldown=300, duration=30, color="#d15a5a", name="Ancestral Protection Totem",      icon="spell_nature_reincarnation.jpg")
 SHAMAN_RESTORATION.add_spell(  spell_id=114052, cooldown=180, duration=15,                  name="Ascendance",                      icon="spell_fire_elementaldevastation.jpg")
+SHAMAN_RESTORATION.add_spell(  spell_id=198838, cooldown=60, duration=15, color="#a47ea6",  name="Earthen Wall Totem",              icon="spell_nature_stoneskintotem.jpg",           show=False)
+
 #################################################################################################################################################################################################
 #   Mage
 MAGE.add_spell(                spell_id=314791, cooldown=60,  duration=3,  color=COL_NF,    name="Shifting Power",                  icon="ability_ardenweald_mage.jpg",               show=False)
@@ -207,8 +209,9 @@ WARLOCK.add_spell(             spell_id=325640, cooldown=60,  duration=8,  color
 WARLOCK_AFFLICTION.add_spell(  spell_id=205180, cooldown=180, duration=8,  color="#49ad6e", name="Summon Darkglare",                icon="inv_beholderwarlock.jpg")
 WARLOCK_AFFLICTION.add_spell(  spell_id=113860, cooldown=120, duration=20, color="#c35ec4", name="Dark Soul: Misery",               icon="spell_warlock_soulburn.jpg")
 WARLOCK_AFFLICTION.add_spell(  spell_id=205179, cooldown=45,  duration=16, color="#7833b0", name="Phantom Singularity",             icon="inv_enchant_voidsphere.jpg")
-WARLOCK_DEMONOLOGY.add_spell(  spell_id=265187, cooldown=90,  duration=15, color="#9150ad", name="Summon Demonic Tyrant",           icon="inv_summondemonictyrant.jpg")
+WARLOCK_DEMONOLOGY.add_spell(  spell_id=265187, cooldown=60,  duration=15, color="#9150ad", name="Summon Demonic Tyrant",           icon="inv_summondemonictyrant.jpg")
 WARLOCK_DEMONOLOGY.add_spell(  spell_id=111898, cooldown=120, duration=17, color="#c46837", name="Grimoire: Felguard",              icon="spell_shadow_summonfelguard.jpg")
+WARLOCK_DEMONOLOGY.add_spell(  spell_id=264119, cooldown=45,  duration=15, color="#69b851", name="Summon Vilefiend",                icon="inv_argusfelstalkermount.jpg")
 WARLOCK_DEMONOLOGY.add_spell(  spell_id=267217, cooldown=180, duration=15,                  name="Nether Portal",                   icon="inv_netherportal.jpg")
 WARLOCK_DESTRUCTION.add_spell( spell_id=1122,   cooldown=180, duration=30, color="#91c45a", name="Summon Infernal",                 icon="spell_shadow_summoninfernal.jpg")
 WARLOCK_DESTRUCTION.add_spell( spell_id=113858, cooldown=120, duration=20, color="#c35ec4", name="Dark Soul: Instability",          icon="spell_warlock_soulburn.jpg")
@@ -224,7 +227,7 @@ MONK_WINDWALKER.add_spell(     spell_id=123904, cooldown=120, duration=24, color
 MONK_WINDWALKER.add_spell(     spell_id=137639, cooldown=90,  duration=15, color="#be53db", name="Storm, Earth, and Fire",          icon="spell_nature_giftofthewild.jpg")
 #################################################################################################################################################################################################
 # Druid
-DRUID.add_spell(               spell_id=323764, cooldown=120, duration=4,  color=COL_NF,    name="Convoke the Spirits",             icon="ability_ardenweald_druid.jpg",              show=False)
+DRUID.add_spell(               spell_id=323764, cooldown=60,  duration=4,  color=COL_NF,    name="Convoke the Spirits",             icon="ability_ardenweald_druid.jpg",              show=False)
 DRUID_RESTORATION.add_spell(   spell_id=197721, cooldown=90,  duration=8,  color="#7ec44d", name="Flourish",                        icon="spell_druid_wildburst.jpg",                 show=False)
 DRUID_RESTORATION.add_spell(   spell_id=29166,  cooldown=180, duration=10, color="#3b97ed", name="Innervate",                       icon="spell_nature_lightning.jpg",                show=False)
 DRUID_RESTORATION.add_spell(   spell_id=740,    cooldown=180, duration=6,  color="#6cbfd9", name="Tranquility",                     icon="/static/images/spells/spell_nature_tranquility.jpg")
