@@ -180,6 +180,18 @@ def comp_ranking(comp_name, boss_slug):
         "reports": [report.as_dict() for report in comp_ranking.reports]
     }
 
+@blueprint.route("/load_comp_ranking/<string:comp_name>/<string:boss_slug>")
+async def load_comp_ranking(comp_name, boss_slug):
+    limit = flask.request.args.get("limit", default=50, type=int)
+
+    comp_config = warcraftlogs_comps.CompConfig.objects(name=comp_name).first()
+
+    scr = await comp_config.load_reports(boss_slug=boss_slug, limit=limit)
+    scr.save()
+    comp_config.save()
+
+    return "done"
+
 
 ###############################################################################
 #

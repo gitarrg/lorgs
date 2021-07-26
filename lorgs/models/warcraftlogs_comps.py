@@ -124,10 +124,10 @@ class CompRating(me.Document, warcraftlogs_base.wclclient_mixin):
                 if len(self.reports) > limit:
                     return
 
-    async def update(self):
+    async def update(self, limit=50):
 
         # reports
-        await self.find_top_reports()
+        await self.find_top_reports(limit=limit)
 
         # fights
         fights = utils.flatten(report.fights for report in self.reports)
@@ -210,9 +210,9 @@ class CompConfig(me.Document, warcraftlogs_base.wclclient_mixin):
         return [self.casts_filter, "type='cast'", f"ability.id in ({spell_ids})"]
 
 
-    async def load_reports(self, boss_slug):
+    async def load_reports(self, boss_slug, limit=50):
 
         scr = CompRating.get_or_create(comp=self, boss_slug=boss_slug)
-        await scr.update()
+        await scr.update(limit=limit)
         self.boss_reports[boss_slug] = scr
         return scr
