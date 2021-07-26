@@ -16,6 +16,10 @@
         <span>{{boss.name}}</span>
         <span>vs</span>
 
+        <img class="icon-spec icon-l rounded shadow" src="/static/images/roles/healer.jpg">
+        {{comp.name}}
+
+        {#
         {% for spec in comp_ranking.comp.specs %}
             <img class="icon-l rounded shadow wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.icon_path}}">
             <span class="wow-class-{{spec.wow_class.name_slug}}">{{spec.short_name}}</span>
@@ -23,6 +27,7 @@
                 <span> </span>
             {% endif %}
         {% endfor %}
+        #}
 
     </a>
 </h1>

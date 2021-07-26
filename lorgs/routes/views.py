@@ -126,7 +126,7 @@ async def comp_ranking(comp_name, boss_slug):
     kwargs["timeline_duration"] = max(fight.duration for fight in comp_ranking.fights) if comp_ranking.fights else 0
 
     kwargs["roles"] = data.ROLES
-    kwargs["bosses"] = data.CASTLE_NATHRIA.bosses
+    kwargs["bosses"] = comp_ranking.boss.zone.bosses
 
     return flask.render_template("comp_ranking.html", **kwargs)
 
