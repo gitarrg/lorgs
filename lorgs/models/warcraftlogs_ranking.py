@@ -72,11 +72,11 @@ class SpecRanking(warcraftlogs_base.Document):
                     specName: "{self.spec.name_slug_cap}",
                     metric: {self.spec.role.metric},
                     includeCombatantInfo: false,
-                    serverRegion: "EU",
                 )
             }}
         }}
         """
+        # serverRegion: "EU",
         query_result = await self.client.query(query)
         query_result = query_result.get("worldData", {}).get("encounter", {}).get("characterRankings", {})
 
