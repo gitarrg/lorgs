@@ -242,7 +242,7 @@ async def task_load_spec_rankings_all_bosses(spec_slug):
     limit = flask.request.args.get("limit", default=0, type=int)
 
     for boss in data.SANCTUM_OF_DOMINATION_BOSSES:
-        url = f"/task/api/load_spec_rankings/{spec_slug}/{boss.name_slug}"
+        url = f"/api/task/load_spec_rankings/{spec_slug}/{boss.name_slug}"
         create_task(url, limit=limit)
 
     return "task queued"
