@@ -32,3 +32,5 @@ mongoengine==0.23.1
 dnspython==2.1.0
 redis==3.5.3
 # celery==4.4.7
+
+google-cloud-tasks
