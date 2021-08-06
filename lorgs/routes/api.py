@@ -221,9 +221,12 @@ def report_fight_player(report_id, fight_id, source_id):
 ###############################################################################
 
 
-def create_task(url):
+def create_task(url, limit=0):
     google_task_client = tasks_v2.CloudTasksClient()
     parent = "projects/lorrgs/locations/europe-west2/queues/lorgs-task-queue"
+
+    if limit:
+        url += f"?limit={limit}"
 
     task = {
         "app_engine_http_request": {  # Specify the type of request.
@@ -234,14 +237,25 @@ def create_task(url):
     return google_task_client.create_task(request={"parent": parent, "task": task})
 
 
+
 @blueprint.route("/task/load_spec_rankings/<string:spec_slug>/<string:boss_slug>")
 async def task_load_spec_rankings(spec_slug, boss_slug):
     limit = flask.request.args.get("limit", default=0, type=int)
-    url = f"/api/load_spec_rankings/{spec_slug}/{boss_slug}"
-    if limit:
-        url += f"?limit={limit}"
 
-    create_task(url)
+    url = f"/api/load_spec_rankings/{spec_slug}/{boss_slug}"
+    create_task(url, limit=limit)
+
+    return "task queued"
+
+
+@blueprint.route("/task/load_spec_rankings/<string:spec_slug>")
+async def task_load_spec_rankings_all_bosses(spec_slug):
+    limit = flask.request.args.get("limit", default=0, type=int)
+
+    for boss in data.SANCTUM_OF_DOMINATION_BOSSES:
+        url = f"/task/api/load_spec_rankings/{spec_slug}/{boss.name_slug}"
+        create_task(url, limit=limit)
+
     return "task queued"
 
 
@@ -249,17 +263,14 @@ async def task_load_spec_rankings(spec_slug, boss_slug):
 async def task_load_all():
     limit = flask.request.args.get("limit", default=0, type=int)
 
-    for boss in data.SANCTUM_OF_DOMINATION_BOSSES:
-        for spec in data.SUPPORTED_SPECS:
-            url = f"/api/load_spec_rankings/{spec.full_name_slug}/{boss.name_slug}"
-            if limit:
-                url += f"?limit={limit}"
-            create_task(url)
+    for spec in data.SUPPORTED_SPECS:
+        url = f"/api/load_spec_rankings/{spec.full_name_slug}"
+        create_task(url, limit=limit)
 
+    """
     comps = ["any-heal"]
     for comp_name in comps:
         for boss in data.SANCTUM_OF_DOMINATION_BOSSES:
             url = f"/api/load_comp_ranking/{comp_name}/{boss.name_slug}"
-            if limit:
-                url += f"?limit={limit}"
-            create_task(url)
+            create_task(url, limit=limit)
+    """
