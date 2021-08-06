@@ -237,17 +237,6 @@ def create_task(url, limit=0):
     return google_task_client.create_task(request={"parent": parent, "task": task})
 
 
-
-@blueprint.route("/task/load_spec_rankings/<string:spec_slug>/<string:boss_slug>")
-async def task_load_spec_rankings(spec_slug, boss_slug):
-    limit = flask.request.args.get("limit", default=0, type=int)
-
-    url = f"/api/load_spec_rankings/{spec_slug}/{boss_slug}"
-    create_task(url, limit=limit)
-
-    return "task queued"
-
-
 @blueprint.route("/task/load_spec_rankings/<string:spec_slug>")
 async def task_load_spec_rankings_all_bosses(spec_slug):
     limit = flask.request.args.get("limit", default=0, type=int)
@@ -256,6 +245,15 @@ async def task_load_spec_rankings_all_bosses(spec_slug):
         url = f"/task/api/load_spec_rankings/{spec_slug}/{boss.name_slug}"
         create_task(url, limit=limit)
 
+    return "task queued"
+
+
+@blueprint.route("/task/load_spec_rankings/<string:spec_slug>/<string:boss_slug>")
+async def task_load_spec_rankings(spec_slug, boss_slug):
+
+    limit = flask.request.args.get("limit", default=0, type=int)
+    url = f"/api/load_spec_rankings/{spec_slug}/{boss_slug}"
+    create_task(url, limit=limit)
     return "task queued"
 
 
