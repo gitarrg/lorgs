@@ -10,6 +10,7 @@ import flask
 from google.cloud import tasks_v2
 
 # IMPORT LOCAL LIBRARIES
+from lorgs import data
 from lorgs.logger import logger
 from lorgs.models import specs
 from lorgs.models import warcraftlogs_ranking
@@ -42,9 +43,6 @@ async def async_test(n):
     return "ok", 200
 
 
-
-
-
 ###############################################################################
 #
 #       World Data
@@ -75,16 +73,14 @@ def spells():
 async def load_spec_rankings(spec_slug, boss_slug):
     limit = flask.request.args.get("limit", default=50, type=int)
 
-    logger.info("HELLO | spec=%s | boss=%s | limit=%d", spec_slug, boss_slug, limit)
+    logger.info("START | spec=%s | boss=%s | limit=%d", spec_slug, boss_slug, limit)
 
     spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(boss_slug=boss_slug, spec_slug=spec_slug)
     await spec_ranking.load(limit=limit)
     spec_ranking.save()
 
+    logger.info("DONE | spec=%s | boss=%s | limit=%d", spec_slug, boss_slug, limit)
     return "done"
-
-    # new_task = tasks.load_spec_ranking.delay(boss_id=boss_id, spec_id=spec_id, limit=limit)
-    # return {"task": new_task.id}
 
 
 @blueprint.route("/spec_ranking/<string:spec_slug>/<string:boss_slug>")
@@ -181,12 +177,6 @@ async def load_comp_ranking(comp_name, boss_slug):
 #
 ###############################################################################
 
-@blueprint.route("/load_report/<string:report_id>")
-def load_report(report_id):
-    logger.info("report_id: %s | START", report_id)
-    task = tasks.load_report.delay(report_id)
-    return {"task": task.id}
-
 """
 
 @blueprint.route("/report/<string:report_id>")
@@ -247,9 +237,6 @@ def create_task(url):
 @blueprint.route("/task/load_spec_rankings/<string:spec_slug>/<string:boss_slug>")
 async def task_load_spec_rankings(spec_slug, boss_slug):
     limit = flask.request.args.get("limit", default=0, type=int)
-
-    logger.info("HEY! | spec=%s | boss=%s | limit=%d", spec_slug, boss_slug, limit)
-
     url = f"/api/load_spec_rankings/{spec_slug}/{boss_slug}"
     if limit:
         url += f"?limit={limit}"
@@ -264,20 +251,15 @@ async def task_load_all():
 
     for boss in data.SANCTUM_OF_DOMINATION_BOSSES:
         for spec in data.SUPPORTED_SPECS:
-            print(spec, "vs", boss)
-
             url = f"/api/load_spec_rankings/{spec.full_name_slug}/{boss.name_slug}"
             if limit:
                 url += f"?limit={limit}"
             create_task(url)
 
-    comp_name = "any-heal"
-    for boss in data.SANCTUM_OF_DOMINATION_BOSSES:
-        print(comp_name, "vs", boss)
-        url = f"/api/load_comp_ranking/{comp_name}/{boss.name_slug}"
-        if limit:
-            url += f"?limit={limit}"
-
-        create_task(url)
-
-
+    comps = ["any-heal"]
+    for comp_name in comps:
+        for boss in data.SANCTUM_OF_DOMINATION_BOSSES:
+            url = f"/api/load_comp_ranking/{comp_name}/{boss.name_slug}"
+            if limit:
+                url += f"?limit={limit}"
+            create_task(url)

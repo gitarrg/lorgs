@@ -6,17 +6,14 @@
 service: default
 runtime: python39
 
+
 entrypoint: >
   gunicorn
   -b :$PORT
-  --timeout=240
-  --workers 4
+  --timeout=600
+  --workers 1
   "lorgs.app:create_app()"
-
-# --worker-class uvicorn.workers.UvicornWorker
 # longer timeout for the api calls that load data
-# entrypoint: uvicorn --port $PORT --factory "lorgs.app:create_app"
-# entrypoint: flask run --host=0.0.0.0 --port=$PORT
 
 
 includes:
