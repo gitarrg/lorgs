@@ -21,10 +21,9 @@ blueprint = flask.Blueprint("api", __name__, cli_group=None)
 
 ###############################################################################
 
-google_task_client = tasks_v2.CloudTasksClient()
-
 
 def create_task(url, limit=None):
+    google_task_client = tasks_v2.CloudTasksClient()
     parent = "projects/lorrgs/locations/europe-west2/queues/lorgs-task-queue"
     if limit:
         url += f"?limit={limit}"
@@ -41,12 +40,12 @@ def create_task(url, limit=None):
 ###############################################################################
 
 
-@blueprint.route("/ping")
+@blueprint.get("/ping")
 def ping():
     return {"reply": "Hi!", "time": datetime.datetime.utcnow().isoformat()}
 
 
-@blueprint.route("/async_test/<int:n>")
+@blueprint.get("/async_test/<int:n>")
 async def async_test(n):
     """Quick Test for Async Performance on different webservers.
 
@@ -60,7 +59,7 @@ async def async_test(n):
     return "ok", 200
 
 
-@blueprint.route("/task_status/<string:task_id>")
+@blueprint.get("/task_status/<string:task_id>")
 def task_status(task_id):
 
     task = AsyncResult(task_id)
@@ -80,7 +79,7 @@ def task_status(task_id):
 #
 ###############################################################################
 
-@blueprint.route("/spell/<int:spell_id>")
+@blueprint.get("/spell/<int:spell_id>")
 def spell(spell_id):
     spell = specs.WowSpell.get(spell_id=spell_id)
     if not spell:
@@ -88,7 +87,7 @@ def spell(spell_id):
     return spell.as_dict()
 
 
-@blueprint.route("/spells")
+@blueprint.get("/spells")
 def spells():
     return {spell.spell_id: spell.as_dict() for spell in specs.WowSpell.all}
 
