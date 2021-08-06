@@ -19,23 +19,6 @@ from lorgs.models import warcraftlogs_comps
 blueprint = flask.Blueprint("api", __name__, cli_group=None)
 
 
-###############################################################################
-
-
-def create_task(url, limit=None):
-    google_task_client = tasks_v2.CloudTasksClient()
-    parent = "projects/lorrgs/locations/europe-west2/queues/lorgs-task-queue"
-    if limit:
-        url += f"?limit={limit}"
-
-    task = {
-        "app_engine_http_request": {  # Specify the type of request.
-            "http_method": tasks_v2.HttpMethod.GET,
-            "relative_uri": url
-        }
-    }
-    return google_task_client.create_task(request={"parent": parent, "task": task})
-
 
 ###############################################################################
 
@@ -59,18 +42,7 @@ async def async_test(n):
     return "ok", 200
 
 
-@blueprint.get("/task_status/<string:task_id>")
-def task_status(task_id):
 
-    task = AsyncResult(task_id)
-    info = task.info or {}
-    if task.failed:
-        info = {} # as the Exception might not be JSON serializable
-
-    return {
-        "status": task.status,
-        "info": info,
-    }
 
 
 ###############################################################################
@@ -102,13 +74,8 @@ def spells():
 @blueprint.route("/load_spec_rankings/<string:spec_slug>/<string:boss_slug>")
 async def load_spec_rankings(spec_slug, boss_slug):
     limit = flask.request.args.get("limit", default=50, type=int)
-    delayed = flask.request.args.get("delayed", default=False, type=bool)
 
-    logger.info("HELLO | spec=%s | boss=%s | limit=%d | delayed=%s", spec_slug, boss_slug, limit, delayed)
-
-    if delayed:
-        create_task(f"/api/load_spec_rankings/{spec_slug}/{boss_slug}")
-        return "task queued"
+    logger.info("HELLO | spec=%s | boss=%s | limit=%d", spec_slug, boss_slug, limit)
 
     spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(boss_slug=boss_slug, spec_slug=spec_slug)
     await spec_ranking.load(limit=limit)
@@ -255,3 +222,37 @@ def report_fight_player(report_id, fight_id, source_id):
         flask.abort(404, description="Fight not found")
     return player.as_dict()
 """
+
+
+
+
+###############################################################################
+#
+#       Delayed Tasks
+#
+###############################################################################
+
+
+def create_task(url, limit=None):
+    google_task_client = tasks_v2.CloudTasksClient()
+    parent = "projects/lorrgs/locations/europe-west2/queues/lorgs-task-queue"
+    if limit:
+        url += f"?limit={limit}"
+
+    task = {
+        "app_engine_http_request": {  # Specify the type of request.
+            "http_method": tasks_v2.HttpMethod.GET,
+            "relative_uri": url
+        }
+    }
+    return google_task_client.create_task(request={"parent": parent, "task": task})
+
+
+@blueprint.route("/task/load_spec_rankings/<string:spec_slug>/<string:boss_slug>")
+async def task_load_spec_rankings(spec_slug, boss_slug):
+    limit = flask.request.args.get("limit", default=50, type=int)
+
+    logger.info("HEY! | spec=%s | boss=%s | limit=%d", spec_slug, boss_slug, limit)
+
+    create_task(f"/api/load_spec_rankings/{spec_slug}/{boss_slug}", limit=limit)
+    return "task queued"
