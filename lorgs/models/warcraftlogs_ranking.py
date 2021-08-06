@@ -2,6 +2,7 @@
 
 # IMPORT STANDARD LIBRARIES
 # import uuid
+import arrow
 import datetime
 
 # IMPORT THIRD PARTY LIBRARIES
@@ -53,6 +54,12 @@ class SpecRanking(warcraftlogs_base.Document):
     @property
     def players(self):
         return utils.flatten(fight.players for fight in self.fights)
+
+    @property
+    def update_age(self):
+        now = arrow.utcnow()
+        old = arrow.get(self.updated)
+        return old.humanize(now, only_distance=True)
 
     ##########################
     # Query

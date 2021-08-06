@@ -3,30 +3,39 @@
 # IMPORT STANDARD LIBRARIES
 import asyncio
 import datetime
-# import os
 import time
 
 # IMPORT THIRD PARTY LIBRARIES
 import flask
-# import sqlalchemy as sa
-# from celery.result import AsyncResult
+from google.cloud import tasks_v2
 
 # IMPORT LOCAL LIBRARIES
-# from lorgs.models import loader
-# from lorgs import data
-# from lorgs import tasks
-# from lorgs.cache import Cache
 from lorgs.logger import logger
-# from lorgs.models import Report
 from lorgs.models import specs
-# from lorgs.models import warcraftlogs_report
 from lorgs.models import warcraftlogs_ranking
 from lorgs.models import warcraftlogs_comps
 
-# from lorgs import celery
-
 
 blueprint = flask.Blueprint("api", __name__, cli_group=None)
+
+
+###############################################################################
+
+google_task_client = tasks_v2.CloudTasksClient()
+
+
+def create_task(url, limit=None):
+    parent = "projects/lorrgs/locations/europe-west2/queues/lorgs-task-queue"
+    if limit:
+        url += f"?limit={limit}"
+
+    task = {
+        "app_engine_http_request": {  # Specify the type of request.
+            "http_method": tasks_v2.HttpMethod.GET,
+            "relative_uri": url
+        }
+    }
+    return google_task_client.create_task(request={"parent": parent, "task": task})
 
 
 ###############################################################################
@@ -94,6 +103,11 @@ def spells():
 @blueprint.route("/load_spec_rankings/<string:spec_slug>/<string:boss_slug>")
 async def load_spec_rankings(spec_slug, boss_slug):
     limit = flask.request.args.get("limit", default=50, type=int)
+    delayed = flask.request.args.get("delayed", default=False, type=bool)
+
+    if delayed:
+        create_task(f"/api/load_spec_rankings/{spec_slug}/{boss_slug}")
+        return "task queued", 201
 
     spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(boss_slug=boss_slug, spec_slug=spec_slug)
     await spec_ranking.load(limit=limit)

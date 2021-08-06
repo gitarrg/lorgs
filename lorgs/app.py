@@ -13,7 +13,7 @@ from lorgs import data
 from lorgs import utils
 from lorgs.routes import api
 from lorgs.routes import views
-# from lorgs.routes import admin
+from lorgs.routes import admin
 
 
 def create_app():
@@ -38,6 +38,6 @@ def create_app():
     # Blueprints
     app.register_blueprint(views.blueprint, url_prefix="/")
     app.register_blueprint(api.blueprint, url_prefix="/api")
-    # app.register_blueprint(admin.blueprint, url_prefix="/admin")
-
+    app.register_blueprint(admin.blueprint, url_prefix="/admin")
     return app
+

@@ -27,14 +27,7 @@ export PYTHONPATH=.  # adds current dir, so we can import
 # gunicorn "lorgs.app:create_app()" -b :$PORT --worker-class "eventlet" --timeout=240 --reload
 
 # uvicorn  --port $PORT --factory "lorgs.app:create_app"
-# quart run --host=0.0.0.0 --port=$PORT
-
-gunicorn -b :$PORT -k uvicorn.workers.UvicornWorker --timeout=240 "lorgs.app:create_app()"
-
-# uvicorn  --port $PORT  "lorgs.app:create_app"
-
-# pip install eventlet
-# eventlet==0.30.2
-# gunicorn example:app -w 4 -k uvicorn.workers.UvicornWorker
+flask run --host=0.0.0.0 --port=$PORT
 
 
+# gunicorn -b :$PORT -k uvicorn.workers.UvicornWorker --timeout=240 "lorgs.app:create_app()"

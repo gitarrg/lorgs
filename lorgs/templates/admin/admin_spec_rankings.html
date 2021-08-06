@@ -9,29 +9,54 @@ Lorgs: Admin Page
 {% block content %}
 <div class="p-2 mt-5 ml-5">
 
-
     <h3>Spec Rankings</h3>
 
+
+
     <div class="bg-dark rounded border p-2">
-
-
-        <table class="table table-dark table-sm">
+        <table class="table table-dark table-sm" data-click-to-select>
 
             <thead>
                 <th></th>
                 <th></th>
                 {% for boss in bosses %}
                 <th>
-                    <img class="icon-spec icon-s rounded" src="{{boss.icon_path}}">
+                    <img class="icon-spec icon-s rounded" src="{{boss.icon_path}}" data-toggle="tooltip" title="{{boss.name}}">
                 </th>
                 {% endfor %}
                 <th style="width: 100%"></th>
             </thead>
 
-            {% for spec in specs if spec.supported %}
-            {% set wow_class = spec.wow_class %}
+            {% for role in roles %}
+                {% for spec in role.specs if spec.supported %}
+                    {% set wow_class = spec.wow_class %}
+
+                    <tr>
+
+                        {% if loop.first %}
+                            <td><img class="icon-s rounded border border-black" src="{{role.icon_path}}"></td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+
+                        <td><img class="icon-s rounded wow-class-border-{{wow_class.name_slug}}" src="{{spec.icon_path}}" data-toggle="tooltip" title="{{spec.full_name}}"></td>
+
+
+                    {% for boss in bosses %}
+                        <td>
+                            {% set data = spec_ranking_data[spec.full_name_slug][boss.name_slug] %}
+                            <button type="button" class="update_spec_ranking_button btn btn-primary btn-sm" data-spec="{{spec.full_name_slug}}" data-boss="{{boss.name_slug}}">
+                                {{data.update_age}}
+                            </button>
+                        </td>
+                    {% endfor %}
+                    </tr>
+
+                {% endfor %}
+            {% endfor %}
+
+            {#
             <tr>
-                <td><img class="icon-s rounded wow-class-border-{{wow_class.name_slug}}" src="{{spec.icon_path}}"></td>
                 <td class="wow-class-{{wow_class.name_slug}}">{{spec.name}}</td>
 
                 {% for boss in bosses %}
@@ -52,9 +77,10 @@ Lorgs: Admin Page
                 {% endfor %}
 
                 <td><button type="button" class="update_spec_ranking_button btn btn-primary btn-sm" data-spec_id="{{spec.id}}">update</button></td>
-
             </tr>
             {% endfor %}
+            #}
+
         </table>
     </div>
 
@@ -65,75 +91,22 @@ Lorgs: Admin Page
 <script type="text/javascript">
 
 
-function update_task_status(element, task_id) {
-
-    console.log("update_task_status", task_id);
-
-    fetch(`/api/task_status/${task_id}`)
-        .then(response => response.json())
-        .then(data => {
-            // task_status.innerHTML = "\nNAME: " + data.info.name;
-            // task_status.innerHTML += "</br>STATUS: " + data.status;
-            // task_status.innerHTML += "</br>STEP: " + data.info.step;
-            // document.getElementById("task_status_bar-fg").style.width = (data.info.step*100) + "%";
-            // element.innerHTML = data.status;
-            element.className = "";
-
-            if (data.status == "PENDING") {
-                element.innerHTML = '<i class="far fa-hourglass"></i>'
-                element.className = "spec_ranking_status text-info"
-            }
-            if (data.status == "STARTED") {
-                element.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>'
-                element.className = "spec_ranking_status text-primary"
-            }
-            if (data.status == "PROGRESS") {
-                element.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>'
-                element.className = "spec_ranking_status text-primary"
-            }
-            if (data.status == "SUCCESS") {
-                element.innerHTML = '<i class="fas fa-check-square"></i>'
-                element.className = "spec_ranking_status text-success"
-            }
-            if (data.status == "FAILURE") {
-                element.innerHTML = '<i class="fas fa-exclamation-triangle"></i>'
-                element.className = "spec_ranking_status text-danger"
-            }
-
-            if (data.status == "PENDING" || data.status == "STARTED" || data.status == "PROGRESS") {
-                setTimeout(
-                    function() {
-                        update_task_status(element, task_id)
-                    },
-                    100
-                );
-            }
-        });
-}
-
-
 function update_spec_ranking() {
-    console.log("this", this);
-    const spec_id = this.dataset.spec_id;
-    // const boss = this.dataset.boss;
+    const spec = this.dataset.spec;
+    const boss = this.dataset.boss;
 
     // cast.dataset.spell_id;
-    console.log("update_spec_ranking", spec_id);
+    console.log("update_spec_ranking", spec, boss);
     // this.innerHTML = "loading...";
+    // element.innerHTML = '<i class="fas fa-paper-plane"></i>'
+    this.className = "spec_ranking_status text-info"
 
-
-    document.querySelectorAll(`.spec_ranking_status[data-spec_id="${spec_id}"]`).forEach(element => {
-        const boss_id = element.dataset.boss_id;
-        element.innerHTML = '<i class="fas fa-paper-plane"></i>'
-        element.className = "spec_ranking_status text-info"
-
-        fetch(`/api/load_spec_rankings/${spec_id}/${boss_id}`)
-            .then(response => response.json())
-            .then(data => {
-                console.log("created tasks", data)
-                update_task_status(element, data.task)
-            });
-    });
+    fetch(`/api/load_spec_rankings/${spec}/${boss}?delayed=true`)
+        .then(response => response.json())
+        .then(data => {
+            console.log("created tasks", data)
+        });
+    return
 }
 
 
