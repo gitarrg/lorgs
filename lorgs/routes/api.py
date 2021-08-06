@@ -104,9 +104,11 @@ async def load_spec_rankings(spec_slug, boss_slug):
     limit = flask.request.args.get("limit", default=50, type=int)
     delayed = flask.request.args.get("delayed", default=False, type=bool)
 
+    logger.info("HELLO | spec=%s | boss=%s | limit=%d | delayed=%s", spec_slug, boss_slug, limit, delayed)
+
     if delayed:
         create_task(f"/api/load_spec_rankings/{spec_slug}/{boss_slug}")
-        return "task queued", 201
+        return "task queued"
 
     spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(boss_slug=boss_slug, spec_slug=spec_slug)
     await spec_ranking.load(limit=limit)
