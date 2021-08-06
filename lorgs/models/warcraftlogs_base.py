@@ -32,6 +32,9 @@ class wclclient_mixin:
             chunks_size[int, optional]: load in chunks of this size.
 
         """
+        if not objects:
+            return
+
         for chunk in utils.chunks(objects, chunk_size):
 
             queries = [obj.get_query(filters or []) for obj in chunk]

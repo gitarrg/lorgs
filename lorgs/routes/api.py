@@ -224,8 +224,6 @@ def report_fight_player(report_id, fight_id, source_id):
 """
 
 
-
-
 ###############################################################################
 #
 #       Delayed Tasks
@@ -233,11 +231,9 @@ def report_fight_player(report_id, fight_id, source_id):
 ###############################################################################
 
 
-def create_task(url, limit=None):
+def create_task(url):
     google_task_client = tasks_v2.CloudTasksClient()
     parent = "projects/lorrgs/locations/europe-west2/queues/lorgs-task-queue"
-    if limit:
-        url += f"?limit={limit}"
 
     task = {
         "app_engine_http_request": {  # Specify the type of request.
@@ -250,9 +246,38 @@ def create_task(url, limit=None):
 
 @blueprint.route("/task/load_spec_rankings/<string:spec_slug>/<string:boss_slug>")
 async def task_load_spec_rankings(spec_slug, boss_slug):
-    limit = flask.request.args.get("limit", default=50, type=int)
+    limit = flask.request.args.get("limit", default=0, type=int)
 
     logger.info("HEY! | spec=%s | boss=%s | limit=%d", spec_slug, boss_slug, limit)
 
-    create_task(f"/api/load_spec_rankings/{spec_slug}/{boss_slug}", limit=limit)
+    url = f"/api/load_spec_rankings/{spec_slug}/{boss_slug}"
+    if limit:
+        url += f"?limit={limit}"
+
+    create_task(url)
     return "task queued"
+
+
+@blueprint.route("/task/load_all")
+async def task_load_all():
+    limit = flask.request.args.get("limit", default=0, type=int)
+
+    for boss in data.SANCTUM_OF_DOMINATION_BOSSES:
+        for spec in data.SUPPORTED_SPECS:
+            print(spec, "vs", boss)
+
+            url = f"/api/load_spec_rankings/{spec.full_name_slug}/{boss.name_slug}"
+            if limit:
+                url += f"?limit={limit}"
+            create_task(url)
+
+    comp_name = "any-heal"
+    for boss in data.SANCTUM_OF_DOMINATION_BOSSES:
+        print(comp_name, "vs", boss)
+        url = f"/api/load_comp_ranking/{comp_name}/{boss.name_slug}"
+        if limit:
+            url += f"?limit={limit}"
+
+        create_task(url)
+
+

@@ -83,6 +83,7 @@ class SpecRanking(warcraftlogs_base.Document):
             }}
         }}
         """
+
         # serverRegion: "EU",
         query_result = await self.client.query(query)
         query_result = query_result.get("worldData", {}).get("encounter", {}).get("characterRankings", {})

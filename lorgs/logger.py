@@ -24,8 +24,6 @@ handler = logging.StreamHandler()
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-
-
 if os.getenv("DEBUG"):
     logger.setLevel(logging.DEBUG)
 else:
