@@ -97,15 +97,10 @@ function update_spec_ranking() {
 
     // cast.dataset.spell_id;
     console.log("update_spec_ranking", spec, boss);
-    // this.innerHTML = "loading...";
+    this.innerHTML = "loading...";
     // element.innerHTML = '<i class="fas fa-paper-plane"></i>'
-    this.className = "spec_ranking_status text-info"
-
-    fetch(`/api/load_spec_rankings/${spec}/${boss}?delayed=true`)
-        .then(response => response.json())
-        .then(data => {
-            console.log("created tasks", data)
-        });
+    // this.className = "spec_ranking_status text-info"
+    fetch(`/api/task/load_spec_rankings/${spec}/${boss}`)
     return
 }
 
