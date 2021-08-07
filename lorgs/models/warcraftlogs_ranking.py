@@ -59,6 +59,13 @@ class SpecRanking(warcraftlogs_base.Document):
     def update_age(self):
         now = arrow.utcnow()
         old = arrow.get(self.updated)
+        return now - old
+        # return old.humanize(now, only_distance=True)
+
+    @property
+    def update_age_fmt(self):
+        now = arrow.utcnow()
+        old = arrow.get(self.updated)
         return old.humanize(now, only_distance=True)
 
     ##########################

@@ -1,3 +1,25 @@
+
+
+
+{% macro update_button(spec_ranking_data) -%}
+
+    {% set age = spec_ranking_data.update_age.total_seconds() %}
+    {% if age > 604800 %}
+        {% set button_class="btn-danger" %}
+    {% elif age > 259200 %}
+        {% set button_class="btn-warning" %}
+    {% elif age > 86400 %}
+        {% set button_class="btn-info" %}
+    {% else %}
+        {% set button_class="btn-success" %}
+    {% endif %}
+
+    <button type="button" class="update_spec_ranking_button btn {{button_class}} btn-sm" data-spec="{{spec_ranking_data.spec_slug}}" data-boss="{{spec_ranking_data.boss_slug}}">
+        {{spec_ranking_data.update_age_fmt}}
+    </button>
+{%- endmacro %}
+
+
 {% extends "base.html" %}
 
 {% block title %}
@@ -45,9 +67,9 @@ Lorgs: Admin Page
                     {% for boss in bosses %}
                         <td>
                             {% set data = spec_ranking_data[spec.full_name_slug][boss.name_slug] %}
-                            <button type="button" class="update_spec_ranking_button btn btn-primary btn-sm" data-spec="{{spec.full_name_slug}}" data-boss="{{boss.name_slug}}">
-                                {{data.update_age}}
-                            </button>
+                            {% if data %}
+                                {{ update_button(data) }}
+                            {% endif %}
                         </td>
                     {% endfor %}
                     </tr>
