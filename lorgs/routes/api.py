@@ -158,8 +158,8 @@ def comp_ranking(comp_name, boss_slug):
         "reports": [report.as_dict() for report in comp_ranking.reports]
     }
 
-@blueprint.route("/load_comp_ranking/<string:comp_name>/<string:boss_slug>")
-async def load_comp_ranking(comp_name, boss_slug):
+@blueprint.route("/load_comp_rankings/<string:comp_name>/<string:boss_slug>")
+async def load_comp_rankings(comp_name, boss_slug):
     limit = flask.request.args.get("limit", default=50, type=int)
 
     comp_config = warcraftlogs_comps.CompConfig.objects(name=comp_name).first()
@@ -285,13 +285,14 @@ async def task_load_comp_rankings_all(comp_name):
 async def task_load_all():
     limit = flask.request.args.get("limit", default=0, type=int)
 
-    """
     for spec in data.SUPPORTED_SPECS:
         url = f"/api/task/load_spec_rankings/{spec.full_name_slug}"
         create_task(url, limit=limit)
-    """
 
     comps = ["any-heal"]
     for comp_name in comps:
         url = f"/api/task/load_comp_rankings/{comp_name}"
         create_task(url, limit=limit)
+
+
+    return "ok"
