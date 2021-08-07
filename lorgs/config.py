@@ -10,6 +10,9 @@ class BaseConfig:
     # pretty json (i just like them more)
     JSONIFY_PRETTYPRINT_REGULAR = True
 
+    CACHE_DEFAULT_TIMEOUT = 300
+    CACHE_TYPE = "SimpleCache"
+
 ################################################################################
 
 class DevelopmentConfig(BaseConfig):
@@ -17,6 +20,9 @@ class DevelopmentConfig(BaseConfig):
 
     GOOGLE_ANALYTICS_ID = ""
     SEND_FILE_MAX_AGE_DEFAULT = 0  # for DEV. updates static files
+
+    CACHE_TYPE = "RedisCache"  # TODO: redis
+    CACHE_REDIS_URL = os.getenv("REDIS_URL") or "redis://localhost:6379"
 
 
 ################################################################################
@@ -26,3 +32,6 @@ class ProductionConfig(BaseConfig):
     """Config used in Production."""
 
     GOOGLE_ANALYTICS_ID = "G-Y92VPCY6QW"
+
+
+

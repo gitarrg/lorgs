@@ -237,6 +237,8 @@ def create_task(url, limit=0):
     return google_task_client.create_task(request={"parent": parent, "task": task})
 
 
+# LOAD SPECS
+
 @blueprint.route("/task/load_spec_rankings/<string:spec_slug>")
 async def task_load_spec_rankings_all_bosses(spec_slug):
     limit = flask.request.args.get("limit", default=0, type=int)
@@ -257,18 +259,39 @@ async def task_load_spec_rankings(spec_slug, boss_slug):
     return "task queued"
 
 
+# LOAD COMP
+
+@blueprint.route("/task/load_comp_rankings/<string:comp_name>/<string:boss_slug>")
+async def task_load_comp_rankings(comp_name, boss_slug):
+    limit = flask.request.args.get("limit", default=0, type=int)
+
+    url = f"/api/load_comp_rankings/{comp_name}/{boss_slug}"
+    create_task(url, limit=limit)
+    return "task queued"
+
+
+@blueprint.route("/task/load_comp_rankings/<string:comp_name>")
+async def task_load_comp_rankings_all(comp_name):
+    limit = flask.request.args.get("limit", default=0, type=int)
+
+    for boss in data.SANCTUM_OF_DOMINATION_BOSSES:
+        url = f"/api/task/load_comp_rankings/{comp_name}/{boss.name_slug}"
+        create_task(url, limit=limit)
+    return "task queued"
+
+# LOAD ALL
+
 @blueprint.route("/task/load_all")
 async def task_load_all():
     limit = flask.request.args.get("limit", default=0, type=int)
 
-    for spec in data.SUPPORTED_SPECS:
-        url = f"/api/load_spec_rankings/{spec.full_name_slug}"
-        create_task(url, limit=limit)
-
     """
+    for spec in data.SUPPORTED_SPECS:
+        url = f"/api/task/load_spec_rankings/{spec.full_name_slug}"
+        create_task(url, limit=limit)
+    """
+
     comps = ["any-heal"]
     for comp_name in comps:
-        for boss in data.SANCTUM_OF_DOMINATION_BOSSES:
-            url = f"/api/load_comp_ranking/{comp_name}/{boss.name_slug}"
-            create_task(url, limit=limit)
-    """
+        url = f"/api/task/load_comp_rankings/{comp_name}"
+        create_task(url, limit=limit)

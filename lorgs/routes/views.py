@@ -7,20 +7,13 @@ import re
 import flask
 
 # IMPORT LOCAL LIBS
-# from lorgs import db
-from lorgs import forms
-# from lorgs.logger import logger
-# from lorgs import models
-# from lorgs import tasks
 from lorgs import data
+from lorgs import forms
 from lorgs import utils
-# from lorgs.cache import Cache
-# from lorgs.models import encounters
-# from lorgs.models import specs
-# from lorgs.models import warcraftlogs
-from lorgs.models import warcraftlogs_ranking
+from lorgs.cache import cache
+from lorgs.logger import logger
 from lorgs.models import warcraftlogs_comps
-# from lorgs.models import warcraftlogs_base
+from lorgs.models import warcraftlogs_ranking
 from lorgs.models import warcraftlogs_report
 
 
@@ -58,8 +51,10 @@ async def page_not_found(error):
 
 
 @blueprint.get("/")
-async def index():
+@cache.cached(timeout=60)
+def index():
     """Render the main index page."""
+    logger.info("LOAD")
     kwargs = {}
     kwargs["boss"] = data.DEFAULT_BOSS
     kwargs["roles"] = data.ROLES
@@ -74,7 +69,8 @@ async def index():
 ################################################################################
 
 @blueprint.route("/spec_ranking/<string:spec_slug>/<string:boss_slug>")
-async def spec_ranking(spec_slug, boss_slug):
+@cache.cached(timeout=60)
+def spec_ranking(spec_slug, boss_slug):
 
     # Inputs
     # limit = flask.request.args.get("limit", default=50, type=int)
@@ -117,7 +113,8 @@ async def spec_ranking(spec_slug, boss_slug):
 
 
 @blueprint.route("/comp_ranking/<string:comp_name>/<string:boss_slug>")
-async def comp_ranking(comp_name, boss_slug):
+@cache.cached(timeout=60)
+def comp_ranking(comp_name, boss_slug):
     comp_ranking = warcraftlogs_comps.CompRating.get_or_create(comp=comp_name, boss_slug=boss_slug)
 
     kwargs = {}

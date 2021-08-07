@@ -6,6 +6,7 @@ import json
 
 # IMPORT THIRD PARTY LIBRARIES
 import redis
+import flask_caching
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.logger import logger
@@ -29,5 +30,9 @@ class RedisJsonCache:
         data = self.client.get(key)
         return json.loads(data) if data else None
 
-Cache = RedisJsonCache()
+# Cache = RedisJsonCache()
+cache = flask_caching.Cache() #config={'CACHE_TYPE': 'SimpleCache'})
 
+
+def init_app(app):
+    cache.init_app(app)

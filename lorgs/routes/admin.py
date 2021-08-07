@@ -4,17 +4,9 @@
 import flask
 
 # IMPORT LOCAL LIBS
-from lorgs import db
-# from lorgs import forms
-# from lorgs import models
-# from lorgs import tasks
-# from lorgs import utils
 from lorgs import data
 from lorgs import utils
-# from lorgs.cache import Cache
-from lorgs.models import encounters
-from lorgs.models import specs
-# from lorgs.models import warcraftlogs
+from lorgs.cache import cache
 from lorgs.models import warcraftlogs_ranking
 
 
@@ -35,6 +27,7 @@ def index():
 
 
 @blueprint.get("/spells")
+@cache.cached(timeout=600)
 def spells():
     kwargs = {}
     kwargs["specs"] = data.SPECS
@@ -42,6 +35,7 @@ def spells():
 
 
 @blueprint.get("/spec_rankings")
+@cache.cached(timeout=60)
 def spec_rankings():
 
 

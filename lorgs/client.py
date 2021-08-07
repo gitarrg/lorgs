@@ -12,7 +12,7 @@ import aiohttp
 # IMPORT LOCAL LIBRARIES
 # from lorgs import models
 # from lorgs import utils
-from lorgs.cache import Cache
+from lorgs.cache import cache
 from lorgs.logger import logger
 
 #: int: cache time for the queries
@@ -67,7 +67,7 @@ class WarcraftlogsClient:
         logger.info("NEW CLIENT: %s", self.client_id)
 
         self.cached = os.getenv("WCL_CACHED") or False
-        self.cache = Cache
+        self.cache = cache
 
         self._num_queries = 0
 
