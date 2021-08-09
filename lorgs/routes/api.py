@@ -296,8 +296,8 @@ async def task_load_all_specs():
 async def task_load_all_comps():
     limit = flask.request.args.get("limit", default=0, type=int)
     comps = warcraftlogs_comps.CompConfig.objects
-    for comp_name in comps:
-        url = f"/api/task/load_comp_rankings/{comp_name}"
+    for comp in comps:
+        url = f"/api/task/load_comp_rankings/{comp.name}"
         create_task(url, limit=limit)
     return "ok"
 
@@ -306,6 +306,6 @@ async def task_load_all_comps():
 async def task_load_all():
     limit = flask.request.args.get("limit", default=0, type=int)
 
-    create_task("api/task/load_all/specs", limit=limit)
-    create_task("api/task/load_all/comps", limit=limit)
+    create_task("/api/task/load_all/specs", limit=limit)
+    create_task("/api/task/load_all/comps", limit=limit)
     return "ok"
