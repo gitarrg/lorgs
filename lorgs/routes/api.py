@@ -279,20 +279,33 @@ async def task_load_comp_rankings_all(comp_name):
         create_task(url, limit=limit)
     return "task queued"
 
+
 # LOAD ALL
+
+
+@blueprint.route("/task/load_all/specs")
+async def task_load_all_specs():
+    limit = flask.request.args.get("limit", default=0, type=int)
+    for spec in data.SUPPORTED_SPECS:
+        url = f"/api/task/load_spec_rankings/{spec.full_name_slug}"
+        create_task(url, limit=limit)
+    return "ok"
+
+
+@blueprint.route("/task/load_all/comps")
+async def task_load_all_comps():
+    limit = flask.request.args.get("limit", default=0, type=int)
+    comps = warcraftlogs_comps.CompConfig.objects
+    for comp_name in comps:
+        url = f"/api/task/load_comp_rankings/{comp_name}"
+        create_task(url, limit=limit)
+    return "ok"
+
 
 @blueprint.route("/task/load_all")
 async def task_load_all():
     limit = flask.request.args.get("limit", default=0, type=int)
 
-    for spec in data.SUPPORTED_SPECS:
-        url = f"/api/task/load_spec_rankings/{spec.full_name_slug}"
-        create_task(url, limit=limit)
-
-    comps = ["any-heal"]
-    for comp_name in comps:
-        url = f"/api/task/load_comp_rankings/{comp_name}"
-        create_task(url, limit=limit)
-
-
+    create_task("api/task/load_all/specs", limit=limit)
+    create_task("api/task/load_all/comps", limit=limit)
     return "ok"

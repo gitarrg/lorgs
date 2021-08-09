@@ -66,9 +66,12 @@
                 {% for comp in comps %}
 
                 <tr>
-                    <a href="{{url_for('ui.comp_ranking', comp_name=comp.name, boss_slug=boss.name_slug)}}">
-                        <img class="icon-spec icon-s rounded" src="/static/images/roles/healer.jpg">
-                        {{comp.name}}
+                    <td>
+                        <a href="{{url_for('ui.comp_ranking', comp_name=comp.name, boss_slug=boss.name_slug)}}">
+                            <img class="icon-spec icon-s rounded" src="/static/images/roles/healer.jpg">
+                            {{comp.name}}
+                        </a>
+                    </td>
                     {#
                     {% for spec in comp.specs %}
                         <img class="icon-spec icon-s rounded wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.icon_path}}">
@@ -76,7 +79,6 @@
                         {% if not loop.last %}&nbsp;{% endif %}
                     {% endfor %}
                     #}
-                    </a>
                 </tr>
 
                 {% endfor %} {# for comps #}
