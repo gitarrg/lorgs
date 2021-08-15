@@ -281,7 +281,26 @@ class Boss(BaseActor):
     #
     def get_sub_query(self, filters=None):
         filters = filters or []
-        filters = ["(ability.id={spell_id} and type='{event_type}')".format(**event) for event in self.raid_boss.events]
+
+        for event in self.raid_boss.events:
+
+            # get all event parts
+            parts = []
+            if event.get("event_type"):
+                parts.append("type='{event_type}'")
+            if event.get("spell_id"):
+                parts.append("ability.id={spell_id}")
+            if event.get("extra_filter"):
+                parts.append("{extra_filter}")
+
+            # combine filter
+            event_filter = " and ".join(parts)
+            event_filter = f"({event_filter})"
+            event_filter = event_filter.format(**event)
+
+            # add filter to list
+            filters.append(event_filter)
+
         filters = " or ".join(filters)
 
         if not filters:

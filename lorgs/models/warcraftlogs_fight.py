@@ -217,7 +217,6 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
 
             player.process_death_events(death_events)
 
-
     def process_query_result(self, query_result):
 
         report_data = query_result.get("report") or {}
