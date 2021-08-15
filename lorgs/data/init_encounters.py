@@ -110,11 +110,12 @@ SOULRENDER.add_event(event_type="cast", spell_id=352933, duration=30, color="#4c
 
 
 PAINSMITH = SANCTUM_OF_DOMINATION.add_boss(id=2430, name="Painsmith Raznal")
+PAINSMITH.add_event(event_type="cast", spell_id=359033, duration=45, color="#30c235", name="Intermission",  icon="ability_mage_moltenarmor.jpg")
 PAINSMITH.add_event(event_type="cast", spell_id=355571, duration=6, color="#3fd4cf", name="Axe",           icon="inv_axe_2h_mawraid_diff.jpg")
 PAINSMITH.add_event(event_type="cast", spell_id=348513, duration=6, color="#3fd4cf", name="Hammer",        icon="inv_mace_2h_maw_c_01.jpg")
 PAINSMITH.add_event(event_type="cast", spell_id=355787, duration=6, color="#3fd4cf", name="Scythe",        icon="inv_polearm_2h_mawnecromancerboss_d_01_grey.jpg")
-PAINSMITH.add_event(event_type="applydebuff", spell_id=356870, duration=1.5, color="#db5f39", name="Flameclasp Trap",  icon="ability_hunter_steeltrap.jpg")
-PAINSMITH.add_event(event_type="cast", spell_id=359033, duration=45, color="#30c235", name="Intermission",  icon="ability_mage_moltenarmor.jpg")
+# we only filter tank debuffs to minimize the number of events returned
+PAINSMITH.add_event(event_type="applydebuff", spell_id=356870, duration=1.5, color="#db5f39", name="Flameclasp Trap",  icon="ability_hunter_steeltrap.jpg", extra_filter="target.role='tank'")
 
 
 GUARDIAN = SANCTUM_OF_DOMINATION.add_boss(id=2436, name="Guardian of the First Ones")
