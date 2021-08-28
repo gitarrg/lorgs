@@ -1,56 +1,52 @@
 
-/*Parse Colors yoinked from Warcraftlogs*/
-.text-epic {color: rgb(163,53,238)}
-.text-legendary {color: rgb(255,128,0)}
-.text-astounding {color: rgb(226,104,168)}
-.text-artifact {color: rgb(229,204,128)}
 
-.wow-class-deathknight {color: #C41E3A}
-.wow-class-demonhunter {color: #A330C9}
-.wow-class-druid {color: #FF7C0A}
-.wow-class-hunter {color: #AAD372}
-.wow-class-mage {color: #3FC7EB}
-.wow-class-monk {color: #00FF98}
-.wow-class-paladin {color: #F48CBA}
-.wow-class-priest {color: #FFFFFF}
-.wow-class-rogue {color: #FFF468}
-.wow-class-shaman {color: #0070DD}
-.wow-class-warlock {color: #8788EE}
-.wow-class-warrior {color: #C69B6D}
-.wow-class-other {color: #888}
+/* Colors yoinked from Warcraftlogs*/
+$qualities: (
+    "common": #ccc,
+    "uncommon": #0f8000,
+    "rare": #0070ff,
+    "epic": rgb(163,53,238),
+    "legendary": rgb(255,128,0),
+    "astounding": rgb(226,104,168),
+    "artifact": rgb(229,204,128)
+);
 
 
-.wow-class-bg-deathknight {background-color: #C41E3A}
-.wow-class-bg-demonhunter {background-color: #A330C9}
-.wow-class-bg-druid {background-color: #FF7C0A}
-/*.wow-class-bg-hunter {background-color: #AAD372}*/
+@each $name, $color in $qualities {
+    .text-#{$name} {color: $color;}
+    .bg-#{$name} {background: $color}
+}
+
+
+$classes: (
+    "deathknight": #C41E3A,
+    "demonhunter": #A330C9,
+    "druid": #FF7C0A,
+    "hunter": #AAD372,
+    "mage": #3FC7EB,
+    "monk": #00FF98,
+    "paladin": #F48CBA,
+    "priest": #FFFFFF,
+    "rogue": #FFF468,
+    "shaman": #0070DD,
+    "warlock": #8788EE,
+    "warrior": #C69B6D,
+
+    "other": #888,
+    "boss": hsl(0, 60%, 55%),
+);
+
+
+@each $name, $color in $classes {
+    .wow-class-#{$name} {color: $color;}
+    .wow-class-bg-#{$name} {background-color: $color;}
+    .wow-class-border-#{$name} {border: 1px solid $color;}
+}
+
+// slightly tuned down the colors for Hunter and Monk
 .wow-class-bg-hunter {background-color: #7e9c54}
-.wow-class-bg-mage {background-color: #3FC7EB}
-/*.wow-class-bg-monk {background-color: #00FF98}*/
 .wow-class-bg-monk {background-color: #38c78d}
-.wow-class-bg-paladin {background-color: #F48CBA}
-.wow-class-bg-priest {background-color: #FFFFFF}
-.wow-class-bg-rogue {background-color: #FFF468}
-.wow-class-bg-shaman {background-color: #0070DD}
-.wow-class-bg-warlock {background-color: #8788EE}
-.wow-class-bg-warrior {background-color: #C69B6D}
 
-.wow-class-bg-other {background-color: #CCC}
-
-.wow-class-border-deathknight {border: 1px solid #C41E3A}
-.wow-class-border-demonhunter {border: 1px solid #A330C9}
-.wow-class-border-druid {border: 1px solid #FF7C0A}
-.wow-class-border-hunter {border: 1px solid #AAD372}
-.wow-class-border-mage {border: 1px solid #3FC7EB}
-.wow-class-border-monk {border: 1px solid #00FF98}
-.wow-class-border-paladin {border: 1px solid #F48CBA}
-.wow-class-border-priest {border: 1px solid #FFFFFF}
-.wow-class-border-rogue {border: 1px solid #FFF468}
-.wow-class-border-shaman {border: 1px solid #0070DD}
-.wow-class-border-warlock {border: 1px solid #8788EE}
-.wow-class-border-warrior {border: 1px solid #C69B6D}
-
-
-.wow-class-border-other {border: 1px solid #00bdff}
-
-
+.wowhead-tooltip-powered {
+    display: none !important;
+}

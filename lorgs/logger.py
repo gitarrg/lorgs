@@ -1,9 +1,10 @@
 """Define and setup Logger-Instances."""
+import os
 import logging
 import datetime
 
 
-LOG_FORMAT = "[%(reltime)s][%(name)s] %(levelname)s: %(message)s"
+LOG_FORMAT = "[%(reltime)s][%(name)s] %(levelname)s: [%(funcName)s] %(message)s"
 """str: Format to be used for log messages."""
 
 
@@ -23,14 +24,7 @@ handler = logging.StreamHandler()
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-
-
-logger.setLevel(logging.INFO)
-
-# logger.setLevel(logging.DEBUG)
-"""
 if os.getenv("DEBUG"):
     logger.setLevel(logging.DEBUG)
 else:
     logger.setLevel(logging.INFO)
-"""

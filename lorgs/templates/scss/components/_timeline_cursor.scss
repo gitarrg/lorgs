@@ -1,0 +1,43 @@
+/* Timeline Cursor */
+
+.timeline_cursor {
+    user-select: none;
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    width: 4px;
+    background: #db1212;
+
+    z-index: 20;
+    cursor: w-resize;
+    transform: translateX(-50%);
+
+    box-shadow: 2px 1px 2px #00000040;
+
+
+    &:hover {
+        width: 6px;
+        background: #ed2828;
+        box-shadow: 4px 3px 4px #00000040;
+    }
+
+    &.active {
+        background: #d9b84e;
+    }
+
+}
+
+.timeline_cursor_handle {
+    position: relative;
+    width: 60px;
+    height: 20px;
+    transform: translateX(-50%);
+
+    // color: white;
+    border-radius: 2px;
+    text-align: center;
+
+    background: inherit;
+    box-shadow: inherit;
+}
+

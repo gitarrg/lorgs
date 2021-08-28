@@ -1,0 +1,115 @@
+{% from "elements/timeline_player_name.html" import player_name %}
+{% from "elements/timeline_player_name.html" import boss_name %}
+{% from "elements/timeline_ruler.html" import timeline_ruler %}
+{% from "elements/timeline_killtime.html" import killtime %}
+{% from "elements/timeline_casts.html" import player_timeline %}
+
+
+{% set boss = comp_ranking.boss %}
+{% set comp = comp_ranking.comp %}
+
+
+{% macro header(comp_ranking) -%}
+<h1 class="m-0">
+    <a href="{{comp_ranking.report_url}}" target="_blank">
+        <img class="icon-l rounded shadow border-white" src="{{boss.icon_path}}" alt="{{boss.name}}" target="_blank">
+        <span>{{boss.name}}</span>
+        <span>vs</span>
+
+        <img class="icon-spec icon-l rounded shadow" src="/static/images/roles/healer.jpg">
+        {{comp.name}}
+
+        {#
+        {% for spec in comp_ranking.comp.specs %}
+            <img class="icon-l rounded shadow wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.icon_path}}">
+            <span class="wow-class-{{spec.wow_class.name_slug}}">{{spec.short_name}}</span>
+            {% if not loop.last %}
+                <span> </span>
+            {% endif %}
+        {% endfor %}
+        #}
+
+    </a>
+</h1>
+{%- endmacro %}
+
+
+{% extends "base.html" %}
+
+{# TITLE #}
+{% block title %}
+Lorgs: {{boss.name}}
+{% endblock %}
+
+
+{# HEADER #}
+{% block header %}
+<div class="mt-3 flex-row d-flex flex-wrap-reverse">
+    <div class="mb-2">
+    {{ header(comp_ranking) }}
+    </div>
+
+    <div class="ml-auto mb-2">
+        {% include "elements/comp_ranking_nav.html" %}
+    </div>
+</div>
+{% endblock %}
+
+
+{# CONTENT #}
+{% block content %}
+<div class="mb-2">
+    {% include "elements/settings_bar.html" %}
+</div>
+
+<!-- TIMELINES -->
+<div class="p-2 mb-2 bg-dark rounded border">
+
+    <!-- Player Names -->
+    <div class="player_names_container float-left">
+        {% for fight in comp_ranking.fights %}
+            <div class="timeline_ruler_playerholder"></div>
+
+            {# Boss #}
+            {{ boss_name(fight.boss) }}
+
+            {# Players #}
+            {%- for player in fight.players|sort(attribute="spec.role,spec.name,name") %}
+                {{ player_name(player) }}
+            {%- endfor %}
+
+            <div class="mb-4"></div>
+        {% endfor %} {# for fights #}
+    </div>
+
+    <!-- Casts -->
+    <div class="player_timelines_container">
+
+        {% include "elements/timeline_cursor.html" %}
+
+        {% for fight in comp_ranking.fights %}
+            <div class="timeline-fight mb-4">
+                {{ timeline_ruler(fight.duration) }}
+
+                {# Boss #}
+                {%- if fight.boss %}
+                {{ player_timeline(fight.boss, show_killtime=True) }}
+                {%- endif %}
+
+                {# Players #}
+                {%- for player in fight.players|sort(attribute="spec.role,spec.name,name") %}
+                {{ player_timeline(player) }}
+                {%- endfor %} {# for player #}
+            </div>
+        {% endfor %} {# for fights #}
+    </div>
+</div>
+
+{% endblock %}
+
+<!-- Content Scripts -->
+{% block scripts %}
+<script src="{{url_for('static',filename='spells.js')}}"></script>
+<script src="{{url_for('static',filename='timeline.js')}}"></script>
+{{ super() }}
+{% endblock %}

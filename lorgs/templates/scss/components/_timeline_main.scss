@@ -1,0 +1,93 @@
+
+
+
+.fight_killtime {
+    border-left: 2px solid green;
+    padding-left: 10px;
+    float: left;
+    color: #ffffff75;
+    height: 28px;
+    margin-top: 1px;
+
+    position: absolute;
+}
+
+
+/********************************
+
+        Player Cast Timeline
+
+*********************************/
+
+.player_timelines_container {
+    overflow: hidden;
+    cursor: grab;
+    position: relative;
+
+    // border: 1px solid yellow;
+    // border-top: none;
+    // border-left: none;
+}
+
+
+.player_timeline {
+    background: #222;
+
+    user-select: none;
+    height: $timeline-height;
+    line-height: $timeline-height - 2px;
+    vertical-align: middle;
+
+    // border-top: none;
+    // height: $timeline-height;
+
+    border: 1px solid black;
+    border-left: none;
+    // border-bottom: none;
+    // margin-top: -1px; // to hide the border
+
+    // height: $timeline-height;
+
+    // .red ~ .red
+
+    // border: none;
+
+    .player_death {
+        position: absolute;
+        height: $timeline-height-cast;
+        // width: 2px;
+        border-left: 3px solid #f00;
+        // background-color: #f00;
+        padding-left: 8px;
+
+        i {
+            color: #bb3434;
+            padding-right: 4px;
+        }
+
+
+        a {
+            width: 24px;
+            display: inline-block;
+        }
+    }
+}
+
+.player_timeline + .player_timeline {
+    height: $timeline-height + 1px;
+    margin-top: -1px; // to hide the border
+    // border-top: none;
+    // border-bottom: none;
+}
+
+
+.timeline_fight {
+    // border: 1px solid black;
+    // border-left: none;
+    // background: #222;
+}
+
+.timeline-fight {
+    // border-top: 1px solid black;
+    // border-bottom: 1px solid black;
+}

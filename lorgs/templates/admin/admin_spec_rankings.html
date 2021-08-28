@@ -1,0 +1,140 @@
+
+
+
+{% macro update_button(spec_ranking_data) -%}
+
+    {% set age = spec_ranking_data.update_age.total_seconds() %}
+    {% if age > 604800 %}
+        {% set button_class="btn-danger" %}
+    {% elif age > 259200 %}
+        {% set button_class="btn-warning" %}
+    {% elif age > 86400 %}
+        {% set button_class="btn-info" %}
+    {% else %}
+        {% set button_class="btn-success" %}
+    {% endif %}
+
+    <button type="button" class="update_spec_ranking_button btn {{button_class}} btn-sm" data-spec="{{spec_ranking_data.spec_slug}}" data-boss="{{spec_ranking_data.boss_slug}}">
+        {{spec_ranking_data.update_age_fmt}}
+    </button>
+{%- endmacro %}
+
+
+{% extends "base.html" %}
+
+{% block title %}
+Lorgs: Admin Page
+{% endblock %}
+
+
+
+{% block content %}
+<div class="p-2 mt-5 ml-5">
+
+    <h3>Spec Rankings</h3>
+
+
+
+    <div class="bg-dark rounded border p-2">
+        <table class="table table-dark table-sm" data-click-to-select>
+
+            <thead>
+                <th></th>
+                <th></th>
+                {% for boss in bosses %}
+                <th>
+                    <img class="icon-spec icon-s rounded" src="{{boss.icon_path}}" data-toggle="tooltip" title="{{boss.name}}">
+                </th>
+                {% endfor %}
+                <th style="width: 100%"></th>
+            </thead>
+
+            {% for role in roles %}
+                {% for spec in role.specs if spec.supported %}
+                    {% set wow_class = spec.wow_class %}
+
+                    <tr>
+
+                        {% if loop.first %}
+                            <td><img class="icon-s rounded border border-black" src="{{role.icon_path}}"></td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+
+                        <td><img class="icon-s rounded wow-class-border-{{wow_class.name_slug}}" src="{{spec.icon_path}}" data-toggle="tooltip" title="{{spec.full_name}}"></td>
+
+
+                    {% for boss in bosses %}
+                        <td>
+                            {% set data = spec_ranking_data[spec.full_name_slug][boss.name_slug] %}
+                            {% if data %}
+                                {{ update_button(data) }}
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                    </tr>
+
+                {% endfor %}
+            {% endfor %}
+
+            {#
+            <tr>
+                <td class="wow-class-{{wow_class.name_slug}}">{{spec.name}}</td>
+
+                {% for boss in bosses %}
+                    {% set n = spec_rankings.get((spec.id, boss.id)) or 0 %}
+                    {% if n >= 45 %}
+                        {% set status_class = "text-success" %}
+                    {% elif n >= 30 %}
+                        {% set status_class = "text-warning" %}
+                    {% elif n >= 20 %}
+                        {% set status_class = "text-danger font-weight-bold" %}
+                    {% elif n >= 0 %}
+                        {% set status_class = "text-muted disabled" %}
+                    {% endif %}
+
+                    <td class="{{status_class}} spec_ranking_status" data-spec_id="{{spec.id}}" data-boss_id={{boss.id}}>
+                        <a href="{{url_for('ui.spec_ranking', spec_id=spec.id, boss_id=boss.id)}}">{{n}}</a>
+                    </td>
+                {% endfor %}
+
+                <td><button type="button" class="update_spec_ranking_button btn btn-primary btn-sm" data-spec_id="{{spec.id}}">update</button></td>
+            </tr>
+            {% endfor %}
+            #}
+
+        </table>
+    </div>
+
+
+</div>
+
+
+<script type="text/javascript">
+
+
+function update_spec_ranking() {
+    const spec = this.dataset.spec;
+    const boss = this.dataset.boss;
+
+    // cast.dataset.spell_id;
+    console.log("update_spec_ranking", spec, boss);
+    this.innerHTML = "loading...";
+    // element.innerHTML = '<i class="fas fa-paper-plane"></i>'
+    // this.className = "spec_ranking_status text-info"
+    fetch(`/api/task/load_spec_rankings/${spec}/${boss}`)
+    return
+}
+
+
+document.querySelectorAll(".update_spec_ranking_button").forEach(button => {
+    button.onclick = update_spec_ranking;
+})
+
+
+
+</script>
+
+{% endblock %}
+
+

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# Build SASS
+# pysassc --style=compact lorgs/templates/scss/main.scss "$build_dir/static/style.css"
+
+# Watchdog
+pysass --style=compact lorgs/templates/scss/main.scss "lorgs/static/_generated/style.css" -I lorgs/templates/scss --watch 

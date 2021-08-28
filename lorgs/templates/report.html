@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-Lorgs: {{boss.name}}
+Lorgs: Report: {{report.report_id}}
 {% endblock %}
 
 
@@ -10,33 +10,16 @@ Lorgs: {{boss.name}}
     <div class="row">
 
     <!-- HEADER -->
-    <h1 class="col">
-        <img class="icon-l rounded shadow border" src="static/images/bosses/castle-nathria/{{boss.name_slug}}.jpg" alt="{{boss.name}}" target="_blank">
-        {{boss.name}}
-        vs
-        {% for spec in comp.specs %}
-            <img class="icon-l rounded shadow wow-class-border-{{spec.class_name_slug}}" src="static/images/specs/{{spec.full_name_slug}}.jpg" alt="{{group }}">
-            <span class="wow-class-{{spec.class_name_slug}}">{{spec.short_name}}</span>
-            {% if not loop.last %}
-                <span> </span>
-            {% endif %}
-        {% endfor %}
+    <h1 class="col display-flex">
+        <a href="{{url_for('ui.index')}}" id=home_button class="button icon-m rounded fas fa-home mr-3" data-toggle="tooltip" title="click here to home"></a>
+        <a href="{{report.report_url}}">Report: {{report.report_id}}</a>
     </h1>
 
-    <div class="col ml-auto d-flex flex-row align-items-end">
+    <div class="clear-both"></div>
 
+    <div class="col ml-auto d-flex flex-row flex-wrap">
         <!-- SETTINGS v2 -->
-        <div class="ml-auto">
         {% include "elements/settings_bar.html" %}
-        </div>
-
-        <!-- Home -->
-        <div class="ml-2 settings_bar">
-            <small class="clear-both text-muted"></small>
-            <div class="p-1 bg-dark border rounded">
-                <a href="./" id=home_button class="button icon-s rounded fas fa-home" data-toggle="tooltip" title="click here or home"></a>
-            </div>
-        </div>
     </div>
 
 
@@ -45,48 +28,116 @@ Lorgs: {{boss.name}}
 {% endblock %}
 
 
-
 {% block content %}
-<!-- TIMELINES -->
-<div class="bg-dark p-2 rounded border" id=timeline>
 
-        <!-- Player Names -->
-        <div class="player_names_container float-left">
 
-        {% for fight in fights %}
-            {% set report = fight.report %}
+<div class="settings_display d-flex flex-row">
 
-            <div class="guild_name">
-                <a href="{{fight.report_url}}" target="_blank" data-toggle="tooltip" title="&lt;{{report.guild}}&gt; {{report.realm}} ({{report.region}})">&lt;{{report.guild}}&gt;</a>
+    <!-- Players -->
+    {% for role, players in unique_players|groupby("spec.role") %}
+    <div class="mr-2">
+
+        <small class="settings_display_role clear-both text-muted" data-role={{role.code}}>{{role.name}}</small>
+
+        <div class="bg-dark p-1 rounded border d-flex flex-row">
+            <div>
+                {% for player in players|sort(attribute="spec.role,spec.name,name") %}
+                {% set spec = player.spec %}
+                <div class="settings_display_player wow-class-{{spec.wow_class.name_slug}}" data-source_id={{player.source_id}} data-role={{role.code}}>
+                    <img class="icon-spec icon-s rounded wow-class-border-{{spec.class_name_slug}}" src="{{spec.icon_path}}">
+                    <span>{{player.name}}</span>
+                </div>
+                {% if loop.index is divisibleby(5) %}</div><div>{% endif %}
+                {% endfor %}
             </div>
 
-            {% set i = -1 %}
-            {% for player in fight.players if player.casts %}
-                {% include "elements/player_name.html" %}
-            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Pulls -->
+    <div class="">
+        <small id=settings_display_pull_header class="clear-both text-muted">Fights/Pulls</small>
+
+        <div class="bg-dark rounded border d-flex flex-wrap">
+        {% for fight in report.fights|sort(attribute="fight_id") %}
+            <div class="settings_display_pull rounded p-1 m-1 text-center" style="width: 6rem" data-fight_id={{fight.fight_id}}>
+                {{fight.fight_id}} <span class="text-muted">({{fight.duration|format_time}})</span>
+                <div class="fight_percentage_bg">
+                    <div class="fight_percentage_fg bg-{{fight.boss.percent_color}}" style="width: {{100-fight.boss.percent}}%"></div>
+                </div>
+            </div>
+
+            {# {% if loop.index is divisibleby(5) %}<div class="flex-break"></div>{% endif %} #}
+
         {% endfor %}
-
         </div>
+    </div>
 
-
-        <div class="player_timelines_container">
-            <div class="timeline_cursor" style="left: 10px;"><div class="timeline_cursor_handle">0:00</div></div>
-            {% for fight in fights %}
-
-                {% set timeline_duration = fight.duration %}
-                {% include "elements/timeline_ruler.html" %}
-
-                {% for player in fight.players if player.casts %}
-                    {% set inline_killtime=loop.first %}
-                    {% include "elements/player_timeline.html" %}
-                {% endfor %}
-            {% endfor %}
-        </div>
-
-        <div style="clear: both"></div>
 
 </div>
 
+
+{% from "elements/timeline_player_name.html" import player_name with context %}
+{% from "elements/timeline_player_name.html" import boss_name %}
+{% from "elements/timeline_ruler.html" import timeline_ruler %}
+{% from "elements/timeline_killtime.html" import killtime %}
+{% from "elements/timeline_casts.html" import player_timeline %}
+
+<div class="d-flex flex-row mt-2">
+
+    <!-- TIMELINES -->
+    {% from "elements/timeline_player_name.html" import player_name with context %}
+    <div class="bg-dark p-2 rounded border" id=timeline>
+
+            <!-- Player Names -->
+            <div class="player_names_container report float-left">
+
+                {% for fight in report.fights|sort(attribute="fight_id") %}
+                    <div class="fight-container" data-fight_id={{fight.fight_id}}>
+
+                        <div class="timeline_ruler_playerholder"></div>
+
+                        {# <small>#{{fight.fight_id}} ({{fight.duration|format_time}}) {{fight.percent}}% </small> #}
+
+                        {# Boss #}
+                        {{ boss_name(fight.boss) }}
+
+                        {# Players #}
+                        {% for player in fight.players|sort(attribute="spec.role,spec.name,name") %}
+                            {{ player_name(player) }}
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+            </div>
+
+            <!-- Casts -->
+            <div class="player_timelines_container">
+
+                {% include "elements/timeline_cursor.html" %}
+
+                {% for fight in report.fights|sort(attribute="fight_id") %}
+
+                    <div class="timeline-fight" data-fight_id={{fight.fight_id}}>
+
+                        {{ timeline_ruler(fight.duration) }}
+
+                        {# Boss #}
+                        {%- if fight.boss %}
+                        {{ player_timeline(fight.boss, show_killtime=True) }}
+                        {%- endif %}
+
+                        {# Players #}
+                        {%- for player in fight.players|sort(attribute="spec.role,spec.name,name") %}
+                        {{ player_timeline(player) }}
+                        {%- endfor %} {# for player #}
+                    </div>
+                {% endfor %}
+            </div>
+            <div style="clear: both"></div>
+    </div>
+</div>
 
 {% endblock %}
 
@@ -95,5 +146,86 @@ Lorgs: {{boss.name}}
 <!-- Content Scripts -->
 {% block scripts %}
 {{ super() }}
-{% include "elements/player_timeline_script.html" %}
+<script src="{{url_for('static',filename='timeline.js')}}"></script>
+<script src="{{url_for('static',filename='spells.js')}}"></script>
+
+
+<script type="text/javascript">
+
+const SETTINGS_DISPLAY_PLAYER = document.querySelectorAll(".settings_display_player")
+const SETTINGS_DISPLAY_FIGHTS = document.querySelectorAll(".settings_display_pull")
+
+
+function update_players() {
+    SETTINGS_DISPLAY_PLAYER.forEach(item => {
+        const source_id = item.dataset.source_id;
+        const timelines = document.querySelectorAll(`.player_timeline[data-source_id="${source_id}"]`);
+        const timeline_player_names = document.querySelectorAll(`.player_name[data-source_id="${source_id}"]`);
+        const enabled = !item.classList.contains("disabled")
+
+        // show/hide
+        timelines.forEach(el => {show(el, enabled)});
+        timeline_player_names.forEach(el => {show(el, enabled)});
+    });
+};
+
+
+function update_fights() {
+
+    SETTINGS_DISPLAY_FIGHTS.forEach(item => {
+        const fight_id = item.dataset.fight_id;
+        const timelines = document.querySelectorAll(`.timeline-fight[data-fight_id="${fight_id}"]`);
+        const timeline_player_names = document.querySelectorAll(`.fight-container[data-fight_id="${fight_id}"]`);
+        const enabled = !item.classList.contains("disabled")
+
+        // show/hide
+        timelines.forEach(el => {show(el, enabled)});
+        timeline_player_names.forEach(el => {show(el, enabled)});
+    });
+};
+
+
+// show/hide players
+SETTINGS_DISPLAY_PLAYER.forEach(item => {
+
+    item.addEventListener("click", event => {
+
+        if (event.ctrlKey) { // multi select
+            item.classList.toggle("disabled")
+        } else { // normal single select
+            // disable all others
+            SETTINGS_DISPLAY_PLAYER.forEach(other => {other.classList.add("disabled")});
+            item.classList.remove("disabled") // make sure this one doesn't have it
+        }
+        update_players();
+    });
+});
+
+
+// show/hide pulls
+SETTINGS_DISPLAY_FIGHTS.forEach(item => {
+
+    item.addEventListener("click", event => {
+
+        if (event.ctrlKey) { // multi select
+            item.classList.toggle("disabled")
+
+        } else { // normal single select
+            // disable all others
+            SETTINGS_DISPLAY_FIGHTS.forEach(other => {other.classList.add("disabled")});
+            item.classList.remove("disabled") // make sure this one doesn't have it
+        }
+        update_fights();
+    });
+});
+
+
+document.getElementById("settings_display_pull_header").addEventListener("click", function() {
+    this.classList.toggle("disabled")
+    const disabled = this.classList.contains("disabled")
+    SETTINGS_DISPLAY_FIGHTS.forEach(other => {other.classList.toggle("disabled", disabled)});
+    update_fights();
+});
+
+</script>
 {% endblock %}

@@ -3,11 +3,13 @@ __pycache__/
 *.swp
 *.*~
 *~
-*.zip
 *.sublime-workspace
 
 _build
-cache*.json
+_generated
 
 # for ".env", we need this (since its already tracked)
 # >>> git update-index --assume-unchanged .env
+
+venv/
+deploy_variables.yaml

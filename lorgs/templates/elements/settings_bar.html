@@ -1,11 +1,18 @@
 
-<div class="settings_bar d-flex flex-row align-items-end">
+
+{% macro spell_button(spec, spell) -%}
+<a href="#a" data-wowhead="{{spell.wowhead_data}}">
+    <img class="button icon-s rounded wow-class-border-{{spec.wow_class.name_slug}} {{"disabled" if not spell.show}}" src="{{spell.icon_path}}" data-toggle="tooltip" data-spell_id={{spell.spell_id}} data-spell_group={{spec.full_name_slug}}>
+</a>
+{%- endmacro %}
 
 
-    <div class="ml-auto mr-2">
 
+<div class="settings_bar d-flex flex-row flex-wrap">
+
+    {# Global Buttons #}
+    <div class="mr-2">
         <small class="clear-both text-muted">Display</small>
-
         <div class="bg-dark p-1 rounded border">
             <div id="settings_button_casttime" class="button icon-s rounded border-white fas fa-clock" data-toggle="tooltip" title="cast time"></div>
             <div id="settings_button_duration" class="button icon-s rounded border-white fas fa-stream" data-toggle="tooltip" title="active duration"></div>
@@ -13,32 +20,52 @@
         </div>
     </div>
 
+    {# Boss Spells #}
+    {% if boss and boss.spells %}
+    <div class="mr-2">
+        <small class="clear-both wow-class-boss">Boss</small>
+        <div class="bg-dark p-1 rounded border">
+            {% for spell in boss.spells %}
+            {{ spell_button(boss, spell) }}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 
+    {# Show/Hide Specs #}
+    {% if comp %}
+    <div class="mr-2">
+        <small class="clear-both text-muted">Specs</small>
+
+        <div class="bg-dark p-1 rounded border">
+            {% for spec in comp.specs %}
+            <a href="#a" class="settings_button_spec" data-spec="{{spec.full_name_slug}}" data-toggle="tooltip" title="{{spec.full_name}}">
+                <img class="icon-spec icon-s rounded wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.icon_path}}">
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {# Spec Spells #}
     {% for spec, group_spells in all_spells|groupby("group") %}
     {% set group_name = spec.short_name %}
-    <div class="{{"mr-2" if not loop.last}}">
-        {% set group_checked = spec.class_name_slug != "other" %}
+    <div class="mr-2">
+        {% set group_checked = spec.wow_class.name_slug != "other" %}
 
-        <div class="group_header {{"disabled" if not group_checked}}" data-spell_group={{group_name}}>
-        {#
-            <img class="icon-xs rounded wow-class-border-{{spec.class_name_slug}} clear-both" src="static/images/specs/{{spec.full_name_slug}}.jpg">
-        #}
-            <small class="wow-class-{{spec.class_name_slug}} clear-both">{{group_name}}</small >
+        <div class="group_header {{"disabled" if not group_checked}}" data-spell_group={{spec.full_name_slug}}>
+            <small class="wow-class-{{spec.wow_class.name_slug}} clear-both">{{group_name}}</small >
         </div>
 
         <div class="bg-dark p-1 rounded border">
             {% for spell in group_spells %}
-            <a href="#a" data-wowhead="spell={{spell.spell_id}}">
-                <img class="button icon-s rounded wow-class-border-{{spec.class_name_slug}} {{"disabled" if not spell.show}}" src="https://wow.zamimg.com/images/wow/icons/medium/{{spell.icon}}" data-toggle="tooltip" data-spell_id={{spell.spell_id}} data-spell_group={{group_name}}>
-            </a>
+            {{ spell_button(spec, spell) }}
             {% endfor %}
         </div>
-
-
     </div>
-
-{% endfor %}
+    {% endfor %} {# specs #}
 </div>
+
 
 <script type="text/javascript">
 
@@ -101,6 +128,37 @@ document.querySelectorAll(".settings_bar .button[data-spell_id]").forEach(item =
     });
 });
 
+
+/////////////////////////
+// Specs
+//
+
+function show_spec(spec_name, enabled) {
+    console.log("show spec", spec_name, enabled);
+
+    document.querySelectorAll(`.player_name[data-spec="${spec_name}"]`).forEach(el => {
+        show(el, enabled);
+    });
+    document.querySelectorAll(`.player_timeline[data-spec="${spec_name}"]`).forEach(el => {
+        show(el, enabled);
+    });
+
+
+}
+
+document.querySelectorAll(".settings_button_spec").forEach(item => {
+
+    item.addEventListener("click", event => {
+        item.classList.toggle("disabled")
+        const enabled = !item.classList.contains("disabled")
+
+        // shows specs
+        show_spec(item.dataset.spec, enabled)
+    });
+});
+
+
+
 /////////////////////////
 // Header Clicks
 //
@@ -124,12 +182,5 @@ document.querySelectorAll(".group_header").forEach(item => {
     });
 
 });
-
-
-
-
-
 </script>
-
-
 

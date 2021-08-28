@@ -1,0 +1,28 @@
+# Config for Google App Engine
+
+
+# >>> gcloud app deploy --project lorrgs
+
+service: default
+runtime: python39
+
+
+entrypoint: >
+  gunicorn
+  -b :$PORT
+  --timeout=600
+  --workers 1
+  "lorgs.app:create_app()"
+# longer timeout for the api calls that load data
+
+
+includes:
+  - deploy_variables.yaml
+
+handlers:
+  - url: /static
+    static_dir: lorgs/static
+
+  - url: /.*
+    script: auto
+

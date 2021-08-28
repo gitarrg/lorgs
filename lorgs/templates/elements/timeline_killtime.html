@@ -1,0 +1,5 @@
+{% macro killtime(timestamp) -%}
+<div class="fight_killtime">
+    <i class="fas fa-skull-crossbones"></i> {{timestamp|format_time}}
+</div>
+{%- endmacro %}
