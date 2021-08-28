@@ -13,3 +13,6 @@ _generated
 
 venv/
 deploy_variables.yaml
+
+# google account credentials
+google_creds.json
