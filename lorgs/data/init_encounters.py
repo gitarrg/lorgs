@@ -138,11 +138,21 @@ KELTHUZAD.add_event(event_type="begincast", spell_id=352293, color="#30c235", na
 KELTHUZAD.add_event(event_type="cast", spell_id=348071, duration=0, color="#03fcc6", name="Soul Fracture",  icon="spell_necro_deathlyecho.jpg", show=False)
 KELTHUZAD.add_event(event_type="cast", spell_id=354198, duration=20, color="#c7eaff", name="Howling Blizzard",  icon="spell_frost_arcticwinds.jpg", show=False)
 
-
+################################################################################
+# 10: SYLVANAS
 SYLVANAS = SANCTUM_OF_DOMINATION.add_boss(id=2435, name="Sylvanas Windrunner")
-SYLVANAS.add_event(event_type="cast", spell_id=347741, duration=9, color="#228c89", name="Veil of Darkness",        icon="ability_argus_deathfog.jpg")
-SYLVANAS.add_event(event_type="cast", spell_id=351353, duration=9, color="#b1c4c3", name="Orbs",        icon="spell_animamaw_orb.jpg")
 
+# P1
+SYLVANAS.add_event(event_type="cast", spell_id=349419, duration=7, color="#00aaff", name="Chains", icon="inv_belt_44.jpg")
+SYLVANAS.add_event(event_type="cast", spell_id=358704, duration=1.5, color="#ff4f42", name="Arrow", icon="ability_theblackarrow.jpg")
+SYLVANAS.add_event(event_type="cast", spell_id=347726, duration=5, color="#228c89", name="Veil of Darkness", icon="ability_argus_deathfog.jpg")
+
+# P3
+SYLVANAS.add_event(event_type="cast", spell_id=354142, duration=1, color="#228c89", name="Veil of Darkness", icon="ability_argus_deathfog.jpg")
+SYLVANAS.add_event(event_type="cast", spell_id=351353, duration=1, color="##ff425b", name="Banshee's Fury", icon="spell_shadow_shadowfury.jpg")
+SYLVANAS.add_event(event_type="cast", spell_id=354011, duration=0.5, color="#9442ff", name="Bane Arrows", icon="spell_shadow_painspike.jpg")
+
+
+################################################################################
 DEFAULT_BOSS = TARRAGRUE
-
 SANCTUM_OF_DOMINATION_BOSSES = SANCTUM_OF_DOMINATION.bosses
