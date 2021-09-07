@@ -16,6 +16,7 @@
 
 {% macro create_cast(cast) -%}
     {% set spell = cast.spell %}
+    {% set duration = cast.duration or spell.duration %}
 
     <div class="cast" data-spell_id="{{spell.spell_id}}" style="left: {{scale * cast.timestamp/1000}}px{{'; display: none' if not spell.show}}">
         {# Cooldown #}
@@ -24,8 +25,9 @@
         {%- endif %}
 
         {# Duration #}
-        {%- if spell.duration %}
-        <div class="cast_duration" style="width: {{spell.duration * scale}}px; background-color: {{spell.color}}"></div>
+
+        {%- if duration %}
+        <div class="cast_duration" style="width: {{duration * scale}}px; background-color: {{spell.color}}"></div>
         {%- endif %}
 
         {# Icon #}

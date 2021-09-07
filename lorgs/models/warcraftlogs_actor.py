@@ -42,6 +42,7 @@ class Cast(me.EmbeddedDocument):
 
     timestamp = me.IntField()
     spell_id = me.IntField()
+    duration = me.IntField()
 
     def __str__(self):
         time_fmt = utils.format_time(self.timestamp)
@@ -60,6 +61,14 @@ class Cast(me.EmbeddedDocument):
     @property
     def spell(self):
         return WowSpell.get(spell_id=self.spell_id)
+
+    @property
+    def end_time(self):
+        return self.timestamp + (self.duration * 1000)
+
+    @end_time.setter
+    def end_time(self, value):
+        self.duration = (value - self.timestamp) / 1000
 
 
 class BaseActor(warcraftlogs_base.EmbeddedDocument):
@@ -307,3 +316,28 @@ class Boss(BaseActor):
             return ""
 
         return f"events({self.fight.table_query_args}, filterExpression: \"{filters}\") {{data}}"
+
+
+    def process_query_result(self, query_result):
+        """Process the result of a casts-query to create Cast objects."""
+        super().process_query_result(query_result)
+
+
+        for event in self.raid_boss.events:
+
+            # skip events without explicit until-statement
+            if not event.get("until"):
+                continue
+
+            until_event = event.get("until")
+            event_spell = event.get("spell_id")
+            end_spell = until_event.get("spell_id")
+
+            last_cast = None
+            for cast in self.casts:
+                if cast.spell_id == event_spell:
+                    last_cast = cast
+
+                if last_cast and cast.spell_id == end_spell:
+                    last_cast.end_time = cast.timestamp
+                    last_cast = None

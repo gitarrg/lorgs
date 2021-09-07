@@ -126,9 +126,17 @@ GUARDIAN.add_event(event_type="cast", spell_id=352589, duration=6, color="#75d42
 
 
 FATESCRIBE = SANCTUM_OF_DOMINATION.add_boss(id=2431, name="Fatescribe Roh-Kalo")
+FATESCRIBE.add_event(event_type="cast", spell_id=354265, duration=6, color="#af24ff", name="Twist Fate",  icon="spell_animamaw_debuff.jpg")
+FATESCRIBE.add_event(event_type="cast", spell_id=351680, duration=8, color="#ffda24", name="Destiny",  icon="spell_animamaw_buff.jpg")
+FATESCRIBE.add_event(event_type="applybuff", spell_id=357739, duration=0, color="#4bbf68", name="Intermisson Start",  icon="spell_shadow_painfulafflictions.jpg", until={"event_type": "removebuff", "spell_id": 357739})
 
 
 KELTHUZAD = SANCTUM_OF_DOMINATION.add_boss(id=2422, name="Kel'Thuzad")
+KELTHUZAD.add_event(event_type="applydebuff", spell_id=346530, duration=10, color="#ff4538", name="Spike",  icon="ability_mage_coldasice.jpg", extra_filter="target.role='tank'")
+KELTHUZAD.add_event(event_type="cast", spell_id=348756, duration=8, color="#03eaff", name="Frost Blast",  icon="spell_frost_glacier.jpg")
+KELTHUZAD.add_event(event_type="begincast", spell_id=352293, color="#30c235", name="Intermisson",  icon="spell_shadow_painfulafflictions.jpg", until={"event_type": "begincast", "spell_id": 352355})
+KELTHUZAD.add_event(event_type="cast", spell_id=348071, duration=0, color="#03fcc6", name="Soul Fracture",  icon="spell_necro_deathlyecho.jpg", show=False)
+KELTHUZAD.add_event(event_type="cast", spell_id=354198, duration=20, color="#c7eaff", name="Howling Blizzard",  icon="spell_frost_arcticwinds.jpg", show=False)
 
 
 SYLVANAS = SANCTUM_OF_DOMINATION.add_boss(id=2435, name="Sylvanas Windrunner")

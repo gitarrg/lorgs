@@ -71,6 +71,11 @@ class RaidBoss(base.Model):
         # track the event (for query)
         self.events.append(kwargs)
 
+        # dedicated "stop" event, for events with non static timers.. eg: intermissions
+        end_event = kwargs.get("until", {})
+        if end_event:
+            self.events.append(end_event)
+
         # spell instance used for UI things
         spell = WowSpell(**kwargs)
         spell.spec = self
