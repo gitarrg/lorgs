@@ -8,6 +8,7 @@ from lorgs import data
 from lorgs import utils
 from lorgs.cache import cache
 from lorgs.models import warcraftlogs_ranking
+from lorgs.models.specs import WowSpec
 
 
 blueprint = flask.Blueprint(
@@ -26,11 +27,17 @@ def index():
     flask.abort(401, description="sorry.. no admin page for you")
 
 
-@blueprint.get("/spells")
-@cache.cached(timeout=600)
-def spells():
+# @cache.cached(timeout=600)
+@blueprint.get("/spells/")
+@blueprint.get("/spells/<group_name>")
+def spells(group_name=None):
     kwargs = {}
     kwargs["specs"] = data.SPECS
+    kwargs["spells"] = data.ALL_SPELLS
+
+    if group_name:
+        kwargs["group"] = WowSpec.get(full_name_slug=group_name)
+
     return flask.render_template("admin/admin_spells.html", **kwargs)
 
 
