@@ -27,7 +27,7 @@
 
     <!-- Bosses -->
     <div class="p-1 bg-dark border ml-2 rounded">
-        {% for boss2 in bosses %}
+        {% for boss2 in bosses if boss2.visible %}
         <a href="{{url_for('ui.spec_ranking', spec_slug=spec.full_name_slug, boss_slug=boss2.name_slug)}}" class="{{'active' if boss2 == boss}}" data-toggle="tooltip" title="{{boss2.name}}">
             <img class="icon-spec icon-m border-black rounded" src="{{boss2.icon_path}}" alt="{{boss2.name_slug}}">
         </a>
