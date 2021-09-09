@@ -9,41 +9,59 @@ Lorgs: Crazy Admin Page
 {% block content %}
 <div class="p-2 mt-5 ml-5">
 
-    <h3>Spells</h3>
-    <div class="bg-dark rounded border p-2">
+    <ul class="nav nav-pills">
+    {% for group2, group_spells in spells|groupby("group")|sort(attribute="0.wow_class.id") %}
+        <li class="nav-item">
+            <a class="nav-link wow-class-{{group2.wow_class.name_slug}} {{'active' if group2 == group}}" aria-current="page" href="{{url_for('admin.spells', group_name=group2.full_name_slug)}}">
+                <img class="icon-m rounded shadow wow-class-border-{{group2.wow_class.name_slug}}" src="{{group2.icon_path}}" alt="{{group2.full_name}}">
+           </a>
+        </li>
+    {% endfor %}
+    </ul>
+
+    {% if group %}
+        <h3>Spells</h3>
+        <div class="bg-dark rounded border p-2">
+
+            <h4 class="wow-class-{{group.wow_class.name_slug}}">
+                <img class="icon-m rounded shadow wow-class-border-{{group.wow_class.name_slug}}" src="{{group.icon_path}}">
+                {{group.full_name}}
+            </h4>
 
             <table class="table table-dark table-sm">
 
-            {% for spec in specs %}
-
                 <thead>
-
-                    <th colspan="99">
-                        <h4 class="wow-class-{{spec.wow_class.name_slug}}">
-                            <img class="icon-m rounded shadow wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.icon_path}}">
-                            {{spec.name}}
-                        </h4>
-                    </th>
+                    <th>Icon</th>
+                    <th>🆔 Spell ID</th>
+                    <th>Name</th>
+                    <th>Cooldown</th>
+                    <th>Duration</th>
+                    <th>Color</th>
 
                 </thead>
 
-                {% for spell in spec.spells|sort(attribute="group") %}
+                {% for group, spells in group.spells|groupby("group")|sort(attribute="0.wow_class.id") %}
+
                     <tr>
-                        <td><a href="https://www.wowhead.com/{{spell.wowhead_data}}" target="_blank" data-wowhead="{{spell.wowhead_data}}"><img class="icon-s rounded wow-class-border-{{spell.spec.wow_class.name_slug}} " src="{{spell.icon_path}}"></a></td>
-                        <td><a href="https://www.wowhead.com/{{spell.wowhead_data}}" target="_blank" data-wowhead="{{spell.wowhead_data}}">{{spell.spell_id}}</a></td>
-                        <td><a href="https://www.wowhead.com/{{spell.wowhead_data}}" target="_blank" data-wowhead="{{spell.wowhead_data}}">{{spell.name}}</a></td>
-
-                        <td class="wow-class-{{spell.group.wow_class.name_slug}}">
-                            <img class="icon-s rounded shadow wow-class-border-{{spell.group.wow_class.name_slug}}" src="{{spell.group.icon_path}}">
-                            {{spell.group.name}}
-                        </td>
-                        <td style="background-color: {{spell.color}}">{{spell.color}}</td>
+                        <td colspan="99">{{group.full_name}}</td>
                     </tr>
+
+                    {% for spell in spells %}
+                        <tr>
+                            <td><a href="https://www.wowhead.com/{{spell.wowhead_data}}" target="_blank" data-wowhead="{{spell.wowhead_data}}"><img class="icon-s rounded wow-class-border-{{spell.spec.wow_class.name_slug}} " src="{{spell.icon_path}}"></a></td>
+                            <td><a href="https://www.wowhead.com/{{spell.wowhead_data}}" target="_blank" data-wowhead="{{spell.wowhead_data}}">{{spell.spell_id}}</a></td>
+                            <td><a href="https://www.wowhead.com/{{spell.wowhead_data}}" target="_blank" data-wowhead="{{spell.wowhead_data}}">{{spell.name}}</a></td>
+
+                            <td><a href="https://www.wowhead.com/{{spell.wowhead_data}}" target="_blank" data-wowhead="{{spell.wowhead_data}}">{{spell.cooldown}}</td>
+                            <td><a href="https://www.wowhead.com/{{spell.wowhead_data}}" target="_blank" data-wowhead="{{spell.wowhead_data}}">{{spell.duration}}</td>
+                            <td style="background-color: {{spell.color}}; color: black;">{{spell.color}}</td>
+                        </tr>
+                    {% endfor %}
                 {% endfor %}
+                </table>
 
+    {% endif %}
 
-
-            {% endfor %}
 </div>
 {% endblock %}
 

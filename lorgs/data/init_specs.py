@@ -276,37 +276,38 @@ for s in SPECS:
 #
 ################################################################################
 
+maxilvl = "&ilvl=252"
+mythic = "&bonus=6646"
+
 # everyone
 for s in SPECS:
     s.add_spell(group=OTHER_POTION, spell_id=6262,                                  name="Healthstone",                 icon="warlock_-healthstone.jpg", wowhead_data="item=5512")
     s.add_spell(group=OTHER_POTION, spell_id=307192, cooldown=300, color="#e35f5f", name="Spiritual Healing Potion",    icon="inv_alchemy_70_red.jpg",   wowhead_data="item=171267")
 
-    # Raid Trinkets
-    s.add_spell(group=OTHER_TRINKET, spell_id=345019, cooldown=90,                  name="Skulking Predator",           icon="inv_icon_wingbroken08d.jpg")
-    s.add_spell(group=OTHER_TRINKET, spell_id=349857, cooldown=90,                  name="Dreadfire Vessel",            icon="inv_misc_trinket6oih_orb1.jpg", wowhead_data="item=184030&bonus=7359:6646")
-
     # Dungeon
-    s.add_spell(group=OTHER_TRINKET, spell_id=330323, cooldown=180,                 name="Inscrutable Quantum Device",  icon="inv_trinket_80_titan02a.jpg", wowhead_data="item=179350&ilvl=226")
-    s.add_spell(group=OTHER_TRINKET, spell_id=345539, cooldown=180, duration=35,    name="Empyreal Ordnance",           icon="spell_animabastion_nova.jpg", wowhead_data="item=180117&ilvl=226")
-    s.add_spell(group=OTHER_TRINKET, spell_id=348139, cooldown=90,  duration=9,     name="Instructor's Divine Bell",    icon="inv_misc_bell_01.jpg",        wowhead_data="item=184842&ilvl=226")
+    s.add_spell(group=OTHER_TRINKET, spell_id=330323, cooldown=180,                 name="Inscrutable Quantum Device",  icon="inv_trinket_80_titan02a.jpg", wowhead_data=f"item=179350{mythic}{maxilvl}")
+    s.add_spell(group=OTHER_TRINKET, spell_id=345539, cooldown=180, duration=35,    name="Empyreal Ordnance",           icon="spell_animabastion_nova.jpg", wowhead_data=f"item=180117{mythic}{maxilvl}")
 
     # Other Trinkets
-    s.add_spell(group=OTHER_TRINKET, spell_id=345228, cooldown=60, duration=15,     name="Gladiator's Badge", icon="spell_holy_championsbond.jpg")
+    s.add_spell(group=OTHER_TRINKET, spell_id=348139, cooldown=90,  duration=9,     name="Instructor's Divine Bell",    icon="inv_misc_bell_01.jpg",        wowhead_data="item=184842&&bonus=1472:5894:6646")
 
 for s in _specs_int:
-    s.add_spell(group=OTHER_TRINKET, spell_id=345801, cooldown=120, duration=15, name="Soulletting Ruby", icon="inv_jewelcrafting_livingruby_01.jpg",  wowhead_data="item=178809&bonus=7214:6652:1501:5884:6646")
-    s.add_spell(group=OTHER_TRINKET, spell_id=345251, cooldown=60,  duration=15, name="Soul Igniter",     icon="inv_trinket_maldraxxus_02_yellow.jpg", wowhead_data="item=184019&bonus=7187:6652:1498:6646")
+    s.add_spell(group=OTHER_TRINKET, spell_id=345801, cooldown=120, duration=15, name="Soulletting Ruby", icon="inv_jewelcrafting_livingruby_01.jpg", wowhead_data=f"item=178809{mythic}{maxilvl}")
+    s.add_spell(group=OTHER_TRINKET, spell_id=355321, cooldown=120, duration=40, name="Shadowed Orb of Torment", icon="spell_animamaw_orb.jpg", wowhead_data=f"item=186428{mythic}{maxilvl}")
+
 
 for s in _specs_agi:
-    s.add_spell(group=OTHER_TRINKET, spell_id=345530, cooldown=90, duration=6,  name="Overcharged Anima Battery", icon="inv_battery_01.jpg",                   wowhead_data="item=180116&bonus=7359:6646")
-    s.add_spell(group=OTHER_TRINKET, spell_id=345251, cooldown=60, duration=15, name="Soul Ignition",             icon="inv_trinket_maldraxxus_02_yellow.jpg", wowhead_data="item=184025&ilvl=226")
+    s.add_spell(group=OTHER_TRINKET, spell_id=345530, cooldown=90, duration=6, name="Overcharged Anima Battery", icon="inv_battery_01.jpg", wowhead_data=f"item=180116{mythic}{maxilvl}")
+    s.add_spell(group=OTHER_TRINKET, spell_id=355333, cooldown=90, duration=20, name="Salvaged Fusion Amplifier", icon="spell_progenitor_missile.jpg", wowhead_data=f"item=186432{mythic}{maxilvl}")
 
-for spec in _specs_str:
-    pass
+for s in _specs_str:
+    s.add_spell(group=OTHER_TRINKET, spell_id=329831, cooldown=90, duration=15, name="Overwhelming Power Crystal", icon="spell_mage_focusingcrystal.jpg", wowhead_data=f"item=179342{mythic}{maxilvl}")
+
+
+################################################################################
 
 
 ALL_SPELLS = list(WowSpell.all)
-
 
 for spell in ALL_SPELLS:
     if spell.group.role is ROLE_ITEM:
