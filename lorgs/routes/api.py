@@ -1,9 +1,7 @@
 """Endpoints related to the Backend/API."""
 
 # IMPORT STANDARD LIBRARIES
-import asyncio
 import datetime
-import time
 
 # IMPORT THIRD PARTY LIBRARIES
 import flask
@@ -29,20 +27,6 @@ def ping():
     return {"reply": "Hi!", "time": datetime.datetime.utcnow().isoformat()}
 
 
-@blueprint.get("/async_test/<int:n>")
-async def async_test(n):
-    """Quick Test for Async Performance on different webservers.
-
-    >>> seq 100 | xargs -I %d -n 1 -P 999 curl http://localhost:5010/api/async_test/%d
-    """
-    # for i in range(10):
-    print(f"async_test n={n} START")
-    await asyncio.sleep(1)
-    print(f"async_test n={n} DONE")
-
-    return "ok", 200
-
-
 ###############################################################################
 #
 #       World Data
@@ -59,7 +43,15 @@ def spell(spell_id):
 
 @blueprint.get("/spells")
 def spells():
-    return {spell.spell_id: spell.as_dict() for spell in specs.WowSpell.all}
+
+    spells = specs.WowSpell.all
+
+    # filter by group
+    group = flask.request.args.get("group", default="", type=str)
+    if group:
+        spells = [spell for spell in spells if spell.group and spell.group.full_name_slug == group.lower()]
+
+    return {spell.spell_id: spell.as_dict() for spell in spells}
 
 
 ###############################################################################
@@ -85,51 +77,11 @@ async def load_spec_rankings(spec_slug, boss_slug):
 
 @blueprint.route("/spec_ranking/<string:spec_slug>/<string:boss_slug>")
 def spec_ranking(spec_slug, boss_slug):
-
-    # limit = flask.request.args.get("limit", default=50, type=int)
-
-    t1 = time.time()
-
-    # query them all into memory
-    spec_ranking = warcraftlogs_ranking.SpecRanking.objects(boss_slug=boss_slug, spec_slug=spec_slug).first()
-    spec_ranking = spec_ranking or warcraftlogs_ranking.SpecRanking(boss_slug=boss_slug, spec_slug=spec_slug)
-
-    t2 = time.time()
-
+    spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(boss_slug=boss_slug, spec_slug=spec_slug)
     players = [player.as_dict() for player in spec_ranking.players]
-
-    t21 = (t2-t1) * 1000
 
     return {
         "players": players,
-
-        "times": {
-            "t2-t1": f"{t21:.3}ms",
-        }
-    }
-
-
-@blueprint.route("/spec_ranking_test/<string:spec_slug>/<string:boss_slug>")
-def spec_ranking_test(spec_slug, boss_slug):
-    count = flask.request.args.get("count", default=10, type=int)
-
-    results = []
-    for i in range(count):
-
-        t1 = time.time()
-
-        # query them all into memory
-        spec_ranking = warcraftlogs_ranking.SpecRanking.objects(boss_slug=boss_slug, spec_slug=spec_slug).first()
-        spec_ranking = spec_ranking or warcraftlogs_ranking.SpecRanking(boss_slug=boss_slug, spec_slug=spec_slug)
-
-        t2 = time.time()
-        results.append((t2-t1) * 1000)
-
-    return {
-        "results": results,
-        "avg": sum(results) / count,
-        "min": min(results),
-        "max": max(results),
     }
 
 
@@ -169,49 +121,6 @@ async def load_comp_rankings(comp_name, boss_slug):
     comp_config.save()
 
     return "done"
-
-
-###############################################################################
-#
-#       Reports
-#
-###############################################################################
-
-"""
-
-@blueprint.route("/report/<string:report_id>")
-def report(report_id):
-
-    report = warcraftlogs_report.Report.query.get(report_id)
-    if not report:
-        flask.abort(404, description="Report not found")
-
-    return report.as_dict()
-
-
-@blueprint.route("/report/<string:report_id>/fight/<int:fight_id>")
-def report_fight(report_id, fight_id):
-
-    fight = warcraftlogs_report.Fight.query
-    fight = fight.filter_by(report_id=report_id, fight_id=fight_id)
-    fight = fight.first()
-
-    if not fight:
-        flask.abort(404, description="Fight not found")
-    return fight.as_dict()
-
-
-@blueprint.route("/report/<string:report_id>/fight/<int:fight_id>/player/<int:source_id>")
-def report_fight_player(report_id, fight_id, source_id):
-
-    player = warcraftlogs_report.Player.query
-    player = player.filter_by(report_id=report_id, fight_id=fight_id, source_id=source_id)
-    player = player.first()
-
-    if not player:
-        flask.abort(404, description="Fight not found")
-    return player.as_dict()
-"""
 
 
 ###############################################################################
