@@ -331,13 +331,23 @@ class Boss(BaseActor):
 
             until_event = event.get("until")
             event_spell = event.get("spell_id")
-            end_spell = until_event.get("spell_id")
+            end_spell_id = until_event.get("spell_id")
 
-            last_cast = None
+            start_cast = None
+            end_casts = []
             for cast in self.casts:
-                if cast.spell_id == event_spell:
-                    last_cast = cast
 
-                if last_cast and cast.spell_id == end_spell:
-                    last_cast.end_time = cast.timestamp
-                    last_cast = None
+                # look for the start event
+                if not start_cast and cast.spell_id == event_spell:
+                    start_cast = cast
+                    continue
+
+                # look for the ending event
+                if start_cast and cast.spell_id == end_spell_id:
+                    start_cast.end_time = cast.timestamp
+                    start_cast = None
+                    end_casts.append(cast)
+                    continue
+
+            # end casts should not show up on their own
+            self.casts = [cast for cast in self.casts if cast not in end_casts]

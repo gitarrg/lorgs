@@ -72,6 +72,18 @@ class RaidBoss(base.Model):
         # track the event (for query)
         self.events.append(kwargs)
 
+        # auto duration (mostly for boss buffs/debuffs)
+        if kwargs.get("duration") == "auto":
+            kwargs.pop("duration")
+
+            kwargs["until"] = {}
+            if kwargs.get("event_type") == "applybuff":
+                kwargs["until"]["event_type"] = "removebuff"
+            if kwargs.get("event_type") == "applydebuff":
+                kwargs["until"]["event_type"] = "removedebuff"
+            if kwargs["until"]:
+                kwargs["until"]["spell_id"] = kwargs.get("spell_id", 0)
+
         # dedicated "stop" event, for events with non static timers.. eg: intermissions
         end_event = kwargs.get("until", {})
         if end_event:
