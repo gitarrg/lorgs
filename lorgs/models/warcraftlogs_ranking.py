@@ -1,14 +1,11 @@
-"""Models for Warcraftlog-Reports/Fights/Actors."""
+"""Models for Top Rankings for a given Spec."""
 
 # IMPORT STANDARD LIBRARIES
-# import uuid
-import arrow
 import datetime
 
 # IMPORT THIRD PARTY LIBRARIES
+import arrow
 import mongoengine as me
-# import sqlalchemy as sa
-# from sqlalchemy.dialects import postgresql as pg
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils

@@ -20,6 +20,7 @@ class DevelopmentConfig(BaseConfig):
 
     GOOGLE_ANALYTICS_ID = ""
     SEND_FILE_MAX_AGE_DEFAULT = 0  # for DEV. updates static files
+    TEMPLATES_AUTO_RELOAD = True
 
     CACHE_TYPE = "RedisCache"  # TODO: redis
     CACHE_REDIS_URL = os.getenv("REDIS_URL") or "redis://localhost:6379"

@@ -156,3 +156,13 @@ SYLVANAS.add_event(event_type="cast", spell_id=354011, duration=0.5, color="#944
 ################################################################################
 DEFAULT_BOSS = TARRAGRUE
 SANCTUM_OF_DOMINATION_BOSSES = SANCTUM_OF_DOMINATION.bosses
+
+
+
+################################################################################
+
+_ref = GUARDIAN
+TEST_BOSS = SANCTUM_OF_DOMINATION.add_boss(id=_ref.id, name="Test Boss")
+TEST_BOSS.visible = False
+TEST_BOSS.events = _ref.events
+TEST_BOSS.spells = _ref.spells

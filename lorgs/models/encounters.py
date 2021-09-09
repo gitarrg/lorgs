@@ -42,6 +42,7 @@ class RaidBoss(base.Model):
         self.id = id
         self.zone = zone
         self.name = name
+        self.visible = True
 
         self.name_slug = utils.slug(self.name, space="-")
         self.icon = f"bosses/{self.zone.name_slug}/{self.name_slug}.jpg"
