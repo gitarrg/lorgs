@@ -143,10 +143,12 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
         player_query = ""
         cast_query = ""
         if self.players:
-            cast_query = "casts: "
-            # TODO: this probl doesn't work with multiple players
-            for player in self.players:
-                if not player.casts:
+
+            players_to_load = [player for player in self.players if not player.casts]
+            if players_to_load:
+                cast_query = "casts: "
+                # TODO: this probl doesn't work with multiple players
+                for player in self.players:
                     cast_query += player.get_sub_query()
 
         else:
