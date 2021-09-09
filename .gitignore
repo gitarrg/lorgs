@@ -7,6 +7,7 @@ __pycache__/
 
 _build
 _generated
+offline_files
 
 # for ".env", we need this (since its already tracked)
 # >>> git update-index --assume-unchanged .env

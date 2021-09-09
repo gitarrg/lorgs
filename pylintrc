@@ -2,6 +2,8 @@
 [DESIGN]
 max-attributes=12
 
+[FORMAT]
+max-line-length=160
+
 [MESSAGES CONTROL]
 disable=locally-disabled,redefined-builtin,logging-fstring-interpolation
-

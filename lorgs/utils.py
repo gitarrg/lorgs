@@ -1,10 +1,9 @@
 
 from functools import wraps
 from operator import attrgetter
+import arrow
 import datetime
 import itertools
-import re
-import arrow
 
 
 def chunks(lst, n):
@@ -16,6 +15,7 @@ def chunks(lst, n):
     for i in range(0, len(lst), n):
         yield lst[i:i + n]
 
+
 def format_time(timestamp):
 
     t = datetime.timedelta(milliseconds=timestamp)
@@ -23,6 +23,7 @@ def format_time(timestamp):
     t = str(t) # "0:05:12.00000"
     t = t[2:7]
     return t
+
 
 def format_timestamp(timestamp):
     if timestamp == 0:
@@ -50,20 +51,11 @@ def slug(text, space=""):
 
 
 def flatten(l):
-    """flattens a list of lists into a single large list.
+    """Flattens a list of lists into a single large list.
 
     https://stackoverflow.com/questions/952914/how-to-make-a-flat-list-out-of-a-list-of-lists
     """
     return list(itertools.chain.from_iterable(l))
-
-
-def shrink_text(text):
-    return re.sub(r"\s+", " ", text)
-
-
-class staticproperty(property):
-    def __get__(self, cls, owner):
-        return self.fget.__get__(None, owner)()
 
 
 def as_list(func):
