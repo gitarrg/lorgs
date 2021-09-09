@@ -142,11 +142,6 @@ async def report_index():
         link = form.report_link.data
         match = re.match(forms.WCL_LINK_REGEX, link)
         report_id = match.group("code")
-
-        user_report = warcraftlogs_report.UserReport.get_or_create(report_id=report_id)
-        # report_data = Cache.get(f"report/{report_id}")
-        # if not report_data:
-        #     return flask.redirect(flask.url_for("ui.report_load", report_id=report_id))
         return flask.redirect(flask.url_for("ui.report", report_id=report_id))
 
     kwargs = {}
@@ -154,33 +149,18 @@ async def report_index():
     return flask.render_template("report_index.html", **kwargs)
 
 
-'''
-@blueprint.route("/report_load/<string:report_id>")
-def report_load(report_id):
-    task = tasks.load_report.delay(report_id=report_id)
-    kwargs = {}
-    kwargs["report_id"] = report_id
-    kwargs["task_id"] = task.id
-    return flask.render_template("report_loading.html", **kwargs)
-'''
-
-
 @blueprint.route("/report/<string:report_id>")
 async def report(report_id):
 
     user_report = warcraftlogs_report.UserReport.objects(report__report_id=report_id).first()
-    # user_report = warcraftlogs_report.UserReport.get_or_create(report_id=report_id)
-
     if not user_report:
         flask.abort(404, description="Report not found")
-        # return flask.redirect(flask.url_for("ui.report_load", report_id=report_id))
 
     report = user_report.report
 
     players = utils.uniqify(report.players, key=lambda player: player.source_id)
     spells_used = utils.flatten(player.spells_used for player in players)
     spells_used = utils.uniqify(spells_used, key=lambda spell: (spell.spell_id, spell.group))
-    # used_spells = []
 
     boss = None
     for fight in report.fights:
