@@ -94,7 +94,6 @@ for spec in WowSpec.all:
 WARRIOR_PROT.supported = False
 PALADIN_PROTECTION.supported = False
 DEATHKNIGHT_BLOOD.supported = False
-MONK_BREWMASTER.supported = False
 DRUID_GUARDIAN.supported = False
 
 # mdps
@@ -216,6 +215,7 @@ SHAMAN_RESTORATION.add_spell(  spell_id=198838, cooldown=60, duration=15, color=
 MAGE.add_spell(                spell_id=314791, cooldown=60,  duration=3,  color=COL_NF,    name="Shifting Power",                  icon="ability_ardenweald_mage.jpg",               show=False)
 MAGE_FIRE.add_spell(           spell_id=190319, cooldown=60,  duration=10, color="#e3b02d", name="Combustion",                      icon="spell_fire_sealoffire.jpg")
 MAGE_FIRE.add_spell(           spell_id=153561, cooldown=45,                                name="Meteor",                          icon="spell_mage_meteor.jpg",                     show=False)
+
 #################################################################################################################################################################################################
 #   Warlock
 WARLOCK.add_spell(             spell_id=325640, cooldown=60,  duration=8,  color=COL_NF,    name="Soul Rot",                        icon="ability_ardenweald_warlock.jpg",            show=False)
@@ -228,21 +228,26 @@ WARLOCK_DEMONOLOGY.add_spell(  spell_id=264119, cooldown=45,  duration=15, color
 WARLOCK_DEMONOLOGY.add_spell(  spell_id=267217, cooldown=180, duration=15,                  name="Nether Portal",                   icon="inv_netherportal.jpg")
 WARLOCK_DESTRUCTION.add_spell( spell_id=1122,   cooldown=180, duration=30, color="#91c45a", name="Summon Infernal",                 icon="spell_shadow_summoninfernal.jpg")
 WARLOCK_DESTRUCTION.add_spell( spell_id=113858, cooldown=120, duration=20, color="#c35ec4", name="Dark Soul: Instability",          icon="spell_warlock_soulburn.jpg")
+
 #################################################################################################################################################################################################
 # Monk
 MONK.add_spell(                spell_id=322109, cooldown=180,              color="#c72649", name="Touch of Death",                  icon="ability_monk_touchofdeath.jpg")
-MONK.add_spell(                spell_id=115203, cooldown=360, duration=15,                  name="Fortifying Brew",                 icon="ability_monk_fortifyingale_new.jpg",        show=False)
 MONK.add_spell(                spell_id=310454, cooldown=120, duration=30, color=COL_KYR,   name="Weapons of Order",                icon="ability_bastion_monk.jpg",                  show=False)
 MONK_MISTWEAVER.add_spell(     spell_id=322118, cooldown=180, duration=3.5,                 name="Invoke Yu'lon, the Jade Serpent", icon="ability_monk_dragonkick.jpg")
 MONK_MISTWEAVER.add_spell(     spell_id=115310, cooldown=180,              color="#00FF98", name="Revival",                         icon="spell_monk_revival.jpg")
 MONK_MISTWEAVER.add_spell(     spell_id=325197, cooldown=180, duration=25, color="#e0bb36", name="Invoke Chi-Ji, the Red Crane",    icon="inv_pet_cranegod.jpg")
 MONK_WINDWALKER.add_spell(     spell_id=123904, cooldown=120, duration=24, color="#8cdbbc", name="Invoke Xuen, the White Tiger",    icon="ability_monk_summontigerstatue.jpg")
 MONK_WINDWALKER.add_spell(     spell_id=137639, cooldown=90,  duration=15, color="#be53db", name="Storm, Earth, and Fire",          icon="spell_nature_giftofthewild.jpg")
-#################################################################################################################################################################################################
+MONK_BREWMASTER.add_spell(     spell_id=322507, cooldown=60,  duration=0,  color="#45f9ff", name="Celestial Brew",                  icon="ability_monk_ironskinbrew.jpg",              show=False)
+MONK_BREWMASTER.add_spell(     spell_id=132578, cooldown=105, duration=25,                  name="Invoke Niuzao the Black Ox",      icon="spell_monk_brewmaster_spec.jpg")  # base cd =3min / reduced with conduit
+MONK_BREWMASTER.add_spell(     spell_id=122278, cooldown=120, duration=10, color="#fcba03", name="Dampen Harm",                     icon="ability_monk_dampenharm.jpg")
+MONK_BREWMASTER.add_spell(     spell_id=115176, cooldown=300, duration=8,                   name="Zen Meditation",                  icon="ability_monk_zenmeditation.jpg")
+MONK_BREWMASTER.add_spell(     spell_id=115203, cooldown=360, duration=15, color="#ffb145", name="Fortifying Brew",                 icon="ability_monk_fortifyingale_new.jpg")
+
+###########################################################################################################################################################################
 # Druid
 DRUID.add_spell(               spell_id=323764, cooldown=60,  duration=4,  color=COL_NF,    name="Convoke the Spirits",             icon="ability_ardenweald_druid.jpg",              show=False)
 DRUID.add_spell(               spell_id=323546, cooldown=180, duration=20, color=COL_VENTR, name="Ravenous Frenzy",                 icon="ability_revendreth_druid.jpg",              show=False)
-
 DRUID_RESTORATION.add_spell(   spell_id=197721, cooldown=90,  duration=8,  color="#7ec44d", name="Flourish",                        icon="spell_druid_wildburst.jpg",                 show=False)
 DRUID_RESTORATION.add_spell(   spell_id=29166,  cooldown=180, duration=10, color="#3b97ed", name="Innervate",                       icon="spell_nature_lightning.jpg",                show=False)
 DRUID_RESTORATION.add_spell(   spell_id=740,    cooldown=180, duration=6,  color="#6cbfd9", name="Tranquility",                     icon="/static/images/spells/spell_nature_tranquility.jpg")
@@ -251,6 +256,7 @@ DRUID_BALANCE.add_spell(       spell_id=194223, cooldown=180, duration=20,      
 DRUID_BALANCE.add_spell(       spell_id=102560, cooldown=180, duration=30,                  name="Incarnation: Chosen of Elune",    icon="spell_druid_incarnation.jpg")
 DRUID_BALANCE.add_spell(       spell_id=205636, cooldown=60,  duration=10,                  name="Force of Nature",                 icon="ability_druid_forceofnature.jpg",           show=False)
 DRUID_BALANCE.add_spell(       spell_id=202770, cooldown=60,  duration=8,                   name="Fury of Elune",                   icon="ability_druid_dreamstate.jpg",              show=False)
+
 #################################################################################################################################################################################################
 # DH
 DEMONHUNTER.add_spell(         spell_id=306830, cooldown=60,               color=COL_KYR,   name="Elysian Decree",                  icon="ability_bastion_demonhunter.jpg",           show=False)
