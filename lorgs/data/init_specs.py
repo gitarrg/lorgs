@@ -98,12 +98,8 @@ DEATHKNIGHT_BLOOD.supported = False
 # mdps
 WARRIOR_ARMS.supported = False
 HUNTER_SURVIVAL.supported = False
-ROGUE_ASSASSINATION.supported = False
-ROGUE_SUBTLETY.supported = False
-ROGUE_OUTLAW.supported = False
 DEATHKNIGHT_FROST.supported = False
 DRUID_FERAL.supported = False
-
 
 SUPPORTED_SPECS = [spec for spec in SPECS if spec.supported]
 
@@ -164,6 +160,19 @@ HUNTER_MARKSMANSHIP.add_spell( spell_id=288613, cooldown=120, duration=15,      
 
 #################################################################################################################################################################################################
 #   Rouge
+ROGUE.add_spell(               spell_id=1856,   cooldown=120,              color="#999999", name="Vanish",                           icon="ability_vanish.jpg",                       show=False)
+ROGUE_ASSASSINATION.add_spell( spell_id=703,    cooldown=6,   duration=18,                  name="Garrote",                          icon="ability_rogue_garrote.jpg",                show=False)
+ROGUE_ASSASSINATION.add_spell( spell_id=1943,                                               name="Rupture",                          icon="ability_rogue_rupture.jpg",                show=False)
+ROGUE_ASSASSINATION.add_spell( spell_id=121411,                                             name="Crimson Tempest",                  icon="inv_knife_1h_cataclysm_c_05.jpg",          show=False)
+ROGUE_ASSASSINATION.add_spell( spell_id=5938,   cooldown=25,                                name="Shiv",                             icon="inv_throwingknife_04.jpg",                 show=False)
+ROGUE_ASSASSINATION.add_spell( spell_id=79140,  cooldown=120, duration=20, color="#bf291f", name="Vendetta",                         icon="ability_rogue_deadliness.jpg")
+ROGUE_SUBTLETY.add_spell(      spell_id=121471, cooldown=180, duration=20, color="#9a1be3", name="Shadow Blades",                    icon="inv_knife_1h_grimbatolraid_d_03.jpg")
+ROGUE_SUBTLETY.add_spell(      spell_id=5171,                                               name="Slice and Dice",                   icon="ability_rogue_slicedice.jpg")
+ROGUE_SUBTLETY.add_spell(      spell_id=185313, cooldown=0,   duration=8,  color="#cf5dab", name="Shadow Dance",                     icon="ability_rogue_shadowdance.jpg",            show=False)
+ROGUE_SUBTLETY.add_spell(      spell_id=212283, cooldown=30,  duration=10,                  name="Symbols of Death",                 icon="spell_shadow_rune.jpg")
+ROGUE_OUTLAW.add_spell(        spell_id=315508,               duration=30, color="#c7813c", name="Roll the Bones",                   icon="ability_rogue_rollthebones.jpg",           show=False)
+ROGUE_OUTLAW.add_spell(        spell_id=271877, cooldown=0,                                 name="Blade Rush",                       icon="ability_arakkoa_spinning_blade.jpg",       show=False)
+ROGUE_OUTLAW.add_spell(        spell_id=13750,  cooldown=0,   duration=20,                  name="Adrenaline Rush",                  icon="spell_shadow_shadowworddominate.jpg")
 
 #################################################################################################################################################################################################
 #   Priest
