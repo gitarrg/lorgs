@@ -29,14 +29,24 @@ def index():
 
 # @cache.cached(timeout=600)
 @blueprint.get("/spells/")
+@blueprint.get("/spellbook/")
 @blueprint.get("/spells/<group_name>")
+@blueprint.get("/spellbook/<group_name>")
 def spells(group_name=None):
+
     kwargs = {}
-    kwargs["specs"] = data.SPECS
-    kwargs["spells"] = data.ALL_SPELLS
+
+    spells = data.ALL_SPELLS
 
     if group_name:
-        kwargs["group"] = WowSpec.get(full_name_slug=group_name)
+        group = WowSpec.get(full_name_slug=group_name)
+        if group:
+            kwargs["group"] = group
+            spells = [spell for spell in spells if group in (spell.group, spell.spec)]
+    spells = utils.uniqify(spells, key=lambda spell: spell.spell_id)
+
+    kwargs["specs"] = WowSpec.all
+    kwargs["spells"] = spells
 
     return flask.render_template("admin/admin_spells.html", **kwargs)
 
