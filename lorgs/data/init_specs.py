@@ -107,7 +107,6 @@ DEATHKNIGHT_FROST.supported = False
 DRUID_FERAL.supported = False
 
 # rdps
-PRIEST_SHADOW.supported = False
 MAGE_ARCANE.supported = False
 MAGE_FROST.supported = False
 
@@ -153,24 +152,31 @@ WARRIOR.add_spell(            spell_id=325886, cooldown=90,  duration=12, color=
 WARRIOR.add_spell(            spell_id=97462,  cooldown=180, duration=10,                   name="Rallying Cry",                    icon="ability_warrior_rallyingcry.jpg",           show=False)
 WARRIOR_FURY.add_spell(       spell_id=1719,   cooldown=60,  duration=10,                   name="Recklessness",                    icon="warrior_talent_icon_innerrage.jpg")
 WARRIOR_FURY.add_spell(       spell_id=46924,  cooldown=60,  duration=4,                    name="Bladestorm",                      icon="ability_warrior_bladestorm.jpg")
+
 #################################################################################################################################################################################################
 #   Paladin
 PALADIN.add_spell(             spell_id=304971, cooldown=60,               color=COL_KYR,   name="Divine Toll",                     icon="ability_bastion_paladin.jpg",               show=False)
 PALADIN.add_spell(             spell_id=316958, cooldown=240, duration=30, color=COL_VENTR, name="Ashen Hallow",                    icon="ability_revendreth_paladin.jpg")
 PALADIN.add_spell(             spell_id=31884,  cooldown=120, duration=20, color="#ffc107", name="Avenging Wrath",                  icon="spell_holy_avenginewrath.jpg")
 PALADIN_HOLY.add_spell(        spell_id=31821,  cooldown=180, duration=8,  color="#dc65f5", name="Aura Mastery",                    icon="spell_holy_auramastery.jpg")
+
 #################################################################################################################################################################################################
 # Hunter
 HUNTER.add_spell(              spell_id=328231, cooldown=120, duration=15, color=COL_NF,    name="Wild Spirits",                    icon="ability_ardenweald_hunter.jpg")
 HUNTER_BEASTMASTERY.add_spell( spell_id=193530, cooldown=180, duration=20,                  name="Aspect of the Wild",              icon="spell_nature_protectionformnature.jpg")
 HUNTER_BEASTMASTERY.add_spell( spell_id=19574,  cooldown=30,  duration=15, color="#e6960f", name="Bestial Wrath",                   icon="ability_druid_ferociousbite.jpg",           show=False)
 HUNTER_MARKSMANSHIP.add_spell( spell_id=288613, cooldown=120, duration=15,                  name="Trueshot",                        icon="ability_trueshot.jpg",                      show=False)
+
 #################################################################################################################################################################################################
 #   Rouge
+
 #################################################################################################################################################################################################
 #   Priest
 PRIEST.add_spell(              spell_id=10060,  cooldown=120, duration=20, color="#1fbcd1", name="Power Infusion",                  icon="spell_holy_powerinfusion.jpg",              show=False)
-PRIEST.add_spell(              spell_id=325013, cooldown=180, duration=20, color=COL_KYR,   name="Boon of the Ascended",            icon="ability_bastion_priest.jpg")
+PRIEST.add_spell(              spell_id=325013, cooldown=180, duration=10, color=COL_KYR,   name="Boon of the Ascended",            icon="ability_bastion_priest.jpg")
+PRIEST.add_spell(              spell_id=324724, cooldown=60,               color=COL_NECRO, name="Unholy Nova",                     icon="ability_maldraxxus_priest.jpg")
+PRIEST.add_spell(              spell_id=323673, cooldown=45,  duration=5,  color=COL_VENTR, name="Mindgames",                       icon="ability_revendreth_priest.jpg",             show=False)
+PRIEST.add_spell(              spell_id=327661, cooldown=90,  duration=20, color=COL_NF,    name="Fae Guardians",                   icon="ability_ardenweald_priest.jpg")
 PRIEST_DISCIPLINE.add_spell(   spell_id=62618,  cooldown=180, duration=10, color="#b3ad91", name="Power Word: Barrier",             icon="spell_holy_powerwordbarrier.jpg")
 PRIEST_DISCIPLINE.add_spell(   spell_id=109964, cooldown=60,  duration=10, color="#d7abdb", name="Spirit Shell",                    icon="ability_shaman_astralshift.jpg")
 PRIEST_DISCIPLINE.add_spell(   spell_id=47536,  cooldown=90,  duration=8,                   name="Rapture",                         icon="spell_holy_rapture.jpg",                    show=False)
@@ -178,11 +184,18 @@ PRIEST_DISCIPLINE.add_spell(   spell_id=246287, cooldown=90,                    
 PRIEST_HOLY.add_spell(         spell_id=64843,  cooldown=180, duration=8, color="#d7abdb",  name="Divine Hymn",                     icon="spell_holy_divinehymn.jpg")
 PRIEST_HOLY.add_spell(         spell_id=265202, cooldown=240,                               name="Holy Word: Salvation",            icon="ability_priest_archangel.jpg")
 PRIEST_HOLY.add_spell(         spell_id=200183, cooldown=120, duration=20,                  name="Apotheosis",                      icon="ability_priest_ascension.jpg",              show=False)
+PRIEST_SHADOW.add_spell(       spell_id=228260, cooldown=90,  duration=15, color="#b330e3", name="Voidform",                        icon="spell_priest_voidform.jpg")  # tooltip: 228264
+PRIEST_SHADOW.add_spell(       spell_id=263165, cooldown=30,  duration=3,                   name="Void Torrent",                    icon="spell_priest_voidsear.jpg",                 show=False)
+PRIEST_SHADOW.add_spell(       spell_id=34433,  cooldown=180, duration=15, color="#58db97", name="Shadowfiend",                     icon="spell_shadow_shadowfiend.jpg")
+PRIEST_SHADOW.add_spell(       spell_id=200174, cooldown=60,  duration=15, color="#58db97", name="Mindbender",                      icon="spell_shadow_soulleech_3.jpg")
+PRIEST_SHADOW.add_spell(       spell_id=254232, cooldown=180, duration=15, color="#58db97", name="Voidling",                        icon="spell_shadow_shadowfiend.jpg")  # glyphed shadowfiend
+
 #################################################################################################################################################################################################
 # DK
 DEATHKNIGHT.add_spell(         spell_id=51052,  cooldown=120, duration=10,                  name="Anti-Magic Zone",                 icon="spell_deathknight_antimagiczone.jpg",       show=False)
 DEATHKNIGHT_UNHOLY.add_spell(  spell_id=42650,  cooldown=240, duration=30,                  name="Army of the Dead",                icon="spell_deathknight_armyofthedead.jpg")
 DEATHKNIGHT_UNHOLY.add_spell(  spell_id=275699, cooldown=60,  duration=15,                  name="Apocalypse",                      icon="artifactability_unholydeathknight_deathsembrace.jpg", show=False)
+
 #################################################################################################################################################################################################
 #   Shaman
 SHAMAN.add_spell(              spell_id=320674, cooldown=90,               color=COL_VENTR, name="Chain Harvest",                   icon="ability_revendreth_shaman.jpg",             show=False)
