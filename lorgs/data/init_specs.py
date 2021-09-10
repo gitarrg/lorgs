@@ -189,6 +189,7 @@ PRIEST_SHADOW.add_spell(       spell_id=263165, cooldown=30,  duration=3,       
 PRIEST_SHADOW.add_spell(       spell_id=34433,  cooldown=180, duration=15, color="#58db97", name="Shadowfiend",                     icon="spell_shadow_shadowfiend.jpg")
 PRIEST_SHADOW.add_spell(       spell_id=200174, cooldown=60,  duration=15, color="#58db97", name="Mindbender",                      icon="spell_shadow_soulleech_3.jpg")
 PRIEST_SHADOW.add_spell(       spell_id=254232, cooldown=180, duration=15, color="#58db97", name="Voidling",                        icon="spell_shadow_shadowfiend.jpg")  # glyphed shadowfiend
+PRIEST_SHADOW.add_spell(       spell_id=132603, cooldown=180, duration=15, color="#58db97", name="Shadowfiend",                     icon="spell_shadow_shadowfiend.jpg")  # glyphed shadowfiend
 
 #################################################################################################################################################################################################
 # DK
