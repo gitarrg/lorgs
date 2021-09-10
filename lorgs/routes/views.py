@@ -74,8 +74,8 @@ def spec_ranking(spec_slug, boss_slug):
 
     # Inputs
     # limit = flask.request.args.get("limit", default=50, type=int)
-    spec_ranking = warcraftlogs_ranking.SpecRanking.objects(boss_slug=boss_slug, spec_slug=spec_slug).first()
-    if not spec_ranking:
+    spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(boss_slug=boss_slug, spec_slug=spec_slug)
+    if not (spec_ranking.boss and spec_ranking.spec):
         flask.abort(404, description="Invalid Spec or Boss")
 
     # preprocess some data
