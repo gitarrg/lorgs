@@ -57,7 +57,6 @@ class SpecRanking(warcraftlogs_base.Document):
         now = arrow.utcnow()
         old = arrow.get(self.updated)
         return now - old
-        # return old.humanize(now, only_distance=True)
 
     @property
     def update_age_fmt(self):

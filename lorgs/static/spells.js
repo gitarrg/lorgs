@@ -69,12 +69,5 @@ document.addEventListener('DOMContentLoaded', (event) => {
         cast.addEventListener("mousedown", select_spell);
     });
 
-
     update_selected_spell();
-
-
-
 });
-
-/*
-*/
