@@ -67,6 +67,7 @@ def spec_rankings():
         spec_rankings_data[spec_ranking.spec_slug][spec_ranking.boss_slug] = spec_ranking
 
     for spec in specs:
+        spec_rankings_data.setdefault(spec.full_name_slug, {})
         for boss in bosses:
             spec_rankings_data[spec.full_name_slug].setdefault(boss.name_slug, None)
 

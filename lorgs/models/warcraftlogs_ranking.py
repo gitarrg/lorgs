@@ -65,11 +65,24 @@ class SpecRanking(warcraftlogs_base.Document):
         return old.humanize(now, only_distance=True)
 
     ##########################
+    # Methods
+    #
+    def sort_reports(self):
+        """Sort the reports in place by the highest dps player."""
+        def get_dps(report):
+            top = 0
+            for fight in report.fights:
+                for player in fight.players:
+                    top = max(top, player.total)
+            return top
+        self.reports = sorted(self.reports, key=get_dps, reverse=True)
+
+    ##########################
     # Query
     #
-    async def load(self, limit=50):
+    async def load(self, limit=50, clear_old=False):
         """Get Top Ranks for a given boss and spec."""
-        logger.info(f"{self.boss.name} vs. {self.spec.name} {self.spec.wow_class.name} START | limit={limit}")
+        logger.info(f"{self.boss.name} vs. {self.spec.name} {self.spec.wow_class.name} START | limit={limit} | clear_old={clear_old}")
 
         # Build and run the query
         query = f"""\
@@ -95,13 +108,35 @@ class SpecRanking(warcraftlogs_base.Document):
         if limit:
             rankings = rankings[:limit]
 
-        self.reports = []
+        if clear_old:
+            self.reports = []
 
+        #########################
+        #
+        #
+        old_reports = []
+        for report in self.reports:
+            for fight in report.fights:
+                for player in fight.players:
+                    key = (report.report_id, fight.fight_id, player.name)
+                    old_reports.append(key)
+
+        new_fights = []
         for ranking_data in rankings:
             report_data = ranking_data.get("report", {})
 
             # skip hidden reports
             if ranking_data.get("hidden"):
+                continue
+
+            ################
+            # check if already in the list
+            key = (
+                report_data.get("code", ""),
+                report_data.get("fightID"),
+                ranking_data.get("name")
+            )
+            if key in old_reports:
                 continue
 
             ################
@@ -118,9 +153,6 @@ class SpecRanking(warcraftlogs_base.Document):
             fight.start_time = ranking_data.get("startTime", 0) - report.start_time
             fight.end_time = fight.start_time + ranking_data.get("duration", 0)
 
-            if len(self.reports) == 1: # this is the first report
-                fight.add_boss(self.boss.id)
-
             ################
             # Player
             player = fight.add_player()
@@ -129,12 +161,23 @@ class SpecRanking(warcraftlogs_base.Document):
             player.name = ranking_data.get("name")
             player.total = ranking_data.get("amount", 0)
 
+            new_fights.append(fight)
+
         ########################
         # load casts
         #
-        logger.info(f"{self.boss.name} vs. {self.spec.name} {self.spec.wow_class.name} load casts")
-        # for fight in self.fights:
-        #     print(fight.get_query())
+        if new_fights:
+            self.sort_reports()
 
-        await self.load_many(self.fights)
+        # the very first report/fight should always have the boss
+        if self.fights:
+            first_fight = self.fights[0]
+            if not first_fight.boss_id and first_fight not in new_fights:
+                first_fight.add_boss(self.boss.id)
+                new_fights.append(first_fight)
+
+        if new_fights:
+            logger.info(f"{self.boss.name} vs. {self.spec.name} {self.spec.wow_class.name} load casts | {len(new_fights)} new fights")
+            await self.load_many(new_fights)
+
         self.updated = datetime.datetime.utcnow()
