@@ -1,0 +1,136 @@
+
+
+{% extends "base.html" %}
+
+{% block title %}
+Lorgs: Admin Page
+{% endblock %}
+
+
+
+{% block content %}
+<div class="p-2 mt-5 ml-5">
+
+    <h3>Spec Rankings</h3>
+
+
+    <div class="bg-dark rounded border p-2 mb-2">
+
+
+        <div class="row">
+
+            {# SPECS #}
+            <div class="col">
+                <label for="select_spec">Specs</label>
+                <select id=select_spec class="form-select form-select-sm" size="{{specs|length + roles|length}}" multiple aria-label="multiple select example" onchange="update_preview()">
+
+                {% for role in roles %}
+                <optgroup label="{{role.name}}">
+                    {% for spec in role.specs %}
+                        <option value="{{spec.full_name_slug}}" {{"disabled" if not spec.supported}}>{{spec.full_name}}</option>
+                    {% endfor %}
+                </optgroup>
+                {% endfor %}
+                </select>
+            </div>
+
+            <div class="col">
+
+                <div class="row">
+
+                    {# BOSSEE #}
+                    <div class="col">
+                        <label for="select_boss">Boss</label>
+                        <select id=select_boss class="form-select form-select-sm" size="{{bosses|length}}" multiple aria-label="multiple select example" onchange="update_preview()">
+
+                        {% for boss in bosses %}
+                            <option value="{{boss.name_slug}}">{{boss.name}}</option>
+                        {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label>Options</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="checkbox_clear">
+                        <label class="form-check-label" for="checkbox_clear">Clear old</label>
+                    </div>
+                    <label for="input_limit" class="col-form-label">Limit</label>
+                    <input type="number" id="input_limit" class="form-control" value="50" onchange="update_preview()">
+                    <button type="button" class="update_spec_ranking_button btn btn-primary btn-lg" onclick="submit()">LOAD</button>
+                </div>
+
+                <div class="mt-2">
+
+                    <div id="preview" class="border rounded bg-secondary" style="max-height: 400px;overflow-x: hidden;">
+                        select something
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script type="text/javascript">
+
+
+const SELECT_BOSS = document.querySelector("#select_boss");
+const SELECT_SPEC = document.querySelector("#select_spec");
+const PREVIEW = document.querySelector("#preview");
+const LIMIT = document.querySelector("#input_limit");
+const CHECKBOX_CLEAR = document.querySelector("#checkbox_clear");
+
+
+function update_preview() {
+    var bosses = Array.from(SELECT_BOSS.selectedOptions).map(({ value }) => value);
+    var specs = Array.from(SELECT_SPEC.selectedOptions).map(({ value }) => value);
+    var limit = LIMIT.value;
+    var combinations = specs.length*bosses.length;
+
+    PREVIEW.innerHTML = `${specs.length} Specs * ${bosses.length} Bosses => ${combinations} Combinations</br>`;
+    PREVIEW.innerHTML += `x${limit} limit --> ${limit*combinations} fights</br>`;
+}
+
+    // this.innerHTML = "loading...";
+
+
+
+    // cast.dataset.spell_id;
+    // console.log("update preview", SELECT_BOSS.values);
+    // fetch(`/api/task/load_spec_rankings/${spec}/${boss}`)
+
+
+function submit() {
+    var bosses = Array.from(SELECT_BOSS.selectedOptions).map(({ value }) => value);
+    var specs = Array.from(SELECT_SPEC.selectedOptions).map(({ value }) => value);
+    var limit = LIMIT.value;
+    var clear = CHECKBOX_CLEAR.checked;
+
+    let params = {limit:limit, clear:clear};
+    let url_params = new URLSearchParams(params).toString();
+    console.log("url_params", url_params);
+
+
+    PREVIEW.innerHTML = "start</br>"
+
+    specs.forEach(spec => {
+        bosses.forEach(boss => {
+            PREVIEW.innerHTML += `${spec} vs ${boss}</br>`
+
+            var url = `/api/task/load_spec_rankings/${spec}/${boss}?${url_params}`;
+            fetch(url);
+        });
+    });
+    PREVIEW.innerHTML += `DONE</br>`
+    console.log("SEND!")
+}
+
+</script>
+
+{% endblock %}
+
+

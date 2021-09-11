@@ -79,3 +79,18 @@ def spec_rankings():
 
 
     return flask.render_template("admin/admin_spec_rankings.html", **kwargs)
+
+
+@blueprint.get("/updater")
+@cache.cached(timeout=60)
+def updater():
+
+    bosses = data.SANCTUM_OF_DOMINATION_BOSSES
+    roles = data.ROLES
+    specs = utils.flatten(role.specs for role in roles)
+
+    kwargs = {}
+    kwargs["bosses"] = bosses
+    kwargs["roles"] = roles
+    kwargs["specs"] = specs
+    return flask.render_template("admin/admin_spec_updater.html", **kwargs)
