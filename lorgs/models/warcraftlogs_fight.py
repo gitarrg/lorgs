@@ -1,49 +1,29 @@
-
-
 # IMPORT STANRD LIBRARIES
 import textwrap
-import datetime
-import abc
 
 # IMPORT THIRD PARTY LIBRARIES
 import mongoengine as me
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import data
-from lorgs import db
 from lorgs import utils
-from lorgs.client import WarcraftlogsClient
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
 from lorgs.models.encounters import RaidBoss
-from lorgs.models.encounters import RaidZone
 from lorgs.models.specs import WowClass
 from lorgs.models.specs import WowSpec
-from lorgs.models.specs import WowSpell
-from lorgs.models.specs import WowSpell
 from lorgs.models.warcraftlogs_actor import Boss
 from lorgs.models.warcraftlogs_actor import Player
 
 
 class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
 
-    # meta = {"allow_inheritance": True}
-
-    # __abstract__ = True
-
-    # player_cls = BasePlayer
-    # id = sa.Column(sa.Integer(), primary_key=True)
-    # report_id = me.StringField()
     fight_id = me.IntField(primary_key=True)
     start_time = me.IntField(default=0)
     end_time = me.IntField(default=99999999)
 
     boss_id = me.IntField()
 
-    # report = me.ReferenceField("Report")
-
-    # report_id = sa.Column(sa.String)
-    # report_id = sa.Column(sa.String(64), sa.ForeignKey("report.report_id", ondelete="cascade"), primary_key=True)
     players = me.ListField(me.EmbeddedDocumentField(Player))
     boss = me.EmbeddedDocumentField(Boss)
 
@@ -51,7 +31,6 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
         super().__init__(*args, **kwargs)
         self.report = None
 
-        # self.boss = self.boss
         if self.boss:
             self.boss.fight = self
 
@@ -134,7 +113,6 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
 
     def get_query(self, filters=None):
 
-        # spell_ids = ",".join(str(spell.spell_id) for spell in self.spec.spells)
         filters = list(filters or [])
 
         ################
@@ -240,29 +218,3 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
 
         # filter out players with no casts
         self.players = [player for player in self.players if player.casts]
-
-    """
-    async def load(self):
-
-        if not self.players:
-            self.load_players()
-
-        # self.load_many(self.players + [self.boss])
-    """
-
-
-
-    '''
-    @classmethod
-    async def load_many(cls, fights, filters=None, chunk_size=0):
-        """Load multiple fights at once.
-
-        Args:
-            fights(list[Fights]): the fights to load
-            filters(list[str], optional): extra argument used to filter fight casts
-            chunks_size[int, optional]: load in chunks of this size.
-
-        """
-        for fight in fights:
-            await fight.load_boss_events()
-    '''

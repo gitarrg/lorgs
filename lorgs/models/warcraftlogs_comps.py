@@ -2,13 +2,11 @@
 
 # IMPORT STANDARD LIBRARIES
 import datetime
-import urllib
 
 # IMPORT THIRD PARTY LIBRARIES
 import mongoengine as me
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import db
 from lorgs import utils
 from lorgs.models.specs import WowSpec
 from lorgs.models import warcraftlogs_base
@@ -18,9 +16,7 @@ from lorgs.models import warcraftlogs_report
 
 class CompRating(me.Document, warcraftlogs_base.wclclient_mixin):
 
-    # comp_name = me.StringField(required=True)
-
-    comp = me.ReferenceField("CompConfig", required=True) # , reverse_delete_rule=CASCADE)
+    comp = me.ReferenceField("CompConfig", required=True)
     boss_slug = me.StringField(required=True)
 
     updated = me.DateTimeField(default=datetime.datetime.utcnow)
@@ -59,9 +55,6 @@ class CompRating(me.Document, warcraftlogs_base.wclclient_mixin):
 
     @property
     def report_url(self):
-
-        # search = urllib.parse.quote()
-
         return (
             f"https://www.warcraftlogs.com"
             f"/zone/rankings/{self.boss.zone.id}"
@@ -137,40 +130,12 @@ class CompRating(me.Document, warcraftlogs_base.wclclient_mixin):
 class CompConfig(me.Document, warcraftlogs_base.wclclient_mixin):
     """"""
 
-    # uuid = sa.Column(pg.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-
     name = me.StringField(primary_key=True)
 
     spec_names = me.ListField(me.StringField())
     report_search = me.StringField()
     casts_filter = me.StringField()
-
-    # boss_reports = me.MapField(me.EmbeddedDocumentField(warcraftlogs_base.Report))
     boss_reports = me.MapField(me.ReferenceField(CompRating))
-
-    """
-    spec_id = sa.Column(sa.Integer, sa.ForeignKey("wow_spec.id"))
-    spec = sa.orm.relationship("WowSpec", lazy="joined")
-
-    boss_id = sa.Column(sa.Integer, sa.ForeignKey("raid_boss.id"))
-    boss = sa.orm.relationship("RaidBoss")
-
-    report_id = sa.Column(sa.String(64))
-    fight_id = sa.Column(sa.Integer)
-    player_name = sa.Column(sa.Unicode(128))
-    name = sa.orm.synonym("player_name")
-    amount = sa.Column(sa.Float, default=0)
-    total = sa.orm.synonym("amount")
-
-    fight_time_start = sa.Column(sa.BigInteger, default=0)
-    fight_time_end = sa.Column(sa.BigInteger, default=0)
-    fight_duration = sa.orm.column_property(fight_time_end - fight_time_start)
-
-    cast_data = sa.Column(pg.ARRAY(sa.Integer, dimensions=2), default=[])
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-    """
 
     def __repr__(self):
         spec_names = [spec.name_short for spec in self.specs]

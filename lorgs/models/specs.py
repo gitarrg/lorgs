@@ -61,7 +61,6 @@ class WowSpec(base.Model):
 
     def __init__(self, wow_class: WowClass, name: str, role: WowRole, short_name: str = ""):
         super().__init__()
-        # self.id = id
         self.name = name
         self.role = role
 
@@ -69,10 +68,6 @@ class WowSpec(base.Model):
 
         self.wow_class = wow_class
         self.wow_class.specs.append(self)
-
-        # used for sorting
-        # role_order = {"tank": 0, "heal": 1, "rdps": 2, "mdps": 3, "other": 4}
-        # self.role_index = role_order.get(self.role, 99)
 
         # bool: is this spec is currently supported
         self.supported = True

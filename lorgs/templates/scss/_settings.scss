@@ -99,11 +99,6 @@
     height: 1.2rem;
 }
 
-.spell-checkbox-group-header .icon {
-    width: auto;
-    height: 1.2rem;
-}
-
 
 .spell-checkbox-group-header label:hover {
     text-decoration: underline;
@@ -121,9 +116,6 @@
     border: none !important;
 }
 
-
-input[type="checkbox"]:not(:checked) {
-}
 
 input[type="checkbox"]+label {
     cursor: pointer;
