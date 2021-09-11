@@ -22,8 +22,8 @@ class DevelopmentConfig(BaseConfig):
     SEND_FILE_MAX_AGE_DEFAULT = 0  # for DEV. updates static files
     TEMPLATES_AUTO_RELOAD = True
 
-    CACHE_TYPE = "RedisCache"  # TODO: redis
-    CACHE_REDIS_URL = os.getenv("REDIS_URL") or "redis://localhost:6379"
+    CACHE_TYPE = "NullCache"
+    CACHE_NO_NULL_WARNING = True
 
 
 ################################################################################
@@ -33,6 +33,3 @@ class ProductionConfig(BaseConfig):
     """Config used in Production."""
 
     GOOGLE_ANALYTICS_ID = "G-Y92VPCY6QW"
-
-
-
