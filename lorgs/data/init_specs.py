@@ -50,7 +50,7 @@ CLASSES = list(WowClass.all)
 
 WARRIOR_ARMS          = WowSpec(role=MDPS, wow_class=WARRIOR,      name="Arms")
 WARRIOR_FURY          = WowSpec(role=MDPS, wow_class=WARRIOR,      name="Fury")
-WARRIOR_PROT          = WowSpec(role=TANK, wow_class=WARRIOR,      name="Protection",    short_name="Prot")
+WARRIOR_PROTECTION    = WowSpec(role=TANK, wow_class=WARRIOR,      name="Protection",    short_name="Prot")
 PALADIN_HOLY          = WowSpec(role=HEAL, wow_class=PALADIN,      name="Holy")
 PALADIN_PROTECTION    = WowSpec(role=TANK, wow_class=PALADIN,      name="Protection",    short_name="Prot")
 PALADIN_RETRIBUTION   = WowSpec(role=MDPS, wow_class=PALADIN,      name="Retribution",   short_name="Ret")
@@ -91,7 +91,6 @@ for spec in WowSpec.all:
     spec.role.specs.append(spec)
 
 # sorry guys...
-WARRIOR_PROT.supported = False
 PALADIN_PROTECTION.supported = False
 DEATHKNIGHT_BLOOD.supported = False
 
@@ -139,10 +138,15 @@ COL_MANA  = "#5397ed"
 
 #################################################################################################################################################################################################
 #   Warrior
-WARRIOR.add_spell(            spell_id=325886, cooldown=90,  duration=12, color=COL_NF,     name="Ancient Aftershock",              icon="ability_ardenweald_warrior.jpg")
-WARRIOR.add_spell(            spell_id=97462,  cooldown=180, duration=10,                   name="Rallying Cry",                    icon="ability_warrior_rallyingcry.jpg",           show=False)
-WARRIOR_FURY.add_spell(       spell_id=1719,   cooldown=60,  duration=10,                   name="Recklessness",                    icon="warrior_talent_icon_innerrage.jpg")
-WARRIOR_FURY.add_spell(       spell_id=46924,  cooldown=60,  duration=4,                    name="Bladestorm",                      icon="ability_warrior_bladestorm.jpg")
+WARRIOR.add_spell(             spell_id=324143, cooldown=120, duration=15, color=COL_NECRO, name="Conqueror's Banner",              icon="ability_maldraxxus_warriorplantbanner.jpg")
+WARRIOR.add_spell(             spell_id=325886, cooldown=75,  duration=12, color=COL_NF,    name="Ancient Aftershock",              icon="ability_ardenweald_warrior.jpg")  # 15sec CD reduction with Conduit
+WARRIOR.add_spell(             spell_id=97462,  cooldown=180, duration=10,                  name="Rallying Cry",                    icon="ability_warrior_rallyingcry.jpg",           show=False)
+WARRIOR_FURY.add_spell(        spell_id=1719,   cooldown=60,  duration=10,                  name="Recklessness",                    icon="warrior_talent_icon_innerrage.jpg")
+WARRIOR_FURY.add_spell(        spell_id=1719,   cooldown=60,  duration=10,                  name="Recklessness",                    icon="warrior_talent_icon_innerrage.jpg")
+WARRIOR_FURY.add_spell(        spell_id=46924,  cooldown=60,  duration=4,                   name="Bladestorm",                      icon="ability_warrior_bladestorm.jpg")
+WARRIOR_PROTECTION.add_spell(  spell_id=107574, cooldown=50,  duration=20,                  name="Avatar",                          icon="warrior_talent_icon_avatar.jpg",            show=False)  # CD reduced by Talent per Rage spend
+WARRIOR_PROTECTION.add_spell(  spell_id=12975,  cooldown=180, duration=15, color="#ffbf29", name="Last Stand",                      icon="spell_holy_ashestoashes.jpg")
+WARRIOR_PROTECTION.add_spell(  spell_id=871,    cooldown=120, duration=8,  color="#039dfc", name="Shield Wall",                     icon="ability_warrior_shieldwall.jpg")  # CD reduced by Talent per Rage spend
 
 #################################################################################################################################################################################################
 #   Paladin
