@@ -91,8 +91,6 @@ for spec in WowSpec.all:
     spec.role.specs.append(spec)
 
 # sorry guys...
-DEATHKNIGHT_BLOOD.supported = False
-
 # mdps
 WARRIOR_ARMS.supported = False
 HUNTER_SURVIVAL.supported = False
@@ -204,9 +202,22 @@ PRIEST_SHADOW.add_spell(       spell_id=132603, cooldown=180, duration=15, color
 
 #################################################################################################################################################################################################
 # DK
-DEATHKNIGHT.add_spell(         spell_id=51052,  cooldown=120, duration=10,                  name="Anti-Magic Zone",                 icon="spell_deathknight_antimagiczone.jpg",       show=False)
+DEATHKNIGHT.add_spell(         spell_id=312202, cooldown=60,  duration=14, color=COL_KYR,   name="Shackle the Unworthy",            icon="ability_bastion_deathknight.jpg",          show=False)
+DEATHKNIGHT.add_spell(         spell_id=311648, cooldown=60,  duration=8,  color=COL_VENTR, name="Swarming Mist",                   icon="ability_revendreth_deathknight.jpg")
+DEATHKNIGHT.add_spell(         spell_id=315443, cooldown=120, duration=12, color=COL_NECRO, name="Abomination Limb",                icon="ability_maldraxxus_deathknight.jpg",       show=False)
+
+DEATHKNIGHT.add_spell(         spell_id=51052,  cooldown=120, duration=10, color="#d58cff", name="Anti-Magic Zone",                 icon="spell_deathknight_antimagiczone.jpg")
+DEATHKNIGHT.add_spell(         spell_id=48707,  cooldown=60,  duration=5,  color="#8ced53", name="Anti-Magic Shell",                icon="spell_shadow_antimagicshell.jpg")
+DEATHKNIGHT.add_spell(         spell_id=48792,  cooldown=180, duration=8,  color="#53aaed", name="Icebound Fortitude",              icon="spell_deathknight_iceboundfortitude.jpg")
+DEATHKNIGHT.add_spell(         spell_id=49039,  cooldown=120, duration=10, color="#999999", name="Lichborne",                       icon="spell_shadow_raisedead.jpg")
+
+DEATHKNIGHT_BLOOD.add_spell(   spell_id=49028,  cooldown=120, duration=8,  color="#ffbd24", name="Dancing Rune Weapon",             icon="inv_sword_07.jpg")
+DEATHKNIGHT_BLOOD.add_spell(   spell_id=55233,  cooldown=90,  duration=10,                  name="Vampiric Blood",                  icon="spell_shadow_lifedrain.jpg")
 DEATHKNIGHT_UNHOLY.add_spell(  spell_id=42650,  cooldown=240, duration=30,                  name="Army of the Dead",                icon="spell_deathknight_armyofthedead.jpg")
-DEATHKNIGHT_UNHOLY.add_spell(  spell_id=275699, cooldown=60,  duration=15,                  name="Apocalypse",                      icon="artifactability_unholydeathknight_deathsembrace.jpg", show=False)
+DEATHKNIGHT_UNHOLY.add_spell(  spell_id=275699, cooldown=60,  duration=15,                  name="Apocalypse",                      icon="artifactability_unholydeathknight_deathsembrace.jpg")
+
+
+
 
 #################################################################################################################################################################################################
 #   Shaman
