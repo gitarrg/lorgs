@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    version="1.1"
+    id="logosvg.com"
+
+    x="0px"
+    y="0px"
+    viewBox="0 0 240 240"
+    style="enable-background:new 0 0 240 240;"
+    xml:space="preserve">
+    <style type="text/css"> .st0{fill:#F86754;} .st1{fill:#FFFFFF;} .st2{fill:#002C49;} </style>
+
+    <circle id="red" class="st0" cx="120.139" cy="120.138" r="114.766"></circle>
+    <circle id="white" class="st1" cx="137.465" cy="110.408" r="38.422"></circle>
+    <rect id="blue" x="69.672" y="71.986" class="st2" width="18.543" height="101.659"></rect>
+</svg>
