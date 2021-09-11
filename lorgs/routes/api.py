@@ -2,6 +2,8 @@
 
 # IMPORT STANDARD LIBRARIES
 import datetime
+import urllib
+import json
 
 # IMPORT THIRD PARTY LIBRARIES
 import flask
@@ -9,6 +11,7 @@ from google.cloud import tasks_v2
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import data
+from lorgs.cache import cache
 from lorgs.logger import logger
 from lorgs.models import specs
 from lorgs.models import warcraftlogs_ranking
@@ -16,7 +19,6 @@ from lorgs.models import warcraftlogs_comps
 
 
 blueprint = flask.Blueprint("api", __name__, cli_group=None)
-
 
 
 ###############################################################################
@@ -42,6 +44,7 @@ def spell(spell_id):
 
 
 @blueprint.get("/spells")
+@cache.cached()
 def spells():
 
     spells = specs.WowSpell.all
@@ -60,21 +63,6 @@ def spells():
 #
 ###############################################################################
 
-
-@blueprint.route("/load_spec_rankings/<string:spec_slug>/<string:boss_slug>")
-async def load_spec_rankings(spec_slug, boss_slug):
-    limit = flask.request.args.get("limit", default=50, type=int)
-
-    logger.info("START | spec=%s | boss=%s | limit=%d", spec_slug, boss_slug, limit)
-
-    spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(boss_slug=boss_slug, spec_slug=spec_slug)
-    await spec_ranking.load(limit=limit)
-    spec_ranking.save()
-
-    logger.info("DONE | spec=%s | boss=%s | limit=%d", spec_slug, boss_slug, limit)
-    return "done"
-
-
 @blueprint.route("/spec_ranking/<string:spec_slug>/<string:boss_slug>")
 def spec_ranking(spec_slug, boss_slug):
     spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(boss_slug=boss_slug, spec_slug=spec_slug)
@@ -83,6 +71,21 @@ def spec_ranking(spec_slug, boss_slug):
     return {
         "players": players,
     }
+
+
+@blueprint.route("/load_spec_rankings/<string:spec_slug>/<string:boss_slug>")
+async def load_spec_rankings(spec_slug, boss_slug):
+    limit = flask.request.args.get("limit", default=50, type=int)
+    clear = flask.request.args.get("clear", default=False, type=json.loads)
+
+    logger.info("START | spec=%s | boss=%s | limit=%d | clear=%s", spec_slug, boss_slug, limit, clear)
+
+    spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(boss_slug=boss_slug, spec_slug=spec_slug)
+    await spec_ranking.load(limit=limit, clear_old=clear)
+    spec_ranking.save()
+
+    logger.info("DONE | spec=%s | boss=%s | limit=%d", spec_slug, boss_slug, limit)
+    return "done"
 
 
 ###############################################################################
@@ -110,6 +113,7 @@ def comp_ranking(comp_name, boss_slug):
         "reports": [report.as_dict() for report in comp_ranking.reports]
     }
 
+
 @blueprint.route("/load_comp_rankings/<string:comp_name>/<string:boss_slug>")
 async def load_comp_rankings(comp_name, boss_slug):
     limit = flask.request.args.get("limit", default=50, type=int)
@@ -130,12 +134,12 @@ async def load_comp_rankings(comp_name, boss_slug):
 ###############################################################################
 
 
-def create_task(url, limit=0):
+def create_task(url, **kwargs):
     google_task_client = tasks_v2.CloudTasksClient()
     parent = "projects/lorrgs/locations/europe-west2/queues/lorgs-task-queue"
 
-    if limit:
-        url += f"?limit={limit}"
+    if kwargs:
+        url += "?" + urllib.parse.urlencode(kwargs)
 
     task = {
         "app_engine_http_request": {  # Specify the type of request.
@@ -148,23 +152,25 @@ def create_task(url, limit=0):
 
 # LOAD SPECS
 
-@blueprint.route("/task/load_spec_rankings/<string:spec_slug>")
-async def task_load_spec_rankings_all_bosses(spec_slug):
+@blueprint.route("/task/load_spec_rankings/<string:spec_slug>/<string:boss_slug>")
+async def task_load_spec_rankings(spec_slug, boss_slug):
     limit = flask.request.args.get("limit", default=0, type=int)
+    clear = flask.request.args.get("clear", default=False, type=json.loads)
 
-    for boss in data.SANCTUM_OF_DOMINATION_BOSSES:
-        url = f"/api/task/load_spec_rankings/{spec_slug}/{boss.name_slug}"
-        create_task(url, limit=limit)
-
+    url = f"/api/load_spec_rankings/{spec_slug}/{boss_slug}"
+    create_task(url, limit=limit, clear=clear)
     return "task queued"
 
 
-@blueprint.route("/task/load_spec_rankings/<string:spec_slug>/<string:boss_slug>")
-async def task_load_spec_rankings(spec_slug, boss_slug):
-
+@blueprint.route("/task/load_spec_rankings/<string:spec_slug>")
+async def task_load_spec_rankings_all_bosses(spec_slug):
     limit = flask.request.args.get("limit", default=0, type=int)
-    url = f"/api/load_spec_rankings/{spec_slug}/{boss_slug}"
-    create_task(url, limit=limit)
+    clear = flask.request.args.get("clear", default=False, type=json.loads)
+
+    for boss in data.SANCTUM_OF_DOMINATION_BOSSES:
+        url = f"/api/task/load_spec_rankings/{spec_slug}/{boss.name_slug}"
+        create_task(url, limit=limit, clear=clear)
+
     return "task queued"
 
 
@@ -191,13 +197,14 @@ async def task_load_comp_rankings_all(comp_name):
 
 # LOAD ALL
 
-
 @blueprint.route("/task/load_all/specs")
 async def task_load_all_specs():
     limit = flask.request.args.get("limit", default=0, type=int)
+    clear = flask.request.args.get("clear", default=False, type=json.loads)
+
     for spec in data.SUPPORTED_SPECS:
         url = f"/api/task/load_spec_rankings/{spec.full_name_slug}"
-        create_task(url, limit=limit)
+        create_task(url, limit=limit, clear=clear)
     return "ok"
 
 
@@ -214,7 +221,8 @@ async def task_load_all_comps():
 @blueprint.route("/task/load_all")
 async def task_load_all():
     limit = flask.request.args.get("limit", default=0, type=int)
+    clear = flask.request.args.get("clear", default=False, type=json.loads)
 
-    create_task("/api/task/load_all/specs", limit=limit)
-    create_task("/api/task/load_all/comps", limit=limit)
+    create_task("/api/task/load_all/specs", limit=limit, clear=clear)
+    create_task("/api/task/load_all/comps", limit=limit, clear=clear)
     return "ok"
