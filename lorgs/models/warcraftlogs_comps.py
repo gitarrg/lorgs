@@ -71,6 +71,7 @@ class CompRating(me.Document, warcraftlogs_base.wclclient_mixin):
         reports = []
         load_more = True
         page = 0
+        limit = limit or 50  # in case limit defaults to 0 somewhere
 
         while load_more:
             query = f"""
