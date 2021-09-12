@@ -68,11 +68,9 @@ class CompRating(me.Document, warcraftlogs_base.wclclient_mixin):
 
     async def find_top_reports(self, metric="execution", limit=5):
         """Get Top Fights for a given encounter."""
-        self.reports = []
-
-
+        reports = []
         load_more = True
-        i = 0
+        page = 0
 
         while load_more:
             query = f"""
@@ -83,12 +81,12 @@ class CompRating(me.Document, warcraftlogs_base.wclclient_mixin):
                     fightRankings(
                         metric: {metric},
                         filter: "{self.comp.report_search}",
-                        page: {i+1}
+                        page: {page+1}
                     )
                 }}
             }}
             """
-            i += 1
+            page += 1
 
             data = await self.client.query(query)
             data = data.get("worldData", {}).get("encounter", {}).get("fightRankings", {})
@@ -103,7 +101,7 @@ class CompRating(me.Document, warcraftlogs_base.wclclient_mixin):
                 report = warcraftlogs_report.Report()
                 report.report_id = report_data.get("code", "")
                 report.start_time = report_data.get("startTime", 0)
-                self.reports.append(report)
+                reports.append(report)
 
                 ################
                 # Fight
@@ -114,17 +112,34 @@ class CompRating(me.Document, warcraftlogs_base.wclclient_mixin):
 
                 fight.add_boss(self.boss.id)
 
-                if len(self.reports) > limit:
-                    return
+                if len(reports) >= limit:
+                    return reports
 
-    async def update(self, limit=50):
+        return reports
 
-        # reports
-        await self.find_top_reports(limit=limit)
 
-        # fights
+    async def update(self, limit=50, clear_old=False):
+
+        # old reports
+        if clear_old:
+            self.reports = []
+        old_reports = {report.report_id: report for report in self.reports}
+
+        # new reports
+        new_reports = await self.find_top_reports(limit=limit)
+
+        # combine old and new reports
+        self.reports = []
+        for new_report in new_reports:
+            old_report = old_reports.get(new_report.report_id)
+            self.reports.append(old_report or new_report)
+
+
+        # load only the fights that need to be loaded
         fights = utils.flatten(report.fights for report in self.reports)
+        fights = [fight for fight in fights if not fight.players]
         await self.load_many(fights, filters=self.comp.get_casts_filters(), chunk_size=5)
+
 
 
 class CompConfig(me.Document, warcraftlogs_base.wclclient_mixin):
