@@ -191,9 +191,9 @@ class CompConfig(me.Document, warcraftlogs_base.wclclient_mixin):
         return [self.casts_filter, "type='cast'", f"ability.id in ({spell_ids})"]
 
 
-    async def load_reports(self, boss_slug, limit=50):
+    async def load_reports(self, boss_slug, limit=50, clear_old=False):
 
         scr = CompRating.get_or_create(comp=self, boss_slug=boss_slug)
-        await scr.update(limit=limit)
+        await scr.update(limit=limit, clear_old=clear_old)
         self.boss_reports[boss_slug] = scr
         return scr

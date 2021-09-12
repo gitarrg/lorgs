@@ -169,6 +169,10 @@ class SpecRanking(warcraftlogs_base.Document):
         if new_fights:
             self.sort_reports()
 
+        # enforce limit
+        if limit:
+            self.fights = self.fights[:limit]
+
         # the very first report/fight should always have the boss
         if self.fights:
             first_fight = self.fights[0]
