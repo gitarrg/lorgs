@@ -44,7 +44,7 @@ def add_shared_variables():
 #
 ################################################################################
 
-@blueprint.errorhandler(404)
+@blueprint.app_errorhandler(404)
 async def page_not_found(error):
     # note that we set the 404 status explicitly
     return flask.render_template("errors/404.html", error=error), 404
