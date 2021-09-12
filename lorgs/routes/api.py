@@ -24,6 +24,11 @@ blueprint = flask.Blueprint("api", __name__, cli_group=None)
 ###############################################################################
 
 
+@blueprint.route("/<path:path>")
+def page_not_found(path):
+    return "Invalid Route", 404
+
+
 @blueprint.get("/ping")
 def ping():
     return {"reply": "Hi!", "time": datetime.datetime.utcnow().isoformat()}
