@@ -1,6 +1,5 @@
 
 function toMMSS(sec_num) {
-    // var sec_num = parseInt(this, 10); // don't forget the second param
     var minutes = Math.floor((sec_num) / 60);
     var seconds = Math.floor(sec_num) - (minutes * 60);
 

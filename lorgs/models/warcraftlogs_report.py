@@ -124,8 +124,6 @@ class Report(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
             fight.fight_id = fight_data.get("id")
             fight.start_time = fight_data.get("startTime", 0)
             fight.end_time = fight_data.get("endTime", 0)
-            # fight.boss_id = fight_data.get("encounterID")
-
             fight.boss = Boss(boss_id=boss_id)
             fight.boss.fight = fight
             fight.boss.percent = fight_data.get("fightPercentage")
@@ -138,7 +136,6 @@ class Report(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
 
 class UserReport(me.Document):
     """docstring for UserReport"""
-    # report_id = me.StringField(primary_key=True)
 
     report_id = me.StringField(primary_key=True)
     report = me.EmbeddedDocumentField(Report)

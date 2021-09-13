@@ -60,7 +60,7 @@ function select_spell(event) {
     window.history.replaceState({}, '', `${location.pathname}?${params}`);
 
     update_selected_spell();
-};
+}
 
 
 document.addEventListener('DOMContentLoaded', (event) => {
