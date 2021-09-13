@@ -90,10 +90,6 @@ SPECS = list(WowSpec.all)
 for spec in WowSpec.all:
     spec.role.specs.append(spec)
 
-# sorry guys...
-# mdps
-HUNTER_SURVIVAL.supported = False
-
 SUPPORTED_SPECS = [spec for spec in SPECS if spec.supported]
 
 
@@ -162,9 +158,16 @@ PALADIN_PROTECTION.add_spell(  spell_id=212641, cooldown=300, duration=8,       
 #################################################################################################################################################################################################
 # Hunter
 HUNTER.add_spell(              spell_id=328231, cooldown=120, duration=15, color=COL_NF,    name="Wild Spirits",                    icon="ability_ardenweald_hunter.jpg")
+HUNTER.add_spell(              spell_id=308491, cooldown=60,  duration=10, color=COL_KYR,   name="Resonating Arrow",                icon="ability_bastion_hunter.jpg")
+# HUNTER.add_spell(             spell_id=325028, cooldown=45,  duration=,         name="Death Chakram",   icon="ability_maldraxxus_hunter.jpg")
+# HUNTER.add_spell(             spell_id=324149, cooldown=30,  duration=,         name="Flayed Shot", icon="ability_revendreth_hunter.jpg")
 HUNTER_BEASTMASTERY.add_spell( spell_id=193530, cooldown=180, duration=20,                  name="Aspect of the Wild",              icon="spell_nature_protectionformnature.jpg")
 HUNTER_BEASTMASTERY.add_spell( spell_id=19574,  cooldown=30,  duration=15, color="#e6960f", name="Bestial Wrath",                   icon="ability_druid_ferociousbite.jpg",           show=False)
 HUNTER_MARKSMANSHIP.add_spell( spell_id=288613, cooldown=120, duration=15,                  name="Trueshot",                        icon="ability_trueshot.jpg",                      show=False)
+HUNTER_SURVIVAL.add_spell(    spell_id=266779, cooldown=120, duration=20,                   name="Coordinated Assault",             icon="inv_coordinatedassault.jpg")
+HUNTER_SURVIVAL.add_spell(    spell_id=260331, cooldown=0,   duration=0,                    name="Birds of Prey",                   icon="spell_hunter_aspectofthehawk.jpg")
+HUNTER_SURVIVAL.add_spell(    spell_id=186289, cooldown=90,  duration=15,                   name="Aspect of the Eagle",             icon="spell_hunter_aspectoftheironhawk.jpg")
+
 
 #################################################################################################################################################################################################
 #   Rouge
