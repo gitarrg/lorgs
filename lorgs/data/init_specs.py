@@ -90,11 +90,6 @@ SPECS = list(WowSpec.all)
 for spec in WowSpec.all:
     spec.role.specs.append(spec)
 
-# sorry guys...
-# mdps
-WARRIOR_ARMS.supported = False
-HUNTER_SURVIVAL.supported = False
-
 SUPPORTED_SPECS = [spec for spec in SPECS if spec.supported]
 
 
@@ -135,6 +130,7 @@ COL_MANA  = "#5397ed"
 #   Warrior
 WARRIOR.add_spell(             spell_id=324143, cooldown=120, duration=15, color=COL_NECRO, name="Conqueror's Banner",              icon="ability_maldraxxus_warriorplantbanner.jpg")
 WARRIOR.add_spell(             spell_id=325886, cooldown=75,  duration=12, color=COL_NF,    name="Ancient Aftershock",              icon="ability_ardenweald_warrior.jpg")  # 15sec CD reduction with Conduit
+WARRIOR.add_spell(             spell_id=307865, cooldown=60,               color=COL_KYR,   name="Spear of Bastion",                icon="ability_bastion_warrior.jpg")
 WARRIOR.add_spell(             spell_id=97462,  cooldown=180, duration=10,                  name="Rallying Cry",                    icon="ability_warrior_rallyingcry.jpg",           show=False)
 WARRIOR_FURY.add_spell(        spell_id=1719,   cooldown=60,  duration=10,                  name="Recklessness",                    icon="warrior_talent_icon_innerrage.jpg")
 WARRIOR_FURY.add_spell(        spell_id=1719,   cooldown=60,  duration=10,                  name="Recklessness",                    icon="warrior_talent_icon_innerrage.jpg")
@@ -142,6 +138,11 @@ WARRIOR_FURY.add_spell(        spell_id=46924,  cooldown=60,  duration=4,       
 WARRIOR_PROTECTION.add_spell(  spell_id=107574, cooldown=50,  duration=20,                  name="Avatar",                          icon="warrior_talent_icon_avatar.jpg",            show=False)  # CD reduced by Talent per Rage spend
 WARRIOR_PROTECTION.add_spell(  spell_id=12975,  cooldown=180, duration=15, color="#ffbf29", name="Last Stand",                      icon="spell_holy_ashestoashes.jpg")
 WARRIOR_PROTECTION.add_spell(  spell_id=871,    cooldown=120, duration=8,  color="#039dfc", name="Shield Wall",                     icon="ability_warrior_shieldwall.jpg")  # CD reduced by Talent per Rage spend
+WARRIOR_ARMS.add_spell(        spell_id=107574, cooldown=90,  duration=20,                  name="Avatar",                          icon="warrior_talent_icon_avatar.jpg")
+WARRIOR_ARMS.add_spell(        spell_id=227847, cooldown=90,  duration=6,                   name="Bladestorm",                      icon="ability_warrior_bladestorm.jpg")
+WARRIOR_ARMS.add_spell(        spell_id=262161, cooldown=45,  duration=10,                  name="Warbreaker",                      icon="inv_warbreaker.jpg",                        show=False)
+WARRIOR_ARMS.add_spell(        spell_id=772,    cooldown=15,                                name="Rend",                            icon="ability_gouge.jpg",                         show=False)
+
 
 #################################################################################################################################################################################################
 #   Paladin
@@ -157,9 +158,16 @@ PALADIN_PROTECTION.add_spell(  spell_id=212641, cooldown=300, duration=8,       
 #################################################################################################################################################################################################
 # Hunter
 HUNTER.add_spell(              spell_id=328231, cooldown=120, duration=15, color=COL_NF,    name="Wild Spirits",                    icon="ability_ardenweald_hunter.jpg")
+HUNTER.add_spell(              spell_id=308491, cooldown=60,  duration=10, color=COL_KYR,   name="Resonating Arrow",                icon="ability_bastion_hunter.jpg")
+# HUNTER.add_spell(             spell_id=325028, cooldown=45,  duration=,         name="Death Chakram",   icon="ability_maldraxxus_hunter.jpg")
+# HUNTER.add_spell(             spell_id=324149, cooldown=30,  duration=,         name="Flayed Shot", icon="ability_revendreth_hunter.jpg")
 HUNTER_BEASTMASTERY.add_spell( spell_id=193530, cooldown=180, duration=20,                  name="Aspect of the Wild",              icon="spell_nature_protectionformnature.jpg")
 HUNTER_BEASTMASTERY.add_spell( spell_id=19574,  cooldown=30,  duration=15, color="#e6960f", name="Bestial Wrath",                   icon="ability_druid_ferociousbite.jpg",           show=False)
 HUNTER_MARKSMANSHIP.add_spell( spell_id=288613, cooldown=120, duration=15,                  name="Trueshot",                        icon="ability_trueshot.jpg",                      show=False)
+HUNTER_SURVIVAL.add_spell(    spell_id=266779, cooldown=120, duration=20,                   name="Coordinated Assault",             icon="inv_coordinatedassault.jpg")
+HUNTER_SURVIVAL.add_spell(    spell_id=260331, cooldown=0,   duration=0,                    name="Birds of Prey",                   icon="spell_hunter_aspectofthehawk.jpg")
+HUNTER_SURVIVAL.add_spell(    spell_id=186289, cooldown=90,  duration=15,                   name="Aspect of the Eagle",             icon="spell_hunter_aspectoftheironhawk.jpg")
+
 
 #################################################################################################################################################################################################
 #   Rouge
