@@ -166,6 +166,10 @@ HUNTER_MARKSMANSHIP.add_spell( spell_id=288613, cooldown=120, duration=15,      
 #################################################################################################################################################################################################
 #   Rouge
 ROGUE.add_spell(               spell_id=1856,   cooldown=120,              color="#999999", name="Vanish",                           icon="ability_vanish.jpg",                       show=False)
+ROGUE.add_spell(               spell_id=323547, cooldown=45, duration=45,  color=COL_KYR,   name="Echoing Reprimand",                icon="ability_bastion_rogue.jpg",                show=False)
+ROGUE.add_spell(               spell_id=323654, cooldown=90, duration=12,  color=COL_VENTR, name="Flagellation",                     icon="ability_revendreth_rogue.jpg",             show=False)
+ROGUE.add_spell(               spell_id=328547, cooldown=30,               color=COL_NECRO, name="Serrated Bone Spike",              icon="ability_maldraxxus_rogue.jpg",             show=False)
+ROGUE.add_spell(               spell_id=328305, cooldown=90,               color=COL_NF,    name="Sepsis",                           icon="ability_ardenweald_rogue.jpg",             show=False)
 ROGUE_ASSASSINATION.add_spell( spell_id=703,    cooldown=6,   duration=18,                  name="Garrote",                          icon="ability_rogue_garrote.jpg",                show=False)
 ROGUE_ASSASSINATION.add_spell( spell_id=1943,                                               name="Rupture",                          icon="ability_rogue_rupture.jpg",                show=False)
 ROGUE_ASSASSINATION.add_spell( spell_id=121411,                                             name="Crimson Tempest",                  icon="inv_knife_1h_cataclysm_c_05.jpg",          show=False)
