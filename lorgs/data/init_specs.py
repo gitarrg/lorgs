@@ -305,7 +305,9 @@ DRUID_GUARDIAN.add_spell(      spell_id=102558, cooldown=180, duration=30,      
 DRUID_GUARDIAN.add_spell(      spell_id=22812,  cooldown=60,  duration=8,                   name="Barkskin",                        icon="spell_nature_stoneclawtotem.jpg",           show=False)
 DRUID_FERAL.add_spell(         spell_id=106951, cooldown=180, duration=15,                  name="Berserk",                         icon="ability_druid_berserk.jpg")
 DRUID_FERAL.add_spell(         spell_id=58984,  cooldown=120,              color="#999999", name="Shadowmeld ",                     icon="ability_ambush.jpg")
-DRUID_FERAL.add_spell(         spell_id=319454, cooldown=300, duration=45, color="#fcdf03", name="Hearth of the Wild ",             icon="spell_holy_blessingofagility.jpg")
+DRUID_FERAL.add_spell(         spell_id=108291, cooldown=300, duration=45, color="#fcdf03", name="Hearth of the Wild ",             icon="spell_holy_blessingofagility.jpg")
+DRUID_FERAL.add_spell(         spell_id=197625,                            color="#11cff5", name="Moonkin Form ",                   icon="spell_nature_forceofnature.jpg")
+
 
 #################################################################################################################################################################################################
 # DH
@@ -381,6 +383,11 @@ for s in _specs_str:
     s.add_spell(group=OTHER_TRINKET, spell_id=329831, cooldown=90, duration=15, name="Overwhelming Power Crystal", icon="spell_mage_focusingcrystal.jpg", wowhead_data=f"item=179342{mythic}{maxilvl}")
 
 
+for s in [DRUID_FERAL, HUNTER_SURVIVAL, MONK_BREWMASTER, DRUID_GUARDIAN]:
+    # 2h Agi on use weapon https://www.wowhead.com/item=186404/jotungeirr-destinys-call?bonus=7757
+    s.add_spell(group=OTHER_TRINKET, spell_id=357773, cooldown=180, duration=30, color="#7f4af0", name="Jotungeirr, Destiny's Call", icon="inv_polearm_2h_mawraid_d_01.jpg", wowhead_data=f"item=186404{mythic}{maxilvl}")
+
+    
 ################################################################################
 
 
