@@ -24,6 +24,11 @@ blueprint = flask.Blueprint("api", __name__, cli_group=None)
 ###############################################################################
 
 
+@blueprint.route("/<path:path>")
+def page_not_found(path):
+    return "Invalid Route", 404
+
+
 @blueprint.get("/ping")
 def ping():
     return {"reply": "Hi!", "time": datetime.datetime.utcnow().isoformat()}
@@ -117,10 +122,11 @@ def comp_ranking(comp_name, boss_slug):
 @blueprint.route("/load_comp_rankings/<string:comp_name>/<string:boss_slug>")
 async def load_comp_rankings(comp_name, boss_slug):
     limit = flask.request.args.get("limit", default=50, type=int)
+    clear = flask.request.args.get("clear", default=False, type=json.loads)
 
     comp_config = warcraftlogs_comps.CompConfig.objects(name=comp_name).first()
 
-    scr = await comp_config.load_reports(boss_slug=boss_slug, limit=limit)
+    scr = await comp_config.load_reports(boss_slug=boss_slug, limit=limit, clear_old=clear)
     scr.save()
     comp_config.save()
 
@@ -134,12 +140,12 @@ async def load_comp_rankings(comp_name, boss_slug):
 ###############################################################################
 
 
-def create_task(url, **kwargs):
+def create_task(url):
     google_task_client = tasks_v2.CloudTasksClient()
     parent = "projects/lorrgs/locations/europe-west2/queues/lorgs-task-queue"
 
-    if kwargs:
-        url += "?" + urllib.parse.urlencode(kwargs)
+    if flask.request.args:
+        url += "?" + urllib.parse.urlencode(flask.request.args)
 
     task = {
         "app_engine_http_request": {  # Specify the type of request.
@@ -154,22 +160,16 @@ def create_task(url, **kwargs):
 
 @blueprint.route("/task/load_spec_rankings/<string:spec_slug>/<string:boss_slug>")
 async def task_load_spec_rankings(spec_slug, boss_slug):
-    limit = flask.request.args.get("limit", default=0, type=int)
-    clear = flask.request.args.get("clear", default=False, type=json.loads)
-
     url = f"/api/load_spec_rankings/{spec_slug}/{boss_slug}"
-    create_task(url, limit=limit, clear=clear)
+    create_task(url)
     return "task queued"
 
 
 @blueprint.route("/task/load_spec_rankings/<string:spec_slug>")
 async def task_load_spec_rankings_all_bosses(spec_slug):
-    limit = flask.request.args.get("limit", default=0, type=int)
-    clear = flask.request.args.get("clear", default=False, type=json.loads)
-
     for boss in data.SANCTUM_OF_DOMINATION_BOSSES:
         url = f"/api/task/load_spec_rankings/{spec_slug}/{boss.name_slug}"
-        create_task(url, limit=limit, clear=clear)
+        create_task(url)
 
     return "task queued"
 
@@ -178,20 +178,16 @@ async def task_load_spec_rankings_all_bosses(spec_slug):
 
 @blueprint.route("/task/load_comp_rankings/<string:comp_name>/<string:boss_slug>")
 async def task_load_comp_rankings(comp_name, boss_slug):
-    limit = flask.request.args.get("limit", default=0, type=int)
-
     url = f"/api/load_comp_rankings/{comp_name}/{boss_slug}"
-    create_task(url, limit=limit)
+    create_task(url)
     return "task queued"
 
 
 @blueprint.route("/task/load_comp_rankings/<string:comp_name>")
 async def task_load_comp_rankings_all(comp_name):
-    limit = flask.request.args.get("limit", default=0, type=int)
-
     for boss in data.SANCTUM_OF_DOMINATION_BOSSES:
         url = f"/api/task/load_comp_rankings/{comp_name}/{boss.name_slug}"
-        create_task(url, limit=limit)
+        create_task(url)
     return "task queued"
 
 
@@ -199,30 +195,23 @@ async def task_load_comp_rankings_all(comp_name):
 
 @blueprint.route("/task/load_all/specs")
 async def task_load_all_specs():
-    limit = flask.request.args.get("limit", default=0, type=int)
-    clear = flask.request.args.get("clear", default=False, type=json.loads)
-
     for spec in data.SUPPORTED_SPECS:
         url = f"/api/task/load_spec_rankings/{spec.full_name_slug}"
-        create_task(url, limit=limit, clear=clear)
+        create_task(url)
     return "ok"
 
 
 @blueprint.route("/task/load_all/comps")
 async def task_load_all_comps():
-    limit = flask.request.args.get("limit", default=0, type=int)
     comps = warcraftlogs_comps.CompConfig.objects
     for comp in comps:
         url = f"/api/task/load_comp_rankings/{comp.name}"
-        create_task(url, limit=limit)
+        create_task(url)
     return "ok"
 
 
 @blueprint.route("/task/load_all")
 async def task_load_all():
-    limit = flask.request.args.get("limit", default=0, type=int)
-    clear = flask.request.args.get("clear", default=False, type=json.loads)
-
-    create_task("/api/task/load_all/specs", limit=limit, clear=clear)
-    create_task("/api/task/load_all/comps", limit=limit, clear=clear)
+    create_task("/api/task/load_all/specs")
+    create_task("/api/task/load_all/comps")
     return "ok"

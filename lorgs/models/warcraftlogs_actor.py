@@ -14,29 +14,6 @@ from lorgs.models.specs import WowSpec
 from lorgs.models.specs import WowSpell
 
 
-'''
-class Death(me.EmbeddedDocument):
-    """docstring for Cast"
-
-    not used right now
-
-    """
-    def __init__(self, timestamp: int):
-        super().__init__()
-        self.timestamp = timestamp
-        # self.spell_id = spell_id
-        # self.spell = WowSpell.query.get(spell_id)
-
-    def __str__(self):
-        time_fmt = utils.format_time(self.timestamp)
-        return f"Death(at={time_fmt})"
-
-    def as_dict(self):
-        return {
-            "timestamp": self.timestamp,
-        }
-'''
-
 class Cast(me.EmbeddedDocument):
     """docstring for Cast"""
 
@@ -347,7 +324,6 @@ class Boss(BaseActor):
                     start_cast.end_time = cast.timestamp
                     start_cast = None
                     end_casts.append(cast)
-                    continue
 
             # end casts should not show up on their own
             self.casts = [cast for cast in self.casts if cast not in end_casts]

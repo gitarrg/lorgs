@@ -2,13 +2,11 @@
 
 # IMPORT STANDARD LIBRARIES
 import datetime
-import urllib
 
 # IMPORT THIRD PARTY LIBRARIES
 import mongoengine as me
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import db
 from lorgs import utils
 from lorgs.models.specs import WowSpec
 from lorgs.models import warcraftlogs_base
@@ -18,9 +16,7 @@ from lorgs.models import warcraftlogs_report
 
 class CompRating(me.Document, warcraftlogs_base.wclclient_mixin):
 
-    # comp_name = me.StringField(required=True)
-
-    comp = me.ReferenceField("CompConfig", required=True) # , reverse_delete_rule=CASCADE)
+    comp = me.ReferenceField("CompConfig", required=True)
     boss_slug = me.StringField(required=True)
 
     updated = me.DateTimeField(default=datetime.datetime.utcnow)
@@ -59,9 +55,6 @@ class CompRating(me.Document, warcraftlogs_base.wclclient_mixin):
 
     @property
     def report_url(self):
-
-        # search = urllib.parse.quote()
-
         return (
             f"https://www.warcraftlogs.com"
             f"/zone/rankings/{self.boss.zone.id}"
@@ -75,11 +68,10 @@ class CompRating(me.Document, warcraftlogs_base.wclclient_mixin):
 
     async def find_top_reports(self, metric="execution", limit=5):
         """Get Top Fights for a given encounter."""
-        self.reports = []
-
-
+        reports = []
         load_more = True
-        i = 0
+        page = 0
+        limit = limit or 50  # in case limit defaults to 0 somewhere
 
         while load_more:
             query = f"""
@@ -90,12 +82,12 @@ class CompRating(me.Document, warcraftlogs_base.wclclient_mixin):
                     fightRankings(
                         metric: {metric},
                         filter: "{self.comp.report_search}",
-                        page: {i+1}
+                        page: {page+1}
                     )
                 }}
             }}
             """
-            i += 1
+            page += 1
 
             data = await self.client.query(query)
             data = data.get("worldData", {}).get("encounter", {}).get("fightRankings", {})
@@ -110,7 +102,7 @@ class CompRating(me.Document, warcraftlogs_base.wclclient_mixin):
                 report = warcraftlogs_report.Report()
                 report.report_id = report_data.get("code", "")
                 report.start_time = report_data.get("startTime", 0)
-                self.reports.append(report)
+                reports.append(report)
 
                 ################
                 # Fight
@@ -121,56 +113,45 @@ class CompRating(me.Document, warcraftlogs_base.wclclient_mixin):
 
                 fight.add_boss(self.boss.id)
 
-                if len(self.reports) > limit:
-                    return
+                if len(reports) >= limit:
+                    return reports
 
-    async def update(self, limit=50):
+        return reports
 
-        # reports
-        await self.find_top_reports(limit=limit)
 
-        # fights
+    async def update(self, limit=50, clear_old=False):
+
+        # old reports
+        if clear_old:
+            self.reports = []
+        old_reports = {report.report_id: report for report in self.reports}
+
+        # new reports
+        new_reports = await self.find_top_reports(limit=limit)
+
+        # combine old and new reports
+        self.reports = []
+        for new_report in new_reports:
+            old_report = old_reports.get(new_report.report_id)
+            self.reports.append(old_report or new_report)
+
+
+        # load only the fights that need to be loaded
         fights = utils.flatten(report.fights for report in self.reports)
+        fights = [fight for fight in fights if not fight.players]
         await self.load_many(fights, filters=self.comp.get_casts_filters(), chunk_size=5)
+
 
 
 class CompConfig(me.Document, warcraftlogs_base.wclclient_mixin):
     """"""
-
-    # uuid = sa.Column(pg.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
     name = me.StringField(primary_key=True)
 
     spec_names = me.ListField(me.StringField())
     report_search = me.StringField()
     casts_filter = me.StringField()
-
-    # boss_reports = me.MapField(me.EmbeddedDocumentField(warcraftlogs_base.Report))
     boss_reports = me.MapField(me.ReferenceField(CompRating))
-
-    """
-    spec_id = sa.Column(sa.Integer, sa.ForeignKey("wow_spec.id"))
-    spec = sa.orm.relationship("WowSpec", lazy="joined")
-
-    boss_id = sa.Column(sa.Integer, sa.ForeignKey("raid_boss.id"))
-    boss = sa.orm.relationship("RaidBoss")
-
-    report_id = sa.Column(sa.String(64))
-    fight_id = sa.Column(sa.Integer)
-    player_name = sa.Column(sa.Unicode(128))
-    name = sa.orm.synonym("player_name")
-    amount = sa.Column(sa.Float, default=0)
-    total = sa.orm.synonym("amount")
-
-    fight_time_start = sa.Column(sa.BigInteger, default=0)
-    fight_time_end = sa.Column(sa.BigInteger, default=0)
-    fight_duration = sa.orm.column_property(fight_time_end - fight_time_start)
-
-    cast_data = sa.Column(pg.ARRAY(sa.Integer, dimensions=2), default=[])
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-    """
 
     def __repr__(self):
         spec_names = [spec.name_short for spec in self.specs]
@@ -210,9 +191,9 @@ class CompConfig(me.Document, warcraftlogs_base.wclclient_mixin):
         return [self.casts_filter, "type='cast'", f"ability.id in ({spell_ids})"]
 
 
-    async def load_reports(self, boss_slug, limit=50):
+    async def load_reports(self, boss_slug, limit=50, clear_old=False):
 
         scr = CompRating.get_or_create(comp=self, boss_slug=boss_slug)
-        await scr.update(limit=limit)
+        await scr.update(limit=limit, clear_old=clear_old)
         self.boss_reports[boss_slug] = scr
         return scr

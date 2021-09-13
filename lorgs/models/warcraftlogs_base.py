@@ -21,7 +21,7 @@ class wclclient_mixin:
         return ""
 
     def process_query_result(self, query_result: dict):
-        pass
+        """Implement some custom logic here to process our results from the query."""
 
     async def load_many(self, objects, filters=None, chunk_size=0):
         """Load multiple objects at once.
@@ -38,10 +38,6 @@ class wclclient_mixin:
         for chunk in utils.chunks(objects, chunk_size):
 
             queries = [obj.get_query(filters or []) for obj in chunk]
-
-            # for q in queries:
-            #     print(q)
-
             query_result = await self.client.multiquery(queries)
 
             for obj, obj_data in zip(chunk, query_result):
@@ -53,9 +49,7 @@ class wclclient_mixin:
 
 class EmbeddedDocument(me.EmbeddedDocument, wclclient_mixin):
     """docstring for Base"""
-    pass
     meta = {"allow_inheritance": True}
-
 
 
 class Document(me.Document, wclclient_mixin):

@@ -30,8 +30,8 @@ class RedisJsonCache:
         data = self.client.get(key)
         return json.loads(data) if data else None
 
-# Cache = RedisJsonCache()
-cache = flask_caching.Cache() #config={'CACHE_TYPE': 'SimpleCache'})
+
+cache = flask_caching.Cache()
 
 
 def init_app(app):

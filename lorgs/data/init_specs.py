@@ -94,8 +94,6 @@ for spec in WowSpec.all:
 # mdps
 WARRIOR_ARMS.supported = False
 HUNTER_SURVIVAL.supported = False
-DEATHKNIGHT_FROST.supported = False
-DRUID_FERAL.supported = False
 
 SUPPORTED_SPECS = [spec for spec in SPECS if spec.supported]
 
@@ -166,6 +164,10 @@ HUNTER_MARKSMANSHIP.add_spell( spell_id=288613, cooldown=120, duration=15,      
 #################################################################################################################################################################################################
 #   Rouge
 ROGUE.add_spell(               spell_id=1856,   cooldown=120,              color="#999999", name="Vanish",                           icon="ability_vanish.jpg",                       show=False)
+ROGUE.add_spell(               spell_id=323547, cooldown=45, duration=45,  color=COL_KYR,   name="Echoing Reprimand",                icon="ability_bastion_rogue.jpg",                show=False)
+ROGUE.add_spell(               spell_id=323654, cooldown=90, duration=12,  color=COL_VENTR, name="Flagellation",                     icon="ability_revendreth_rogue.jpg",             show=False)
+ROGUE.add_spell(               spell_id=328547, cooldown=30,               color=COL_NECRO, name="Serrated Bone Spike",              icon="ability_maldraxxus_rogue.jpg",             show=False)
+ROGUE.add_spell(               spell_id=328305, cooldown=90,               color=COL_NF,    name="Sepsis",                           icon="ability_ardenweald_rogue.jpg",             show=False)
 ROGUE_ASSASSINATION.add_spell( spell_id=703,    cooldown=6,   duration=18,                  name="Garrote",                          icon="ability_rogue_garrote.jpg",                show=False)
 ROGUE_ASSASSINATION.add_spell( spell_id=1943,                                               name="Rupture",                          icon="ability_rogue_rupture.jpg",                show=False)
 ROGUE_ASSASSINATION.add_spell( spell_id=121411,                                             name="Crimson Tempest",                  icon="inv_knife_1h_cataclysm_c_05.jpg",          show=False)
@@ -205,19 +207,19 @@ PRIEST_SHADOW.add_spell(       spell_id=132603, cooldown=180, duration=15, color
 DEATHKNIGHT.add_spell(         spell_id=312202, cooldown=60,  duration=14, color=COL_KYR,   name="Shackle the Unworthy",            icon="ability_bastion_deathknight.jpg",          show=False)
 DEATHKNIGHT.add_spell(         spell_id=311648, cooldown=60,  duration=8,  color=COL_VENTR, name="Swarming Mist",                   icon="ability_revendreth_deathknight.jpg")
 DEATHKNIGHT.add_spell(         spell_id=315443, cooldown=120, duration=12, color=COL_NECRO, name="Abomination Limb",                icon="ability_maldraxxus_deathknight.jpg",       show=False)
-
-DEATHKNIGHT.add_spell(         spell_id=51052,  cooldown=120, duration=10, color="#d58cff", name="Anti-Magic Zone",                 icon="spell_deathknight_antimagiczone.jpg")
-DEATHKNIGHT.add_spell(         spell_id=48707,  cooldown=60,  duration=5,  color="#8ced53", name="Anti-Magic Shell",                icon="spell_shadow_antimagicshell.jpg")
+DEATHKNIGHT.add_spell(         spell_id=51052,  cooldown=120, duration=10, color="#d58cff", name="Anti-Magic Zone",                 icon="spell_deathknight_antimagiczone.jpg",      show=False)
+DEATHKNIGHT.add_spell(         spell_id=48707,  cooldown=60,  duration=5,  color="#8ced53", name="Anti-Magic Shell",                icon="spell_shadow_antimagicshell.jpg",          show=False)
 DEATHKNIGHT.add_spell(         spell_id=48792,  cooldown=180, duration=8,  color="#53aaed", name="Icebound Fortitude",              icon="spell_deathknight_iceboundfortitude.jpg")
 DEATHKNIGHT.add_spell(         spell_id=49039,  cooldown=120, duration=10, color="#999999", name="Lichborne",                       icon="spell_shadow_raisedead.jpg")
-
 DEATHKNIGHT_BLOOD.add_spell(   spell_id=49028,  cooldown=120, duration=8,  color="#ffbd24", name="Dancing Rune Weapon",             icon="inv_sword_07.jpg")
 DEATHKNIGHT_BLOOD.add_spell(   spell_id=55233,  cooldown=90,  duration=10,                  name="Vampiric Blood",                  icon="spell_shadow_lifedrain.jpg")
 DEATHKNIGHT_UNHOLY.add_spell(  spell_id=42650,  cooldown=240, duration=30,                  name="Army of the Dead",                icon="spell_deathknight_armyofthedead.jpg")
 DEATHKNIGHT_UNHOLY.add_spell(  spell_id=275699, cooldown=60,  duration=15,                  name="Apocalypse",                      icon="artifactability_unholydeathknight_deathsembrace.jpg")
-
-
-
+DEATHKNIGHT_FROST.add_spell(   spell_id=51271,  cooldown=60,  duration=12,                  name="Pillar of Frost",                 icon="ability_deathknight_pillaroffrost.jpg",    show=False)
+DEATHKNIGHT_FROST.add_spell(   spell_id=46585,  cooldown=120, duration=60, color="#c7ba28", name="Raise Dead",                      icon="inv_pet_ghoul.jpg")
+DEATHKNIGHT_FROST.add_spell(   spell_id=47568,  cooldown=120, duration=20, color="#88e8f2", name="Empower Rune Weapon",             icon="inv_sword_62.jpg")
+DEATHKNIGHT_FROST.add_spell(   spell_id=152279, cooldown=120, duration=30, color="#52abff", name="Breath of Sindragosa",            icon="spell_deathknight_breathofsindragosa.jpg")
+DEATHKNIGHT_FROST.add_spell(   spell_id=279302, cooldown=180, duration=10,                  name="Frostwyrm's Fury",                icon="achievement_boss_sindragosa.jpg")
 
 #################################################################################################################################################################################################
 #   Shaman
@@ -288,13 +290,14 @@ DRUID_BALANCE.add_spell(       spell_id=194223, cooldown=180, duration=20,      
 DRUID_BALANCE.add_spell(       spell_id=102560, cooldown=180, duration=30,                  name="Incarnation: Chosen of Elune",    icon="spell_druid_incarnation.jpg")
 DRUID_BALANCE.add_spell(       spell_id=205636, cooldown=60,  duration=10,                  name="Force of Nature",                 icon="ability_druid_forceofnature.jpg",           show=False)
 DRUID_BALANCE.add_spell(       spell_id=202770, cooldown=60,  duration=8,                   name="Fury of Elune",                   icon="ability_druid_dreamstate.jpg",              show=False)
-DRUID_GUARDIAN.add_spell(      spell_id=108292, cooldown=300, duration=45,                  name="Heart of the Wild",               icon="spell_holy_blessingofagility.jpg",          show=False)
+DRUID_GUARDIAN.add_spell(      spell_id=108292, cooldown=300, duration=45, color="#fcdf03", name="Heart of the Wild",               icon="spell_holy_blessingofagility.jpg",          show=False)
 DRUID_GUARDIAN.add_spell(      spell_id=61336,  cooldown=180, duration=6,                   name="Survival Instincts",              icon="ability_druid_tigersroar.jpg")
 DRUID_GUARDIAN.add_spell(      spell_id=50334,  cooldown=180, duration=15,                  name="Berserk",                         icon="ability_druid_berserk.jpg")
 DRUID_GUARDIAN.add_spell(      spell_id=102558, cooldown=180, duration=30,                  name="Incarnation: Guardian of Ursoc",  icon="spell_druid_incarnation.jpg")
 DRUID_GUARDIAN.add_spell(      spell_id=22812,  cooldown=60,  duration=8,                   name="Barkskin",                        icon="spell_nature_stoneclawtotem.jpg",           show=False)
-
-
+DRUID_FERAL.add_spell(         spell_id=106951, cooldown=180, duration=15,                  name="Berserk",                         icon="ability_druid_berserk.jpg")
+DRUID_FERAL.add_spell(         spell_id=58984,  cooldown=120,              color="#999999", name="Shadowmeld ",                     icon="ability_ambush.jpg")
+DRUID_FERAL.add_spell(         spell_id=319454, cooldown=300, duration=45, color="#fcdf03", name="Hearth of the Wild ",             icon="spell_holy_blessingofagility.jpg")
 
 #################################################################################################################################################################################################
 # DH
