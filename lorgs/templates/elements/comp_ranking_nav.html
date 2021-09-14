@@ -28,7 +28,7 @@
     <!-- Bosses -->
     <div class="p-1 bg-dark border ml-2 rounded">
         {% for boss2 in bosses if boss2.visible %}
-        <a href="{{url_for('ui.comp_ranking', comp_name=comp.name, boss_slug=boss2.name_slug)}}" class="{{'active' if boss2 == boss}}" data-toggle="tooltip" title="{{boss2.name}}">
+        <a href="{{url_for('ui.comp_ranking', comp_name=comp.name, boss_slug=boss2.name_slug)}}" class="{{'active' if boss2 == boss}}" data-bs-toggle="tooltip" title="{{boss2.name}}">
             <img class="icon-spec icon-m border-black rounded" src="{{boss2.icon_path}}" alt="{{boss2.name_slug}}">
         </a>
         {% endfor %}
@@ -36,7 +36,7 @@
 
     <!-- Home -->
     <div class="p-1 bg-dark border ml-2 rounded">
-        <a href="{{url_for('ui.index')}}" class="ranking-nav-home-icon" data-toggle="tooltip" title="home">
+        <a href="{{url_for('ui.index')}}" class="ranking-nav-home-icon" data-bs-toggle="tooltip" title="home">
             <i class="fas fa-home fa-2x"></i>
         </a>
     </div>

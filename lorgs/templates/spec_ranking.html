@@ -7,7 +7,7 @@
 
 {% macro header_boss(boss, spec) -%}
 <h1 class="m-0">
-    <a href="https://www.warcraftlogs.com/zone/rankings/{{boss.zone.id}}#boss={{boss.id}}&class={{spec.wow_class.name_slug_cap}}&spec={{spec.name_slug_cap}}&metric={{spec.role.metric}}&region=2" target="_blank">
+    <a href="https://www.warcraftlogs.com/zone/rankings/{{boss.zone.id}}#boss={{boss.id}}&class={{spec.wow_class.name_slug_cap}}&spec={{spec.name_slug_cap}}&metric={{spec.role.metric}}" target="_blank">
         <img class="icon-l rounded shadow wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.icon_path}}">
         <span class="wow-class-{{spec.wow_class.name_slug}}">{{spec.full_name}}s</span>
         <span>vs</span>

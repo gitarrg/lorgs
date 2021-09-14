@@ -48,13 +48,28 @@
         {% block content %}{% endblock %}
     </main>
 
+    <footer>
+        <div class="flex-row p-1 ml-5">
+            <div class="col">
+                <p id=copyright class="text-muted">
+                    <small>
+                    All data is retrieved from <a href="https://warcraftlogs.com" target="_blank"><strong>Warcraft Logs</strong></a>.&nbsp;
+                    Item and ability tooltips by <a href="https://wowhead.com" target="_blank"><strong>Wowhead</strong></a>.<br>
+                    All images copyright Blizzard Entertainment. World of Warcraft
+                    Warcraft and Blizzard Entertainment are trademarks or registered trademarks of Blizzard Entertainment, Inc. in the U.S. and/or other countries.
+                    </small>
+                </p>
+            </div>
+        </div>
+    </footer>
+
 </div>
 
 <!-- Scripts -->
 {% block scripts %}
 <script>
 // enable tooltips
-var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-toggle="tooltip"]'))
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
 var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl)
 })

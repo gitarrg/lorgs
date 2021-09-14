@@ -2,6 +2,7 @@
 
 
 # >>> gcloud app deploy --project lorrgs
+# >>> gcloud app deploy --project lorrgs --no-promote
 
 service: default
 runtime: python39
