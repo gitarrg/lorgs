@@ -5,13 +5,157 @@
 {% block content %}
 
 
-<div class="d-flex flex-row p-2 mt-5 ml-5">
+<div class="container text-wrap">
 
-    <!-- Info -->
-    <div class="col-3">
-        <h3>Help Page</h3>
-    </div>
+    <!-- Header -->
+    <h1 class="m-0">Lorrgs - Help</h1>
 
+
+    <div class="row">
+
+        {# Table of Contents #}
+        <div class="col-sm-2">
+            <nav id="help-navbar" class="navbar navbar-dark bg-dark border rounded sticky-top flex-column align-items-stretch p-2 mt-5">
+
+
+                <nav class="nav nav-pills flex-column">
+                    <a class="nav-link" href="#overview">Overview</a>
+
+                    <a class="nav-link" href="#spells_toolbar">Spells Toolbar</a>
+                    <nav class="nav nav-pills flex-column">
+                        <a class="nav-link ms-3" href="#spells_toolbar_display">Display</a>
+                        <a class="nav-link ms-3" href="#spells_toolbar_spells">Spells</a>
+                    </nav>
+
+                    <a class="nav-link" href="#navigation">Navigation</a>
+
+                    <a class="nav-link" href="#timeline">Timeline</a>
+                    <nav class="nav nav-pills flex-column">
+                        <a class="nav-link ms-3" href="#timeline_boss">Boss Lane</a>
+                        <a class="nav-link ms-3" href="#timeline_players">Player Names</a>
+                        <a class="nav-link ms-3" href="#timeline_ruler">Ruler</a>
+                    </nav>
+
+                </nav>
+            </nav>
+        </div>
+
+        {# Main #}
+        <div class="col">
+
+            <h1 id=overview>Overview:</h1>
+            <p>We have three main sections:</p>
+            <ul>
+                <li>Spell Selection</li>
+                <li>Navigation Bar</li>
+                <li>Timeline View</li>
+            </ul>
+            <img class="img-fluid" src="https://cdn.discordapp.com/attachments/886940165338169344/887028864755318874/unknown.png">
+
+            <hr>
+
+            <!-- SPELL TOOLBAR -->
+            <h1 id=spells_toolbar>Spells Toolbar</h1>
+            <img class="img-fluid" src="https://cdn.discordapp.com/attachments/886940165338169344/887124365978775612/unknown.png">
+
+
+            <!-- DISPLAY -->
+            <h3 id=spells_toolbar_display>Display-Group</h3>
+            <div class="row">
+                <div class="col">
+                    <p>the Display Group offers you three buttons to customize the overall view:</p>
+
+                    <strong><i class="fas fa-clock"></i> Cast Time</strong>
+                    <p>show/hide the time stamp for each cast</p>
+
+                    <strong><i class="fas fa-stream"></i> Duration</strong>
+                    <p>show/hide for how long each cast was active.<br>
+                    eg.: Healing Tide Totem is active for 10sec.
+                    </p>
+
+                    <strong><i class="fas fa-hourglass"></i> Cooldown</strong>
+                    <p>show/hide spell cooldowns.<br>
+                    Toggle the display for the cooldown-bars, that indicate for how long the spell was on cooldown.
+                    This can be useful to see if players decided to hold a spell, or used it right as it came of cooldown.
+                    </p>
+                </div>
+
+                <div class="col">
+                    <img class="img-fluid" src="https://i.imgur.com/8fn8mIv.gif">
+                </div>
+            </div>
+
+            <hr>
+
+            <!-- SPELLS -->
+            <h3 id=spells_toolbar_spells>Spells/Consumables/Items:</h3>
+            <div class="row">
+                <p>next you have icons for each spell/consumable/trinket that has been found in those logs.</p>
+
+
+                <div class="col">
+                    <p>Click on any spell to show/hide it.<br>
+                    Click on a Group-Name to toggle all spells in that group.</p>
+                    <img class="img-fluid" src="https://i.imgur.com/KryE3Dr.gif">
+                </div>
+
+                <div class="col">
+                    <p>These are roughly split into 4 categories:</p>
+                    <strong>Boss:</strong>
+                    <p>abilities used by the encounter</p>
+                    <strong>Spec:</strong>
+                    <p>spells cast by the player(s)</p>
+                    <strong>Potions:</strong>
+                    <p>pots and consumables</p>
+                    <strong>Trinkets:</strong>
+                    <p>on-use trinkets and similar items</p>
+                    <p></p>
+
+                    <div class="card text-dark bg-warning" style="max-width: 20rem;">
+                        <div class="card-body">
+                            <h5 class="card-title"><strong>⚠️ Not every ability is listed ⚠️</strong></h5>
+                            <p class="card-text">
+                                All of tracked abilities are manual added to a whitelist.<br>
+                                If there are any missing spells you would like to see added, please feel free to reach out via discord.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <!-- NAV -->
+            <h1 id="navigation">Navigation</h1>
+
+            <div class="row">
+                <div class="col-4">
+                    <strong>A: Specs</strong>
+                    <p>show a different spec</p>
+                </div>
+
+                <div class="col-4">
+                    <strong>B: Bosses</strong>
+                    <p>swap between different bosses</p>
+                </div>
+                <div class="col-4">
+                    <strong><i class="fas fa-home"></i> C: Home</strong>
+                    <p>go back to the start page</p>
+                </div>
+            </div>
+            <img class="img-fluid" src="https://cdn.discordapp.com/attachments/886940165338169344/887143350128492574/unknown.png">
+
+            <hr>
+
+            <!-- Timeline -->
+            <h1 id="timeline">Timeline</h1>
+            <h3 id="timeline_boss">Boss Lane</h3>
+            <h3 id="timeline_players">Player Names</h3>
+            <h3 id="timeline_ruler">Timeline Ruler</h3>
+
+
+        </div> {# end main-col #}
+    </div> {# end main-row #}
 {% endblock %}
 
 
@@ -30,4 +174,16 @@
 </div>
 
 {% endblock %}
+
+{% block scripts %}
+{{ super() }}
+
+{# data-bs-spy="scroll" data-bs-target="#help-navbar" data-bs-offset="0" #}
+<script type="text/javascript">
+    var scrollSpy = new bootstrap.ScrollSpy(document.body, {
+        target: '#help-navbar'
+    })
+</script>
+{% endblock %}
+
 
