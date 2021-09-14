@@ -7,28 +7,51 @@
 
 <div class="d-flex flex-row p-2 mt-5 ml-5">
 
-    <!-- Info -->
-    <div class="col-3">
-        <h3>What is this?</h3>
-        <div class="bg-dark rounded border p-2 text-wrap" style="background-color: $blue-800">
+    <div class="col-4" style="max-width: 525px">
 
-            This little website looks at the <strong class="text-astounding">top 50 logs</strong> for each spec<br>
-            and visualizes <strong class="text-legendary"><em>relevant(*)</em> spells on a timeline.</strong><br>
-            <br>
-            The Idea is to give players a <span class="text-epic">quick idea how to time their CDs,</span>
-            without having to go trough a number of logs themself and compare them by hand.<br>
-            <br>
-            <hr>
-            <strong>* relevant spells:</strong><br>
-            whats considered a relevant spell is just a list of spells per spec I manually create and maintain.<br>
-            If there are any spells you'd considerer relevant but they are currently missing,
-            please let me know and I will have a look into adding them.
+        <!-- Info -->
+        <h3>What is this?</h3>
+        <div class="bg-dark rounded border p-2 text-wrap">
+            <p>This website looks at the current <strong class="text-astounding">top 50 logs for every spec</strong> and visualizes <i class="wow-class-mage" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" title="The tracked <i>relevant spells</i> are <strong>added for each spec manually</strong> by me.<br><br>If there are any missing spells you consider relevant then please let me know and I will have a look into adding them.">"relevant"</i> spells on an encounter timeline.</p>
+            <p>This lets you easily compare multiple high performing logs against each other, concerning when they use various important cooldowns.</p>
+            <strong class="text-legendary">No more sifting through individual logs manually!</strong>
         </div>
+
+        <!-- Disclaimer -->
+        <h4 class="mt-3 mb-1">⚠️Disclaimer</h4>
+        <div class="bg-dark rounded p-2 pt-0 text-wrap wow-class-border-deathknight">
+            <p><strong class="fs-5 text-white">Do not simply copy paste the timings you see here!</strong></p>
+            <p>This page is meant to <strong class="wow-class-rogue">give you a reference</strong>, but you will have to <strong class="wow-class-deathknight">adapt your cooldowns</strong> based on your guild’s strats, setup, push timings and other variables.</p>
+
+            <hr class="border-0">
+
+            <p>Just seeing what people are doing successfully will not make it work for you, <span class="wow-class-monk">unless you understand why</span>.</p>
+            <p class="mb-0">By looking at the timelines represented here you should conclude something like:</p>
+
+            <div class="ml-2">
+            <i class="text-light">"If we 4 heal this fight and push to phase 2 before 2:54, then it’s possible to achieve what I'm seeing here".</i>
+            </div>
+        </div>
+
+        {#
+        <!-- Help -->
+        <h4 class="mt-3 mb-1"><i class="fas fa-info-circle"></i> Help</h4>
+        <div class="index_links bg-dark rounded border p-2 text-wrap">
+            <p>click here to access documention.</p>
+        </div>
+
+        <!-- Discord -->
+        <h4 class="mt-3 mb-1"><img class="icon-s" src="{{url_for('static',filename='images/icons/logo_discord.svg')}}"> Discord</h4>
+        <div class="index_links bg-dark rounded border p-2 text-wrap">
+            <p>Feel free to join our  <a href="https://discord.gg/U3xmktWEzU" class="wow-class-mage"><u><strong>Discord Server</strong></u></a> if you have any questions, feedback or just want to hang out.</p>
+        </div>
+        #}
     </div>
 
-    <div>
 
-        <!-- Parses -->
+    <div class="col">
+
+        <!-- Parses: Specs -->
         <h3>Top Parses by Spec:</h3>
 
         <div class="bg-dark rounded border p-2">
@@ -36,15 +59,11 @@
                 {% for role in roles %}
                 <tr>
                     <td><img class="icon-m rounded border border-black" src="{{role.icon_path}}"></td>
-                    <td style="width: 8rem;margin-right: 2rem"><span>{{role.name}}:</span></td>
+                    <td style="width: 5rem;margin-right: 2rem"><span>{{role.name}}:</span></td>
 
                     <td>
-                        {% for spec in role.specs %}
-                        {% if spec.supported %}
-                        <a href="{{url_for('ui.spec_ranking', spec_slug=spec.full_name_slug, boss_slug=boss.name_slug)}}" data-toggle="tooltip" title="{{spec.full_name}}">
-                        {% else %}
-                        <a class="disabled" href="#" data-toggle="tooltip" title="{{spec.full_name}} (not supported yet)">
-                        {% endif %}
+                        {% for spec in role.specs|sort(attribute="full_name_slug") %}
+                            <a href="{{url_for('ui.spec_ranking', spec_slug=spec.full_name_slug, boss_slug=boss.name_slug)}}" data-bs-toggle="tooltip" title="{{spec.full_name}}">
                             <img class="icon-spec icon-m rounded wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.icon_path}}" alt="{{spec.full_name}}" >
                         </a>
                         {% endfor %}
@@ -57,34 +76,49 @@
             </table>
         </div>
 
-        <div class="mb-3" style="clear: both"></div>
-
-        <h3>Top Reports by Comp:</h3>
-
+        <!-- Parses: Reports -->
+        <h3 class="mt-4">Top Reports by Comp:</h3>
         <div class="bg-dark rounded border p-2">
-            <table>
-                {% for comp in comps %}
 
-                <tr>
-                    <td>
-                        <a href="{{url_for('ui.comp_ranking', comp_name=comp.name, boss_slug=boss.name_slug)}}">
-                            <img class="icon-spec icon-s rounded" src="/static/images/roles/healer.jpg">
-                            {{comp.name}}
-                        </a>
-                    </td>
-                    {#
-                    {% for spec in comp.specs %}
-                        <img class="icon-spec icon-s rounded wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.icon_path}}">
-                        <span class="wow-class-{{spec.wow_class.name_slug}}">{{spec.short_name}}</span>
-                        {% if not loop.last %}&nbsp;{% endif %}
-                    {% endfor %}
-                    #}
-                </tr>
 
-                {% endfor %} {# for comps #}
-
-            </table>
+            {% for comp in comps %}
+                <div>
+                    <a href="{{url_for('ui.comp_ranking', comp_name=comp.name, boss_slug=boss.name_slug)}}">
+                        <img class="icon-spec icon-s rounded mr-1" src="/static/images/roles/healer.jpg">{{comp.name}}
+                    </a>
+                </div>
+            {% endfor %} {# for comps #}
+            <small class="text-muted">(🚧 Work in progress. 🚧)</small>
         </div>
+
+
+        <div class="mt-3 bg-dark rounded border p-2">
+
+            <div class="d-flex flex-row">
+
+                <div class="ml-2 mt-3 align-middle">
+                    <a href="#"><h5 class="mb-0"><i class="fas fa-info-circle"></i>&nbsp;&nbsp;Help</h5></a>
+                    <p class="text-muted ml-2">soon™</p>
+                </div>
+
+                <div class="ml-2 align-middle">
+                    <img src="https://cdn.discordapp.com/attachments/885649171045056542/887334773410918400/unknown.png" width="auto" height="80px" style="mix-blend-mode: screen;">
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
+
+    <div class="col">
+    </div>
+
 </div>
+
+
 {% endblock %}
+
+
+
+

@@ -51,15 +51,20 @@ async def page_not_found(error):
 
 
 @blueprint.get("/")
-@cache.cached(timeout=60)
+@cache.cached()
 def index():
     """Render the main index page."""
-    logger.info("LOAD")
     kwargs = {}
     kwargs["boss"] = data.DEFAULT_BOSS
     kwargs["roles"] = data.ROLES
     kwargs["comps"] = warcraftlogs_comps.CompConfig.objects
     return flask.render_template("index.html", **kwargs)
+
+@blueprint.get("/help")
+@cache.cached()
+def help():
+    """Render the help page."""
+    return flask.render_template("help.html")
 
 
 ################################################################################

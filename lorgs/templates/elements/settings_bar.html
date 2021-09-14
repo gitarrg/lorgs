@@ -2,7 +2,7 @@
 
 {% macro spell_button(spec, spell) -%}
 <a href="#a" data-wowhead="{{spell.wowhead_data}}">
-    <img class="button icon-s rounded wow-class-border-{{spec.wow_class.name_slug}} {{"disabled" if not spell.show}}" src="{{spell.icon_path}}" data-toggle="tooltip" data-spell_id={{spell.spell_id}} data-spell_group={{spec.full_name_slug}}>
+    <img class="button icon-s rounded wow-class-border-{{spec.wow_class.name_slug}} {{"disabled" if not spell.show}}" src="{{spell.icon_path}}" data-bs-toggle="tooltip" data-spell_id={{spell.spell_id}} data-spell_group={{spec.full_name_slug}}>
 </a>
 {%- endmacro %}
 
@@ -14,9 +14,9 @@
     <div class="mr-2">
         <small class="clear-both text-muted">Display</small>
         <div class="bg-dark p-1 rounded border">
-            <div id="settings_button_casttime" class="button icon-s rounded border-white fas fa-clock" data-toggle="tooltip" title="cast time"></div>
-            <div id="settings_button_duration" class="button icon-s rounded border-white fas fa-stream" data-toggle="tooltip" title="active duration"></div>
-            <div id="settings_button_cooldown" class="button icon-s rounded border-white fas fa-hourglass" data-toggle="tooltip" title="cooldown"></div>
+            <div id="settings_button_casttime" class="button icon-s rounded border-white fas fa-clock" data-bs-toggle="tooltip" title="cast time"></div>
+            <div id="settings_button_duration" class="button icon-s rounded border-white fas fa-stream" data-bs-toggle="tooltip" title="active duration"></div>
+            <div id="settings_button_cooldown" class="button icon-s rounded border-white fas fa-hourglass" data-bs-toggle="tooltip" title="cooldown"></div>
         </div>
     </div>
 
@@ -39,7 +39,7 @@
 
         <div class="bg-dark p-1 rounded border">
             {% for spec in comp.specs %}
-            <a href="#a" class="settings_button_spec" data-spec="{{spec.full_name_slug}}" data-toggle="tooltip" title="{{spec.full_name}}">
+            <a href="#a" class="settings_button_spec" data-spec="{{spec.full_name_slug}}" data-bs-toggle="tooltip" title="{{spec.full_name}}">
                 <img class="icon-spec icon-s rounded wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.icon_path}}">
             </a>
             {% endfor %}
