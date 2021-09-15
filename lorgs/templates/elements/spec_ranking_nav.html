@@ -1,8 +1,15 @@
 <!-- NAV -->
 <div class="flex-row d-flex gx-2">
 
+    <!-- Home -->
+    <div class="p-1 bg-dark border mr-2 rounded">
+        <a href="{{url_for('ui.index')}}" class="ranking-nav-home-icon" data-bs-toggle="tooltip" title="home">
+            <i class="fas fa-home fa-2x"></i>
+        </a>
+    </div>
+
     <!-- Roles -->
-    <div class="p-1 bg-dark border rounded">
+    <div class="p-1 bg-dark border mr-2 rounded">
     {% for role in roles %}
         <div class="ranking-nav">
             <img class="ranking-nav-role-icon icon-m rounded wow-border-{{role.code}}" src="{{role.icon_path}}">
@@ -26,18 +33,11 @@
     </div>
 
     <!-- Bosses -->
-    <div class="p-1 bg-dark border ml-2 rounded">
+    <div class="p-1 bg-dark border rounded">
         {% for boss2 in bosses if boss2.visible %}
         <a href="{{url_for('ui.spec_ranking', spec_slug=spec.full_name_slug, boss_slug=boss2.name_slug)}}" class="{{'active' if boss2 == boss}}" data-bs-toggle="tooltip" title="{{boss2.name}}">
             <img class="icon-spec icon-m border-black rounded" src="{{boss2.icon_path}}" alt="{{boss2.name_slug}}">
         </a>
         {% endfor %}
-    </div>
-
-    <!-- Home -->
-    <div class="p-1 bg-dark border ml-2 rounded">
-        <a href="{{url_for('ui.index')}}" class="ranking-nav-home-icon" data-bs-toggle="tooltip" title="home">
-            <i class="fas fa-home fa-2x"></i>
-        </a>
     </div>
 </div>
