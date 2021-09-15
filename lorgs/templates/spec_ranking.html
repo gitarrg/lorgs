@@ -30,9 +30,15 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
 {# HEADER #}
 
 {% block header -%}
-    <div class="mb-2 mt-3">
+<div class="mt-3 flex-row d-flex flex-wrap-reverse">
+    <div class="mb-2">
+    {{ header_boss(boss, spec) }}
+    </div>
+
+    <div class="ml-auto mb-2">
         {% include "elements/spec_ranking_nav.html" %}
     </div>
+</div>
 {% endblock %}
 
 {##############################################################################}
@@ -43,9 +49,6 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
 
     <div class="flex-row flex-row d-flex flex-wrap">
 
-        <div class="mr-auto">
-            {{ header_boss(boss, spec) }}
-        </div>
         <div class="">
             {% include "elements/settings_bar.html" %}
         </div>
