@@ -13,6 +13,8 @@ class BaseConfig:
     CACHE_DEFAULT_TIMEOUT = 300
     CACHE_TYPE = "SimpleCache"
 
+    DISCORD_LINK = os.environ.get("DISCORD_LINK") or "https://discord.gg/U3xmktWEzU"
+
 ################################################################################
 
 class DevelopmentConfig(BaseConfig):
