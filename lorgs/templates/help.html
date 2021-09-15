@@ -2,48 +2,54 @@
 
 {% block title %}Lorgs: Help{% endblock %}
 
+{% block header %}
+<nav class="navbar fixed-top navbar-dark bg-dark">
+    <a class="navbar-brand" href="{{url_for('ui.index')}}">
+        <i class="fas fa-home"></i> How to Lorrg
+    </a>
+</nav>
+{% endblock %}
+
 {% block content %}
 
 
-<div class="container text-wrap">
+<div id="help_page" class="container text-wrap">
 
-    <!-- Header -->
-    <h1 class="m-0">Lorrgs - Help</h1>
-
-
-    <div class="row">
-
+    <div class="row mt-3">
         {# Table of Contents #}
         <div class="col-sm-2">
-            <nav id="help-navbar" class="navbar navbar-dark bg-dark border rounded sticky-top flex-column align-items-stretch p-2 mt-5">
-
-
-                <nav class="nav nav-pills flex-column">
-                    <a class="nav-link" href="#overview">Overview</a>
-
-                    <a class="nav-link" href="#spells_toolbar">Spells Toolbar</a>
+            <div class="sticky-top" style="top: 4.5rem;">
+                <nav id="help-navbar" class="navbar navbar-dark bg-dark border rounded flex-column align-items-stretch p-2">
                     <nav class="nav nav-pills flex-column">
-                        <a class="nav-link ms-3" href="#spells_toolbar_display">Display</a>
-                        <a class="nav-link ms-3" href="#spells_toolbar_spells">Spells</a>
+                        <a class="nav-link" href="#overview">Overview</a>
+
+                        <a class="nav-link" href="#timeline">Timeline</a>
+                        <nav class="nav nav-pills flex-column">
+                            <a class="nav-link ms-3" href="#timeline_boss">Boss Lane</a>
+                            <a class="nav-link ms-3" href="#timeline_players">Player Names</a>
+                            <a class="nav-link ms-3" href="#timeline_ruler">Ruler</a>
+                        </nav>
+
+                        <a class="nav-link" href="#spells_toolbar">Spells Toolbar</a>
+                        <nav class="nav nav-pills flex-column">
+                            <a class="nav-link ms-3" href="#spells_toolbar_display">Display</a>
+                            <a class="nav-link ms-3" href="#spells_toolbar_spells">Spells</a>
+                        </nav>
+
+                        <a class="nav-link" href="#navigation">Navigation</a>
+
                     </nav>
-
-                    <a class="nav-link" href="#navigation">Navigation</a>
-
-                    <a class="nav-link" href="#timeline">Timeline</a>
-                    <nav class="nav nav-pills flex-column">
-                        <a class="nav-link ms-3" href="#timeline_boss">Boss Lane</a>
-                        <a class="nav-link ms-3" href="#timeline_players">Player Names</a>
-                        <a class="nav-link ms-3" href="#timeline_ruler">Ruler</a>
-                    </nav>
-
                 </nav>
-            </nav>
+            </div>
         </div>
+
 
         {# Main #}
         <div class="col">
 
             <h1 id=overview>Overview:</h1>
+            <p>(🚧 Work in progress. 🚧)</p>
+
             <p>We have three main sections:</p>
             <ul>
                 <li>Spell Selection</li>
@@ -53,6 +59,90 @@
             <img class="img-fluid" src="https://cdn.discordapp.com/attachments/886940165338169344/887028864755318874/unknown.png">
 
             <hr>
+
+            <!-- Timeline -->
+            <h1 id="timeline">Timeline</h1>
+
+            <!-- Timeline: Spell -->
+            <div class="row">
+                <div class="col">
+                    <img class="img-fluid" src="https://i.imgur.com/sqREhiR.png">
+                </div>
+                <div class="col">
+                    <p>Each cast can have these elements:</p>
+
+                    <strong><i class="fas fa-clock"></i> Cast Time</strong>
+                    <p>Indicates the exact time when this spell was cast.</p>
+
+                    <strong><i class="fas fa-stream"></i> Duration</strong>
+                    <p>Shows for how long a spell has been active <i class="text-muted">(when applicable)</i>.</p>
+
+                    <strong><i class="fas fa-hourglass"></i> Cooldown</strong>
+                    <p>How long a spell has been on cooldown.<br>
+                    <small class="text-muted">In some cases (for spells that have their cooldowns reduced by talents, legendaries or other effect) the value here is an estimate.</small>
+
+                    </p>
+                </div>
+
+            <!-- Timeline: Focus -->
+            <div class="row">
+                <div class="col">
+                    <p><strong class="wow-class-rogue">Click</strong> on any Cast <strong class="wow-class-rogue">to focus</strong> it and all instances of the same spell.</p>
+                    <p><strong class="wow-class-mage">Ctrl+Click</strong> to <strong class="wow-class-mage">focus multiple spells</strong> at once.</p>
+                </div>
+                <div class="col">
+                    <img class="img-fluid" src="https://i.imgur.com/oYVTTCQ.gif">
+                </div>
+            </div>
+
+            <!-- Timeline: Move -->
+            <div class="row">
+                <div class="col">
+                    <strong class="text-legendary">Click and Drag</strong> on the timeline-ticks or anywhere on the background <strong class="text-legendary">to move</strong>.
+                </div>
+                <div class="col">
+                    <img class="img-fluid" src="https://i.imgur.com/Kxbr3bv.gif">
+                </div>
+            </div>
+
+            <!-- Timeline: Boss -->
+            <h3 id="timeline_boss">Boss Lane</h3>
+            <div class="row">
+                <div class="col-4">
+                    <p><strong>The Boss-Casts are taken from the #1 Log!</strong></p>
+                    <p>Based on the boss-encounter and guilds dps/pushtimings/strat those timings might vary from slightly from kill to kill.</p>
+                    <p>Keep that in mind when you ask yourself why seemingly some players use their CD's a few seconds before or after an important ability. This can most likely be due to that guild getting said boss ability a few seconds earlier/later.</p>
+                </div>
+                <div class="col-8">
+                    <p>Remember that you can click on the icons in the <strong>yellow box, to show/hide abilities.</strong></p>
+                    <img class="img-fluid" src="https://i.imgur.com/2jklPmA.png">
+                </div>
+            </div>
+
+            <h3 id="timeline_players">Player Names</h3>
+            <div class="row">
+                <div class="col">
+                    <p>Click on any name to open the corresponding log on warcraftlogs.</p>
+                    <img src="https://i.imgur.com/RPZhdDx.gif" width="500px">
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col">
+                    <h3 id="timeline_ruler">Timeline Ruler</h3>
+
+                    <p>to aid you check timings across all parses, not just the first few,<br>
+                    we added a little bar, that can be dragged around.</p>
+                </div>
+                <div class="col">
+                    <img src="https://i.imgur.com/ak43Ln0.gif" width="300px">
+                </div>
+            </div>
+
+
+            <hr>
+
+
 
             <!-- SPELL TOOLBAR -->
             <h1 id=spells_toolbar>Spells Toolbar</h1>
@@ -116,7 +206,8 @@
                             <h5 class="card-title"><strong>⚠️ Not every ability is listed ⚠️</strong></h5>
                             <p class="card-text">
                                 All of tracked abilities are manual added to a whitelist.<br>
-                                If there are any missing spells you would like to see added, please feel free to reach out via discord.
+                                If there are any missing spells you would like to see added, please feel free to reach out on 
+                                <a href="{{config.DISCORD_LINK}}"><strong class="text-black">discord</strong></a>.
                             </p>
                         </div>
                     </div>
@@ -147,12 +238,6 @@
 
             <hr>
 
-            <!-- Timeline -->
-            <h1 id="timeline">Timeline</h1>
-            <h3 id="timeline_boss">Boss Lane</h3>
-            <h3 id="timeline_players">Player Names</h3>
-            <h3 id="timeline_ruler">Timeline Ruler</h3>
-
 
         </div> {# end main-col #}
     </div> {# end main-row #}
@@ -160,7 +245,6 @@
 
 
 {% block footer %}
-
 <div class="flex-row p-1 mt-5 ml-5">
     <div class="col">
         <p id=copyright class="text-muted">
@@ -172,8 +256,8 @@
         </p>
     </div>
 </div>
-
 {% endblock %}
+
 
 {% block scripts %}
 {{ super() }}
@@ -181,7 +265,8 @@
 {# data-bs-spy="scroll" data-bs-target="#help-navbar" data-bs-offset="0" #}
 <script type="text/javascript">
     var scrollSpy = new bootstrap.ScrollSpy(document.body, {
-        target: '#help-navbar'
+        target: '#help-navbar',
+        offset: 10,
     })
 </script>
 {% endblock %}
