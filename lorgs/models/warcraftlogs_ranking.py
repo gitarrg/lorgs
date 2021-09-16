@@ -176,9 +176,10 @@ class SpecRanking(warcraftlogs_base.Document):
         # the very first report/fight should always have the boss
         if self.fights:
             first_fight = self.fights[0]
-            if not first_fight.boss_id and first_fight not in new_fights:
+            if not first_fight.boss_id:
                 first_fight.add_boss(self.boss.id)
-                new_fights.append(first_fight)
+                if first_fight not in new_fights:
+                    new_fights.append(first_fight)
 
         if new_fights:
             logger.info(f"{self.boss.name} vs. {self.spec.name} {self.spec.wow_class.name} load casts | {len(new_fights)} new fights")
