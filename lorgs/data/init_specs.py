@@ -273,9 +273,11 @@ WARLOCK_DESTRUCTION.add_spell( spell_id=113858, cooldown=120, duration=20, color
 
 #################################################################################################################################################################################################
 # Monk
-MONK.add_spell(                spell_id=322109, cooldown=180,              color="#c72649", name="Touch of Death",                  icon="ability_monk_touchofdeath.jpg")
 MONK.add_spell(                spell_id=310454, cooldown=120, duration=30, color=COL_KYR,   name="Weapons of Order",                icon="ability_bastion_monk.jpg",                  show=False)
 MONK.add_spell(                spell_id=325216, cooldown=60,  duration=10, color=COL_NECRO, name="Bonedust Brew",                   icon="ability_maldraxxus_monk.jpg",               show=False)
+MONK.add_spell(                spell_id=326860, cooldown=180, duration=24, color=COL_VENTR, name="Fallen Order",                    icon="ability_revendreth_monk.jpg",                show=True)
+MONK.add_spell(                spell_id=327104, cooldown=30,  duration=30, color=COL_NF,    name="Faeline Stomp",                   icon="ability_ardenweald_monk.jpg",               show=False)
+MONK.add_spell(                spell_id=322109, cooldown=180,              color="#c72649", name="Touch of Death",                  icon="ability_monk_touchofdeath.jpg")
 MONK_MISTWEAVER.add_spell(     spell_id=322118, cooldown=180, duration=3.5,                 name="Invoke Yu'lon, the Jade Serpent", icon="ability_monk_dragonkick.jpg")
 MONK_MISTWEAVER.add_spell(     spell_id=115310, cooldown=180,              color="#00FF98", name="Revival",                         icon="spell_monk_revival.jpg")
 MONK_MISTWEAVER.add_spell(     spell_id=325197, cooldown=180, duration=25, color="#e0bb36", name="Invoke Chi-Ji, the Red Crane",    icon="inv_pet_cranegod.jpg")
