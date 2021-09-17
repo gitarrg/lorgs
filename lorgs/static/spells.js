@@ -7,10 +7,13 @@
 //      GLOBALS
 //
 
+
 ////////////////////////////////////////////////////////////////////////////////
 //      CREATION
 //
 
+
+/*
 // int: which spell are are currently selecting (or null if no selection)
 var SELECTED_SPELL = null;
 const SELECTED_SPELL_SEPARATOR = "-"
@@ -71,3 +74,4 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     update_selected_spell();
 });
+*/

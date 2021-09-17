@@ -262,6 +262,12 @@ class Boss(BaseActor):
             return "uncommon"
         return "common"
 
+    def as_dict(self):
+        return {
+            "boss_id": self.boss_id,
+            "casts": [cast.as_dict() for cast in self.casts]
+        }
+
     ##########################
     # Methods
     #

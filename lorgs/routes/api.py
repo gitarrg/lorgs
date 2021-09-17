@@ -71,10 +71,10 @@ def spells():
 @blueprint.route("/spec_ranking/<string:spec_slug>/<string:boss_slug>")
 def spec_ranking(spec_slug, boss_slug):
     spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(boss_slug=boss_slug, spec_slug=spec_slug)
-    players = [player.as_dict() for player in spec_ranking.players]
+    # players = [player.as_dict() for player in spec_ranking.players]
 
     return {
-        "players": players,
+        "fights": [fight.as_dict() for fight in spec_ranking.fights],
     }
 
 
