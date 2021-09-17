@@ -2,6 +2,7 @@
 
 
 import re
+import json
 
 # IMPORT THIRD PARTY LIBS
 import flask
@@ -15,6 +16,8 @@ from lorgs.logger import logger
 from lorgs.models import warcraftlogs_comps
 from lorgs.models import warcraftlogs_ranking
 from lorgs.models import warcraftlogs_report
+from lorgs.models.specs import WowSpec
+from lorgs.models import encounters
 
 
 blueprint = flask.Blueprint(
@@ -59,6 +62,7 @@ def index():
     kwargs["roles"] = data.ROLES
     kwargs["comps"] = warcraftlogs_comps.CompConfig.objects
     return flask.render_template("index.html", **kwargs)
+
 
 @blueprint.get("/help")
 @cache.cached()
@@ -108,7 +112,10 @@ def spec_ranking(spec_slug, boss_slug):
     kwargs["roles"] = data.ROLES
     kwargs["bosses"] = spec_ranking.boss.zone.bosses
 
-    return flask.render_template("spec_ranking.html", **kwargs)
+    # canvas = flask.request.args.get("canvas", default=False, type=json.loads)
+    return flask.render_template("canvas_test.html", **kwargs)
+    # if canvas:
+    # return flask.render_template("spec_ranking.html", **kwargs)
 
 ################################################################################
 #

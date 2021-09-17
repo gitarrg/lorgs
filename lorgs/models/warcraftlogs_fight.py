@@ -6,11 +6,9 @@ import mongoengine as me
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import data
-from lorgs import utils
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
 from lorgs.models.encounters import RaidBoss
-from lorgs.models.specs import WowClass
 from lorgs.models.specs import WowSpec
 from lorgs.models.warcraftlogs_actor import Boss
 from lorgs.models.warcraftlogs_actor import Player
@@ -50,7 +48,8 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
 
             "report_url": self.report_url,
             "num_players": len(self.players),
-            "players": [player.as_dict() for player in self.players]
+            "players": [player.as_dict() for player in self.players],
+            "boss": self.boss.as_dict() if self.boss else {}
         }
 
     ##########################
