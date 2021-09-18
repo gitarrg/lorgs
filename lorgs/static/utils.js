@@ -1,12 +1,13 @@
 
-function toMMSS(sec_num) {
-    var minutes = Math.floor((sec_num) / 60);
-    var seconds = Math.floor(sec_num) - (minutes * 60);
 
-    if (minutes < 10) {minutes = "0"+minutes;}
-    if (seconds < 10) {seconds = "0"+seconds;}
-    return minutes+':'+seconds;
+function toMMSS(seconds) {
+    return new Date(seconds * 1000).toISOString().substr(14, 5);
 }
+
+
+function clamp(num, min, max) {
+  return Math.min(Math.max(num, min), max);
+};
 
 
 // show/hide an element (aka jquery.. but js)
@@ -21,4 +22,3 @@ function show(element, display=true) {
 function hide(element) {
     show(element, false);
 }
-

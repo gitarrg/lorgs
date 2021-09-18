@@ -12,7 +12,7 @@
         <!-- Info -->
         <h3>What is this?</h3>
         <div class="bg-dark rounded border p-2 text-wrap">
-            <p>This website looks at the current <strong class="text-astounding">top 50 logs for every spec</strong> and visualizes <i class="wow-class-mage" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" title="The tracked <i>relevant spells</i> are <strong>added for each spec manually</strong> by me.<br><br>If there are any missing spells you consider relevant then please let me know and I will have a look into adding them.">"relevant"</i> spells on an encounter timeline.</p>
+            <p>This website looks at the current <strong class="text-astounding">top 50 logs for every spec</strong> and visualizes <i class="wow-class-mage" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" title="The tracked <i>relevant spells</i> are <strong>added for each spec manually</strong>.<br><br>If there are any missing spells you consider relevant then please let me know and I will have a look into adding them.">"relevant"</i> spells on an encounter timeline.</p>
             <p>This lets you easily compare multiple high performing logs against each other, concerning when they use various important cooldowns.</p>
             <strong class="text-legendary">No more sifting through individual logs manually!</strong>
         </div>
@@ -33,19 +33,6 @@
             </div>
         </div>
 
-        {#
-        <!-- Help -->
-        <h4 class="mt-3 mb-1"><i class="fas fa-info-circle"></i> Help</h4>
-        <div class="index_links bg-dark rounded border p-2 text-wrap">
-            <p>click here to access documention.</p>
-        </div>
-
-        <!-- Discord -->
-        <h4 class="mt-3 mb-1"><img class="icon-s" src="{{url_for('static',filename='images/icons/logo_discord.svg')}}"> Discord</h4>
-        <div class="index_links bg-dark rounded border p-2 text-wrap">
-            <p>Feel free to join our  <a href="https://discord.gg/U3xmktWEzU" class="wow-class-mage"><u><strong>Discord Server</strong></u></a> if you have any questions, feedback or just want to hang out.</p>
-        </div>
-        #}
     </div>
 
 
@@ -58,7 +45,7 @@
             <table>
                 {% for role in roles %}
                 <tr>
-                    <td><img class="icon-m rounded border border-black" src="{{role.icon_path}}"></td>
+                    <td><img class="icon-m rounded wow-border-{{role.code}}" src="{{role.icon_path}}"></td>
                     <td style="width: 5rem;margin-right: 2rem"><span>{{role.name}}:</span></td>
 
                     <td>
@@ -92,18 +79,27 @@
         </div>
 
 
-        <div class="mt-3 bg-dark rounded border p-2">
+        <h4 class="mt-3 mb-1">Links</h4>
+        <div class="bg-dark rounded border p-2">
 
-            <div class="d-flex flex-row">
-
-                <div class="ml-2 mt-3 align-middle">
-                    <a href="#"><h5 class="mb-0"><i class="fas fa-info-circle"></i>&nbsp;&nbsp;Help</h5></a>
-                    <p class="text-muted ml-2">soon™</p>
+            <div class="d-flex flex-row p-3 gx-3">
+                <!-- Help -->
+                <div>
+                    <a href="{{url_for('ui.help')}}" class="h5"><i class="fas fa-info-circle"></i>&nbsp;&nbsp;Help</a>
                 </div>
 
-                <div class="ml-2 align-middle">
-                    <img src="https://cdn.discordapp.com/attachments/885649171045056542/887334773410918400/unknown.png" width="auto" height="80px" style="mix-blend-mode: screen;">
+
+                {#
+                <!-- Discord -->
+                <div class="ml-3">
+                    <span>
+                        <a href="{{config.DISCORD_LINK}}" target="_blank" class="h5" data-bs-toggle="tooltip" title="Feel free to join if you have any questions, feedback or just want to hang out.">
+                            <img class="icon-s" src="{{url_for('static',filename='images/icons/logo_discord.svg')}}"> Discord</a><br>
+                        <small class="text-muted" data-bs-toggle="tooltip" title="why is this so much text?">Feel free to join<br>if you have any questions, feedback<br>or just want to hang out.</small>
+                    </span>
                 </div>
+                #}
+
 
             </div>
 

@@ -1,3 +1,7 @@
+
+# TODO:
+# find a way to share config with the main cloudbuild.yaml
+
 steps:
 
 # Build Artifacts
@@ -34,5 +38,5 @@ steps:
 
 # Deploy the APP
 - name: "gcr.io/cloud-builders/gcloud"
-  args: ["app", "deploy"]
+  args: ["app", "deploy", "--no-promote"]  # <-- the only thing that is meant to differ from the main file
   timeout: "1600s"
