@@ -62,9 +62,7 @@ class Stage extends Konva.Stage{
 
 
         // update canvas on window resize
-        window.addEventListener("resize", () => {
-            this.width(options.container.offsetWidth)
-        })
+        window.addEventListener("resize", () => {this.update_size()})
 
         this.on("dragmove",  this.on_dragmove)
         this.on("wheel",  this.on_wheel)
@@ -130,12 +128,6 @@ class Stage extends Konva.Stage{
         this.batchDraw();
     }
 
-    draw() {
-
-
-    }
-
-
     update_has_selection() {
         this.has_selection = this.spells.some(spell => spell.selected)
     }
@@ -144,6 +136,11 @@ class Stage extends Konva.Stage{
     ////////////////////////////////////////////////////////////////////////////
     // EVENTS
     //
+
+    update_size() {
+        let container = this.container()
+        this.width(container.offsetWidth)
+    }
 
     _limit_movement() {
         this.y(0);

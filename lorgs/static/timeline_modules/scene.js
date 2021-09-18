@@ -272,8 +272,6 @@ class Scene {
 
         ////////////////////////////
         // Update the Stage
-        this.stage.width(window.innerWidth); // idk if this makes any sense
-        this.stage.height(this.player_names_container.offsetHeight)
 
         console.time("stage set fights/spells")
         this.stage.set_spells(this.spells_data)
@@ -288,15 +286,12 @@ class Scene {
         await this.stage.update();
         console.timeEnd("stage update")
 
-    }
 
-    init_canvas() {
+        // Update Size
+        // this.stage.width(window.innerWidth); // idk if this makes any sense
+        this.stage.height(this.player_names_container.offsetHeight)
+        this.stage.update_size()
 
-        var SCENE = new Scene({
-            container: "timeline_canvas",
-            width: window.innerWidth,
-            height: window.innerHeight,
-        });
     }
 }
 
