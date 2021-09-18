@@ -232,6 +232,7 @@ DEATHKNIGHT_FROST.add_spell(   spell_id=279302, cooldown=180, duration=10,      
 #################################################################################################################################################################################################
 #   Shaman
 SHAMAN.add_spell(              spell_id=320674, cooldown=90,               color=COL_VENTR, name="Chain Harvest",                   icon="ability_revendreth_shaman.jpg",             show=False)
+SHAMAN.add_spell(              spell_id=328923, cooldown=120, duration=3,  color=COL_NF,    name="Fae Transfusion",                 icon="ability_ardenweald_shaman.jpg",             show=True)
 SHAMAN_ELEMENTAL.add_spell(    spell_id=191634, cooldown=60,               color="#00bfff", name="Stormkeeper",                     icon="ability_thunderking_lightningwhip.jpg")
 SHAMAN_ELEMENTAL.add_spell(    spell_id=198067, cooldown=150,              color="#ffa500", name="Fire Elemental",                  icon="spell_fire_elemental_totem.jpg")
 SHAMAN_ENHANCEMENT.add_spell(  spell_id=114051, cooldown=180,                               name="Ascendance",                      icon="spell_fire_elementaldevastation.jpg")
