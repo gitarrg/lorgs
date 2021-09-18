@@ -14,6 +14,7 @@ class Cast extends Konva.Group {
 
         // Internal Attrs
         // this.player = player
+        this.stage = STAGE;
         this.added = false
         this.hovering = false
 
@@ -25,7 +26,7 @@ class Cast extends Konva.Group {
 
     create() {
         // Cast Info
-        const stage = this.getStage();
+        const stage = this.stage || this.getStage();
 
         this.spell = this.stage.spells[this.spell_id];
         if (this.spell === undefined) {
@@ -105,8 +106,6 @@ class Cast extends Konva.Group {
 
         this.add(this.cast_text);
         this.y(1);
-        // this.cache()
-
     }
 
     update() {
@@ -146,11 +145,11 @@ class Cast extends Konva.Group {
         this.cast_text.visible(stage.display_casttime)
         this.cast_cooldown.visible(stage.display_cooldown)
         this.cast_duration.visible(stage.display_duration)
-
+        this.cast_icon.visible(stage.display_casticon)
 
         // default state
         this.cast_text.fontStyle("normal");
-        // this.cast_text.fill("white");
+        this.cast_text.fill("white");
         this.cast_duration.opacity(0.5)
         this.cast_cooldown.opacity(0.1)
         this.cast_icon.opacity(1.0)
@@ -158,6 +157,7 @@ class Cast extends Konva.Group {
         this.cast_icon.strokeWidth(1)
         this.opacity(1.0)
         // this.blurRadius(0)
+        // this.cast_duration.stroke("none")
 
 
         if (stage.has_selection) {
@@ -181,50 +181,6 @@ class Cast extends Konva.Group {
             this.cast_duration.opacity(0.75)
             this.cast_cooldown.opacity(0.3)
         }
-
-        // this.cast_duration.fill(this.hovering ? "red": "green")
-        // console.log("update", this.hovering, this.cast_duration.isCached())
-        // return
-        /*
-        this.mode = (stage.has_selection && this.spell.selected) ? MODE_SELECTED : this.mode
-        switch(this.mode) {
-
-            case MODE_SELECTED:
-            break
-
-            case MODE_HOVER:
-            break
-
-            case MODE_DEFAULT:
-            default:
-                this.cast_text.fill("white")
-                this.cast_text.fontStyle("normal");
-                this.cast_duration.opacity(0.5)
-        }
-
-        if (stage.has_selection) {
-
-            // style: selected spell
-            if (this.spell.selected) {
-                this.cast_text.fill("lime")
-                this.cast_duration.opacity(CAST_DURATION_OPACITY_SELECTED)
-
-            // style: un-selected spell
-            } else {
-                this.cast_text.fontStyle("italic");
-                this.cast_duration.opacity(CAST_DURATION_OPACITY_DEFAULT)
-            }
-            return
-        }
-        */
-
-
-        // this.spell_group.find(".duration").forEach(duration => {
-        // })
-        // this.spell_group.find(".cooldown").forEach(cooldown => {
-        // })
-        // this.spell_group.cache();
-        // this.cache();
     }
 
     hover(state) {
@@ -241,29 +197,27 @@ class Cast extends Konva.Group {
 
     }
 
-    select() {
+    select(event) {
 
         const stage = this.getStage()
 
-        stage.has_selection = false
-        stage.spells.forEach(spell => {
-            spell.selected = (spell == this.spell) && !this.spell.selected
+        if (event.evt.ctrlKey) {
+            // keep current selection.. simply toggle the current spell
+            this.spell.selected = !this.spell.selected
 
-            // if (spell == this.spell) {
-            //     spell.selected = !spell.selected;
-            //     console.log("new state", this.spell.selected)
-            // } else {
-            //     spell.selected = false;
-            // }
-            stage.has_selection = stage.has_selection || spell.selected;
-        })
+        } else {
+            // regular selection:
+            //  - deselect all spells
+            //  - toogle the current spell
+            stage.spells.forEach(spell => {
+                spell.selected = (spell == this.spell) && !this.spell.selected
+            })
+        }
 
-        // this.spell.selected = !this.spell.selected
-
-        this.spell.selected = this.spell.selected || stage.has_selection
-        // this.mode = this.spell.selected ? MODE_SELECTED : MODE_DEFAULT
-
+        stage.update_has_selection()
         stage.update()
-    }
 
+        // why is this?
+        // this.spell.selected = this.spell.selected || stage.has_selection
+    }
 }

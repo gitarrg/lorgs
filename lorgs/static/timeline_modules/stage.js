@@ -1,5 +1,9 @@
 
 
+// global stage pointer.. i know its ugly.
+var STAGE;
+
+
 class Stage extends Konva.Stage{
 
     ZOOM_RATE = 1.1
@@ -9,11 +13,13 @@ class Stage extends Konva.Stage{
     display_cooldown = true
     display_duration = true
     display_casttime = true
+    display_casticon = true
 
     constructor(options) {
         options.draggable = true
+        options.strokeScaleEnabled = false
         super(options);
-        this.transformsEnabled("position");
+        // this.transformsEnabled("position");
 
         // this.spec_slug = "";
         // this.boss_slug = "";
@@ -23,7 +29,6 @@ class Stage extends Konva.Stage{
         this.spells = []
 
         STAGE = this;
-        Cast.prototype.stage = this;
 
         // bool: true if any spell is selected
         this.has_selection = false;
@@ -128,6 +133,11 @@ class Stage extends Konva.Stage{
 
     }
 
+    update_has_selection() {
+        this.has_selection = this.spells.some(spell => spell.selected)
+    }
+
+
     ////////////////////////////////////////////////////////////////////////////
     // EVENTS
     //
@@ -144,6 +154,36 @@ class Stage extends Konva.Stage{
     on_wheel(event) {
         event.evt.preventDefault();
 
+
+        ////////////////////////////////////
+        // scroll fast mode
+
+        /*
+        if (this.fast_mode_timer) {
+            clearTimeout(this.fast_mode_timer)
+        }
+
+        this.scroll_settings = this.scroll_settings || {
+            display_cooldown: this.display_cooldown,
+            display_duration: this.display_duration,
+            display_casttime: this.display_casttime,
+            display_casticon: this.display_casticon,
+        }
+
+        // enable fast mode
+        this.display_casttime = false;
+        this.display_casticon = false;
+        this.fast_mode_timer = setTimeout(() => {
+            this.display_casticon = this.scroll_settings.display_casticon
+            this.display_casttime = this.scroll_settings.display_casttime
+            this.scroll_settings = undefined
+            this.update();
+        }, 100);
+        */
+
+        ////////////////////////////////////
+        // update scale
+
         let pointer = this.getPointerPosition();
 
         let old_offset = ( pointer.x - this.x()) / this.scale_x; // normalized distance between 0:00 and cursor
@@ -158,7 +198,9 @@ class Stage extends Konva.Stage{
         this.x(new_x);
         this._limit_movement()
 
-        // update_debug_layer()
+        ////////////////////////////////////
+        // update scale
+
         this.update();
     }
 

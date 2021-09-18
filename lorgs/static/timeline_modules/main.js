@@ -7,6 +7,3 @@
 
 const LINE_HEIGHT = 28;
 
-
-var STAGE;  // why did I do this?
-

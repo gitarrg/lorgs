@@ -19,7 +19,7 @@ class TimelineMarker extends Konva.Group {
 
         this.line = new Konva.Line({
             name: "line",
-            points: [0, 10, 0, 999],  // fix height
+            points: [0, 10, 0, 100],  // fix height
             stroke: this.color,
             strokeWidth: 2,
         })
@@ -37,7 +37,6 @@ class TimelineMarker extends Konva.Group {
         })
         // this.cast_duration.perfectDrawEnabled(false);
         this.add(this.handle)
-
 
         this.label = new Konva.Text({
             name: "label",
@@ -67,7 +66,7 @@ class TimelineMarker extends Konva.Group {
 
             e.evt.preventDefault();
             if (e.evt.button === 2) {
-                console.log("right clicked a marker")
+                console.log("removing marker")
                 this.remove()
             }
         })
@@ -77,15 +76,20 @@ class TimelineMarker extends Konva.Group {
     //
     update() {
 
-        // update label
         let stage = this.getStage()
-        const x = this.t; // / stage.scale_x;
+        if (!stage) { return }
+
+        // update label
         this.label.text(toMMSS(this.t))
 
+        // update position
         if (stage.zoom_changed) {
             this.x(this.t * stage.scale_x)
         }
+    }
 
+    set_height(height) {
+        this.line.points([0, 10, 0, height]);
     }
 
     //////////////////////////////
@@ -213,8 +217,15 @@ class TimelineRuler extends Konva.Group {
                     fontFamily: "Lato",
                     fill: this.color,
                     transformsEnabled: "position",
-                    // listening: false,
+                    strokeScaleEnabled: false,
                 })
+
+                text.on("transform", () => {
+                    console.log("update text")
+                    text.scaleX(1.0)
+                })
+
+
                 this.timestamps.push(text)
                 this.add(text)
             } // if big
@@ -275,8 +286,10 @@ class TimelineRuler extends Konva.Group {
         let x = pointer.x - this.stage.x()
 
         let marker = new TimelineMarker()
-        this.markers.push(marker)
         marker.x(x);
+        marker.set_height(this.stage.height())
+
+        this.markers.push(marker)
         this.stage.overlay_layer.add(marker)
 
         // refresh the timestamp

@@ -40,3 +40,5 @@ class ProductionConfig(BaseConfig):
     """Config used in Production."""
 
     GOOGLE_ANALYTICS_ID = "G-Y92VPCY6QW"
+
+    CACHE_DEFAULT_TIMEOUT = 600  # 10min
