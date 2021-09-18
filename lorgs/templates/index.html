@@ -12,7 +12,7 @@
         <!-- Info -->
         <h3>What is this?</h3>
         <div class="bg-dark rounded border p-2 text-wrap">
-            <p>This website looks at the current <strong class="text-astounding">top 50 logs for every spec</strong> and visualizes <i class="wow-class-mage" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" title="The tracked <i>relevant spells</i> are <strong>added for each spec manually</strong> by me.<br><br>If there are any missing spells you consider relevant then please let me know and I will have a look into adding them.">"relevant"</i> spells on an encounter timeline.</p>
+            <p>This website looks at the current <strong class="text-astounding">top 50 logs for every spec</strong> and visualizes <i class="wow-class-mage" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom" title="The tracked <i>relevant spells</i> are <strong>added for each spec manually</strong>.<br><br>If there are any missing spells you consider relevant then please let me know and I will have a look into adding them.">"relevant"</i> spells on an encounter timeline.</p>
             <p>This lets you easily compare multiple high performing logs against each other, concerning when they use various important cooldowns.</p>
             <strong class="text-legendary">No more sifting through individual logs manually!</strong>
         </div>
@@ -43,7 +43,7 @@
         <!-- Discord -->
         <h4 class="mt-3 mb-1"><img class="icon-s" src="{{url_for('static',filename='images/icons/logo_discord.svg')}}"> Discord</h4>
         <div class="index_links bg-dark rounded border p-2 text-wrap">
-            <p>Feel free to join our  <a href="https://discord.gg/U3xmktWEzU" class="wow-class-mage"><u><strong>Discord Server</strong></u></a> if you have any questions, feedback or just want to hang out.</p>
+            <p>Feel free to join our  <a href="{{config.DISCORD_LINK}}" class="wow-class-mage"><u><strong>Discord Server</strong></u></a> if you have any questions, feedback or just want to hang out.</p>
         </div>
         #}
     </div>
@@ -58,7 +58,7 @@
             <table>
                 {% for role in roles %}
                 <tr>
-                    <td><img class="icon-m rounded border border-black" src="{{role.icon_path}}"></td>
+                    <td><img class="icon-m rounded wow-border-{{role.code}}" src="{{role.icon_path}}"></td>
                     <td style="width: 5rem;margin-right: 2rem"><span>{{role.name}}:</span></td>
 
                     <td>

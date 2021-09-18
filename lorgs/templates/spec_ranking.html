@@ -8,10 +8,8 @@
 {% macro header_boss(boss, spec) -%}
 <h1 class="m-0">
     <a href="https://www.warcraftlogs.com/zone/rankings/{{boss.zone.id}}#boss={{boss.id}}&class={{spec.wow_class.name_slug_cap}}&spec={{spec.name_slug_cap}}&metric={{spec.role.metric}}" target="_blank">
-        <img class="icon-l rounded shadow wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.icon_path}}">
         <span class="wow-class-{{spec.wow_class.name_slug}}">{{spec.full_name}}s</span>
-        <span>vs</span>
-        <img class="icon-l rounded shadow border-white" src="{{boss.icon_path}}" alt="{{boss.name}}" target="_blank">
+        <span>vs.</span>
         <span>{{boss.name}}</span>
     </a>
 </h1>
@@ -47,8 +45,16 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
 {# CONTENT #}
 
 {% block content -%}
-<div class="mb-2">
-    {% include "elements/settings_bar.html" %}
+<div class="mb-2 mt-4">
+
+    <div class="flex-row flex-row d-flex flex-wrap">
+
+        <div class="">
+            {% include "elements/settings_bar.html" %}
+        </div>
+    </div>
+
+
 </div>
 
 
