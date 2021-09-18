@@ -31,8 +31,9 @@ class DevelopmentConfig(BaseConfig):
 
     LOCAL_FILES = True
 
-    CACHE_TYPE = "SimpleCache"
+    CACHE_TYPE = "NullCache"
     CACHE_NO_NULL_WARNING = True
+
 
 
 ################################################################################
@@ -44,3 +45,6 @@ class ProductionConfig(BaseConfig):
     GOOGLE_ANALYTICS_ID = "G-Y92VPCY6QW"
 
     CACHE_DEFAULT_TIMEOUT = 600  # 10min
+
+    # not yet
+    DISCORD_LINK = ""
