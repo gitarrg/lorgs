@@ -232,6 +232,7 @@ DEATHKNIGHT_FROST.add_spell(   spell_id=279302, cooldown=180, duration=10,      
 #################################################################################################################################################################################################
 #   Shaman
 SHAMAN.add_spell(              spell_id=320674, cooldown=90,               color=COL_VENTR, name="Chain Harvest",                   icon="ability_revendreth_shaman.jpg",             show=False)
+SHAMAN.add_spell(              spell_id=328923, cooldown=120, duration=3,  color=COL_NF,    name="Fae Transfusion",                 icon="ability_ardenweald_shaman.jpg",             show=True)
 SHAMAN_ELEMENTAL.add_spell(    spell_id=191634, cooldown=60,               color="#00bfff", name="Stormkeeper",                     icon="ability_thunderking_lightningwhip.jpg")
 SHAMAN_ELEMENTAL.add_spell(    spell_id=198067, cooldown=150,              color="#ffa500", name="Fire Elemental",                  icon="spell_fire_elemental_totem.jpg")
 SHAMAN_ENHANCEMENT.add_spell(  spell_id=114051, cooldown=180,                               name="Ascendance",                      icon="spell_fire_elementaldevastation.jpg")
@@ -273,8 +274,11 @@ WARLOCK_DESTRUCTION.add_spell( spell_id=113858, cooldown=120, duration=20, color
 
 #################################################################################################################################################################################################
 # Monk
-MONK.add_spell(                spell_id=322109, cooldown=180,              color="#c72649", name="Touch of Death",                  icon="ability_monk_touchofdeath.jpg")
 MONK.add_spell(                spell_id=310454, cooldown=120, duration=30, color=COL_KYR,   name="Weapons of Order",                icon="ability_bastion_monk.jpg",                  show=False)
+MONK.add_spell(                spell_id=325216, cooldown=60,  duration=10, color=COL_NECRO, name="Bonedust Brew",                   icon="ability_maldraxxus_monk.jpg",               show=False)
+MONK.add_spell(                spell_id=326860, cooldown=180, duration=24, color=COL_VENTR, name="Fallen Order",                    icon="ability_revendreth_monk.jpg",                show=True)
+MONK.add_spell(                spell_id=327104, cooldown=30,  duration=30, color=COL_NF,    name="Faeline Stomp",                   icon="ability_ardenweald_monk.jpg",               show=False)
+MONK.add_spell(                spell_id=322109, cooldown=180,              color="#c72649", name="Touch of Death",                  icon="ability_monk_touchofdeath.jpg")
 MONK_MISTWEAVER.add_spell(     spell_id=322118, cooldown=180, duration=3.5,                 name="Invoke Yu'lon, the Jade Serpent", icon="ability_monk_dragonkick.jpg")
 MONK_MISTWEAVER.add_spell(     spell_id=115310, cooldown=180,              color="#00FF98", name="Revival",                         icon="spell_monk_revival.jpg")
 MONK_MISTWEAVER.add_spell(     spell_id=325197, cooldown=180, duration=25, color="#e0bb36", name="Invoke Chi-Ji, the Red Crane",    icon="inv_pet_cranegod.jpg")
@@ -387,7 +391,7 @@ for s in [DRUID_FERAL, HUNTER_SURVIVAL, MONK_BREWMASTER, DRUID_GUARDIAN]:
     # 2h Agi on use weapon https://www.wowhead.com/item=186404/jotungeirr-destinys-call?bonus=7757
     s.add_spell(group=OTHER_TRINKET, spell_id=357773, cooldown=180, duration=30, color="#7f4af0", name="Jotungeirr, Destiny's Call", icon="inv_polearm_2h_mawraid_d_01.jpg", wowhead_data=f"item=186404{mythic}{maxilvl}")
 
-    
+
 ################################################################################
 
 
