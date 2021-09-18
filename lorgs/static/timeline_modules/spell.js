@@ -19,17 +19,18 @@ class Spell {
         this.cast_icon = new Konva.Image({
             name: "icon",
             image: spell_data.button,
-            // listening: false,
+            listening: false,
             x: 3.5, // padding
             y: 3.5, // padding
             width: 20,
             height: 20,
-            cornerRadius: 3,
+            // cornerRadius: 3,
 
             stroke: "black",
             strokeWidth: 1,
             transformsEnabled: "position",
         })
+        this.cast_icon.cache()
         this.cast_icon.perfectDrawEnabled(false);
 
         // Build the Group
@@ -42,7 +43,7 @@ class Spell {
                 width: this.duration * stage.scale_x,
                 height: LINE_HEIGHT-1,
                 fill: this.color,
-                cornerRadius: 3,
+                // cornerRadius: 3,
                 opacity: 0.5,
                 listening: true,
                 transformsEnabled: "none",
@@ -56,7 +57,7 @@ class Spell {
                 width: this.cooldown * stage.scale_x,
                 height: LINE_HEIGHT-1,
                 fill: this.color,
-                cornerRadius: 3,
+                // cornerRadius: 3,
                 opacity: 0.1,
                 listening: false,
                 transformsEnabled: "none",

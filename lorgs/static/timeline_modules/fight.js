@@ -50,7 +50,9 @@ class Fight extends Konva.Group {
     update() {
         const stage = this.getStage() || this.background.getStage();
         if (!stage) {return}
-        const w = this.duration * stage.scale_x;
+
+        let w = this.duration * stage.scale_x;
+        w = Math.floor(w); // avoid drawing strokes on half pixels
 
         // update background
         this.background_fill.width(w)

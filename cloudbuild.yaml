@@ -1,20 +1,34 @@
 steps:
 
-# Build SCSS
-- name: "python:3"
-  entrypoint: python3
-  args: ["-m", "pip", "install", "-t", ".", "pysass"]
-- name: "python:3"
+# Build Artifacts
+- name: create_artifact_dir
   entrypoint: 'mkdir'
   args: ["-p", "lorgs/static/_generated"]
-- name: 'python:3'
+  waitFor: ['-']
+
+- name: install_build_reqs
+  id: install_build_reqs
+  entrypoint: python3
+  args: ["-m", "pip", "install", "-t", ".", "pysass", "jsmin"]
+
+- name: 'build css'
   entrypoint: python3
   args: ["-m", "pysassc", "--style=compact", "lorgs/templates/scss/main.scss", "lorgs/static/_generated/style.css"]
+  waitFor:
+    - install_build_reqs
 
-# add sensible config
+- name: "mimify"
+  entrypoint: python3
+  args: ["lorgs/scripts/mimify.py"]
+  waitFor:
+    - install_build_reqs
+
+
+# add config
 - name: 'gcr.io/cloud-builders/gsutil'
   args: ["cp", "gs://lorgs-config/deploy_variables.yaml", '.']
   waitFor: ['-']  # The '-' indicates that this step begins immediately.
+
 
 # Deploy the APP
 - name: "gcr.io/cloud-builders/gcloud"
