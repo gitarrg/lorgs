@@ -1,23 +1,40 @@
 
-## find a way to share config with the main cloudbuild.yaml
+# TODO:
+# find a way to share config with the main cloudbuild.yaml
 
 steps:
 
-# Build SCSS
-- name: "python:3"
-  entrypoint: python3
-  args: ["-m", "pip", "install", "-t", ".", "pysass"]
+# Build Artifacts
 - name: "python:3"
   entrypoint: 'mkdir'
   args: ["-p", "lorgs/static/_generated"]
-- name: 'python:3'
+  waitFor: ['-']
+
+- name: "python:3"
+  id: install_build_reqs
+  entrypoint: python3
+  args: ["-m", "pip", "install", "-t", "/workspace/lib", "pysass", "jsmin"]
+
+- name: "python:3"
   entrypoint: python3
   args: ["-m", "pysassc", "--style=compact", "lorgs/templates/scss/main.scss", "lorgs/static/_generated/style.css"]
+  env: ["PYTHONPATH=/workspace/lib"]
+  waitFor:
+  - install_build_reqs
 
-# add sensible config
+- name: "python:3"
+  entrypoint: python3
+  args: ["scripts/minify.py"]
+  env: ["PYTHONPATH=/workspace/lib"]
+  waitFor:
+  - install_build_reqs
+
+
+# add config
 - name: 'gcr.io/cloud-builders/gsutil'
   args: ["cp", "gs://lorgs-config/deploy_variables.yaml", '.']
   waitFor: ['-']  # The '-' indicates that this step begins immediately.
+
 
 # Deploy the APP
 - name: "gcr.io/cloud-builders/gcloud"
