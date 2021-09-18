@@ -5,7 +5,7 @@
     <div class="p-1 bg-dark border rounded">
     {% for role in roles %}
         <div class="ranking-nav">
-            <img class="ranking-nav-role-icon icon-m rounded border-black" src="{{role.icon_path}}">
+            <img class="ranking-nav-role-icon icon-m rounded wow-border-{{role.code}}" src="{{role.icon_path}}">
 
             <div class="ranking-nav-role-specs bg-dark border rounded">
                 {% for spec in role.specs|sort(attribute="full_name_slug") %}
@@ -40,4 +40,5 @@
             <i class="fas fa-home fa-2x"></i>
         </a>
     </div>
+
 </div>

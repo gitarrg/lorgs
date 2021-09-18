@@ -2,55 +2,169 @@
 
 {% block title %}Lorgs: Help{% endblock %}
 
+{% block header %}
+<nav class="navbar fixed-top navbar-dark bg-dark">
+    <a class="navbar-brand" href="{{url_for('ui.index')}}">
+        <i class="fas fa-home"></i> How to Lorrg
+    </a>
+</nav>
+{% endblock %}
+
 {% block content %}
 
 
-<div class="container text-wrap">
+<div id="help_page" class="container text-wrap">
 
-    <!-- Header -->
-    <h1 class="m-0">Lorrgs - Help</h1>
-
-
-    <div class="row">
-
+    <div class="row mt-3">
         {# Table of Contents #}
         <div class="col-sm-2">
-            <nav id="help-navbar" class="navbar navbar-dark bg-dark border rounded sticky-top flex-column align-items-stretch p-2 mt-5">
-
-
-                <nav class="nav nav-pills flex-column">
-                    <a class="nav-link" href="#overview">Overview</a>
-
-                    <a class="nav-link" href="#spells_toolbar">Spells Toolbar</a>
+            <div class="sticky-top" style="top: 4.5rem;">
+                <nav id="help-navbar" class="navbar navbar-dark bg-dark border rounded flex-column align-items-stretch p-2">
                     <nav class="nav nav-pills flex-column">
-                        <a class="nav-link ms-3" href="#spells_toolbar_display">Display</a>
-                        <a class="nav-link ms-3" href="#spells_toolbar_spells">Spells</a>
+                        <a class="nav-link" href="#overview">Overview</a>
+
+                        <a class="nav-link" href="#timeline">Timeline</a>
+                        <nav class="nav nav-pills flex-column">
+                            <a class="nav-link ms-3" href="#timeline_boss">Boss Lane</a>
+                            <a class="nav-link ms-3" href="#timeline_players">Player Names</a>
+                            <a class="nav-link ms-3" href="#timeline_ruler">Ruler</a>
+                        </nav>
+
+                        <a class="nav-link" href="#spells_toolbar">Spells Toolbar</a>
+                        <nav class="nav nav-pills flex-column">
+                            <a class="nav-link ms-3" href="#spells_toolbar_display">Display</a>
+                            <a class="nav-link ms-3" href="#spells_toolbar_spells">Spells</a>
+                        </nav>
+
+                        <a class="nav-link" href="#navigation">Navigation</a>
+
                     </nav>
-
-                    <a class="nav-link" href="#navigation">Navigation</a>
-
-                    <a class="nav-link" href="#timeline">Timeline</a>
-                    <nav class="nav nav-pills flex-column">
-                        <a class="nav-link ms-3" href="#timeline_boss">Boss Lane</a>
-                        <a class="nav-link ms-3" href="#timeline_players">Player Names</a>
-                        <a class="nav-link ms-3" href="#timeline_ruler">Ruler</a>
-                    </nav>
-
                 </nav>
-            </nav>
+            </div>
         </div>
+
 
         {# Main #}
         <div class="col">
 
+            <div class="border rounded bg-warning">
+                <p class="text-black h3 text-center">(🚧 Work in progress and subject to UI changes. 🚧)</p>
+            </div>
+
             <h1 id=overview>Overview:</h1>
-            <p>We have three main sections:</p>
-            <ul>
-                <li>Spell Selection</li>
-                <li>Navigation Bar</li>
-                <li>Timeline View</li>
-            </ul>
+
+            <p>After selecting the spec you want to examine you will see the top ranking logs for the first boss of the current tier.</p>
+
+            <p>Change to whichever boss is the most relevant one for you in the top right panel.<br>
+            Then you will notice three main sections:
+            The <a href="#timeline"><strong class="wow-class-mage">encounter timeline</a></strong>,
+            <a href="spells_toolbar"><strong class="wow-class-deathknight">spell selection</strong></a>
+            and the <a href="#navigation"><strong class="wow-class-rogue">navigation bar</strong></a>.</p>
+
             <img class="img-fluid" src="https://cdn.discordapp.com/attachments/886940165338169344/887028864755318874/unknown.png">
+
+            <hr>
+
+            <!-- Timeline -->
+            <h1 id="timeline">Timeline</h1>
+            <div class="row mb-3">
+                <div class="col">
+                    <p>
+                        On the timeline you will see the top logs for your chosen encounter and their casting patterns in a directly comparable fashion.<br>
+                        One log for every line.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Timeline: Spell -->
+            <div class="row mb-3">
+                <div class="col">
+                    <img class="img-fluid" src="https://i.imgur.com/sqREhiR.png">
+                </div>
+                <div class="col">
+                    <p>All instances of relevant spell casts are highlighted on the timeline, with up to three elements:</p>
+
+                    <strong><i class="fas fa-clock"></i> Cast Time</strong>
+                    <p>How far into the encounter this spell was cast.</p>
+
+                    <strong><i class="fas fa-stream"></i> Duration</strong>
+                    <p>How long the spell is active for <i class="text-muted">(when applicable)</i>.</p>
+
+                    <strong><i class="fas fa-hourglass"></i> Cooldown</strong>
+                    <p>How long the spell has been on cooldown.<br>
+                    <small class="text-muted">In some cases (for spells that have their cooldowns reduced by talents, legendaries or other effects) the value here is an estimate.</small>
+
+                    </p>
+                </div>
+
+            <!-- Timeline: Focus -->
+            <div class="row mb-3">
+                <div class="col">
+                    <h3>Spell selection</h3>
+                    <p><strong class="wow-class-rogue">Click</strong> Click on any ability on the timeline <strong class="wow-class-rogue">to focus</strong> it and all instances of the same spell.</p>
+                    <p><strong class="wow-class-mage">Ctrl+Click</strong> to <strong class="wow-class-mage">focus multiple spells</strong> at once.</p>
+                </div>
+                <div class="col">
+                    <img class="img-fluid" src="https://i.imgur.com/oYVTTCQ.gif">
+                </div>
+            </div>
+
+            <!-- Timeline: Navigation -->
+            <div class="row mb-3">
+                <div class="col">
+                    <h3>Timeline navigation</h3>
+                    <strong class="text-legendary">Click and Drag</strong> on the timeline-ticks or anywhere on the background <strong class="text-legendary">to move</strong>.
+                </div>
+                <div class="col">
+                    <img class="img-fluid" src="https://i.imgur.com/Kxbr3bv.gif">
+                </div>
+            </div>
+
+            <!-- Timeline: Boss -->
+            <h3 id="timeline_boss">Boss Lane</h3>
+            <div class="row mb-3">
+                <div class="col-7">
+                    <img class="img-fluid" src="https://i.imgur.com/2jklPmA.png">
+                </div>
+
+                <div class="col-5">
+                    <div class="card text-dark bg-info">
+                        <div class="card-body">
+                            <h5 class="card-text"><strong><i class="fas fa-info-circle"></i> The Boss's Casts are taken from the first lane on the timeline!</strong></h5>
+                        </div>
+                    </div>
+
+                    <p>
+                        Some encounters change based on push timings, or specific strat executations.<br>
+                        In these instances the exact boss lane timings might be inaccurate from log to log.
+                    </p>
+                    <p>
+                        Keep that in mind when you ask yourself why some players use their CD's a few seconds before or after an important ability.
+                        This can most likely be due to that guild getting said boss ability a few seconds off from what that particular fight shown in the boss lane.
+                    </p>
+                </div>
+
+            </div> {# end row #}
+
+
+            <h3 id="timeline_players">Player Names</h3>
+            <div class="row mb-3">
+                <div class="col">
+                    <p>Hover over the log lane number on the left to reveal the player’s name.<br>
+                    From there you can click on their name to open the corresponding log on warcraftlogs.</p>
+                    <img src="https://i.imgur.com/RPZhdDx.gif" width="500px">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col">
+                    <h3 id="timeline_ruler">Timeline Ruler</h3>
+                    <p>To help you check through timings across many parses, not just the first few, we added a draggable bar that will highlight the exact time slice you are looking at across all logs.</p>
+                </div>
+                <div class="col">
+                    <img src="https://i.imgur.com/ak43Ln0.gif" width="300px">
+                </div>
+            </div>
 
             <hr>
 
@@ -61,20 +175,21 @@
 
             <!-- DISPLAY -->
             <h3 id=spells_toolbar_display>Display-Group</h3>
-            <div class="row">
+            <div class="row mb-3">
                 <div class="col">
                     <p>the Display Group offers you three buttons to customize the overall view:</p>
 
                     <strong><i class="fas fa-clock"></i> Cast Time</strong>
-                    <p>show/hide the time stamp for each cast</p>
+                    <p>Show/Hide the time stamp for each cast</p>
 
                     <strong><i class="fas fa-stream"></i> Duration</strong>
-                    <p>show/hide for how long each cast was active.<br>
-                    eg.: Healing Tide Totem is active for 10sec.
+                    <p>Show/Hide for how long each cast was active.<br>
+                        <small class="text-muted">eg.: Healing Tide Totem is active for 10sec.</small>
+                    <p>
                     </p>
 
                     <strong><i class="fas fa-hourglass"></i> Cooldown</strong>
-                    <p>show/hide spell cooldowns.<br>
+                    <p>Show/Hide spell cooldowns.<br>
                     Toggle the display for the cooldown-bars, that indicate for how long the spell was on cooldown.
                     This can be useful to see if players decided to hold a spell, or used it right as it came of cooldown.
                     </p>
@@ -88,10 +203,9 @@
             <hr>
 
             <!-- SPELLS -->
-            <h3 id=spells_toolbar_spells>Spells/Consumables/Items:</h3>
-            <div class="row">
-                <p>next you have icons for each spell/consumable/trinket that has been found in those logs.</p>
-
+            <h3 id=spells_toolbar_spells>Spells/Consumables/Items</h3>
+            <div class="row mb-3">
+                <p>The next icon you will see is one for each spell/consumable/trinket that has been found in the top 50 logs.</p>
 
                 <div class="col">
                     <p>Click on any spell to show/hide it.<br>
@@ -100,15 +214,15 @@
                 </div>
 
                 <div class="col">
-                    <p>These are roughly split into 4 categories:</p>
+                    <p>These are most often split into 4 categories:</p>
                     <strong>Boss:</strong>
-                    <p>abilities used by the encounter</p>
+                    <p>Abilities used by the encounter</p>
                     <strong>Spec:</strong>
-                    <p>spells cast by the player(s)</p>
+                    <p>Spells cast by the player(s)</p>
                     <strong>Potions:</strong>
-                    <p>pots and consumables</p>
+                    <p>Pots and consumables</p>
                     <strong>Trinkets:</strong>
-                    <p>on-use trinkets and similar items</p>
+                    <p>On-use trinkets and similar items</p>
                     <p></p>
 
                     <div class="card text-dark bg-warning" style="max-width: 20rem;">
@@ -116,7 +230,8 @@
                             <h5 class="card-title"><strong>⚠️ Not every ability is listed ⚠️</strong></h5>
                             <p class="card-text">
                                 All of tracked abilities are manual added to a whitelist.<br>
-                                If there are any missing spells you would like to see added, please feel free to reach out via discord.
+                                If there are any missing spells you would like to see added, please feel free to reach out on 
+                                <a href="{{config.DISCORD_LINK}}"><strong class="text-black">👉 discord</strong></a>.
                             </p>
                         </div>
                     </div>
@@ -128,30 +243,24 @@
             <!-- NAV -->
             <h1 id="navigation">Navigation</h1>
 
-            <div class="row">
+            <div class="row mb-3">
                 <div class="col-4">
                     <strong>A: Specs</strong>
-                    <p>show a different spec</p>
+                    <p>Choose a different spec</p>
                 </div>
 
                 <div class="col-4">
                     <strong>B: Bosses</strong>
-                    <p>swap between different bosses</p>
+                    <p>Swap between different bosses of the current raid tier</p>
                 </div>
                 <div class="col-4">
                     <strong><i class="fas fa-home"></i> C: Home</strong>
-                    <p>go back to the start page</p>
+                    <p>Go back to the start page</p>
                 </div>
             </div>
             <img class="img-fluid" src="https://cdn.discordapp.com/attachments/886940165338169344/887143350128492574/unknown.png">
 
             <hr>
-
-            <!-- Timeline -->
-            <h1 id="timeline">Timeline</h1>
-            <h3 id="timeline_boss">Boss Lane</h3>
-            <h3 id="timeline_players">Player Names</h3>
-            <h3 id="timeline_ruler">Timeline Ruler</h3>
 
 
         </div> {# end main-col #}
@@ -160,7 +269,6 @@
 
 
 {% block footer %}
-
 <div class="flex-row p-1 mt-5 ml-5">
     <div class="col">
         <p id=copyright class="text-muted">
@@ -172,8 +280,8 @@
         </p>
     </div>
 </div>
-
 {% endblock %}
+
 
 {% block scripts %}
 {{ super() }}
@@ -181,7 +289,8 @@
 {# data-bs-spy="scroll" data-bs-target="#help-navbar" data-bs-offset="0" #}
 <script type="text/javascript">
     var scrollSpy = new bootstrap.ScrollSpy(document.body, {
-        target: '#help-navbar'
+        target: '#help-navbar',
+        offset: 10,
     })
 </script>
 {% endblock %}
