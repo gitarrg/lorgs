@@ -1,6 +1,6 @@
 # Lorrgs
 
-simple webapp to analyse and compare cooldown usage in top logs by spec/comp.
+simple webapp to analyze and compare cooldown usage in top logs by spec/comp.
 
 ## Link
 
