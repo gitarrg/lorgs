@@ -18,11 +18,17 @@ __pycache__/
 # Ignored by the build system
 /setup.cfg
 
+# pip install dir used in cloudbuild
+lib
 
 # config
 .env
 venv/
-offline_files
 test
 
+# various config/project files
+docker-*
+*.yaml
+*.json
+*sublime*
 

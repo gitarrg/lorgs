@@ -1,6 +1,5 @@
 """Views/Routes for the UI/Frontend."""
 
-
 import re
 
 # IMPORT THIRD PARTY LIBS
@@ -11,10 +10,10 @@ from lorgs import data
 from lorgs import forms
 from lorgs import utils
 from lorgs.cache import cache
-from lorgs.logger import logger
+from lorgs.models import encounters
 from lorgs.models import warcraftlogs_comps
-from lorgs.models import warcraftlogs_ranking
 from lorgs.models import warcraftlogs_report
+from lorgs.models.specs import WowSpec
 
 
 blueprint = flask.Blueprint(
@@ -24,18 +23,6 @@ blueprint = flask.Blueprint(
     static_folder="static",
     static_url_path="/"
 )
-
-
-SHARED_DATA = {}
-
-
-@blueprint.app_context_processor
-def add_shared_variables():
-    config = flask.current_app.config
-    return {
-        # "wow_data": wow_data,
-        "GOOGLE_ANALYTICS_ID": config["GOOGLE_ANALYTICS_ID"],
-    }
 
 
 ################################################################################
@@ -60,6 +47,7 @@ def index():
     kwargs["comps"] = warcraftlogs_comps.CompConfig.objects
     return flask.render_template("index.html", **kwargs)
 
+
 @blueprint.get("/help")
 @cache.cached()
 def help():
@@ -74,41 +62,26 @@ def help():
 ################################################################################
 
 @blueprint.route("/spec_ranking/<string:spec_slug>/<string:boss_slug>")
-@cache.cached(timeout=60)
+@cache.cached()
 def spec_ranking(spec_slug, boss_slug):
 
-    # Inputs
-    # limit = flask.request.args.get("limit", default=50, type=int)
-    spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(boss_slug=boss_slug, spec_slug=spec_slug)
-    if not (spec_ranking.boss and spec_ranking.spec):
-        flask.abort(404, description="Invalid Spec or Boss")
+    spec = WowSpec.get(full_name_slug=spec_slug)
+    boss = encounters.RaidBoss.get(name_slug=boss_slug)
 
-    # preprocess some data
-    spells_used = utils.flatten(player.spells_used for player in spec_ranking.players)
-    spells_used = utils.uniqify(spells_used, key=lambda spell: spell)
-    timeline_duration = max(fight.duration for fight in spec_ranking.fights) if spec_ranking.fights else 0
-
-
-    boss_player = None
-    for fight in spec_ranking.fights:
-        if fight.boss and fight.boss.casts:
-            boss_player = fight.boss
-            break
+    if not spec:
+        flask.abort(404, description="Invalid Spec")
+    if not boss:
+        flask.abort(404, description="Invalid Boss")
 
     # Return
     kwargs = {}
-    kwargs["spec"] = spec_ranking.spec
-    kwargs["boss"] = spec_ranking.boss
-
-    kwargs["players"] = spec_ranking.players
-    kwargs["boss_player"] = boss_player
-    kwargs["all_spells"] = spells_used
-    kwargs["timeline_duration"] = timeline_duration
-
+    kwargs["spec"] = spec
+    kwargs["boss"] = boss
+    kwargs["spells"] = spec.spells
     kwargs["roles"] = data.ROLES
-    kwargs["bosses"] = spec_ranking.boss.zone.bosses
-
+    kwargs["bosses"] = boss.zone.bosses
     return flask.render_template("spec_ranking.html", **kwargs)
+
 
 ################################################################################
 #

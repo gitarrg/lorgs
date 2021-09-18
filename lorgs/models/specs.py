@@ -141,7 +141,7 @@ class WowSpell(base.Model):
 
     def as_dict(self):
 
-        return {
+        d = {
             "spell_id": self.spell_id,
             "duration": self.duration,
             "cooldown": self.cooldown,
@@ -152,6 +152,13 @@ class WowSpell(base.Model):
             "color": self.color,
             "show": self.show,
         }
+
+        if self.group:
+            d["group"] = {}
+            d["group"]["name"] = self.group.name
+            d["group"]["full_name"] = self.group.full_name
+
+        return d
 
     @property
     def icon_path(self):

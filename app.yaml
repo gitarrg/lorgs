@@ -1,11 +1,14 @@
 # Config for Google App Engine
 
 
-# >>> gcloud app deploy --project lorrgs
-# >>> gcloud app deploy --project lorrgs --no-promote
+# >>> gcloud app deploy --project lorrgs -q
+# >>> gcloud app deploy --project lorrgs -q --no-promote
 
 service: default
 runtime: python39
+
+default_expiration: "1h"  # static files cache
+
 
 
 entrypoint: >
@@ -21,9 +24,9 @@ includes:
   - deploy_variables.yaml
 
 handlers:
+
   - url: /static
     static_dir: lorgs/static
 
   - url: /.*
     script: auto
-

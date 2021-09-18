@@ -34,10 +34,21 @@ $classes: (
 
     "other": #888,
     "boss": hsl(0, 60%, 55%),
+
+    "tank": #1980e0,
+    "heal": #4dcf29,
+    "mdps": #C41E3A,
+    "rdps": #ffb405,
 );
 
 
 @each $name, $color in $classes {
+
+    .wow-#{$name} {color: $color;}
+    .wow-bg-#{$name} {background-color: $color;}
+    .wow-border-#{$name} {border: 1px solid $color;}
+
+    // old..  should remove the "class"-part
     .wow-class-#{$name} {color: $color;}
     .wow-class-bg-#{$name} {background-color: $color;}
     .wow-class-border-#{$name} {border: 1px solid $color;}
