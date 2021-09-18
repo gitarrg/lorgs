@@ -1,27 +1,29 @@
 steps:
 
 # Build Artifacts
-- name: create_artifact_dir
+- name: "python:3"
   entrypoint: 'mkdir'
   args: ["-p", "lorgs/static/_generated"]
   waitFor: ['-']
 
-- name: install_build_reqs
+- name: "python:3"
   id: install_build_reqs
   entrypoint: python3
-  args: ["-m", "pip", "install", "-t", ".", "pysass", "jsmin"]
+  args: ["-m", "pip", "install", "-t", "/workspace/lib", "pysass", "jsmin"]
 
-- name: 'build css'
+- name: "python:3"
   entrypoint: python3
   args: ["-m", "pysassc", "--style=compact", "lorgs/templates/scss/main.scss", "lorgs/static/_generated/style.css"]
+  env: ["PYTHONPATH=/workspace/lib"]
   waitFor:
-    - install_build_reqs
+  - install_build_reqs
 
-- name: "mimify"
+- name: "python:3"
   entrypoint: python3
-  args: ["lorgs/scripts/mimify.py"]
+  args: ["scripts/minify.py"]
+  env: ["PYTHONPATH=/workspace/lib"]
   waitFor:
-    - install_build_reqs
+  - install_build_reqs
 
 
 # add config
