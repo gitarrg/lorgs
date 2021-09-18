@@ -11,9 +11,7 @@ class Fight extends Konva.Group {
         this.duration = fight_data.duration / 1000; // ms to s
         this.duration = Math.ceil(this.duration);
 
-
         this.actors = []
-
         this.clip({
             x: 0,
             y: 1,
@@ -26,7 +24,7 @@ class Fight extends Konva.Group {
         this.background.name("fight_background")
 
         this.background_fill = new Konva.Rect({
-            height: LINE_HEIGHT+1,
+            height: LINE_HEIGHT,
             // width: 20,
             x: -0.5,
             y: 0.5,
@@ -56,7 +54,7 @@ class Fight extends Konva.Group {
 
         // update background
         this.background_fill.width(w)
-        this.clipWidth(w+1)
+        this.clipWidth(w-1) // clip content to show background stroke
 
         // update actors
         this.actors.forEach(actor => {actor.update()})
