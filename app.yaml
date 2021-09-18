@@ -7,6 +7,9 @@
 service: default
 runtime: python39
 
+default_expiration: "1h"  # static files cache
+
+
 
 entrypoint: >
   gunicorn
@@ -21,9 +24,9 @@ includes:
   - deploy_variables.yaml
 
 handlers:
+
   - url: /static
     static_dir: lorgs/static
 
   - url: /.*
     script: auto
-

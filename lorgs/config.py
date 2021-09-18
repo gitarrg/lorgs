@@ -35,7 +35,6 @@ class DevelopmentConfig(BaseConfig):
     CACHE_NO_NULL_WARNING = True
 
 
-
 ################################################################################
 
 
