@@ -11,6 +11,7 @@ from google.cloud import tasks_v2
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import data
+from lorgs import utils
 from lorgs.cache import cache
 from lorgs.logger import logger
 from lorgs.models import specs
@@ -55,9 +56,9 @@ def spells():
     spells = specs.WowSpell.all
 
     # filter by group
-    group = flask.request.args.get("group", default="", type=str)
-    if group:
-        spells = [spell for spell in spells if spell.group and spell.group.full_name_slug == group.lower()]
+    groups = flask.request.args.getlist("group") #, default="", type=str)
+    if groups:
+        spells = [spell for spell in spells if spell.group and spell.group.full_name_slug in groups]
 
     return {spell.spell_id: spell.as_dict() for spell in spells}
 
@@ -69,6 +70,7 @@ def spells():
 ###############################################################################
 
 @blueprint.route("/spec_ranking/<string:spec_slug>/<string:boss_slug>")
+@cache.cached()
 def spec_ranking(spec_slug, boss_slug):
     spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(boss_slug=boss_slug, spec_slug=spec_slug)
     # players = [player.as_dict() for player in spec_ranking.players]
