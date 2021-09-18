@@ -62,13 +62,21 @@ class TimelineMarker extends Konva.Group {
         this.on('mouseover', () => {this.hover(true)});
         this.on('mouseout', () => {this.hover(false)});
 
-        this.on("mousedown", (e) => {
+        this.on("mousedown contextmenu", (e) => {
 
             e.evt.preventDefault();
             if (e.evt.button === 2) {
-                console.log("removing marker")
-                this.remove()
+
+                let stage = this.getStage()
+
+                if (stage && stage.overlay_layer) {
+                    console.log("removing marker")
+                    this.remove()
+                    stage.overlay_layer.batchDraw()
+                }
             }
+
+
         })
     }
 
@@ -98,6 +106,7 @@ class TimelineMarker extends Konva.Group {
     hover(state) {
         this.line.strokeWidth(state ? 5 : 2)
         const stage = this.getStage();
+        if (!stage) { return }
         stage.container().style.cursor = state ? "w-resize" : "default";
 
         this.handle.fill(state ? this.color_hover : this.color)
@@ -156,6 +165,7 @@ class TimelineRuler extends Konva.Group {
             strokeWidth: 0.5,
             fill: "white",
             transformsEnabled: "position",
+            visible: false,
         })
 
         this.bbox = new Konva.Rect({
@@ -262,9 +272,9 @@ class TimelineRuler extends Konva.Group {
             this.bbox.width(this.duration * this.stage.scale_x)
 
             this.markers.forEach(marker => marker.update())
-
-
         }
+
+        this.update_crosshair()
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -272,12 +282,13 @@ class TimelineRuler extends Konva.Group {
 
     update_crosshair() {
 
-        if (this) {
-            let pointer = this.stage.getPointerPosition();
+        if (!this) { return }
 
-            // console.log("mousemove", pointer)
-            this.mouse_crosshair_y.x(pointer.x - this.stage.x())
-        }
+        let pointer = this.stage.getPointerPosition();
+        if (!pointer) { return }
+
+        this.mouse_crosshair_y.x(pointer.x - this.stage.x())
+        this.stage.overlay_layer.batchDraw()
     }
 
     add_marker() {

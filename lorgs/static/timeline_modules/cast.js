@@ -21,7 +21,6 @@ class Cast extends Konva.Group {
         // Spell Info
         this.spell_id = cast_data.spell_id;
         this.timestamp = cast_data.timestamp / 1000;
-        // this.listening(true);
     }
 
     create() {
@@ -188,10 +187,15 @@ class Cast extends Konva.Group {
         this.hovering = state;
         this.update()
 
+        // update group
         const casts_group = this.getParent();
         casts_group.cache()  // refresh cache for this group
-        // console.log()
 
+        // update layer
+        let layer = this.getLayer()
+        layer.batchDraw()
+
+        // update cursor
         const stage = this.getStage()
         stage.container().style.cursor = this.hovering ? "pointer" : "grab";
 

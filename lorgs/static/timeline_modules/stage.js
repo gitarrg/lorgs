@@ -3,6 +3,10 @@
 // global stage pointer.. i know its ugly.
 var STAGE;
 
+// for performance
+Konva.autoDrawEnabled = false;
+
+
 
 class Stage extends Konva.Stage{
 
@@ -36,6 +40,7 @@ class Stage extends Konva.Stage{
         // bool: used to indicate if objects need to be rescaled
         this.zoom_changed = true; // true for initial load
 
+        ////////////////////////////////
         // create layers
         this.back_layer = new Konva.Layer({listening: false})
         this.add(this.back_layer);
@@ -51,30 +56,29 @@ class Stage extends Konva.Stage{
 
         // this.players = []
         this.ruler = new TimelineRuler(this);
-
         this.back_layer.add(this.ruler)
 
         this.longest_fight = 0;
 
+
+        // update canvas on window resize
+        window.addEventListener("resize", () => {
+            this.width(options.container.offsetWidth)
+        })
+
         this.on("dragmove",  this.on_dragmove)
         this.on("wheel",  this.on_wheel)
 
-
-        this.on('contextmenu', (e) => {
-            e.evt.preventDefault();
-        });
-
-        // this.on("mousedown", (e) => {
-        //     console.log("clicked stage")
-        // })
-
+        this.on("contextmenu", this.contextmenu)
     }
+
 
     ////////////////////////////////////////////////////////////////////////////
     // CREATION AND DRAW
     //
-    create_ctx_menu() {
-
+    contextmenu(event) {
+        console.log("stage: skipped contextmenu")
+        event.evt.preventDefault();
     }
 
     create() {
@@ -114,8 +118,6 @@ class Stage extends Konva.Stage{
 
     update() {
 
-        Konva.autoDrawEnabled = false;
-
         // ruler
         this.ruler.update()
 
@@ -124,14 +126,15 @@ class Stage extends Konva.Stage{
             fight.update();
         });
 
-        Konva.autoDrawEnabled = true;
-        this.main_layer.batchDraw();
-
         this.zoom_changed = false;
+        this.batchDraw();
+    }
 
-        // this.main_layer.cache()
+    draw() {
+
 
     }
+
 
     update_has_selection() {
         this.has_selection = this.spells.some(spell => spell.selected)
@@ -149,6 +152,7 @@ class Stage extends Konva.Stage{
 
     on_dragmove() {
         this._limit_movement()
+        this.batchDraw();
     }
 
     on_wheel(event) {
