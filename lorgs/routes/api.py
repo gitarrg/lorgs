@@ -42,6 +42,7 @@ def ping():
 ###############################################################################
 
 @blueprint.get("/spell/<int:spell_id>")
+@cache.cached()
 def spell(spell_id):
     spell = specs.WowSpell.get(spell_id=spell_id)
     if not spell:
@@ -50,7 +51,7 @@ def spell(spell_id):
 
 
 @blueprint.get("/spells")
-@cache.cached()
+@cache.cached(query_string=True)
 def spells():
 
     spells = specs.WowSpell.all
