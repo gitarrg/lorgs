@@ -5,7 +5,8 @@ cached-property==1.5.2
 python-dotenv==0.17.1
 
 # to build scss
-pysass==0.1.0
+# pysass==0.1.0
+# jsmin==3.0.0
 
 # Quart==0.15
 Flask-WTF==0.14.3
@@ -14,7 +15,7 @@ Flask==2.0
 flask[async]==2.0
 flask_caching
 
-uvicorn[standard]==0.13
+# uvicorn[standard]==0.13
 gunicorn==20.1.0
 
 
