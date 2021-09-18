@@ -155,8 +155,12 @@ class Player(BaseActor):
         return {
             "name": self.name,
             "total": self.total,
+            "total_fmt": utils.format_big_number(self.total),
+
             "source_id": self.source_id,
             "spec_slug": self.spec_slug,
+            "class_slug": self.spec.wow_class.name_slug,
+
             "casts": [cast.as_dict() for cast in self.casts]
         }
 
@@ -263,10 +267,10 @@ class Boss(BaseActor):
         return "common"
 
     def as_dict(self):
-        return {
-            "boss_id": self.boss_id,
-            "casts": [cast.as_dict() for cast in self.casts]
-        }
+        d = self.raid_boss.as_dict()
+        d["zone"] = self.raid_boss.zone.as_dict()
+        d["casts"] = [cast.as_dict() for cast in self.casts]
+        return d
 
     ##########################
     # Methods

@@ -53,6 +53,10 @@ class RaidBoss(base.Model):
         # we track them as "spells" for now
         self.spells = []
 
+        # alias to match the Spec Interface
+        self.full_name = self.name
+        self.full_name_slug = self.name_slug
+
     def __repr__(self):
         return f"<RaidBoss(id={self.id} name={self.name})>"
 
@@ -60,7 +64,7 @@ class RaidBoss(base.Model):
         return {
             "id": self.id,
             "name": self.name,
-            # "name_slug": self.name_slug,
+            "name_slug": self.name_slug,
         }
 
     ##########################
@@ -91,5 +95,6 @@ class RaidBoss(base.Model):
 
         # spell instance used for UI things
         spell = WowSpell(**kwargs)
+        spell.group = self
         spell.spec = self
         self.spells.append(spell)

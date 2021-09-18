@@ -22,4 +22,3 @@ function show(element, display=true) {
 function hide(element) {
     show(element, false);
 }
-
