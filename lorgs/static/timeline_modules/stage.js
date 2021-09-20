@@ -1,11 +1,9 @@
 
-
 // global stage pointer.. i know its ugly.
 var STAGE;
 
 // for performance
 Konva.autoDrawEnabled = false;
-
 
 
 class Stage extends Konva.Stage{
@@ -23,16 +21,15 @@ class Stage extends Konva.Stage{
         options.draggable = true
         options.strokeScaleEnabled = false
         super(options);
-        // this.transformsEnabled("position");
 
-        // this.spec_slug = "";
-        // this.boss_slug = "";
+        STAGE = this; // global pointer :/
 
+        /////////////////////////////////
+        // custom attributes
         this.scale_x = 4;
         this.fights = []
         this.spells = []
-
-        STAGE = this;
+        this.longest_fight = 0;
 
         // bool: true if any spell is selected
         this.has_selection = false;
@@ -54,12 +51,9 @@ class Stage extends Konva.Stage{
         this.debug_layer = new Konva.Layer()
         this.add(this.debug_layer);
 
-        // this.players = []
+
         this.ruler = new TimelineRuler(this);
         this.back_layer.add(this.ruler)
-
-        this.longest_fight = 0;
-
 
         // update canvas on window resize
         window.addEventListener("resize", () => {this.update_size()})
@@ -109,9 +103,6 @@ class Stage extends Konva.Stage{
         this.ruler.create();
         console.timeEnd("ruler create")
 
-        // this.create_debug_layer()
-        // var marker = new TimelineMarker();
-        // this.debug_layer.add(marker)
     }
 
     update() {
@@ -154,37 +145,9 @@ class Stage extends Konva.Stage{
 
     on_wheel(event) {
 
-
         // only zoom on shift/ctrl + scroll
         if (! (event.evt.shiftKey || event.evt.ctrlKey)) { return;}
-
         event.evt.preventDefault();
-
-        ////////////////////////////////////
-        // scroll fast mode
-
-        /*
-        if (this.fast_mode_timer) {
-            clearTimeout(this.fast_mode_timer)
-        }
-
-        this.scroll_settings = this.scroll_settings || {
-            display_cooldown: this.display_cooldown,
-            display_duration: this.display_duration,
-            display_casttime: this.display_casttime,
-            display_casticon: this.display_casticon,
-        }
-
-        // enable fast mode
-        this.display_casttime = false;
-        this.display_casticon = false;
-        this.fast_mode_timer = setTimeout(() => {
-            this.display_casticon = this.scroll_settings.display_casticon
-            this.display_casttime = this.scroll_settings.display_casttime
-            this.scroll_settings = undefined
-            this.update();
-        }, 100);
-        */
 
         ////////////////////////////////////
         // update scale
@@ -242,16 +205,6 @@ class Stage extends Konva.Stage{
     // LOAD
     //
 
-    // async load_spell_icons() {
-    //     //////////////////////////
-    //     // Load Images
-    //     var promisses = [];
-    //     this.spells.forEach(spell => {
-    //         promisses.push(spell.load_icon())
-    //     })
-    //     await Promise.all(promisses); // wait for all the images to be loaded
-    // }
-
     set_spells(spells_data) {
 
         // create Spell Instances
@@ -285,7 +238,5 @@ class Stage extends Konva.Stage{
         })
         console.log("num stage objects:", n)
     }
-
-
 }
 
