@@ -245,7 +245,8 @@ SHAMAN_RESTORATION.add_spell(  spell_id=98008,  cooldown=180, duration=6,  color
 SHAMAN_RESTORATION.add_spell(  spell_id=16191,  cooldown=180, duration=8,  color=COL_MANA,  name="Mana Tide Totem",                 icon="spell_frost_summonwaterelemental.jpg",      show=False)
 SHAMAN_RESTORATION.add_spell(  spell_id=207399, cooldown=300, duration=30, color="#d15a5a", name="Ancestral Protection Totem",      icon="spell_nature_reincarnation.jpg")
 SHAMAN_RESTORATION.add_spell(  spell_id=114052, cooldown=180, duration=15,                  name="Ascendance",                      icon="spell_fire_elementaldevastation.jpg")
-SHAMAN_RESTORATION.add_spell(  spell_id=198838, cooldown=60, duration=15, color="#a47ea6",  name="Earthen Wall Totem",              icon="spell_nature_stoneskintotem.jpg",           show=False)
+SHAMAN_RESTORATION.add_spell(  spell_id=198838, cooldown=60, duration=15,  color="#a47ea6", name="Earthen Wall Totem",              icon="spell_nature_stoneskintotem.jpg",           show=False)
+SHAMAN_RESTORATION.add_spell(  spell_id=157153, cooldown=30, duration=15,  color="#96d0eb", name="Cloudburst Totem",                icon="ability_shaman_condensationtotem.jpg",      show=False)
 
 #################################################################################################################################################################################################
 #   Mage
