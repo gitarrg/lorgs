@@ -7,7 +7,7 @@ function toMMSS(seconds) {
 
 function clamp(num, min, max) {
   return Math.min(Math.max(num, min), max);
-};
+}
 
 
 // show/hide an element (aka jquery.. but js)

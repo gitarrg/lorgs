@@ -4,6 +4,7 @@ __pycache__/
 *.*~
 *~
 *.sublime-workspace
+*.scannerwork
 
 _build
 _generated
