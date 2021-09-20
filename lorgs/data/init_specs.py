@@ -223,6 +223,7 @@ DEATHKNIGHT_BLOOD.add_spell(   spell_id=49028,  cooldown=120, duration=8,  color
 DEATHKNIGHT_BLOOD.add_spell(   spell_id=55233,  cooldown=90,  duration=10,                  name="Vampiric Blood",                  icon="spell_shadow_lifedrain.jpg")
 DEATHKNIGHT_UNHOLY.add_spell(  spell_id=42650,  cooldown=240, duration=30,                  name="Army of the Dead",                icon="spell_deathknight_armyofthedead.jpg")
 DEATHKNIGHT_UNHOLY.add_spell(  spell_id=275699, cooldown=60,  duration=15,                  name="Apocalypse",                      icon="artifactability_unholydeathknight_deathsembrace.jpg")
+DEATHKNIGHT_UNHOLY.add_spell(  spell_id=63560,  cooldown=60,  duration=15,                  name="Dark Transformation",             icon="achievement_boss_festergutrotface.jpg")
 DEATHKNIGHT_FROST.add_spell(   spell_id=51271,  cooldown=60,  duration=12,                  name="Pillar of Frost",                 icon="ability_deathknight_pillaroffrost.jpg",    show=False)
 DEATHKNIGHT_FROST.add_spell(   spell_id=46585,  cooldown=120, duration=60, color="#c7ba28", name="Raise Dead",                      icon="inv_pet_ghoul.jpg")
 DEATHKNIGHT_FROST.add_spell(   spell_id=47568,  cooldown=120, duration=20, color="#88e8f2", name="Empower Rune Weapon",             icon="inv_sword_62.jpg")
@@ -233,8 +234,10 @@ DEATHKNIGHT_FROST.add_spell(   spell_id=279302, cooldown=180, duration=10,      
 #   Shaman
 SHAMAN.add_spell(              spell_id=320674, cooldown=90,               color=COL_VENTR, name="Chain Harvest",                   icon="ability_revendreth_shaman.jpg",             show=False)
 SHAMAN.add_spell(              spell_id=328923, cooldown=120, duration=3,  color=COL_NF,    name="Fae Transfusion",                 icon="ability_ardenweald_shaman.jpg",             show=True)
+SHAMAN.add_spell(              spell_id=326059, cooldown=45,               color=COL_NECRO, name="Primordial Wave",                 icon="ability_maldraxxus_shaman.jpg",             show=False)
 SHAMAN_ELEMENTAL.add_spell(    spell_id=191634, cooldown=60,               color="#00bfff", name="Stormkeeper",                     icon="ability_thunderking_lightningwhip.jpg")
-SHAMAN_ELEMENTAL.add_spell(    spell_id=198067, cooldown=150,              color="#ffa500", name="Fire Elemental",                  icon="spell_fire_elemental_totem.jpg")
+SHAMAN_ELEMENTAL.add_spell(    spell_id=198067, cooldown=150, duration=30, color="#ffa500", name="Fire Elemental",                  icon="spell_fire_elemental_totem.jpg")
+SHAMAN_ELEMENTAL.add_spell(    spell_id=192249, cooldown=150, duration=30, color="#64b8d9", name="Storm Elemental",                 icon="inv_stormelemental.jpg")
 SHAMAN_ENHANCEMENT.add_spell(  spell_id=114051, cooldown=180,                               name="Ascendance",                      icon="spell_fire_elementaldevastation.jpg")
 SHAMAN_ENHANCEMENT.add_spell(  spell_id=51533,  cooldown=120,                               name="Feral Spirit",                    icon="spell_shaman_feralspirit.jpg")
 SHAMAN_RESTORATION.add_spell(  spell_id=108280, cooldown=180, duration=10,                  name="Healing Tide Totem",              icon="ability_shaman_healingtide.jpg")
@@ -242,7 +245,8 @@ SHAMAN_RESTORATION.add_spell(  spell_id=98008,  cooldown=180, duration=6,  color
 SHAMAN_RESTORATION.add_spell(  spell_id=16191,  cooldown=180, duration=8,  color=COL_MANA,  name="Mana Tide Totem",                 icon="spell_frost_summonwaterelemental.jpg",      show=False)
 SHAMAN_RESTORATION.add_spell(  spell_id=207399, cooldown=300, duration=30, color="#d15a5a", name="Ancestral Protection Totem",      icon="spell_nature_reincarnation.jpg")
 SHAMAN_RESTORATION.add_spell(  spell_id=114052, cooldown=180, duration=15,                  name="Ascendance",                      icon="spell_fire_elementaldevastation.jpg")
-SHAMAN_RESTORATION.add_spell(  spell_id=198838, cooldown=60, duration=15, color="#a47ea6",  name="Earthen Wall Totem",              icon="spell_nature_stoneskintotem.jpg",           show=False)
+SHAMAN_RESTORATION.add_spell(  spell_id=198838, cooldown=60, duration=15,  color="#a47ea6", name="Earthen Wall Totem",              icon="spell_nature_stoneskintotem.jpg",           show=False)
+SHAMAN_RESTORATION.add_spell(  spell_id=157153, cooldown=30, duration=15,  color="#96d0eb", name="Cloudburst Totem",                icon="ability_shaman_condensationtotem.jpg",      show=False)
 
 #################################################################################################################################################################################################
 #   Mage

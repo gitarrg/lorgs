@@ -153,8 +153,12 @@ class Stage extends Konva.Stage{
     }
 
     on_wheel(event) {
-        event.evt.preventDefault();
 
+
+        // only zoom on shift/ctrl + scroll
+        if (! (event.evt.shiftKey || event.evt.ctrlKey)) { return;}
+
+        event.evt.preventDefault();
 
         ////////////////////////////////////
         // scroll fast mode
