@@ -242,7 +242,7 @@ class Scene {
         this.fights_data = fights_data // await
         this.spells_data = spells_data // await
 
-        this.fights_data = this.fights_data.slice(0, 10)
+        // this.fights_data = this.fights_data.slice(0, 10)
 
         console.timeEnd("requests")
 
