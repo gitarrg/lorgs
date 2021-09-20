@@ -33,8 +33,6 @@ async function load_fights(spec_slug, boss_slug) {
     }
     let data = await response.json();
     return data.fights;
-    // update scene
-    // this.fights = [];
 }
 
 
@@ -113,7 +111,6 @@ class Scene {
         this.boss_slug = args.boss_slug;
 
         // request results
-        // this.fights_data;
         this.players = []
 
         this.all_spells = {}
@@ -134,8 +131,6 @@ class Scene {
     // loading
 
     init_players() {
-        // this.player_names_container = document.getElementByid()
-
 
         // collect players
         this.players = []
@@ -157,7 +152,6 @@ class Scene {
             }) // for player
         }) // for fight
 
-        // this.players = [this.players[0], this.players[1]]
         // create html elements
         this.players.forEach(player => {
             let player_div = player.type == "boss" ? create_boss_name_div(player) : create_player_name_div(player)
@@ -174,24 +168,6 @@ class Scene {
     }
 
     init_spells() {
-
-
-        // let groups = [this.spec_slug, this.boss_slug, ]
-        // this.spells_data = await load_spells(groups);
-
-        // this.all_spells = 
-
-        /*
-        // get a unique list of groups (compared by group name)
-        let spell_groups = [...new Map(this.all_spells.map(spell => [spell.group.full_name, spell.group])).values()];
-
-        // get the spells for each group
-        spell_groups.forEach(group => {
-            group.spells = this.all_spells.filter(spell => spell.group.full_name == group.full_name)
-        })
-        console.log(spell_groups)
-        */
-
 
         // setup spell buttons
         this.spells_data.forEach(spell => {
@@ -265,6 +241,9 @@ class Scene {
         ])
         this.fights_data = fights_data // await
         this.spells_data = spells_data // await
+
+        this.fights_data = this.fights_data.slice(0, 10)
+
         console.timeEnd("requests")
 
         this.init_players()
@@ -280,19 +259,14 @@ class Scene {
 
 
         console.time("stage create")
-        await this.stage.create();
+        this.stage.create();
         console.timeEnd("stage create")
         console.time("stage update")
-        await this.stage.update();
+        this.stage.update();
         console.timeEnd("stage update")
 
-
         // Update Size
-        // this.stage.width(window.innerWidth); // idk if this makes any sense
         this.stage.height(this.player_names_container.offsetHeight)
         this.stage.update_size()
-
     }
 }
-
-

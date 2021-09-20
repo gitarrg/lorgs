@@ -24,8 +24,6 @@ class Cast extends Konva.Group {
     }
 
     create() {
-        // Cast Info
-        const stage = this.stage || this.getStage();
 
         this.spell = this.stage.spells[this.spell_id];
         if (this.spell === undefined) {
