@@ -1,8 +1,16 @@
 #!/usr/bin/env python
-"""Models for Raids and RaidBosses."""
-
 # pylint: disable=line-too-long
 # pylint: disable=C0326  # spaces
+
+"""Data for Raidzones and Bosses.
+
+In here we create all our instances for the Raid Zones and Encounters,
+list their spells and relevant buffs/casts etc.
+
+This could be stored in a Database instead..
+but at the end of the day, this was the most straight forward way
+"""
+
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.models.encounters import RaidZone
