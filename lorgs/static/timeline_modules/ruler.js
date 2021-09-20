@@ -35,26 +35,24 @@ class TimelineMarker extends Konva.Group {
             listening: true,
             transformsEnabled: "position",
         })
-        // this.cast_duration.perfectDrawEnabled(false);
         this.add(this.handle)
 
         this.label = new Konva.Text({
             name: "label",
 
-            // text: toMMSS(0),
+            text: "",  // will be set in update()
             fontSize: 14,
             fontFamily: "Lato",
             fill: "white",
             transformsEnabled: "position",
-            // y: -10,
+
             x: this.handle.x(),
             width: this.handle.width(),
             height: this.handle.height(),
 
             verticalAlign: 'middle',
             align: "center",
-
-            // listening: false,
+            listening: false,
         })
         this.add(this.label)
         this.on("dragmove", this.on_dragmove)
@@ -150,13 +148,6 @@ class TimelineRuler extends Konva.Group {
 
         this.markers = []
 
-        // const tick_sm = new Konva.Line({
-        //     name: "ruler_tick",
-        //     points: [0, 0, 0, height],
-        //     stroke: "red",
-        //     strokeWidth: 3,
-        // })
-
 
         this.mouse_crosshair_y = new Konva.Line({
             name: "mouse_crosshair_y",
@@ -171,8 +162,6 @@ class TimelineRuler extends Konva.Group {
         this.bbox = new Konva.Rect({
             height: LINE_HEIGHT,
             width: 200,
-            // stroke: "red",
-            // strokeWidth: 1,
             transformsEnabled: "none",
         })
         this.bbox.on("mouseover", () => {this.mouse_crosshair_y.visible(true)})
@@ -210,7 +199,6 @@ class TimelineRuler extends Konva.Group {
                 transformsEnabled: "position",
             })
 
-            // let tick = (big ? tick_lg : tick_sm).clone()
             this.ticks.push(tick)
             this.add(tick)
 
@@ -218,7 +206,6 @@ class TimelineRuler extends Konva.Group {
                 let text = new Konva.Text({
                     text: toMMSS(t),
                     name: "timestamp",
-                    // x: 27,
                     y: -10,
                     fontSize: 14,
                     height: LINE_HEIGHT,

@@ -9,7 +9,6 @@ class WowRole(base.Model):
     """A role like Tank, Healer, DPS."""
 
     def __init__(self, name, code=""):
-        # self.id = id
         self.name = name
         self.code = code or name.lower()
 

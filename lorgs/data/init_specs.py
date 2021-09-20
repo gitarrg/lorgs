@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 """Models for Raids and RaidBosses."""
-# IMPORT STANDARD LIBRARIES
 
 # pylint: disable=line-too-long
 # pylint: disable=C0326  # spaces
+
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.models.specs import WowClass

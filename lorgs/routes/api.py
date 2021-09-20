@@ -74,8 +74,6 @@ def spells():
 @cache.cached()
 def spec_ranking(spec_slug, boss_slug):
     spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(boss_slug=boss_slug, spec_slug=spec_slug)
-    # players = [player.as_dict() for player in spec_ranking.players]
-
     return {
         "fights": [fight.as_dict() for fight in spec_ranking.fights],
     }
