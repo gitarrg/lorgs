@@ -26,9 +26,16 @@ lib
 venv/
 test
 
+scripts/
+
 # various config/project files
 docker-*
 *.yaml
 *.json
 *sublime*
+
+template.env
+sonar-*
+pylintrc
+.circleci
 
