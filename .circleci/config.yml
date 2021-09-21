@@ -1,0 +1,178 @@
+version: 2.1
+
+
+################################
+# Orbs
+#
+
+orbs:
+  discord: antonioned/discord@0.1.0
+
+
+################################
+# Commands
+#
+
+
+commands:
+
+  deploy:
+
+    parameters:
+      promote:
+        description: promote the deployed service to be the new default
+        type: boolean
+        default: false
+
+    steps:
+      - run:
+          name: Deploy to AppEngine
+          command: gcloud --quiet app deploy --project lorrgs <<# parameters.promote >>--promote<</ parameters.promote >>
+
+################################
+# Jobs
+#
+
+jobs:
+
+  ################
+  # prep
+  build:
+    docker:
+      - image: python:3
+
+    steps:
+
+      # install build deps
+      - run: pip3 install pysass jsmin
+
+      # git checkout the code
+      - checkout
+
+      - run:
+          name: Setup Environment Variables
+          command: |
+            echo "export BUILD_TAG=$(echo $CIRCLE_SHA1 | cut -c -7)" >> $BASH_ENV
+            cat .env >> $BASH_ENV
+
+      # create dir for our generated files
+      - run:
+          name: create _generated dir
+          command: mkdir -p lorgs/static/_generated
+
+      # build: app.yaml
+      - run:
+          name: build app.yaml
+          command: |
+            python scripts/format_app_yaml.py template.app.yaml > app.yaml
+            cat app.yaml
+
+      # build: scss
+      - run:
+          name: build scss
+          command: pysassc --style=compact lorgs/templates/scss/main.scss lorgs/static/_generated/style_${BUILD_TAG}.css
+
+      # build: js
+      - run:
+          name: build js
+          command: |
+            python scripts/minify.py
+
+      # save build dir
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project
+
+  deploy:
+
+    parameters:
+      promote:
+        description: promote the deployed service to be the new default
+        type: boolean
+        default: false
+
+    docker:
+      - image: google/cloud-sdk:alpine
+
+    steps:
+
+      - attach_workspace:
+          at: ~/
+
+      # reapply env from prep-job
+      - run: cat .env >> $BASH_ENV
+
+      - run:
+          name: setup google service account
+          command: |
+            echo ${GOOGLE_CREDS} > /tmp/google_key.json
+            gcloud auth activate-service-account --key-file=/tmp/google_key.json
+            rm /tmp/google_key.json
+
+      - deploy:
+          promote: << parameters.promote >>
+
+      - discord/status:
+          success_message: "new version deployd!!!"
+          failure_message: "**${CIRCLE_USERNAME}**'s build: **${CIRCLE_JOB}** failed."
+          webhook: "${DISCORD_WEBHOOK_URL}"
+
+      ###############
+      # Deploy to App Engine
+      #
+      # - run:
+      #     name: install gcloud sdk
+      #     working_directory: /google_sdk
+      #     command: |
+      #       curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-358.0.0-linux-x86_64.tar.gz
+      #       tar -xf ./google-cloud-sdk-358.0.0-linux-x86_64.tar.gz
+      #       ./google-cloud-sdk/install.sh --quiet
+      #
+      # - run:
+      #     name: test
+      #     command: |
+      #       /google_sdk/google-cloud-sdk/bin/gcloud --help
+
+################################
+# Workflows
+#
+
+workflows:
+  build-and-deploy:
+    jobs:
+      - build
+
+      - deploy:
+          promote: true
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - master
+
+      - deploy:
+          promote: false
+
+          requires:
+            - build
+
+          filters:
+            branches:
+              only:
+                - develop
+                - circleci
+
+
+# gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+# gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+
+  # deploy:
+  #   docker:
+  #       - image: google/cloud-sdk:slim
+  #   steps:
+
+
+
+

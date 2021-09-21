@@ -10,7 +10,6 @@ runtime: python39
 default_expiration: "1h"  # static files cache
 
 
-
 entrypoint: >
   gunicorn
   -b :$PORT
@@ -20,12 +19,19 @@ entrypoint: >
 # longer timeout for the api calls that load data
 
 
-includes:
-  - deploy_variables.yaml
-
-
 env_variables:
-  BUILD_TAG: _SHORT_SHA
+
+  # Lorgs Config
+  BUILD_TAG: {BUILD_TAG}
+  SECRET_KEY: {SECRET_KEY}
+
+  # Third Party Credentials
+  WCL_CLIENT_ID: {WARCRAFTLOGS_CLIENT_ID}
+  WCL_CLIENT_SECRET: {WCL_SECRET}
+
+  # Database Credentials
+  MONGO_URI: {MONGO_URI}
+  REDIS_URL: {REDIS_URL}
 
 
 handlers:
