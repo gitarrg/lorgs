@@ -1,42 +1,68 @@
+# Circle CI Config
+
+
 version: 2.1
 
 
-################################
+################################################################################
+#
 # Orbs
 #
+################################################################################
+
 
 orbs:
   discord: antonioned/discord@0.1.0
 
 
-################################
+################################################################################
+#
 # Commands
 #
-
+################################################################################
 
 commands:
 
+  ################################
+  # command to execute the final deployment to google app engine
+  #
   deploy:
 
     parameters:
       promote:
-        description: promote the deployed service to be the new default
+        description: Promote the deployed version to receive all traffic
         type: boolean
         default: false
 
     steps:
+      # copy google service account login data
+      - run:
+          name: setup google service account
+          command: |
+            echo ${GOOGLE_CREDS} > /tmp/google_key.json
+            gcloud auth activate-service-account --key-file=/tmp/google_key.json
+            rm /tmp/google_key.json
+
+      # run the actual deploy command
       - run:
           name: Deploy to AppEngine
-          command: gcloud --quiet app deploy --project lorrgs <<# parameters.promote >>--promote<</ parameters.promote >>
+          command: >
+            gcloud --quiet app deploy
+            --project lorrgs
+            <<^ parameters.promote >> --no-promote<</ parameters.promote >>
 
-################################
+
+################################################################################
+#
 # Jobs
 #
+################################################################################
 
 jobs:
 
-  ################
+  ################################
   # prep
+  #
   build:
     docker:
       - image: python:3
@@ -84,6 +110,10 @@ jobs:
           paths:
             - project
 
+  ################################
+  # deploy job
+  #
+
   deploy:
 
     parameters:
@@ -103,46 +133,30 @@ jobs:
       # reapply env from prep-job
       - run: cat .env >> $BASH_ENV
 
-      - run:
-          name: setup google service account
-          command: |
-            echo ${GOOGLE_CREDS} > /tmp/google_key.json
-            gcloud auth activate-service-account --key-file=/tmp/google_key.json
-            rm /tmp/google_key.json
-
       - deploy:
           promote: << parameters.promote >>
 
       - discord/status:
-          success_message: "new version deployd!!!"
+          success_message: "new version deployed!!!"
           failure_message: "**${CIRCLE_USERNAME}**'s build: **${CIRCLE_JOB}** failed."
           webhook: "${DISCORD_WEBHOOK_URL}"
 
-      ###############
-      # Deploy to App Engine
-      #
-      # - run:
-      #     name: install gcloud sdk
-      #     working_directory: /google_sdk
-      #     command: |
-      #       curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-358.0.0-linux-x86_64.tar.gz
-      #       tar -xf ./google-cloud-sdk-358.0.0-linux-x86_64.tar.gz
-      #       ./google-cloud-sdk/install.sh --quiet
-      #
-      # - run:
-      #     name: test
-      #     command: |
-      #       /google_sdk/google-cloud-sdk/bin/gcloud --help
 
-################################
+################################################################################
+#
 # Workflows
 #
+################################################################################
+
 
 workflows:
   build-and-deploy:
     jobs:
+
+      # always execute "build"
       - build
 
+      # deploy for /master
       - deploy:
           promote: true
           requires:
@@ -152,6 +166,7 @@ workflows:
               only:
                 - master
 
+      # deploy for /devlop and similar branches
       - deploy:
           promote: false
 
@@ -162,17 +177,3 @@ workflows:
             branches:
               only:
                 - develop
-                - circleci
-
-
-# gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
-# gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
-
-  # deploy:
-  #   docker:
-  #       - image: google/cloud-sdk:slim
-  #   steps:
-
-
-
-
