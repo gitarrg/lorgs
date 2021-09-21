@@ -95,7 +95,7 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
     <script src="{{url_for('static', filename='timeline_modules/ruler.js')}}"></script>
     <script src="{{url_for('static', filename='timeline_modules/stage.js')}}"></script>
 {% else %}
-    <script src="{{url_for('static',filename='_generated/all_min.js')}}"></script>
+    <script src="{{url_for('static',filename='_generated/all_min_' + config.BUILD_TAG + '.js')}}"></script>
 {% endif %}
 
 

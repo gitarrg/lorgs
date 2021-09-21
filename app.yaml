@@ -23,6 +23,11 @@ entrypoint: >
 includes:
   - deploy_variables.yaml
 
+
+env_variables:
+  BUILD_TAG: _SHORT_SHA
+
+
 handlers:
 
   - url: /static
