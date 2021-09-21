@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" />
 
     <!-- local -->
-    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='_generated/style.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='_generated/style_' + config.BUILD_TAG + '.css')}}">
     <script src="{{url_for('static',filename='utils.js')}}"></script>
 
     <link rel="shortcut icon" href="{{url_for('static', filename='images/favicon.png')}}">

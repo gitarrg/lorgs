@@ -5,17 +5,20 @@ import os
 class BaseConfig:
     """Default Config."""
 
-    SECRET_KEY = os.environ.get("SECRET_KEY") or "giga-secret_key-nobody-will-ever-find-out"
+    SECRET_KEY = os.getenv("SECRET_KEY") or "giga-secret_key-nobody-will-ever-find-out"
 
     GOOGLE_ANALYTICS_ID = ""
 
     CACHE_DEFAULT_TIMEOUT = 300
     CACHE_TYPE = "SimpleCache"
 
-    DISCORD_LINK = os.environ.get("DISCORD_LINK") or "https://discord.gg/U3xmktWEzU"
+    DISCORD_LINK = os.getenv("DISCORD_LINK") or "https://discord.gg/U3xmktWEzU"
 
     # switch used to use non mimified js files
     LOCAL_FILES = False
+
+    # custom tag to force refreshes on js and css files
+    BUILD_TAG = os.getenv("BUILD_TAG", "BUILD_TAG")
 
 
 ################################################################################
