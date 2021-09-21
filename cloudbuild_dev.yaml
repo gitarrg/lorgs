@@ -17,7 +17,7 @@ steps:
 
 - name: "python:3"
   entrypoint: python3
-  args: ["-m", "pysassc", "--style=compact", "lorgs/templates/scss/main.scss", "lorgs/static/_generated/style.css"]
+  args: ["-m", "pysassc", "--style=compact", "lorgs/templates/scss/main.scss", "lorgs/static/_generated/style_$SHORT_SHA.css"]
   env: ["PYTHONPATH=/workspace/lib"]
   waitFor:
   - install_build_reqs
@@ -25,14 +25,26 @@ steps:
 - name: "python:3"
   entrypoint: python3
   args: ["scripts/minify.py"]
-  env: ["PYTHONPATH=/workspace/lib"]
+  env:
+    - "PYTHONPATH=/workspace/lib"
+    - "BUILD_TAG=$SHORT_SHA"
   waitFor:
   - install_build_reqs
 
 
 # add config
 - name: 'gcr.io/cloud-builders/gsutil'
+  id: download_deploy_vars
   args: ["cp", "gs://lorgs-config/deploy_variables.yaml", '.']
+  waitFor: ['-']  # The '-' indicates that this step begins immediately.
+
+# add dynamic config
+- name: ubuntu
+  id: generate_tag
+  entrypoint: bash
+  args:
+  - '-c'
+  - sed -i 's/_SHORT_SHA/$SHORT_SHA/g' app.yaml
   waitFor: ['-']  # The '-' indicates that this step begins immediately.
 
 
