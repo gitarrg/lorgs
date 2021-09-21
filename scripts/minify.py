@@ -8,12 +8,14 @@ this aims to replicate the behavior of
 
 """
 
+import os
 import glob
-# from jsmin import JavascriptMinify
 from jsmin import jsmin
 
 
-PATH_OUT = "lorgs/static/_generated/all_min.js"
+BUILD_TAG = os.getenv("BUILD_TAG") or "BUILD_TAG"
+
+PATH_OUT = f"lorgs/static/_generated/all_min_{BUILD_TAG}.js"
 PATHS_IN = [
     "lorgs/static/*.js",
     "lorgs/static/timeline_modules/*.js"
