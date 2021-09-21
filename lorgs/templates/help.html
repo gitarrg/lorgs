@@ -3,7 +3,7 @@
 {% block title %}Lorgs: Help{% endblock %}
 
 {% block header %}
-<nav class="navbar fixed-top navbar-dark bg-dark">
+<nav class="navbar fixed-top navbar-dark bg-dark" aria-label="Header">
     <a class="navbar-brand" href="{{url_for('ui.index')}}">
         <i class="fas fa-home"></i> How to Lorrg
     </a>
@@ -19,26 +19,25 @@
         {# Table of Contents #}
         <div class="col-sm-2">
             <div class="sticky-top" style="top: 4.5rem;">
-                <nav id="help-navbar" class="navbar navbar-dark bg-dark border rounded flex-column align-items-stretch p-2">
-                    <nav class="nav nav-pills flex-column">
-                        <a class="nav-link" href="#overview">Overview</a>
+                <nav id="help-navbar" class="navbar navbar-dark bg-dark border rounded flex-column align-items-stretch p-2" aria-label="Main Help Nav">
 
-                        <a class="nav-link" href="#timeline">Timeline</a>
-                        <nav class="nav nav-pills flex-column">
-                            <a class="nav-link ms-3" href="#timeline_boss">Boss Lane</a>
-                            <a class="nav-link ms-3" href="#timeline_players">Player Names</a>
-                            <a class="nav-link ms-3" href="#timeline_ruler">Ruler</a>
-                        </nav>
+                    <a class="nav-link" href="#overview">Overview</a>
 
-                        <a class="nav-link" href="#spells_toolbar">Spells Toolbar</a>
-                        <nav class="nav nav-pills flex-column">
-                            <a class="nav-link ms-3" href="#spells_toolbar_display">Display</a>
-                            <a class="nav-link ms-3" href="#spells_toolbar_spells">Spells</a>
-                        </nav>
-
-                        <a class="nav-link" href="#navigation">Navigation</a>
-
+                    <a class="nav-link" href="#timeline">Timeline</a>
+                    <nav class="nav nav-pills flex-column" aria-label="Timeline SubNav">
+                        <a class="nav-link ms-3" href="#timeline_boss">Boss Lane</a>
+                        <a class="nav-link ms-3" href="#timeline_players">Player Names</a>
+                        <a class="nav-link ms-3" href="#timeline_ruler">Ruler</a>
                     </nav>
+
+                    <a class="nav-link" href="#spells_toolbar">Spells Toolbar</a>
+                    <nav class="nav nav-pills flex-column" aria-label="Spells Toolbar SubNav">
+                        <a class="nav-link ms-3" href="#spells_toolbar_display">Display</a>
+                        <a class="nav-link ms-3" href="#spells_toolbar_spells">Spells</a>
+                    </nav>
+
+                    <a class="nav-link" href="#navigation">Navigation</a>
+
                 </nav>
             </div>
         </div>

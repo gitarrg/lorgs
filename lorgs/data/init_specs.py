@@ -1,8 +1,14 @@
 #!/usr/bin/env python
-"""Models for Raids and RaidBosses."""
-
 # pylint: disable=line-too-long
 # pylint: disable=C0326  # spaces
+
+"""Data for Roles, Classes and Specs.
+
+In here we create all our instances for the playable Roles, Classes, Specs and list their spells.
+
+This could be stored in a Database instead..
+but at the end of the day, this was the most straight forward way
+"""
 
 
 # IMPORT LOCAL LIBRARIES

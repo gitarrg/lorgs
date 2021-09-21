@@ -230,7 +230,6 @@ class Stage extends Konva.Stage{
     print_tree() {
         // Debug
         let n = 0;
-        var children = []
         this.find(node => {
             const d = node.getDepth()
             console.log("node", "\t".repeat(d), node.getType(), node.name(), node.visible())
