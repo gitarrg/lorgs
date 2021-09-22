@@ -25,9 +25,10 @@
 
                     <a class="nav-link" href="#timeline">Timeline</a>
                     <nav class="nav nav-pills flex-column" aria-label="Timeline SubNav">
+                        <a class="nav-link ms-3" href="#timeline_nav">Navigation</a>
                         <a class="nav-link ms-3" href="#timeline_boss">Boss Lane</a>
                         <a class="nav-link ms-3" href="#timeline_players">Player Names</a>
-                        <a class="nav-link ms-3" href="#timeline_ruler">Ruler</a>
+                        <a class="nav-link ms-3" href="#timeline_ruler">Markers</a>
                     </nav>
 
                     <a class="nav-link" href="#spells_toolbar">Spells Toolbar</a>
@@ -99,8 +100,8 @@
             <!-- Timeline: Focus -->
             <div class="row mb-3">
                 <div class="col">
-                    <h3>Spell selection</h3>
-                    <p><strong class="wow-class-rogue">Click</strong> Click on any ability on the timeline <strong class="wow-class-rogue">to focus</strong> it and all instances of the same spell.</p>
+                    <h3 id=timeline_focus>Spell selection</h3>
+                    <p><strong class="wow-class-rogue">Click</strong> on any ability on the timeline <strong class="wow-class-rogue">to focus</strong> it and all instances of the same spell.</p>
                     <p><strong class="wow-class-mage">Ctrl+Click</strong> to <strong class="wow-class-mage">focus multiple spells</strong> at once.</p>
                 </div>
                 <div class="col">
@@ -111,7 +112,7 @@
             <!-- Timeline: Navigation: Drag -->
             <div class="row mb-3">
                 <div class="col">
-                    <h3>Timeline navigation</h3>
+                    <h3 id=timeline_nav>Timeline navigation</h3>
                     <strong class="text-legendary">Click and Drag</strong> on the timeline-ticks or anywhere on the background <strong class="text-legendary">to move</strong>.
                 </div>
                 <div class="col">
@@ -168,7 +169,7 @@
             <div class="row mb-3">
                 <div class="col">
                     <h3 id="timeline_ruler">Timeline Markers</h3>
-                    <p>To help you check through timings across many parses, not just the first few, you can add a markers will highlight the exact time slice you are looking at across all logs.</p>
+                    <p>To help you check through timings across many parses, not just the first few, you can add markers that will highlight the exact time slice you are looking at across all logs.</p>
                     <p>
                         <strong class="wow-class-monk">Double click to add</strong> markers.<br>
                         <strong class="wow-class-deathknight">Right click</strong> on a marker <strong class="wow-class-deathknight">to remove</strong> it.<br>
