@@ -83,19 +83,19 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
 {{ super() }}
 
 {# todo: use sync src #}
-<script src="https://unpkg.com/konva@8/konva.min.js"></script>
+<script defer src="https://unpkg.com/konva@8/konva.min.js"></script>
 {% if config.LOCAL_FILES %}
     {# find a better way to do this #}
-    <script src="{{url_for('static', filename='timeline_modules/main.js')}}"></script>
-    <script src="{{url_for('static', filename='timeline_modules/spell.js')}}"></script>
-    <script src="{{url_for('static', filename='timeline_modules/cast.js')}}"></script>
-    <script src="{{url_for('static', filename='timeline_modules/player.js')}}"></script>
-    <script src="{{url_for('static', filename='timeline_modules/fight.js')}}"></script>
-    <script src="{{url_for('static', filename='timeline_modules/scene.js')}}"></script>
-    <script src="{{url_for('static', filename='timeline_modules/ruler.js')}}"></script>
-    <script src="{{url_for('static', filename='timeline_modules/stage.js')}}"></script>
+    <script defer src="{{url_for('static', filename='timeline_modules/main.js')}}"></script>
+    <script defer src="{{url_for('static', filename='timeline_modules/spell.js')}}"></script>
+    <script defer src="{{url_for('static', filename='timeline_modules/cast.js')}}"></script>
+    <script defer src="{{url_for('static', filename='timeline_modules/player.js')}}"></script>
+    <script defer src="{{url_for('static', filename='timeline_modules/fight.js')}}"></script>
+    <script defer src="{{url_for('static', filename='timeline_modules/scene.js')}}"></script>
+    <script defer src="{{url_for('static', filename='timeline_modules/ruler.js')}}"></script>
+    <script defer src="{{url_for('static', filename='timeline_modules/stage.js')}}"></script>
 {% else %}
-    <script src="{{url_for('static',filename='_generated/all_min_' + config.BUILD_TAG + '.js')}}"></script>
+    <script defer src="{{url_for('static',filename='_generated/all_min_' + config.BUILD_TAG + '.js')}}"></script>
 {% endif %}
 
 
