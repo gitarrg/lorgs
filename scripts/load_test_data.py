@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """Load a some test reports. Useful to assist in development."""
 
 import asyncio
@@ -19,8 +20,8 @@ async def load_spec_ranking():
     ########################################
     # Vars
     limit = 8
-    boss = data.PAINSMITH
-    spec = data.DEATHKNIGHT_BLOOD
+    boss = data.GUARDIAN
+    spec = data.SHAMAN_RESTORATION
 
     ########################################
     # load
@@ -53,9 +54,7 @@ async def load_comp():
 
 
 async def main():
-
-    await load_comp()
-
+    await load_spec_ranking()
 
 
 if __name__ == '__main__':
