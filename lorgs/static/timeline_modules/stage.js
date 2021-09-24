@@ -1,12 +1,20 @@
 
+
+import Fight from "./fight.js"
+import Player from "./player.js"
+import Spell from "./spell.js"
+import TimelineRuler from "./ruler.js"
+import {LINE_HEIGHT} from "./vars.js"
+
+
 // global stage pointer.. i know its ugly.
-var STAGE;
+// var STAGE;
 
 // for performance
 Konva.autoDrawEnabled = false;
 
 
-class Stage extends Konva.Stage{
+export default class Stage extends Konva.Stage{
 
     ZOOM_RATE = 1.1
     ZOOM_MIN = 0.5
@@ -21,8 +29,6 @@ class Stage extends Konva.Stage{
         options.draggable = true
         options.strokeScaleEnabled = false
         super(options);
-
-        STAGE = this; // global pointer :/
 
         /////////////////////////////////
         // custom attributes
@@ -84,11 +90,12 @@ class Stage extends Konva.Stage{
         this.longest_fight = 0;
         this.fights.forEach((fight, i) => {
 
+            this.main_layer.add(fight)
+
             fight.create();  // <-- slow
 
             // background
             fight.y(y) // - 0.5)
-            this.main_layer.add(fight)
 
             fight.background.y(y) // - 0.5)
             this.back_layer.add(fight.background)
@@ -216,8 +223,10 @@ class Stage extends Konva.Stage{
     set_players(players) {
 
         players.forEach((player) => {
-            let fight = new Fight(player.fight);
-            fight.load_actors([player])
+
+            // fight
+            let fight = new Fight(this, player.fight);
+            fight.actors.push(new Player(this, player))
             this.fights.push(fight)
         })
     }

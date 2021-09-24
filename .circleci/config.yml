@@ -114,6 +114,20 @@ jobs:
   # deploy job
   #
 
+  webpack:
+    docker:
+      - image: cimg/node
+
+    steps:
+      # git checkout the code
+      - checkout
+
+      - run: node --version
+
+      - run: npm install
+      - run: npm run build
+
+
   deploy:
 
     parameters:
@@ -155,6 +169,11 @@ workflows:
 
       # always execute "build"
       - build
+          filters:
+            branches:
+              only:
+                - master
+                - develop
 
       # deploy for /master
       - deploy:
@@ -177,3 +196,11 @@ workflows:
             branches:
               only:
                 - develop
+
+
+      - webpack:
+          filters:
+            branches:
+              only:
+                - webpack
+

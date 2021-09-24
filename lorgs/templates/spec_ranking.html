@@ -62,10 +62,7 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
 
         {# loading bar #}
         <div id="canvas_loading" class="position-absolute top-50 start-50">
-            <span class="h1">loading...</span>
-            <div id="task_progress_bar_bg" class="bg-dark">
-                <div id="task_progress_bar_fg" class="bg-info no-transition"></div>
-            </div>
+            <span class="h1"><i class="fas fa-circle-notch fa-spin"></i></span>
         </div>
 
         <!-- the canvas -->
@@ -82,48 +79,48 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
 {% block scripts %}
 {{ super() }}
 
+<script type="text/javascript">
+/* Define the Config/Settings for our App.
+
+until I move fully to react or similar,
+I could not find a cleaner way to pass those from flask/jinja over...
+
+*/
+
+const SETTINGS = {
+
+    // spec and boss
+    spec_slug: "{{spec.full_name_slug}}",
+    boss_slug: "{{boss.name_slug}}",
+
+    // dom elements
+    canvas: document.getElementById("timeline_canvas"),
+    player_names_container: document.getElementById("player_names_container"),
+    spell_settings_bar: document.getElementById("settings_bar"),
+    loading_spinner: document.getElementById("canvas_loading"),
+}
+</script>
+
+
 {# todo: use sync src #}
 <script defer src="https://unpkg.com/konva@8/konva.min.js"></script>
+
 {% if config.LOCAL_FILES %}
     {# find a better way to do this #}
-    <script defer src="{{url_for('static', filename='timeline_modules/main.js')}}"></script>
-    <script defer src="{{url_for('static', filename='timeline_modules/spell.js')}}"></script>
-    <script defer src="{{url_for('static', filename='timeline_modules/cast.js')}}"></script>
-    <script defer src="{{url_for('static', filename='timeline_modules/player.js')}}"></script>
-    <script defer src="{{url_for('static', filename='timeline_modules/fight.js')}}"></script>
-    <script defer src="{{url_for('static', filename='timeline_modules/scene.js')}}"></script>
-    <script defer src="{{url_for('static', filename='timeline_modules/ruler.js')}}"></script>
-    <script defer src="{{url_for('static', filename='timeline_modules/stage.js')}}"></script>
+    <script type="module" src="{{url_for('static', filename='/timeline_modules/main.js')}}"></script>
 {% else %}
-    <script defer src="{{url_for('static',filename='_generated/all_min_' + config.BUILD_TAG + '.js')}}"></script>
+    <script defer src="{{url_for('static',filename='_generated/main.js')}}?tag={{config.BUILD_TAG}}"></script>
 {% endif %}
 
 
-<script type="text/javascript">
-
-////////////////////////////////////////////////////////////////////////////////
-// progress bar
-//
-const TASK_STATUS_BAR = document.getElementById("task_progress_bar_fg");
-var PROGRESS_BAR_STATUS = 0;
-function update_progress_bar() {
-    PROGRESS_BAR_STATUS += 10;
-
-    TASK_STATUS_BAR.style.width = PROGRESS_BAR_STATUS + "%";
-
-    // update again in 100ms
-    if (PROGRESS_BAR_STATUS < 100) {
-        setTimeout(update_progress_bar, 200)
-    }
-}
+<script defer type="text/javascript">
 
 
 ////////////////////////////////////////////////////////////////////////////////
-
 
 async function init() {
 
-    update_progress_bar()
+    console.log("inline init", Scene)
 
     // create scene
     let scene = new Scene({
@@ -145,7 +142,7 @@ async function init() {
 }
 
 // init()
-document.addEventListener('DOMContentLoaded', init)
+// document.addEventListener('DOMContentLoaded', init)
 
 </script>
 {% endblock %}
