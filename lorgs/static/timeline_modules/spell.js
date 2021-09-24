@@ -1,5 +1,8 @@
 
-class Spell {
+import {LINE_HEIGHT} from "./vars.js"
+
+
+export default class Spell {
 
     constructor(stage, spell_data) {
 

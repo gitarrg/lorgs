@@ -1,4 +1,7 @@
 
+import {LINE_HEIGHT} from "./vars.js"
+
+
 class TimelineMarker extends Konva.Group {
 
     color = "#db1212"
@@ -126,7 +129,7 @@ class TimelineMarker extends Konva.Group {
 
 
 
-class TimelineRuler extends Konva.Group {
+export default class TimelineRuler extends Konva.Group {
 
     tick_distance = 10; // seconds
     timestamp_distance = 30;

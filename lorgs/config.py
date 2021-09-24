@@ -12,7 +12,7 @@ class BaseConfig:
     CACHE_DEFAULT_TIMEOUT = 300
     CACHE_TYPE = "SimpleCache"
 
-    DISCORD_LINK = os.getenv("DISCORD_LINK") or "https://discord.gg/U3xmktWEzU"
+    DISCORD_LINK = os.getenv("DISCORD_LINK") or "https://discord.gg/jZWj6djJk2"
 
     # switch used to use non mimified js files
     LOCAL_FILES = False

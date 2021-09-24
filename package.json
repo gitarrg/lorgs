@@ -1,0 +1,26 @@
+{
+  "name": "lorgs",
+  "description": "website to compare top logs in wow",
+  "version": "0.2.0",
+  "author": "arrg",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gitarrg/lorgs.git"
+  },
+  "scripts": {
+    "build": "NODE_ENV=production webpack",
+    "build_dev": "webpack",
+    "format_app_yaml": "envsub --syntax handlebars template.app.yaml app.yaml"
+  },
+  "devDependencies": {
+    "css-loader": "^6.3.0",
+    "envsub": "^4.0.7",
+    "mini-css-extract-plugin": "^2.3.0",
+    "sass": "^1.42.1",
+    "sass-loader": "^12.1.0",
+    "style-loader": "^3.3.0",
+    "webpack": "^5.53.0",
+    "webpack-cli": "^4.8.0"
+  }
+}

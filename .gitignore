@@ -5,15 +5,20 @@ __pycache__/
 *~
 *.sublime-workspace
 *.scannerwork
+.vscode
 
 _build
 _generated
+node_modules
 
 # for ".env", we need this (since its already tracked)
 # >>> git update-index --assume-unchanged .env
+.env_bak
 
 venv/
 deploy_variables.yaml
 
 # google account credentials
 google_creds.json
+
+package-lock.json

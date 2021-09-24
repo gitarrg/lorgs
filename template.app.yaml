@@ -22,16 +22,17 @@ entrypoint: >
 env_variables:
 
   # Lorgs Config
-  BUILD_TAG: {BUILD_TAG}
-  SECRET_KEY: {SECRET_KEY}
+  LORGS_CONFIG_NAME: lorgs.config.ProductionConfig
+  BUILD_TAG: {{BUILD_TAG}}
+  SECRET_KEY: {{SECRET_KEY}}
 
   # Third Party Credentials
-  WCL_CLIENT_ID: {WARCRAFTLOGS_CLIENT_ID}
-  WCL_CLIENT_SECRET: {WCL_SECRET}
+  WCL_CLIENT_ID: {{WARCRAFTLOGS_CLIENT_ID}}
+  WCL_CLIENT_SECRET: {{WCL_SECRET}}
 
   # Database Credentials
-  MONGO_URI: {MONGO_URI}
-  REDIS_URL: {REDIS_URL}
+  MONGO_URI: {{MONGO_URI}}
+  REDIS_URL: {{REDIS_URL}}
 
 
 handlers:
