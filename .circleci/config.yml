@@ -65,13 +65,9 @@ jobs:
   #
   build:
     docker:
-      - image: python:3
+      - image: cimg/node:16.9
 
     steps:
-
-      # install build deps
-      - run: pip3 install pysass jsmin
-
       # git checkout the code
       - checkout
 
@@ -79,30 +75,10 @@ jobs:
           name: Setup Environment Variables
           command: |
             echo "export BUILD_TAG=$(echo $CIRCLE_SHA1 | cut -c -7)" >> $BASH_ENV
-            cat .env >> $BASH_ENV
 
-      # create dir for our generated files
-      - run:
-          name: create _generated dir
-          command: mkdir -p lorgs/static/_generated
-
-      # build: app.yaml
-      - run:
-          name: build app.yaml
-          command: |
-            python scripts/format_app_yaml.py template.app.yaml > app.yaml
-            cat app.yaml
-
-      # build: scss
-      - run:
-          name: build scss
-          command: pysassc --style=compact lorgs/templates/scss/main.scss lorgs/static/_generated/style_${BUILD_TAG}.css
-
-      # build: js
-      - run:
-          name: build js
-          command: |
-            python scripts/minify.py
+      - run: npm install
+      - run: npm run build
+      - run: npm run format_app_yaml
 
       # save build dir
       - persist_to_workspace:
@@ -113,20 +89,6 @@ jobs:
   ################################
   # deploy job
   #
-
-  webpack:
-    docker:
-      - image: cimg/node
-
-    steps:
-      # git checkout the code
-      - checkout
-
-      - run: node --version
-
-      - run: npm install
-      - run: npm run build
-
 
   deploy:
 
@@ -143,9 +105,6 @@ jobs:
 
       - attach_workspace:
           at: ~/
-
-      # reapply env from prep-job
-      - run: cat .env >> $BASH_ENV
 
       - deploy:
           promote: << parameters.promote >>
@@ -169,11 +128,6 @@ workflows:
 
       # always execute "build"
       - build
-          filters:
-            branches:
-              only:
-                - master
-                - develop
 
       # deploy for /master
       - deploy:
@@ -196,11 +150,4 @@ workflows:
             branches:
               only:
                 - develop
-
-
-      - webpack:
-          filters:
-            branches:
-              only:
-                - webpack
-
+                - feature/webpack
