@@ -3,10 +3,6 @@ aiohttp==3.7.4.post0
 arrow==1.1
 python-dotenv==0.17.1
 
-# to build scss
-# pysass==0.1.0
-# jsmin==3.0.0
-
 # Quart==0.15
 Flask-WTF==0.14.3
 
