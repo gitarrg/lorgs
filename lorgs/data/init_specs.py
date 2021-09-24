@@ -206,6 +206,7 @@ PRIEST_DISCIPLINE.add_spell(   spell_id=62618,  cooldown=180, duration=10, color
 PRIEST_DISCIPLINE.add_spell(   spell_id=109964, cooldown=60,  duration=10, color="#d7abdb", name="Spirit Shell",                    icon="ability_shaman_astralshift.jpg")
 PRIEST_DISCIPLINE.add_spell(   spell_id=47536,  cooldown=90,  duration=8,                   name="Rapture",                         icon="spell_holy_rapture.jpg",                    show=False)
 PRIEST_DISCIPLINE.add_spell(   spell_id=246287, cooldown=90,                                name="Evangelism",                      icon="spell_holy_divineillumination.jpg")
+PRIEST_DISCIPLINE.add_spell(   spell_id=194509, cooldown=20,              color="#edbb2f",  name="Power Word: Radiance",            icon="spell_priest_power-word.jpg",               show=False)
 PRIEST_HOLY.add_spell(         spell_id=64843,  cooldown=180, duration=8, color="#d7abdb",  name="Divine Hymn",                     icon="spell_holy_divinehymn.jpg")
 PRIEST_HOLY.add_spell(         spell_id=265202, cooldown=240,                               name="Holy Word: Salvation",            icon="ability_priest_archangel.jpg")
 PRIEST_HOLY.add_spell(         spell_id=200183, cooldown=120, duration=20,                  name="Apotheosis",                      icon="ability_priest_ascension.jpg",              show=False)
