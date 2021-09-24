@@ -7,6 +7,8 @@
 #   $ gcloud topic gcloudignore
 #
 .gcloudignore
+
+
 # If you would like to upload your .git directory, .gitignore file or files
 # from your .gitignore file, remove the corresponding line
 # below:
@@ -18,24 +20,25 @@ __pycache__/
 # Ignored by the build system
 /setup.cfg
 
-# pip install dir used in cloudbuild
-lib
-
 # config
-.env
 venv/
-test
+node_modules
 
-scripts/
+.env
+test
+scripts
 
 # various config/project files
 docker-*
 *.yaml
 *.json
+*.md
 *sublime*
 
 template.env
 sonar-*
 pylintrc
 .circleci
+
+
 

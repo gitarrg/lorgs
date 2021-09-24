@@ -5,6 +5,7 @@ __pycache__/
 *~
 *.sublime-workspace
 *.scannerwork
+.vscode
 
 _build
 _generated
@@ -19,3 +20,5 @@ deploy_variables.yaml
 
 # google account credentials
 google_creds.json
+
+package-lock.json
