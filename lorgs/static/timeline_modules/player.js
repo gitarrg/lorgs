@@ -1,14 +1,17 @@
 
+import Cast from "./cast.js"
 
-class Player {
 
-    constructor(player_data) {
+export default class Player {
 
+    constructor(stage, player_data) {
+
+        this.stage = stage
         this.casts_group = new Konva.Group()
         this.casts_group.transformsEnabled("position")
 
         // load casts
-        this.casts = player_data.casts.map(cast_data => new Cast(cast_data))
+        this.casts = player_data.casts.map(cast_data => new Cast(this.stage, cast_data))
     }
 
     create() {

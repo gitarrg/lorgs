@@ -1,0 +1,647 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Canvas Test</title>
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
+
+    <!-- bootstrap theme: darkly -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/darkly/bootstrap.min.css" integrity="sha384-nNK9n28pDUDDgIiIqZ/MiyO3F4/9vsMtReZK39klb/MtkZI3/LtjSjlmyVPS3KdN" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:5011/static/_generated/style.css">
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/460/fabric.min.js" integrity="sha512-ybPp3kCrNQXdvTfh99YLIdnajWnQvHuEKDJ+b26mxI9w+pLhnBo3HmNLJ1pEUBFO1Q0bfJxApeqecNbmaV763g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+</head>
+
+
+
+
+<body>
+<!-- Container -->
+<div class="container-fluid d-flex flex-column h-100">
+
+
+    <div class="ml-3 mt-3">
+        <h1>Canvas Test</h1>
+
+
+
+        <div class="d-flex flex-row">
+            <div class="slidecontainer">
+                <input type="range" min="0.01" max="100" value="4" class="slider" id="zoom_slider" step="0.01">
+            </div>
+            <div id=zoom_number>4.0</div>
+            <div id=spell_icons></div>
+
+        </div>
+
+        <div class="p-2 mt-3 ml-3 bg-dark rounded border">
+
+            <canvas id="timeline_canvas" width="1400" height="1000" style="border: 1px solid pink; width: 1400; height: 1000;">
+                timelines
+            </canvas>
+
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<script type="text/javascript">
+
+
+SPEC_SLUG = "deathknight-blood"
+
+const CANVAS = new fabric.Canvas("timeline_canvas");
+CANVAS.selection = false;
+
+// imageSmoothingEnabled
+
+const RENDER_SCALE = 2;
+
+
+const LINE_HEIGHT = 25;
+
+var SPELLS = {};
+
+let cameraOffset = { x: 0, y: 0 }
+let cameraZoom = 10;
+
+
+// var PIXEL_RATIO = (function () {
+//     var ctx = document.createElement("canvas").getContext("2d"),
+//         dpr = window.devicePixelRatio || 1,
+//         bsr = ctx.webkitBackingStorePixelRatio ||
+//               ctx.mozBackingStorePixelRatio ||
+//               ctx.msBackingStorePixelRatio ||
+//               ctx.oBackingStorePixelRatio ||
+//               ctx.backingStorePixelRatio || 1;
+// 
+//     return dpr / bsr;
+// })();
+// console.log("PIXEL_RATIO", PIXEL_RATIO)
+
+
+
+class Spell {
+
+    constructor(spell_data) {
+
+        this.spell_id = spell_data.spell_id;
+
+        this.cooldown = spell_data.cooldown;
+        this.duration = spell_data.duration;
+        this.color = spell_data.color;
+
+        this.show = spell_data.show;
+
+        // this.icon = new Image();
+        // this.icon.loaded = false;
+
+        this.icon_id = "spell_icon_" + this.spell_id;
+        this.icon_element = document.getElementById(this.icon_id);
+        this.icon = new fabric.Image(this.icon_element)
+        this.icon_path = "https://wow.zamimg.com/images/wow/icons/medium/" + spell_data.icon
+        // this.icon.onload  = function() {
+        // }
+
+        // this.group = new fabric.Group();
+        // this.group.selectable = false
+
+        // const spell = this;
+
+    }
+}
+
+
+class Cast {
+
+    constructor(cast_data) {
+
+        this.spell_id = cast_data.spell_id;
+        this.spell = SPELLS[this.spell_id];
+
+        this.player = undefined;
+        this.timestamp = cast_data.timestamp;
+        // this.y = 25;
+        // this.x = this.timestamp / 1000;
+        // console.log("x", this.x);
+        // this.w = duration;
+        // this.h = LINE_HEIGHT;
+
+        var date = new Date(null);
+        date.setSeconds(this.timestamp / 1000); // specify value for SECONDS here
+        const timestamp_fmt = date.toISOString().substr(14, 5);
+
+        // this.group.evented = false
+
+        this.group = new fabric.Group();
+        this.group.selectable = false
+
+        if (this.spell === undefined) {
+            return
+        }
+
+        this.group.visible = this.spell.show
+
+        this.cooldown = new fabric.Rect()
+        if (this.spell.cooldown) {
+            this.cooldown.opacity = 0.1
+            this.cooldown.rx = 3;
+            this.cooldown.ry = 3;
+            this.cooldown.fill = this.spell.color
+            this.cooldown.width = SCENE.scale_x * this.spell.cooldown
+            this.cooldown.height = LINE_HEIGHT
+            this.group.addWithUpdate(this.cooldown);
+        }
+
+        this.duration = new fabric.Rect()
+        if (this.spell.duration) {
+            this.duration.opacity = 0.5
+            this.duration.rx = 3;
+            this.duration.ry = 3;
+            this.duration.fill = this.spell.color
+            this.duration.width = SCENE.scale_x * this.spell.duration
+            this.duration.height = LINE_HEIGHT
+            this.group.addWithUpdate(this.duration);
+        }
+
+        this.cast_text = new fabric.Text(
+            timestamp_fmt,
+            {
+                left: 27,
+                top: 2,
+                fontSize: 14,
+                fontWeight: 700,
+                textAlign: 'center',
+                fontFamily: "Lato",
+                fill: "white",
+                // objectCaching: false,
+            }
+        )
+        this.group.addWithUpdate(this.cast_text);
+
+
+        var icon = new fabric.Image.fromURL(this.spell.icon_path, (img) => {
+
+
+            // img.width = 20;
+            img.scaleToHeight(20);
+            img.scaleToWidth(20);
+            img.hasBorders = true
+            this.group.add(img)
+            img.set({
+                left: 4 -this.group.width/2,
+                top: -10
+            });
+            CANVAS.renderAll();
+        })
+        // this.group.set({left: x})
+
+        this.group.left = 175 + SCENE.scale_x * (this.timestamp / 1000);
+
+        // this.group.on('mousedown', () => {
+        //     console.log("mouse click", this)
+        //     this.duration.set({opacity: 1.0});
+        // })
+
+        this.group.on('mouseover', () => {
+            // this.duration.left = 5;
+            this.duration.set({ opacity: 0.75 });
+            this.cooldown.set({ opacity: 0.3 });
+            CANVAS.renderAll();
+        })
+
+        this.group.on('mouseout', (event) => {
+            // this.duration.set({ fill: 'rgb(0,255,0)' });
+            // this.duration.fill = this.spell.color
+            this.duration.set({ opacity: 0.5 });
+            this.cooldown.set({ opacity: 0.1 });
+            // this.duration.set({fill: this.spell.color});
+            CANVAS.renderAll();
+        })
+
+
+    }
+
+    draw(ctx) {
+
+        if (this.spell === undefined) {
+            return;
+        }
+
+        var x = 175 + SCENE.scale_x * (this.timestamp / 1000);
+        x = math.floor(x);
+        const y = this.player.y;
+        const w = SCENE.scale_x * this.spell.cooldown;
+
+        // console.log("Cast.draw", x, w);
+
+        // draw cooldown
+        // ctx.globalAlpha = 0.1;
+        // ctx.fillStyle = this.spell.color; // SPELLS
+        // ctx.fillRect(x, y, SCENE.scale_x * this.spell.cooldown, LINE_HEIGHT);
+
+        ctx.globalAlpha = 0.5;
+        ctx.fillStyle = this.spell.color; // SPELLS
+        ctx.fillRect(x, y, SCENE.scale_x * this.spell.duration, LINE_HEIGHT);
+
+        // draw icon
+        if (this.spell.icon.loaded)
+        {
+            ctx.globalAlpha = 1.0;
+            ctx.drawImage(this.spell.icon, x+3, y+2.5, 20, 20);
+        }
+        // var img = new Image();
+        // img.onload  = function() {
+        //     ctx.drawImage(img, x+3, y+2.5, 20, 20);
+        // }
+        // img.src = "https://wow.zamimg.com/images/wow/icons/medium/" + this.spell.icon;
+    }
+
+}
+
+
+class Player {
+
+    constructor(player_data) {
+        this.name = player_data.name
+
+        this.y = 0;  // offset in y
+        this.casts = [];
+
+        this.total_fmt = "10k";
+
+        this.group = new fabric.Group();
+        this.group.selectable = false;
+
+        this.background = new fabric.Rect({
+            left: 0,
+            top: 0,
+            fill: "hsl(0, 0%, 30%)",
+            width: 175,
+            height: LINE_HEIGHT
+        });
+
+        this.text_name = new fabric.Text(
+            this.name,
+            {
+                left: 0,
+                top: 0,
+                fontSize: 19,
+                textAlign: 'center',
+                fontFamily: "Lato",
+                fill: "white",
+            }
+        );
+
+        this.group.addWithUpdate(this.background);
+        this.group.addWithUpdate(this.text_name);
+
+
+        // this.name
+
+
+    }
+
+    draw(ctx) {
+
+        // Name: Background
+        ctx.fillStyle = "hsl(0, 0%, 30%)";
+        ctx.fillRect(0, this.y, 175, LINE_HEIGHT);
+
+        // Name: Name
+        ctx.fillStyle = 'White';
+        ctx.textAlign = "start";
+        ctx.font = "1.2rem Lato, sans-serif";
+        ctx.textBaseline = "middle";
+        ctx.fillText(this.name, 5, this.y + LINE_HEIGHT/2);
+
+        // Total
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "end";
+        ctx.fillText(this.total_fmt, 170, this.y + LINE_HEIGHT/2);
+
+
+        this.casts.forEach(cast => {
+            cast.draw(ctx);
+        });
+    }
+}
+
+
+
+class Scene{
+
+    constructor() {
+        // super(...args);
+
+        this.players = []
+        this.scale_x = 4;
+    }
+
+    draw(ctx) {
+
+        this.players.forEach((player, i) => {
+
+            player.y = i * (LINE_HEIGHT + 2);;
+            player.draw(ctx);
+        })
+    }
+
+
+    // on_mousedown
+    // on_mouseup
+    // on_mousemove
+
+}
+
+
+const SCENE = new Scene;
+
+
+function draw() {
+
+
+    CANVAS.renderAll();
+
+    // const ctx = CANVAS.getContext("2d");
+    // ctx.imageSmoothingEnabled = true;
+
+    // ctx.fillStyle = "White"
+    // ctx.font = "14px Lato";
+    // ctx.fillText("Hello", 100, 40);
+
+
+    // if (!CANVAS.getContext) { return false; }
+
+    // ctx.clearRect(0, 0, CANVAS.width, CANVAS.height);
+    // ctx.translate(0, 0)
+    // ctx.translate(cameraOffset.x, cameraOffset.y)
+    // console.log("translate", cameraOffset);
+
+    // ctx.clearRect(0, 0, CANVAS.width, CANVAS.height);
+    // SCENE.draw(ctx);
+
+    // requestAnimationFrame(draw);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+async function load_spells() {
+
+    let params = new URLSearchParams({"group": "deathknight-blood"})
+    let url ="/api/spells?" + params
+    let response = await fetch(url);
+    let data = await response.json();
+
+    const spell_icons = document.getElementById("spell_icons")
+
+    console.log(data);
+
+    SPELLS = [];
+    for(var i in data) {
+        var spell_data = data[i];
+        // SPELLS.push();
+        var spell = new Spell(spell_data);
+        SPELLS[spell_data.spell_id] = spell;
+
+        let icon = document.createElement("img");
+        icon.id = spell.icon_id
+        icon.src = "https://wow.zamimg.com/images/wow/icons/medium/" + spell_data.icon
+        spell_icons.appendChild(icon);
+    }
+    // data.forEach(spell_data => {
+    // })
+    // SPELLS = data;
+
+
+}
+
+
+async function load_players() {
+
+    let url = `/api/spec_ranking/${SPEC_SLUG}/painsmith-raznal`
+    let response = await fetch(url);
+    let data = await response.json();
+
+    // update scene
+    SCENE.players = [];
+
+
+    // let group = new fabric.Group();
+    // group.addWithUpdate(circle);
+    // group.addWithUpdate(triangle);
+    // CANVAS.add(group);
+
+    data.players.forEach((player_data, i) => {
+
+        let player = new Player(player_data);
+        // player.y = i * LINE_HEIGHT
+
+
+        SCENE.players.push(player);
+        player.group.set({top: i * (LINE_HEIGHT + 2)})
+        CANVAS.add(player.group);
+
+        player_data.casts.forEach(cast_data => {
+            let cast = new Cast(cast_data)
+            // cast.y = player.group.top;
+            // cast.player = player;
+            // player.casts.push(cast);
+
+            //     spell_id
+            // );
+            // cast.spell_id = cast_data.spell_id;
+            // cast.timestamp = cast_data.timestamp;
+            // cast.duration = 20;
+            // CANVAS.add(cast.cooldown);
+
+            cast.group.set({top: player.group.top})
+            CANVAS.add(cast.group);
+        });
+
+    })
+}
+
+
+async function load() {
+
+    // const ctx = CANVAS.getContext("2d");
+    // ratio = 1 / 2.0;
+    // ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+    // CANVAS.setZoom(2.0)
+
+
+    await load_spells();
+    await load_players();
+
+    draw();
+    // requestAnimationFrame( draw )
+}
+// load();
+
+document.addEventListener('DOMContentLoaded', load);
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+let mouse_clicked = false;
+
+CANVAS.on("mouse:down", (event) => {
+    mouse_clicked = true;
+    CANVAS.setCursor("grab")
+})
+
+
+CANVAS.on("mouse:move", (event) => {
+    if (mouse_clicked) {
+        const delta = new fabric.Point(event.e.movementX, 0);
+
+        // console.log(delta);
+        CANVAS.relativePan(delta);
+
+        let transform = CANVAS.viewportTransform;
+        if (transform[4] > 0) {
+            transform[4] = 0
+            CANVAS.setViewportTransform(transform)
+        }
+        // TODO: cap at right side
+
+    }
+})
+
+
+CANVAS.on("mouse:up", (event) => {
+    CANVAS.setCursor("default")
+    mouse_clicked = false;
+})
+
+
+/*
+CANVAS.on('mouse:over', (event) => {
+    console.log("mouse over", event, event.target)
+
+    if(e.target == null) { return};
+
+    event.target.objects.forEach(object => {
+        console.log("hover over", object)
+    })
+
+        let cast = event.target;
+        if (cast != undefined) {
+            cast.duration.set('fill', 'red');
+            // event.target.set('fill', 'red');
+            CANVAS.renderAll();
+        }
+    }
+});
+*/
+
+
+/*
+
+const slider = document.getElementById("zoom_slider");
+const zoom_number = document.getElementById("zoom_number");
+slider.oninput = function() {
+
+
+    console.log("change zoom", slider.value);
+    zoom_number.innerHTML = slider.value;
+    SCENE.scale_x = slider.value;
+    draw();
+
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+let is_dragging = false
+let dragStart = { x: 0, y: 0 }
+
+
+CANVAS.on('mouse:wheel', function(opt) {
+    var delta = opt.e.deltaY;
+    var zoom = CANVAS.getZoom();
+
+    zoom *= 0.999 ** delta;
+    if (zoom > 20) zoom = 20;
+    if (zoom < 0.01) zoom = 0.01;
+
+    CANVAS.setZoom(zoom);
+    opt.e.preventDefault();
+    opt.e.stopPropagation();
+})
+
+
+function getEventLocation(e)
+{
+    if (e.touches && e.touches.length == 1)
+    {
+        return { x:e.touches[0].clientX, y: e.touches[0].clientY }
+    }
+    else if (e.clientX && e.clientY)
+    {
+        return { x: e.clientX, y: e.clientY }
+    }
+}
+
+
+function on_mousedown(event) {
+    is_dragging = true
+
+    dragStart.x = getEventLocation(event).x  / cameraZoom - cameraOffset.x
+    // dragStart.y = getEventLocation(event).y  / cameraZoom - cameraOffset.y
+    console.log("on_mousedown", dragStart);
+}
+
+
+function on_mouseup(e)
+{
+    is_dragging = false
+    // initialPinchDistance = null
+    // lastZoom = cameraZoom
+    cameraOffset.x = 0
+    // cameraOffset.y = 0
+}
+
+function on_mousemove(e)
+{
+    if (is_dragging)
+    {
+        let mouse_pos = getEventLocation(e).x;
+        cameraOffset.x = (mouse_pos / cameraZoom) - dragStart.x
+        // cameraOffset.y = getEventLocation(e).y/cameraZoom - dragStart.y
+        console.log("on_mousemove", dragStart, mouse_pos, cameraOffset);
+    }
+
+    // draw();
+}
+
+*/
+
+// CANVAS.addEventListener("mousedown", on_mousedown)
+// CANVAS.addEventListener("mouseup", on_mouseup)
+// CANVAS.addEventListener("mousemove", on_mousemove)
+
+
+
+</script>
+
+
+</body>
+
+

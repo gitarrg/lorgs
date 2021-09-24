@@ -1,17 +1,21 @@
 
 
-class Cast extends Konva.Group {
+import {LINE_HEIGHT} from "./vars.js"
 
-    constructor(cast_data, config) {
+
+export default class Cast extends Konva.Group {
+
+    constructor(stage, cast_data, config) {
         super(config)
 
         // Kova Attrs
         this.listening(true)
         this.transformsEnabled("position")
         this.name("Cast")
+        this.stage = stage
 
         // Internal Attrs
-        this.stage = STAGE;
+        // this.stage = undefined; //STAGE;
         this.added = false
         this.hovering = false
 
