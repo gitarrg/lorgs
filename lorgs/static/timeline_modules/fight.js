@@ -1,12 +1,16 @@
 
+import {LINE_HEIGHT} from "./vars.js"
+import Player from "./player.js"
 
-class Fight extends Konva.Group {
 
-    constructor(fight_data) {
+export default class Fight extends Konva.Group {
+
+    constructor(stage, fight_data) {
         super()
         this.name("Fight")
         this.listening(true)
         this.transformsEnabled("position")
+        this.stage = stage
 
         this.duration = fight_data.duration / 1000; // ms to s
         this.duration = Math.ceil(this.duration);
@@ -41,15 +45,11 @@ class Fight extends Konva.Group {
         this.actors.forEach((actor, i) => {
             actor.create();
             this.add(actor.casts_group);
-            // actor.casts_group.y(i * LINE_HEIGHT)
         })
     }
 
     update() {
-        const stage = this.getStage() || this.background.getStage();
-        if (!stage) {return}
-
-        let w = this.duration * stage.scale_x;
+        let w = this.duration * this.stage.scale_x;
         w = Math.floor(w); // avoid drawing strokes on half pixels
 
         // update background
@@ -60,10 +60,11 @@ class Fight extends Konva.Group {
         this.actors.forEach(actor => {actor.update()})
     }
 
-    load_actors(actors_data) {
+
+/*    load_actors(actors_data) {
         actors_data.forEach(actor_data => {
             this.actors.push(new Player(actor_data))
         })
-    }
+    }*/
 }
 
