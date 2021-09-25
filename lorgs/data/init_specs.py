@@ -16,6 +16,7 @@ from lorgs.models.specs import WowClass
 from lorgs.models.specs import WowRole
 from lorgs.models.specs import WowSpec
 from lorgs.models.specs import WowSpell
+from lorgs.models.specs import WowCovenant
 
 ################################################################################
 #
@@ -111,6 +112,19 @@ ROLE_ITEM     = WowRole(code="item", name="Items")
 OTHER         = WowClass(id=1001, name="Other", color="#cccccc")
 OTHER_POTION  = WowSpec(role=ROLE_ITEM, wow_class=OTHER, name="Potions")
 OTHER_TRINKET = WowSpec(role=ROLE_ITEM, wow_class=OTHER, name="Trinkets")
+
+################################################################################
+#
+#   COVENANTS
+#
+################################################################################
+NO_COV = WowCovenant(id=0, name="None")
+KYRIAN = WowCovenant(id=1, name="Kyrian")
+VENTHYR = WowCovenant(id=2, name="Venthyr")
+NIGHTFAE = WowCovenant(id=3, name="Nightfae")
+NECROLORD = WowCovenant(id=4, name="Necrolord")
+COVENANTS = [KYRIAN, VENTHYR, NIGHTFAE, NECROLORD]
+
 
 ################################################################################
 #

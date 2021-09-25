@@ -160,6 +160,8 @@ class SpecRanking(warcraftlogs_base.Document):
             player.source_id = -1
             player.name = ranking_data.get("name")
             player.total = ranking_data.get("amount", 0)
+            player.covenant_id = ranking_data.get("covenantID", 0)
+            player.soulbind_id = ranking_data.get("soulbindID", 0)
 
             new_fights.append(fight)
 
