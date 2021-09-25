@@ -75,7 +75,17 @@ export default class Cast extends Konva.Group {
         )
         this.cast_text.perfectDrawEnabled(false);
         this.add(this.cast_text);
+
+        // invisible box for mouse events
+        // (some casts might not have a duration-bar to use)
+        const bbox = new Konva.Rect({
+            width: this.cast_text.x() + this.cast_text.width() + 3,
+            height: LINE_HEIGHT-1,
+        });
+        this.add(bbox)
+
         this.y(1);
+
     }
 
     update() {
