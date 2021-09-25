@@ -34,7 +34,7 @@ export default class Stage extends Konva.Stage{
         // custom attributes
         this.scale_x = 4;
         this.fights = []
-        this.spells = []
+        this.spells = {}
         this.longest_fight = 0;
 
         // bool: true if any spell is selected
@@ -127,7 +127,8 @@ export default class Stage extends Konva.Stage{
     }
 
     update_has_selection() {
-        this.has_selection = this.spells.some(spell => spell.selected)
+        let spells = Object.values(this.spells)
+        this.has_selection = spells.some(spell => spell.selected)
     }
 
 

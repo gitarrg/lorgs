@@ -15,6 +15,7 @@ export default class Spell {
         this.duration = this.data.duration || 0;
         this.color = this.data.color;
         this.show = this.data.show;
+        this.name = this.data.name;
 
         this.selected = false;
 
@@ -42,6 +43,7 @@ export default class Spell {
             width: this.duration * stage.scale_x,
             height: LINE_HEIGHT-1,
             fill: this.color,
+            listening: false,
             // cornerRadius: 3,
             opacity: 0.5,
             listening: true,
