@@ -163,9 +163,14 @@ SYLVANAS = SANCTUM_OF_DOMINATION.add_boss(id=2435, name="Sylvanas Windrunner")
 SYLVANAS.add_event(event_type="cast", spell_id=349419, duration=7, color="#00aaff", name="Chains", icon="inv_belt_44.jpg")
 SYLVANAS.add_event(event_type="cast", spell_id=358704, duration=1.5, color="#ff4f42", name="Arrow", icon="ability_theblackarrow.jpg")
 SYLVANAS.add_event(event_type="cast", spell_id=347726, duration=5, color="#228c89", name="Veil of Darkness", icon="ability_argus_deathfog.jpg")
+SYLVANAS.add_event(event_type="cast", spell_id=347670, duration=9, color="#7820e3", name="Shadow Dagger", icon="ability_throw.jpg")
+
 
 # P2
 SYLVANAS.add_event(event_type="cast", spell_id=347741, duration=3, color="#228c89", name="Veil of Darkness", icon="ability_argus_deathfog.jpg")
+SYLVANAS.add_event(event_type="cast", spell_id=351117, duration=9, color="#a76ded", name="Crushing Dread", icon="spell_shadow_gathershadows.jpg")
+SYLVANAS.add_event(event_type="cast", spell_id=348109, duration=9, color="#3cb5ab", name="Banshee Wail", icon="spell_shadow_soulleech_3.jpg", show=False)
+SYLVANAS.add_event(event_type="cast", spell_id=356021, duration=2, cooldown=20, color="#eb4034", name="Dark Communion (Orbs)", icon="spell_animamaw_buff.jpg", show=True)
 
 # P3
 SYLVANAS.add_event(event_type="cast", spell_id=354142, duration=1, color="#228c89", name="Veil of Darkness", icon="ability_argus_deathfog.jpg")
