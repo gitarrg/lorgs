@@ -212,10 +212,13 @@ PRIEST_HOLY.add_spell(         spell_id=265202, cooldown=240,                   
 PRIEST_HOLY.add_spell(         spell_id=200183, cooldown=120, duration=20,                  name="Apotheosis",                      icon="ability_priest_ascension.jpg",              show=False)
 PRIEST_SHADOW.add_spell(       spell_id=228260, cooldown=90,  duration=15, color="#b330e3", name="Voidform",                        icon="spell_priest_voidform.jpg")  # tooltip: 228264
 PRIEST_SHADOW.add_spell(       spell_id=263165, cooldown=30,  duration=3,                   name="Void Torrent",                    icon="spell_priest_voidsear.jpg",                 show=False)
-PRIEST_SHADOW.add_spell(       spell_id=34433,  cooldown=180, duration=15, color="#58db97", name="Shadowfiend",                     icon="spell_shadow_shadowfiend.jpg")
-PRIEST_SHADOW.add_spell(       spell_id=200174, cooldown=60,  duration=15, color="#58db97", name="Mindbender",                      icon="spell_shadow_soulleech_3.jpg")
-PRIEST_SHADOW.add_spell(       spell_id=254232, cooldown=180, duration=15, color="#58db97", name="Voidling",                        icon="spell_shadow_shadowfiend.jpg")  # glyphed shadowfiend
-PRIEST_SHADOW.add_spell(       spell_id=132603, cooldown=180, duration=15, color="#58db97", name="Shadowfiend",                     icon="spell_shadow_shadowfiend.jpg")  # glyphed shadowfiend
+
+# Shadowfiend/Mindbeder Variations (with different glyphs etc)
+for spec in (PRIEST_SHADOW, PRIEST_DISCIPLINE):
+    spec.add_spell(spell_id=200174, cooldown=60,  duration=15, color="#58db97", name="Mindbender", icon="spell_shadow_soulleech_3.jpg")
+    for spell_id in (34433, 254232, 254224, 132603):
+        spec.add_spell(spell_id=spell_id, cooldown=180, duration=15, color="#58db97", name="Shadowfiend", icon="spell_shadow_shadowfiend.jpg")
+
 
 #################################################################################################################################################################################################
 # DK
