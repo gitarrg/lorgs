@@ -3,6 +3,63 @@
 import {LINE_HEIGHT} from "./vars.js"
 
 
+class CastTooltip extends Konva.Group {
+
+    PADDING = 8
+
+    constructor(cast, options) {
+        super(options)
+        this.listening(false)
+        this.transformsEnabled("position")
+
+        let label = `${cast.spell.name}`
+        if (cast.count) {
+            label += ` #${cast.count}`
+        }
+        label += `\n`
+
+        label += `${toMMSS(cast.timestamp)}`
+
+        if (cast.spell.duration > 0) {
+            label += ` - ${toMMSS(cast.timestamp+cast.spell.duration)}`
+        }
+
+        // Timestamp
+        this.text = new Konva.Text({
+            name: "tooltip_Text",
+            text: label,
+            // x: this.PADDING,
+            // y: this.PADDING,
+            fontSize: 14,
+
+            verticalAlign: "bottom",
+
+            fontFamily: "Lato",
+            fill: "white",
+            listening: false,
+            transformsEnabled: "position",
+            }
+        )
+
+        const box = new Konva.Rect({
+            x: this.text.x(),
+            y: this.text.y(),
+            width: this.text.width() + 2 * this.PADDING,
+            height: this.text.height() + 2 * this.PADDING,
+
+            fill: "black",
+            opacity: 1,
+            cornerRadius: 4,
+        });
+
+        this.text.move({x: this.PADDING, y: this.PADDING})
+
+        this.add(box);
+        this.add(this.text)
+    }
+}
+
+
 export default class Cast extends Konva.Group {
 
     constructor(stage, cast_data, config) {
@@ -14,23 +71,29 @@ export default class Cast extends Konva.Group {
         this.name("Cast")
         this.stage = stage
 
-        // Internal Attrs
-        // this.stage = undefined; //STAGE;
-        this.added = false
-        this.hovering = false
-
         // Spell Info
         this.spell_id = cast_data.spell_id;
         this.timestamp = cast_data.timestamp / 1000;
+        this.count = cast_data.count;
+        this.spell = this.stage.spells[this.spell_id];
+
+        // Internal Attrs
+        this.hovering = false
+        this.tooltip;
+        this.tooltip_timer;
+
+
     }
 
     create() {
 
-        this.spell = this.stage.spells[this.spell_id];
+        // this.spell = this.stage.spells[this.spell_id];
         if (this.spell === undefined) {
             this.remove()  // yeet!
             return
         }
+
+
         this.visible(this.spell.show)
 
         // Setup Events
@@ -38,7 +101,6 @@ export default class Cast extends Konva.Group {
         this.on('mouseover', () => {this.hover(true)});
         this.on('mouseout', () => {this.hover(false)});
 
-        if (!this.spell) { return; }
 
         // Cast Cooldown
         this.cast_cooldown = this.spell.cast_cooldown.clone()
@@ -156,11 +218,35 @@ export default class Cast extends Konva.Group {
         const stage = this.getStage()
         stage.container().style.cursor = this.hovering ? "pointer" : "grab";
 
+
+        // Hacky Tooltip logic FIXME
+        if (this.hovering) {
+
+            if (this.tooltip_timer === undefined) {
+                this.tooltip_timer = setTimeout(() => {
+                    this.tooltip = new CastTooltip(this)
+                    this.stage.overlay_layer.add(this.tooltip)
+                    this.tooltip.absolutePosition(this.absolutePosition())
+                    this.tooltip.move({x: 40, y: -30})
+                    this.stage.overlay_layer.batchDraw()
+                }, 500)
+            }
+        } else {
+
+            if (this.tooltip_timer) {
+                clearTimeout(this.tooltip_timer)
+                this.tooltip_timer = undefined
+            }
+
+            if (this.tooltip) {
+                this.tooltip.hide()
+                this.tooltip.remove()
+                this.tooltip = undefined
+            }
+        }
     }
 
     select(event) {
-
-        const stage = this.getStage()
 
         if (event.evt.ctrlKey) {
             // keep current selection.. simply toggle the current spell
@@ -170,12 +256,12 @@ export default class Cast extends Konva.Group {
             // regular selection:
             //  - deselect all spells
             //  - toogle the current spell
-            stage.spells.forEach(spell => {
+            let spells = Object.values(this.stage.spells)
+            spells.forEach(spell => {
                 spell.selected = (spell == this.spell) && !this.spell.selected
             })
         }
-
-        stage.update_has_selection()
-        stage.update()
+        this.stage.update_has_selection()
+        this.stage.update()
     }
 }

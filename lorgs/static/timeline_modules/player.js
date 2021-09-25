@@ -15,8 +15,8 @@ export default class Player {
     }
 
     create() {
-        this.casts.forEach(cast => { cast.create() })
         this.casts = this.casts.filter(cast => cast.spell)
+        this.casts.forEach(cast => { cast.create() })
     }
 
     update() {

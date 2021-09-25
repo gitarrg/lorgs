@@ -165,8 +165,13 @@ export default class Scene {
         // filter used spells
         this.used_spells.clear()
         this.players.forEach(player => {
+            let cast_counter = {}
             player.casts.forEach(cast => {
                 this.used_spells.add(cast.spell_id)
+
+                cast_counter[cast.spell_id] = 1 + (cast_counter[cast.spell_id] || 0)
+                cast.count = cast_counter[cast.spell_id]
+
             }) // for cast
         }) // for player
     }
@@ -250,7 +255,7 @@ export default class Scene {
 
         console.timeEnd("requests")
 
-        this.init_players()
+        this.init_players()  // players first, so we are able to get "spells_used"
         this.init_spells()
 
         ////////////////////////////
