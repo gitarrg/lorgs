@@ -1,13 +1,5 @@
 
-
-{% macro killtime_input(id) -%}
-    <input id="killtime_input_{{id}}" type="text" class="killtime_input form-control" placeholder="0:00" pattern="\d+:\d{2,}">
-{%- endmacro %}
-
-
-
 <div class="ml-auto"></div> {# Spacer #}
-
 
 {# Covenant #}
 <div class="filter_option ml-2" style="display: None">
@@ -15,7 +7,7 @@
 
     <div class="bg-dark p-1 rounded border">
     {% for covenant in data.COVENANTS %}
-        <img class="filter_covenant button icon-s rounded wow-border-{{covenant.name_slug}}" src="{{covenant.icon_path}}" data-covenant="{{covenant.name_slug}}" data-bs-toggle="tooltip" title="{{covenant.name}}">
+        <img class="filter_covenant button icon-s rounded wow-border-{{covenant.name_slug}}" src="{{covenant.icon_path}}" data-covenant="{{covenant.name_slug}}" data-bs-toggle="tooltip" title="{{covenant.name}}" alt="{{covenant.name}}">
     {% endfor %}
     </div>
 </div>
@@ -26,9 +18,9 @@
     <small class="clear-both text-muted">Killtime</small>
     <div class="bg-dark rounded border">
         <div class="input-group input-group-sm">
-            {{ killtime_input("min") }}
+            <input id="killtime_input_min" type="text" class="killtime_input form-control" placeholder="0:00" pattern="\d+:\d{2,}" data-bs-toggle="tooltip" title="hide fights shorter than this">
             <span class="input-group-text">-</span>
-            {{ killtime_input("max") }}
+            <input id="killtime_input_max" type="text" class="killtime_input form-control" placeholder="10:00" pattern="\d+:\d{2,}" data-bs-toggle="tooltip" title="hide fights longer than this">
         </div>
     </div>
 </div>

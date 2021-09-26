@@ -1,6 +1,5 @@
 
 import {LINE_HEIGHT} from "./vars.js"
-import Player from "./player.js"
 
 
 export default class Fight extends Konva.Group {
