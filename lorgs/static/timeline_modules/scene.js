@@ -270,17 +270,14 @@ export default class Scene {
 
         this.init_players()  // players first, so we are able to get "spells_used"
         this.init_spells()
+        this.stage.set_spells(this.spells_data)
 
         ////////////////////////////
         // Update the Stage
 
         console.time("stage set fights/spells")
-        this.stage.set_spells(this.spells_data)
-        this.stage.set_players(this.players)
-        this.create_player_names(this.players)
+        this.update_filters()
         console.timeEnd("stage set fights/spells")
-
-        this.update()
     }
 
     update() {
@@ -336,11 +333,17 @@ export default class Scene {
 
         show(this.loading_spinner)
 
+        // apply filters
         let players = this.players.filter(player => this._filter_player(player))
 
+        let url_params = new URLSearchParams(window.location.search);
+        let max_players = parseInt(url_params.get("max_players")) || 50
+        players = players.slice(0, max_players+1)
+        console.log("update_filters", max_players+1, players)
+
+        // update data
         this.stage.set_players(players)
         this.create_player_names(players)
-
         this.update()
     }
 }
