@@ -80,9 +80,8 @@ class SpecRanking(warcraftlogs_base.Document):
     ##########################
     # Query
     #
-    async def load(self, limit=50, clear_old=False):
-        """Get Top Ranks for a given boss and spec."""
-        logger.info(f"{self.boss.name} vs. {self.spec.name} {self.spec.wow_class.name} START | limit={limit} | clear_old={clear_old}")
+
+    async def load_rankings(self, limit=50):
 
         # Build and run the query
         query = f"""\
@@ -107,6 +106,14 @@ class SpecRanking(warcraftlogs_base.Document):
         rankings = query_result.get("rankings", [])
         if limit:
             rankings = rankings[:limit]
+
+        return rankings
+
+    async def load(self, limit=50, clear_old=False):
+        """Get Top Ranks for a given boss and spec."""
+        logger.info(f"{self.boss.name} vs. {self.spec.name} {self.spec.wow_class.name} START | limit={limit} | clear_old={clear_old}")
+
+        rankings = await self.load_rankings(limit=limit)
 
         if clear_old:
             self.reports = []
