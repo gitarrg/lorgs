@@ -129,7 +129,7 @@ class TimelineMarker extends Konva.Group {
 
 
 
-export default class TimelineRuler extends Konva.Group {
+export default class Ruler extends Konva.Group {
 
     tick_distance = 10; // seconds
     timestamp_distance = 30;
@@ -139,7 +139,7 @@ export default class TimelineRuler extends Konva.Group {
     constructor(stage, config={}) {
         // config.listening = false
         config.transformsEnabled = "none"
-        config.name = "TimelineRuler"
+        config.name = "Ruler"
         super(config)
 
         this.stage = stage
@@ -163,7 +163,7 @@ export default class TimelineRuler extends Konva.Group {
         })
 
         this.bbox = new Konva.Rect({
-            height: LINE_HEIGHT,
+            height: LINE_HEIGHT-2,
             width: 200,
             transformsEnabled: "none",
         })
@@ -178,11 +178,13 @@ export default class TimelineRuler extends Konva.Group {
 
     }
 
+    create() {
 
-    create_ticks() {
         // reset
         this.ticks = [];
         this.timestamps = [];
+        this.destroyChildren()
+
 
         if (this.duration <= 0) {return;}
 
@@ -232,13 +234,6 @@ export default class TimelineRuler extends Konva.Group {
         } // for t
         this.cache()
     }
-
-
-    create() {
-        this.stage = this.getStage()
-        this.create_ticks()
-    }
-
 
     update() {
         if (this.duration <= 0) {return;}
@@ -297,9 +292,3 @@ export default class TimelineRuler extends Konva.Group {
         marker.on_dragmove()
     }
 }
-
-
-
-
-
-
