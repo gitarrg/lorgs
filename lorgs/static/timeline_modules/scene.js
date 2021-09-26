@@ -325,7 +325,7 @@ export default class Scene {
         }
 
         // exact check against false, as undefined is considered true in this case
-        if ( this.filters[player.covenant] == false ) {
+        if ( this.filters[player.covenant] === false ) {
             return false
         }
 

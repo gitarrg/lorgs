@@ -3,7 +3,7 @@
 import Fight from "./fight.js"
 import Player from "./player.js"
 import Spell from "./spell.js"
-import TimelineRuler from "./ruler.js"
+import Ruler from "./ruler.js"
 import {LINE_HEIGHT} from "./vars.js"
 
 
@@ -57,7 +57,7 @@ export default class Stage extends Konva.Stage{
         this.debug_layer = new Konva.Layer()
         this.add(this.debug_layer);
 
-        this.ruler = new TimelineRuler(this);
+        this.ruler = new Ruler(this);
         this.back_layer.add(this.ruler)
 
         // update canvas on window resize

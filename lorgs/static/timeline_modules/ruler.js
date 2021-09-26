@@ -129,7 +129,7 @@ class TimelineMarker extends Konva.Group {
 
 
 
-export default class TimelineRuler extends Konva.Group {
+export default class Ruler extends Konva.Group {
 
     tick_distance = 10; // seconds
     timestamp_distance = 30;
@@ -139,7 +139,7 @@ export default class TimelineRuler extends Konva.Group {
     constructor(stage, config={}) {
         // config.listening = false
         config.transformsEnabled = "none"
-        config.name = "TimelineRuler"
+        config.name = "Ruler"
         super(config)
 
         this.stage = stage
