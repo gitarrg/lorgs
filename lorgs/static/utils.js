@@ -5,15 +5,6 @@ function toMMSS(seconds) {
 }
 
 
-// convert a time "1:23" to seconds
-function time_to_seconds(text) {
-
-    const regex = /(?<minutes>\d+):(?<seconds>\d+)/
-    const found = text.match(regex)
-    if (!found) {return 0}
-    return parseInt(found.groups.minutes) * 60 + parseInt(found.groups.seconds)
-}
-
 
 function clamp(num, min, max) {
   return Math.min(Math.max(num, min), max);
