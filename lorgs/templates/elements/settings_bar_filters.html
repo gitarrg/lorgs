@@ -1,0 +1,94 @@
+
+<div class="ml-auto"></div> {# Spacer #}
+
+{# Covenant #}
+<div class="filter_option ml-2" style="display: None">
+    <small class="clear-both text-muted">Covenant</small>
+
+    <div class="bg-dark p-1 rounded border">
+    {% for covenant in data.COVENANTS %}
+        <img class="filter_covenant button icon-s rounded wow-border-{{covenant.name_slug}}" src="{{covenant.icon_path}}" data-covenant="{{covenant.name_slug}}" data-bs-toggle="tooltip" title="{{covenant.name}}" alt="{{covenant.name}}">
+    {% endfor %}
+    </div>
+</div>
+
+
+{# Killtime #}
+<div class="filter_option ml-2" style="display: None">
+    <small class="clear-both text-muted">Killtime</small>
+    <div class="bg-dark rounded border">
+        <div class="input-group input-group-sm">
+            <input id="killtime_input_min" type="text" class="killtime_input form-control" placeholder="0:00" pattern="\d+:\d{2,}" data-bs-toggle="tooltip" title="hide fights shorter than this">
+            <span class="input-group-text">-</span>
+            <input id="killtime_input_max" type="text" class="killtime_input form-control" placeholder="9:59" pattern="\d+:\d{2,}" data-bs-toggle="tooltip" title="hide fights longer than this">
+        </div>
+    </div>
+</div>
+
+
+<div class="ml-2"> {# Spacer #}
+    <small class="clear-both text-muted">Filters</small>
+    <div class="bg-dark p-1 rounded border">
+        <div id="show_filters" class="button icon-s rounded border-white fas fa-filter disabled" data-bs-toggle="tooltip" title="filter"></div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+(function () {
+
+//////////////////////////////////
+// Show/Hide filter Groups
+document.getElementById("show_filters").addEventListener("click", function() {
+
+    this.classList.toggle("disabled")
+    const enabled = !this.classList.contains("disabled")
+
+    document.querySelectorAll(".filter_option").forEach(group => {
+        show(group, enabled)
+    })
+})
+
+
+function dispatchFilterEvent(filters) {
+    let event = new CustomEvent("update_filter");
+    event.filters = filters
+    document.dispatchEvent(event);
+}
+
+
+//////////////////////////////////
+// Killtime
+let filter_killtime_min = document.getElementById("killtime_input_min")
+let filter_killtime_max = document.getElementById("killtime_input_max")
+function update_killtime() {
+
+    // create event
+    let filters = {}
+    filters["killtime_min"] = time_to_seconds(filter_killtime_min.value)
+    filters["killtime_max"] = time_to_seconds(filter_killtime_max.value)
+    dispatchFilterEvent(filters)
+}
+
+filter_killtime_min.addEventListener("change", update_killtime)
+filter_killtime_max.addEventListener("change", update_killtime)
+
+
+//////////////////////////////////
+// Covenant
+document.querySelectorAll(".filter_covenant").forEach(button => {
+
+    let covenant = button.dataset.covenant
+
+    button.addEventListener("click", function() {
+        this.classList.toggle("disabled")
+
+        let filters = {}
+        filters[covenant] = !this.classList.contains("disabled")
+        dispatchFilterEvent(filters)
+    })
+})
+
+})(); // IIFE End
+
+</script>

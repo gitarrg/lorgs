@@ -54,9 +54,7 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
 <div class="p-2 bg-dark rounded border d-flex">
 
     <!-- Player Names -->
-    <div id="player_names_container" class="player_names_container spec_ranking">
-        <div class="timeline_ruler_playerholder"></div>
-    </div>
+    <div id="player_names_container" class="player_names_container spec_ranking"></div>
 
     <div id="player_timelines_container" class="flex-grow-1">
 
@@ -86,7 +84,6 @@ until I move fully to react or similar,
 I could not find a cleaner way to pass those from flask/jinja over...
 
 */
-
 const SETTINGS = {
 
     // spec and boss
@@ -102,8 +99,7 @@ const SETTINGS = {
 </script>
 
 
-{# todo: use sync src #}
-<script defer src="https://unpkg.com/konva@8/konva.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/konva/8.2.1/konva.min.js" integrity="sha512-Kae4IrvcqQ8H13MSTCuxrsUt9pHxzYOyNjTh3QqDtKhYYeLzexguA1aY4+lUAWZnrCRQ6CFx8zHVO8lKLkC/5A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 {% if config.LOCAL_FILES %}
     {# find a better way to do this #}
@@ -112,39 +108,6 @@ const SETTINGS = {
     <script defer src="{{url_for('static',filename='_generated/main.js')}}?tag={{config.BUILD_TAG}}"></script>
 {% endif %}
 
-
-<script defer type="text/javascript">
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-async function init() {
-
-    console.log("inline init", Scene)
-
-    // create scene
-    let scene = new Scene({
-
-        // settings
-        spec_slug: "{{spec.full_name_slug}}",
-        boss_slug: "{{boss.name_slug}}",
-
-        // hmtl elements
-        canvas: document.getElementById("timeline_canvas"),
-        player_names_container: document.getElementById("player_names_container"),
-        spell_settings_bar: document.getElementById("settings_bar"),
-    })
-    await scene.load()
-
-    // hide loading text
-    let canvas_loading = document.getElementById("canvas_loading");
-    hide(canvas_loading)
-}
-
-// init()
-// document.addEventListener('DOMContentLoaded', init)
-
-</script>
 {% endblock %}
 
 

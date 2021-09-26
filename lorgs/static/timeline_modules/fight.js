@@ -1,6 +1,5 @@
 
 import {LINE_HEIGHT} from "./vars.js"
-import Player from "./player.js"
 
 
 export default class Fight extends Konva.Group {
@@ -58,13 +57,10 @@ export default class Fight extends Konva.Group {
 
         // update actors
         this.actors.forEach(actor => {actor.update()})
+
+        // reflect changes to the background layer
+        this.background.visible(this.visible())
+        this.background.y(this.y())
     }
-
-
-/*    load_actors(actors_data) {
-        actors_data.forEach(actor_data => {
-            this.actors.push(new Player(actor_data))
-        })
-    }*/
 }
 
