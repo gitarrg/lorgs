@@ -12,6 +12,7 @@ from lorgs.models import warcraftlogs_base
 from lorgs.models.encounters import RaidBoss
 from lorgs.models.specs import WowSpec
 from lorgs.models.specs import WowSpell
+from lorgs.models.specs import WowCovenant
 
 
 class Cast(me.EmbeddedDocument):
@@ -146,6 +147,9 @@ class Player(BaseActor):
     total = me.FloatField()
     spec_slug = me.StringField(required=True)
 
+    covenant_id = me.IntField()
+    soulbind_id = me.IntField()
+
     deaths = me.ListField(me.DictField())
 
     def __str__(self):
@@ -161,6 +165,8 @@ class Player(BaseActor):
             "spec_slug": self.spec_slug,
             "class_slug": self.spec.wow_class.name_slug,
 
+            "covenant": self.covenant.name_slug,
+
             "casts": [cast.as_dict() for cast in self.casts]
         }
 
@@ -170,6 +176,10 @@ class Player(BaseActor):
     @property
     def spec(self):
         return WowSpec.get(full_name_slug=self.spec_slug)
+
+    @property
+    def covenant(self):
+        return WowCovenant.get(id=self.covenant_id or 0)
 
     @property
     def report_url(self):

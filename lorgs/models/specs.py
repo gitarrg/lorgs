@@ -166,3 +166,20 @@ class WowSpell(base.Model):
         if self.icon.startswith("/"):
             return self.icon
         return f"{self.ICON_ROOT}/{self.icon}"
+
+
+class WowCovenant(base.Model):
+    """Datacontainer for Covenants in the Game.
+
+    Nightfae, Necrolord, Ventyr and Kyrian.
+
+    """
+
+    def __init__(self, id, name):
+        self.id = id
+        self.name = name
+        self.name_slug = utils.slug(self.name)
+        self.icon = f"covenants/{self.name_slug}.jpg"
+
+    def __repr__(self):
+        return f"<Covenant({self.name})>"

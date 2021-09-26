@@ -75,10 +75,10 @@ def spec_ranking(spec_slug, boss_slug):
 
     # Return
     kwargs = {}
+    kwargs["data"] = data
     kwargs["spec"] = spec
     kwargs["boss"] = boss
     kwargs["spells"] = spec.spells
-    kwargs["roles"] = data.ROLES
     kwargs["bosses"] = boss.zone.bosses
     return flask.render_template("spec_ranking.html", **kwargs)
 

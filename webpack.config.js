@@ -1,9 +1,14 @@
 
+// Imports
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-// const HtmlWebpackPlugin = require('html-webpack-plugin');
+const TerserPlugin = require("terser-webpack-plugin");
 const path = require("path")
 
+// Constants
+const DEBUG = process.env.NODE_ENV !== "production";
 
+
+// Config
 module.exports = {
 
     mode: process.env.NODE_ENV || 'development',
@@ -33,7 +38,14 @@ module.exports = {
 
     // for testing
     optimization: {
-        minimize: process.env.NODE_ENV == "production"
+        minimize: process.env.NODE_ENV == "production",
+        minimizer: [new TerserPlugin({
+            terserOptions: {
+                compress: {
+                    drop_console: true,
+                }
+            }
+        })],
     },
 
     plugins: [
