@@ -13,11 +13,23 @@
 }
 
 
+
+#canvas_loading {
+    z-index: 999;
+
+}
+
 /********************************
 
         Player Cast Timeline
 
 *********************************/
+
+
+#player_names_container {
+    padding-top: $timeline-height;
+}
+
 
 .player_timelines_container {
     overflow: hidden;

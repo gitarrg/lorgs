@@ -57,7 +57,6 @@ export default class Stage extends Konva.Stage{
         this.debug_layer = new Konva.Layer()
         this.add(this.debug_layer);
 
-
         this.ruler = new TimelineRuler(this);
         this.back_layer.add(this.ruler)
 
@@ -66,7 +65,6 @@ export default class Stage extends Konva.Stage{
 
         this.on("dragmove",  this.on_dragmove)
         this.on("wheel",  this.on_wheel)
-
         this.on("contextmenu", this.contextmenu)
     }
 
@@ -75,41 +73,35 @@ export default class Stage extends Konva.Stage{
     // CREATION AND DRAW
     //
     contextmenu(event) {
-        console.log("stage: skipped contextmenu")
         event.evt.preventDefault();
     }
 
+
     create() {
 
-        this.main_layer.clear()
-        let y = 0;
-
-        y += (this.ruler.height-1)
-
-        // update longest_fight
+        this.clear()
+        this.zoom_changed = true
         this.longest_fight = 0;
+
+        // update fights
         this.fights.forEach((fight, i) => {
 
+            // create/add the fight
+            fight.y(this.ruler.height-1 + (i*LINE_HEIGHT))
             this.main_layer.add(fight)
-
-            fight.create();  // <-- slow
-
-            // background
-            fight.y(y) // - 0.5)
-
-            fight.background.y(y) // - 0.5)
             this.back_layer.add(fight.background)
+            fight.create();
 
+            // get longest fight (for the ruler)
             this.longest_fight = Math.max(this.longest_fight, fight.duration)
-            y += LINE_HEIGHT
         })
 
         // Ruler
-        console.time("ruler create")
         this.ruler.duration = this.longest_fight || 5 * 60;
         this.ruler.create();
-        console.timeEnd("ruler create")
 
+        // update height based on number of fights loaded
+        this.height(this.ruler.height + this.fights.length * LINE_HEIGHT)
     }
 
     update() {
@@ -208,7 +200,6 @@ export default class Stage extends Konva.Stage{
         this.update()
     }
 
-
     ////////////////////////////////////////////////////////////////////////////
     // LOAD
     //
@@ -223,9 +214,15 @@ export default class Stage extends Konva.Stage{
 
     set_players(players) {
 
-        players.forEach((player) => {
+        // clear any old fights
+        this.fights.forEach(fight => {
+            fight.destroy()
+            fight.background.destroy()
+        })
+        this.fights = []
 
-            // fight
+        // create fresh instances
+        players.forEach((player) => {
             let fight = new Fight(this, player.fight);
             fight.actors.push(new Player(this, player))
             this.fights.push(fight)

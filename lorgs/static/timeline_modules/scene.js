@@ -117,6 +117,9 @@ export default class Scene {
         // request results
         this.players = []
 
+        // dict: applied filters
+        this.filters = {}
+
         this.all_spells = {}
         this.used_spells = new Set();
 
@@ -128,11 +131,29 @@ export default class Scene {
         // HTML Elements
         this.player_names_container = args.player_names_container
         this.spell_settings_bar = args.spell_settings_bar
+        this.loading_spinner = args.loading_spinner
+
+        document.addEventListener("update_filter", event => {
+            this.filters = {...this.filters, ...event.filters}
+            this.update_filters()
+        })
 
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // loading
+
+    create_player_names(players) {
+
+        // remove any old divs
+        this.player_names_container.innerHTML = '';
+
+        // create html elements
+        players.forEach(player => {
+            let player_div = player.type == "boss" ? create_boss_name_div(player) : create_player_name_div(player)
+            this.player_names_container.appendChild(player_div)
+        })
+    }
 
     init_players() {
 
@@ -155,12 +176,6 @@ export default class Scene {
                 this.players.push(player)
             }) // for player
         }) // for fight
-
-        // create html elements
-        this.players.forEach(player => {
-            let player_div = player.type == "boss" ? create_boss_name_div(player) : create_player_name_div(player)
-            this.player_names_container.appendChild(player_div)
-        })
 
         // filter used spells
         this.used_spells.clear()
@@ -236,8 +251,6 @@ export default class Scene {
         document.addEventListener("toggle_casttime", event => {
             this.stage.toggle_casttime(event.show)
         })
-
-
     }
 
     async load() {
@@ -264,8 +277,15 @@ export default class Scene {
         console.time("stage set fights/spells")
         this.stage.set_spells(this.spells_data)
         this.stage.set_players(this.players)
+        this.create_player_names(this.players)
         console.timeEnd("stage set fights/spells")
 
+        this.update()
+    }
+
+    update() {
+
+        show(this.loading_spinner)
 
         console.time("stage create")
         this.stage.create();
@@ -275,7 +295,52 @@ export default class Scene {
         console.timeEnd("stage update")
 
         // Update Size
-        this.stage.height(this.player_names_container.offsetHeight)
         this.stage.update_size()
+
+        // hide spinner: delayed so the page can refresh first
+        let s = this.loading_spinner
+        setTimeout(function() {
+            hide(s)
+        }, 20)
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // filters
+
+    _filter_player(player) {
+
+        // for now.. only the #1 fight has the boss lane
+        if (player.type == "boss") {
+            return true;
+        }
+
+        let fight = player.fight
+        let fight_duration = fight.duration / 1000
+
+        if (this.filters.killtime_min && this.filters.killtime_min > fight_duration) {
+            return false
+        }
+        if (this.filters.killtime_max && this.filters.killtime_max < fight_duration) {
+            return false
+        }
+
+        // exact check against false, as undefined is considered true in this case
+        if ( this.filters[player.covenant] == false ) {
+            return false
+        }
+
+        return true
+    }
+
+    update_filters() {
+
+        show(this.loading_spinner)
+
+        let players = this.players.filter(player => this._filter_player(player))
+
+        this.stage.set_players(players)
+        this.create_player_names(players)
+
+        this.update()
     }
 }
