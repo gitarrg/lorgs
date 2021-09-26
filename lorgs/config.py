@@ -46,4 +46,4 @@ class ProductionConfig(BaseConfig):
 
     GOOGLE_ANALYTICS_ID = "G-Y92VPCY6QW"
 
-    CACHE_DEFAULT_TIMEOUT = 600  # 10min
+    CACHE_DEFAULT_TIMEOUT = 60 * 60  # 1h
