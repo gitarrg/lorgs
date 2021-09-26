@@ -13,6 +13,7 @@ version: 2.1
 
 orbs:
   discord: antonioned/discord@0.1.0
+  sonarcloud: sonarsource/sonarcloud@1.0.1
 
 
 ################################################################################
@@ -87,6 +88,16 @@ jobs:
             - project
 
   ################################
+  # prep
+  #
+  sonarscan:
+    docker:
+      - image: cimg/node:16.9
+    steps:
+      - checkout
+      - sonarcloud/scan
+
+  ################################
   # deploy job
   #
 
@@ -128,6 +139,8 @@ workflows:
 
       # always execute "build"
       - build
+
+      - sonarscan
 
       # deploy for /master
       - deploy:

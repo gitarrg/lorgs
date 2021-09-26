@@ -44,9 +44,7 @@ export default class Spell {
             height: LINE_HEIGHT-1,
             fill: this.color,
             listening: false,
-            // cornerRadius: 3,
             opacity: 0.5,
-            listening: true,
             transformsEnabled: "none",
         })
         this.cast_duration.perfectDrawEnabled(false);

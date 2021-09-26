@@ -3,6 +3,7 @@
 
     <!-- Roles -->
     <div class="p-1 bg-dark border rounded">
+    {% set roles = roles or data.ROLES %}
     {% for role in roles %}
         <div class="ranking-nav">
             <img class="ranking-nav-role-icon icon-m rounded wow-border-{{role.code}}" src="{{role.icon_path}}">
