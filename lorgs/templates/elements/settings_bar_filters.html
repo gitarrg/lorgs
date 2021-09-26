@@ -18,9 +18,9 @@
     <small class="clear-both text-muted">Killtime</small>
     <div class="bg-dark rounded border">
         <div class="input-group input-group-sm">
-            <input id="killtime_input_min" type="text" class="killtime_input form-control" placeholder="0:00" pattern="\d+:\d{2,}" data-bs-toggle="tooltip" title="hide fights shorter than this">
+            <input id="killtime_input_min" type="text" class="killtime_input form-control" placeholder="0:00" pattern="\d+:\d{2,}">
             <span class="input-group-text">-</span>
-            <input id="killtime_input_max" type="text" class="killtime_input form-control" placeholder="9:59" pattern="\d+:\d{2,}" data-bs-toggle="tooltip" title="hide fights longer than this">
+            <input id="killtime_input_max" type="text" class="killtime_input form-control" placeholder="9:59" pattern="\d+:\d{2,}">
         </div>
     </div>
 </div>
@@ -36,6 +36,16 @@
 
 <script type="text/javascript">
 (function () {
+
+// convert a time "1:23" to seconds
+function time_to_seconds(text) {
+
+    const regex = /(?<minutes>\d+):(?<seconds>\d+)/
+    const found = text.match(regex)
+    if (!found) {return 0}
+    return parseInt(found.groups.minutes) * 60 + parseInt(found.groups.seconds)
+}
+
 
 //////////////////////////////////
 // Show/Hide filter Groups
