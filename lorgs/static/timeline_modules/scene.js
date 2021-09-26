@@ -96,7 +96,7 @@ function create_player_name_div(player) {
 
     let total = document.createElement("span");
     total.className = "player_name__total"
-    total.innerHTML = player.total_fmt
+    total.innerHTML = kFormatter(player.total)
     wcl_link.appendChild(total);
 
     return container

@@ -158,8 +158,7 @@ class Player(BaseActor):
     def as_dict(self):
         return {
             "name": self.name,
-            "total": self.total,
-            "total_fmt": utils.format_big_number(self.total),
+            "total": int(self.total),
 
             "source_id": self.source_id,
             "spec_slug": self.spec_slug,

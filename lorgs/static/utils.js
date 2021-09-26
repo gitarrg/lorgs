@@ -5,6 +5,16 @@ function toMMSS(seconds) {
 }
 
 
+// based on: https://stackoverflow.com/a/9461657
+function kFormatter(n, digits=2) {
+
+    if (n > 999) {
+        return(n/1000).toFixed(digits) + "k"
+    }
+    return n.toFixed(0);
+}
+
+
 
 function clamp(num, min, max) {
   return Math.min(Math.max(num, min), max);
