@@ -8,7 +8,7 @@
 
 
 
-<div id="settings_bar" class="settings_bar d-flex flex-row flex-wrap">
+<div id="settings_bar" class="settings_bar d-flex flex-row align-items-end flex-wrap">
 
     {# Global Buttons #}
     <div class="mr-2">
@@ -64,6 +64,9 @@
         </div>
     </div>
     {% endfor %}
+
+    {% include "elements/settings_bar_filters.html" %}
+
 </div>
 
 
