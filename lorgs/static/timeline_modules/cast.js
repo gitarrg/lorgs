@@ -72,8 +72,8 @@ export default class Cast extends Konva.Group {
         this.stage = stage
 
         // Spell Info
-        this.spell_id = cast_data.spell_id;
-        this.timestamp = cast_data.timestamp / 1000;
+        this.spell_id = cast_data.id;
+        this.timestamp = cast_data.ts / 1000;
         this.count = cast_data.count;
         this.spell = this.stage.spells[this.spell_id];
 

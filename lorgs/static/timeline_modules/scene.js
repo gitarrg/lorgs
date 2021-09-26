@@ -182,10 +182,10 @@ export default class Scene {
         this.players.forEach(player => {
             let cast_counter = {}
             player.casts.forEach(cast => {
-                this.used_spells.add(cast.spell_id)
+                this.used_spells.add(cast.id)
 
-                cast_counter[cast.spell_id] = 1 + (cast_counter[cast.spell_id] || 0)
-                cast.count = cast_counter[cast.spell_id]
+                cast_counter[cast.id] = 1 + (cast_counter[cast.id] || 0)
+                cast.count = cast_counter[cast.id]
 
             }) // for cast
         }) // for player

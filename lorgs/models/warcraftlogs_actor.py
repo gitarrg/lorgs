@@ -28,8 +28,8 @@ class Cast(me.EmbeddedDocument):
 
     def as_dict(self):
         return {
-            "timestamp": self.timestamp,
-            "spell_id": self.spell_id,
+            "ts": self.timestamp,
+            "id": self.spell_id,
         }
 
     ##########################
