@@ -96,11 +96,10 @@ def comp_ranking(comp_name, boss_slug):
     comp_ranking = warcraftlogs_comps.CompRating.get_or_create(comp=comp_name, boss_slug=boss_slug)
 
     kwargs = {}
+    kwargs["data"] = data
     kwargs["comp_ranking"] = comp_ranking
     kwargs["all_spells"] = comp_ranking.spells_used
     kwargs["timeline_duration"] = max(fight.duration for fight in comp_ranking.fights) if comp_ranking.fights else 0
-
-    kwargs["roles"] = data.ROLES
     kwargs["bosses"] = comp_ranking.boss.zone.bosses
 
     return flask.render_template("comp_ranking.html", **kwargs)
