@@ -65,7 +65,9 @@
     </div>
     {% endfor %}
 
-    {% include "elements/settings_bar_filters.html" %}
+    {% if not comp %}
+        {% include "elements/settings_bar_filters.html" %}
+    {% endif %}
 
 </div>
 
