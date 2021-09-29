@@ -15,18 +15,11 @@ module.exports = {
 
     entry: {
         // main: path.resolve(__dirname, "lorgs/static/main.js"),
-        app: {
-            import: path.resolve(__dirname, "lorgs/static/src/app.jsx"),
-            dependOn: ["react-konva"]
-        },
+        app: path.resolve(__dirname, "lorgs/static/src/app.jsx"),
         style: path.resolve(__dirname, "lorgs/templates/scss/main.scss"),
-        
-        // Libs
-        "react-konva": path.resolve(__dirname, "node_modules/react-konva"),
-
     },
 
-    // modules that will be loaded externally 
+    // modules that will be loaded externally
     externals: {
         'react': 'React',
         'konva': 'Konva',

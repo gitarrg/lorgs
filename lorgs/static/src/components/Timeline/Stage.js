@@ -2,9 +2,9 @@
 
 import Konva from "konva"
 
-// import Fight from "./fight.js"
-// import Player from "./player.js"
-// import Spell from "./spell.js"
+import Fight from "./Fight.js"
+import Player from "./Player.js"
+import Spell from "./Spell.js"
 import Ruler from "./Ruler.js"
 import {LINE_HEIGHT} from "./../../constants.js"
 
@@ -65,8 +65,14 @@ export default class Stage extends Konva.Stage{
         this.on("dragmove",  this.on_dragmove)
         this.on("wheel",  this.on_wheel)
         this.on("contextmenu", this.contextmenu)
-    }
 
+
+        // Button Events
+        document.addEventListener("toggle_cooldown", event => { this.toggle_cooldown(event.show) })
+        document.addEventListener("toggle_duration", event => { this.toggle_duration(event.show) })
+        document.addEventListener("toggle_casttime", event => { this.toggle_casttime(event.show) })
+        document.addEventListener("toggle_spell", event => { this.show_spell(event.spell_id, event.show) })
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     // CREATION AND DRAW
@@ -81,6 +87,8 @@ export default class Stage extends Konva.Stage{
         this.zoom_changed = true
         this.longest_fight = 0;
 
+        console.log("this.fights", this.fights)
+
         // update fights
         this.fights.forEach((fight, i) => {
 
@@ -93,6 +101,8 @@ export default class Stage extends Konva.Stage{
             // get longest fight (for the ruler)
             this.longest_fight = Math.max(this.longest_fight, fight.duration)
         })
+
+        console.log("longest fight", this.longest_fight)
 
         // Ruler
         this.ruler.duration = this.longest_fight || 5 * 60;
@@ -118,17 +128,16 @@ export default class Stage extends Konva.Stage{
 
     update_has_selection() {
         let spells = Object.values(this.spells)
-        this.has_selection = spells.some(spell => spell.selected)
+        this.has_selection = spells.some(spell => (spell.selected && spell.show))
     }
-
 
     ////////////////////////////////////////////////////////////////////////////
     // EVENTS
     //
 
     update_size() {
-        let container = this.container()
-        this.width(container.offsetWidth)
+        // TODO: get parent width (after overflow etc)
+        this.width(this.longest_fight * this.scale_x)
     }
 
     _limit_movement() {
@@ -180,6 +189,7 @@ export default class Stage extends Konva.Stage{
             return
         }
         spell.show = show;
+        this.update_has_selection()
         this.update();
     }
 
@@ -202,15 +212,15 @@ export default class Stage extends Konva.Stage{
     // LOAD
     //
 
-    set_spells(spells_data) {
+    set_spells(spells) {
 
         // create Spell Instances
-        spells_data.forEach(spell_data => {
-            this.spells[spell_data.spell_id] = new Spell(this, spell_data);
+        Object.values(spells).forEach(spell => {
+            this.spells[spell.spell_id] = new Spell(this, spell);
         })
     }
 
-    set_players(players) {
+    set_fights(new_fights) {
 
         // clear any old fights
         this.fights.forEach(fight => {
@@ -220,13 +230,14 @@ export default class Stage extends Konva.Stage{
         this.fights = []
 
         // create fresh instances
-        players.forEach((player) => {
-            let fight = new Fight(this, player.fight);
-            fight.actors.push(new Player(this, player))
-            this.fights.push(fight)
+        new_fights.forEach((fight) => {
+            fight.players.forEach(player => {
+                let new_fight = new Fight(this, player.fight);
+                new_fight.actors.push(new Player(this, player))
+                this.fights.push(new_fight)
+            })
         })
     }
-
 
     ////////////////////////////////////////////////////////////////////////////
     // DEBUGGIN

@@ -5,7 +5,7 @@ import useFetch from "react-fetch-hook";
 
 import PlayerNamesList from "./components/PlayerNamesList.jsx"
 import TimelineCanvas from "./components/TimelineCanvas.jsx"
-import AppDataContext from "./AppDataContext.jsx"
+import AppDataContext, { DEFAULT_CONTEXT } from "./AppDataContext.jsx"
 
 
 // export const AppDataContext = React.createContext()
@@ -44,28 +44,91 @@ async function load_fights(spec_slug, boss_slug) {
 } */
 
 
+function process_spells(spellsData) {
+
+    let new_spells = Object.values(spellsData)
+    new_spells.forEach(spell => {
+
+        // this is a bit of a hack... 
+        // we reuse the img from the settings bar
+        spell.image = document.querySelector(`.button[data-spell_id="${spell.spell_id}"]`)
+    })
+    // setSpells(new_spells)
+    return new_spells
+    // let new_context = {...context, spells: new_spells}
+    // setContext(new_context)
+}
+
+
+function process_fights(fightsData) {
+
+    let main_fight = {}
+    main_fight.players = []
+    fightsData.fights.forEach((fight, i) => {
+        fight.players.forEach(player => {
+            player.rank = i+1
+            player.fight = fight
+            main_fight.players.push(player)
+        });
+    })
+
+    return [main_fight]
+    // let new_context = {...context, fights: [main_fight]}
+    // setContext(new_context)
+}
 
 
 
-export default function App() {
 
-    // TODO: replace test values
-    const spec_slug = "shaman-restoration"
-    const boss_slug = "painsmith-raznal"
+export default function App(props) {
 
-    console.log("app main")
-    
-    const players = React.useRef([])
-    const [duration, setDuration] = React.useState(0)
-    const [zoom, setZoom] = React.useState(4)
+
+
+    const settings = props.settings
+    const spec_slug = settings.spec_slug
+    const boss_slug = settings.boss_slug
+
+    console.log("app main", settings)
+
+    const [context, setContext] = React.useState(DEFAULT_CONTEXT)
+
+    const [spells, setSpells] = React.useState([])
+    const [fights, setFights] = React.useState([])
 
     let groups = [spec_slug, boss_slug, "other-potions", "other-trinkets"]
     let params = new URLSearchParams(groups.map(g => ["group", g]))
-    const spellsData = useFetch(`/api/spells?${params}`);
-    
     const fightsData = useFetch(`/api/spec_ranking/${spec_slug}/${boss_slug}?limit=10`);
+    const spellsData = useFetch(`/api/spells?${params}`);
 
+
+    // create/fill the app context
+    // let context = {} // {"more": [1, 2, 3]}
+    // context.zoom = zoom
+    // context.spells = spellsData.data
+
+
+
+    // React.useEffect(process_spells, [spellsData.data])
+
+/*     function process_fights() {
+        if (fightsData.isLoading) {return}
+
+        let main_fight = {}
+        main_fight.players = []
+        fightsData.data.fights.forEach((fight, i) => {
+            fight.players.forEach(player => {
+                player.rank = i+1
+                player.fight = fight
+                main_fight.players.push(player)
+            });
+        })
+
+        let new_context = {...context, fights: [main_fight]}
+        setContext(new_context)
+    } */
+    // React.useEffect(process_fights, [fightsData.data])
    
+
     /*     async function load_new_fights() {
         let fights_data = await load_fights(spec_slug, boss_slug)
         
@@ -83,7 +146,7 @@ export default function App() {
     } */
     //players.current = await load_new_fights()
     // console.log("players", players.current)
-    
+
     // React.useEffect(() => {}, [])
     // let x = setAppData()
     // x({"new": 8})
@@ -92,33 +155,17 @@ export default function App() {
         return <div>Loading...</div>
     }
 
-    function updateScale(e) {
-        let input = e.target
-        console.log("updateScale", input.value)
-        setZoom(input.value)
-    }
+    let new_context = {...context}
+    new_context["spells"] = process_spells({...spellsData.data})
+    new_context["fights"] = process_fights({...fightsData.data})
 
-    // create/fill the app context
-    let context = {} // {"more": [1, 2, 3]}
-    context.zoom = zoom
-    context.spells = spellsData.data
-
-    let new_players = []
-    fightsData.data.fights.forEach((fight, i) => {
-        fight.players.forEach(player => {
-            player.fight = fight
-            player.rank = i + 1 // include from api?
-            new_players.push(player)
-        })
-    })
-    
     return (
         <React.Fragment>
-            <input type="range" min="0.1" max="11" step="0.1" onChange={updateScale} />
-         
-            <AppDataContext.Provider value={context}>
-                <PlayerNamesList players={new_players} />
-                <TimelineCanvas players={new_players} duration={duration}/>
+            <AppDataContext.Provider value={new_context}>
+
+                <PlayerNamesList />
+                <TimelineCanvas />
+
             </AppDataContext.Provider>
         </React.Fragment>
     )
@@ -126,9 +173,12 @@ export default function App() {
 }
 
 
-ReactDOM.render(
-    <App />,
-    document.getElementById("app_root")
-);
+if (SETTINGS) {
+    ReactDOM.render(
+        <App settings={SETTINGS}/>,
+        document.getElementById("app_root")
+    );
+}
+
 
 

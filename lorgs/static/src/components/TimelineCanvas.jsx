@@ -1,25 +1,18 @@
 
-// import { Stage, Layer } from 'react-konva';
-
-import Ruler from "./Timeline/Ruler.js"
-// import Fight from './Timeline/Fight.jsx';
-// import { LINE_HEIGHT } from '../../timeline_modules/vars.js';
-
-import AppDataContext from "./../AppDataContext.jsx"
 import React from "react";
 
-
+import AppDataContext from "./../AppDataContext.jsx"
 import Stage from "./Timeline/Stage.js"
+
 
 
 export default function TimelineCanvas(props) {
 
-    // console.log("TimelineCanvas main", props.duration)
-    // let ruler = <Ruler key="TimelineRuler" duration={props.duration}/>
 
-    const app_context = React.useContext(AppDataContext)
+    const ctx = React.useContext(AppDataContext)
 
-    const ref = React.useRef()
+    const ref = React.useRef() // container div for the canvas
+    const stage_ref = React.useRef() // canvas itself
 
     // const scale = 2
     // const h = (props.players.length+1) * LINE_HEIGHT
@@ -27,16 +20,32 @@ export default function TimelineCanvas(props) {
 
     // initial creation
     React.useEffect(() => {
-        console.log("init canvas", ref.current)
+        console.log("init canvas", ref.current, ctx)
 
         // create the konva stage
         let stage = new Stage({container: ref.current})
+        stage_ref.current = stage
+        return
+    }, [])
+
+    // update once spells/fights are loaded
+    React.useEffect(() => {
+        const stage = stage_ref.current
+        if (!stage) {return}
+        if (ctx.spells.length == 0) {return}
+        if (ctx.fights.length == 0) {return}
+
+
+        console.log("update canvas", ctx)
+
+        stage.set_spells(ctx.spells)
+        stage.set_fights(ctx.fights)
+
         stage.create()
         stage.update()
+        stage.update_size()
 
-        stage.print_tree()
-
-    }, [])
+    }, [ctx.fights, ctx.spells])
 
 
     return (

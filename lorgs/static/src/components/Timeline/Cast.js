@@ -1,6 +1,6 @@
 
-
-import {LINE_HEIGHT} from "./vars.js"
+import Konva from "konva"
+import {LINE_HEIGHT} from "./../../constants.js"
 
 
 class CastTooltip extends Konva.Group {

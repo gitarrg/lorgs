@@ -1,3 +1,4 @@
+@use "sass:math";
 
 
 .cast_container {
@@ -59,7 +60,7 @@
     overflow: hidden;
 
     left: 3px;
-    top: ($timeline-height-cast - $timeline-cast-icon-size) / 2;
+    top: math.div($timeline-height-cast - $timeline-cast-icon-size, 2);
 
     border-radius: 3px;
     border: 1px solid black;

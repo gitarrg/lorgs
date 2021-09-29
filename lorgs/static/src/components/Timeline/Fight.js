@@ -1,5 +1,8 @@
 
-import {LINE_HEIGHT} from "./vars.js"
+import Konva from "konva"
+
+import {LINE_HEIGHT} from "./../../constants.js"
+
 
 
 export default class Fight extends Konva.Group {
@@ -21,7 +24,6 @@ export default class Fight extends Konva.Group {
             width: 200,
             height: LINE_HEIGHT,
         })
-
 
         this.background = new Konva.Group()
         this.background.name("fight_background")

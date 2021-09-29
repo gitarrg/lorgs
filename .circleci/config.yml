@@ -163,4 +163,4 @@ workflows:
             branches:
               only:
                 - develop
-                - feature/webpack
+                - feature/react
