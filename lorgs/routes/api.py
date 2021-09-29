@@ -71,11 +71,18 @@ def spells():
 ###############################################################################
 
 @blueprint.route("/spec_ranking/<string:spec_slug>/<string:boss_slug>")
-@cache.cached()
+@cache.cached(query_string=True)
 def spec_ranking(spec_slug, boss_slug):
+    limit = flask.request.args.get("limit", default=0, type=int)
+
     spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(boss_slug=boss_slug, spec_slug=spec_slug)
+    fights = spec_ranking.fights
+
+    if limit:
+        fights = spec_ranking.fights[:limit]
+
     return {
-        "fights": [fight.as_dict() for fight in spec_ranking.fights],
+        "fights": [fight.as_dict() for fight in fights],
     }
 
 

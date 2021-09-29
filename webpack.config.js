@@ -13,13 +13,38 @@ module.exports = {
 
     mode: process.env.NODE_ENV || 'development',
 
-    entry: [
-        path.resolve(__dirname, "lorgs/static/main.js"),
-        path.resolve(__dirname, "lorgs/templates/scss/main.scss"),
-    ],
+    entry: {
+        // main: path.resolve(__dirname, "lorgs/static/main.js"),
+        app: {
+            import: path.resolve(__dirname, "lorgs/static/src/app.jsx"),
+            dependOn: ["react-konva"]
+        },
+        style: path.resolve(__dirname, "lorgs/templates/scss/main.scss"),
+        
+        // Libs
+        "react-konva": path.resolve(__dirname, "node_modules/react-konva"),
+
+    },
+
+    // modules that will be loaded externally 
+    externals: {
+        'react': 'React',
+        'konva': 'Konva',
+    },
 
     module: {
         rules: [
+
+            {
+                test: /\.jsx$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/react']
+                    }
+                }
+            },
             {
                 test: /\.scss$/,
                 use: [
@@ -28,12 +53,12 @@ module.exports = {
                     "sass-loader"   // Compiles Sass to CSS
                 ]
             }
+
         ]
     },
 
     output: {
         path: path.resolve(__dirname, "lorgs/static/_generated"),
-        filename: `main.js`,
     },
 
     // for testing
@@ -49,9 +74,7 @@ module.exports = {
     },
 
     plugins: [
-        new MiniCssExtractPlugin({
-            filename: "style.css",
-        }),
+        new MiniCssExtractPlugin(),
     ],
 
 }

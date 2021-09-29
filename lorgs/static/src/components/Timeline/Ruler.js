@@ -1,5 +1,7 @@
 
-import {LINE_HEIGHT} from "./vars.js"
+import Konva from "konva"
+
+import {LINE_HEIGHT} from "./../../constants.js"
 
 
 class TimelineMarker extends Konva.Group {
@@ -184,7 +186,6 @@ export default class Ruler extends Konva.Group {
         this.ticks = [];
         this.timestamps = [];
         this.destroyChildren()
-
 
         if (this.duration <= 0) {return;}
 
