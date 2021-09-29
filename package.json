@@ -28,7 +28,6 @@
     "webpack-cli": "^4.8.0"
   },
   "dependencies": {
-    "react-fetch-hook": "^1.8.5",
-    "react-konva": "^17.0.2-5"
+    "react-fetch-hook": "^1.8.5"
   }
 }

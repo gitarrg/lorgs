@@ -3,7 +3,13 @@
 import React, { useState, useContext } from "react"
 
 
-export const AppDataContext = React.createContext()
+
+export const DEFAULT_CONTEXT = {}
+DEFAULT_CONTEXT["spells"] = {}
+DEFAULT_CONTEXT["fights"] = {}
+
+
+export const AppDataContext = React.createContext(DEFAULT_CONTEXT)
 export default AppDataContext
 
 

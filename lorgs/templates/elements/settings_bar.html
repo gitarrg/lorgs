@@ -73,6 +73,9 @@
 <script type="text/javascript">
 
 
+const SPELL_SETTINGS_BAR = document.getElementById("settings_bar");
+
+
 // show/hide all spell cast times
 document.getElementById("settings_button_casttime").addEventListener("click", function() {
     this.classList.toggle("disabled")
@@ -104,5 +107,19 @@ document.getElementById("settings_button_cooldown").addEventListener("click", fu
     event.show = enabled
     document.dispatchEvent(event);
 });
+
+
+SPELL_SETTINGS_BAR.querySelectorAll(".button[data-spell_id]").forEach(button => {
+
+    button.addEventListener("click", event => {
+        button.classList.toggle("disabled")
+        let enabled = !button.classList.contains("disabled")
+
+        var event = new CustomEvent("toggle_spell");
+        event.show = enabled
+        event.spell_id = button.dataset.spell_id
+        document.dispatchEvent(event);
+    })
+})
 
 </script>

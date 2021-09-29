@@ -53,26 +53,16 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
 <!-- TIMELINES -->
 <div class="p-2 bg-dark rounded border d-flex">
 
-    <!-- Player Names -->
-    <div id="player_names_container" class="player_names_container spec_ranking"></div>
-
-    <div id="player_timelines_container" class="flex-grow-1">
-
+    <div id=app_root class="d-flex overflow-hidden">
         {# loading bar #}
         <div id="canvas_loading" class="position-absolute top-50 start-50">
             <span class="h1"><i class="fas fa-circle-notch fa-spin"></i></span>
         </div>
-
-        <!-- the canvas -->
-        <div id="timeline_canvas" style="overflow: hidden;"></div>
     </div>
 
-    <div class="clearfix"></div>
-
 </div>
-
-
 {% endblock %}
+
 
 {% block scripts %}
 {{ super() }}
@@ -85,28 +75,26 @@ I could not find a cleaner way to pass those from flask/jinja over...
 
 */
 const SETTINGS = {
-
-    // spec and boss
     spec_slug: "{{spec.full_name_slug}}",
     boss_slug: "{{boss.name_slug}}",
-
-    // dom elements
-    canvas: document.getElementById("timeline_canvas"),
-    player_names_container: document.getElementById("player_names_container"),
-    spell_settings_bar: document.getElementById("settings_bar"),
-    loading_spinner: document.getElementById("canvas_loading"),
 }
 </script>
 
 
+{# React #}
+{% if false or config.LOCAL_FILES %}
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.development.js"crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.development.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% else %}
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js" integrity="sha512-qlzIeUtTg7eBpmEaS12NZgxz52YYZVF5myj89mjJEesBd/oE9UPsYOX2QAXzvOAZYEvQohKdcY8zKE02ifXDmA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js" integrity="sha512-9jGNr5Piwe8nzLLYTk8QrEMPfjGU0px80GYzKZUxi7lmCfrBjtyCc1V5kkS5vxVwwIB7Qpzc7UxLiQxfAN30dw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% endif %}
+
+{# Konva #}
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/konva/8.2.1/konva.min.js" integrity="sha512-Kae4IrvcqQ8H13MSTCuxrsUt9pHxzYOyNjTh3QqDtKhYYeLzexguA1aY4+lUAWZnrCRQ6CFx8zHVO8lKLkC/5A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-{% if config.LOCAL_FILES %}
-    {# find a better way to do this #}
-    <script type="module" src="{{url_for('static', filename='/timeline_modules/main.js')}}"></script>
-{% else %}
-    <script defer src="{{url_for('static',filename='_generated/main.js')}}?tag={{config.BUILD_TAG}}"></script>
-{% endif %}
+{# local js #}
+<script defer src="{{url_for('static',filename='_generated/app.js')}}?tag={{config.BUILD_TAG}}"></script>
 
 {% endblock %}
 

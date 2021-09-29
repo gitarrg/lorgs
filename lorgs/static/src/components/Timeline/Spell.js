@@ -1,5 +1,7 @@
 
-import {LINE_HEIGHT} from "./vars.js"
+import Konva from "konva"
+
+import {LINE_HEIGHT} from "./../../constants.js"
 
 
 export default class Spell {
@@ -23,7 +25,7 @@ export default class Spell {
         // Icon
         this.cast_icon = new Konva.Image({
             name: "icon",
-            image: spell_data.button,
+            image: spell_data.image,
             listening: false,
             x: 3.5, // padding
             y: 3.5, // padding

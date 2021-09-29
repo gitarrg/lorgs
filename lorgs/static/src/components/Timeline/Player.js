@@ -1,5 +1,5 @@
 
-import Cast from "./cast.js"
+import Cast from "./Cast.js"
 
 
 export default class Player {
@@ -23,7 +23,7 @@ export default class Player {
 
         this.casts.forEach(cast => {
 
-            if (cast.spell.show) {
+            if (cast.spell && cast.spell.show) {
 
                 cast.update()
 
