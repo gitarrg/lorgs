@@ -13,6 +13,7 @@ node_modules
 
 # for ".env", we need this (since its already tracked)
 # >>> git update-index --assume-unchanged .env
+.env
 .env_bak
 
 venv/

@@ -12,7 +12,7 @@ export QUART_ENV=development
 # export DEBUG=true
 export LORGS_CONFIG_NAME=lorgs.config.DevelopmentConfig
 
-export PORT=5010
+export PORT=5012
 export FLASK_APP="lorgs/app:create_app()"
 export QUART_APP=$FLASK_APP
 
