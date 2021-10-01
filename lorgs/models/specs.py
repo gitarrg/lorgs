@@ -18,6 +18,9 @@ class WowRole(base.Model):
     def __repr__(self):
         return f"<Role({self.name})>"
 
+    def __str__(self):
+        return self.code
+
     def __lt__(self, other):
         return self.code < other.code
 
@@ -138,6 +141,20 @@ class WowSpell(base.Model):
     # Methods
     #
 
+    def group_info(self):
+
+        if not self.group:
+            return {}
+
+        d = {}
+        d["name"] = self.group.name
+        d["full_name"] = self.group.full_name
+
+        d["role"] = str(self.group.role)
+        d["spec"] = self.group.full_name_slug
+        return d
+
+
     def as_dict(self):
 
         d = {
@@ -150,12 +167,10 @@ class WowSpell(base.Model):
             "icon": self.icon,
             "color": self.color,
             "show": self.show,
+            "tooltip_info": self.wowhead_data,
         }
 
-        if self.group:
-            d["group"] = {}
-            d["group"]["name"] = self.group.name
-            d["group"]["full_name"] = self.group.full_name
+        d["group"] = self.group_info()
 
         return d
 

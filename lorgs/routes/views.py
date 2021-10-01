@@ -55,22 +55,6 @@ def help():
     return flask.render_template("help.html")
 
 
-@blueprint.route("/test")
-def test():
-
-    spec = data.SHAMAN_RESTORATION
-    boss = data.PAINSMITH
-
-    # Return
-    kwargs = {}
-    kwargs["data"] = data
-    kwargs["spec"] = spec
-    kwargs["boss"] = boss
-    kwargs["spells"] = spec.spells
-    kwargs["bosses"] = boss.zone.bosses
-    return flask.render_template("test.html", **kwargs)
-
-
 ################################################################################
 #
 #   SPEC RANKINGS

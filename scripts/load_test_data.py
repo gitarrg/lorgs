@@ -19,9 +19,9 @@ from lorgs.models import warcraftlogs_comps
 async def load_spec_ranking():
     ########################################
     # Vars
-    limit = 8
+    limit = 12
     boss = data.GUARDIAN
-    spec = data.SHAMAN_RESTORATION
+    spec = data.DRUID_RESTORATION
 
     ########################################
     # load
