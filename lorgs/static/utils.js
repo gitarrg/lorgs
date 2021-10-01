@@ -20,6 +20,10 @@ function clamp(num, min, max) {
   return Math.min(Math.max(num, min), max);
 }
 
+function randint(min, max) {
+  return Math.floor(Math.random() * (max - min) ) + min;
+}
+
 
 // show/hide an element (aka jquery.. but js)
 function show(element, display=true) {

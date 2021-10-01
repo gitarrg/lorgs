@@ -169,10 +169,10 @@ export default class Cast extends Konva.Group {
 
 
         // update element visibility
-        this.cast_text.visible(stage.display_casttime)
-        this.cast_cooldown.visible(stage.display_cooldown)
+        this.cast_text.visible(stage.display_casttime && this.spell_id)
+        this.cast_cooldown.visible(stage.display_cooldown && this.spell_id)
         this.cast_duration.visible(stage.display_duration)
-        this.cast_icon.visible(stage.display_casticon)
+        this.cast_icon.visible(stage.display_casticon && this.spell_id)
 
         // default state
         this.cast_text.fontStyle("normal");

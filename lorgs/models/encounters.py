@@ -54,6 +54,7 @@ class RaidBoss(base.Model):
         self.spells = []
 
         # alias to match the Spec Interface
+        self.role = "boss"
         self.full_name = self.name
         self.full_name_slug = self.name_slug
 
