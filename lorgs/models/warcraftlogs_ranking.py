@@ -42,7 +42,7 @@ class SpecRanking(warcraftlogs_base.Document):
 
     @property
     def boss(self):
-        return encounters.RaidBoss.get(name_slug=self.boss_slug)
+        return encounters.RaidBoss.get(full_name_slug=self.boss_slug)
 
     @property
     def fights(self):

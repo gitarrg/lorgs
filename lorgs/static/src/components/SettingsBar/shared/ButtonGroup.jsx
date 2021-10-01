@@ -5,14 +5,14 @@ import React from 'react'
 export default function ButtonGroup(props) {
 
     const extra_class = props.extra_class || ""
+    const m = props.side == "left" ? "mr-2" : "ml-2"
 
     return (
 
-        <div className="mr-2">
+        <div className={m}>
 
             {props.name && <small className={"clear-both " + extra_class}>{props.name}</small>}
-
-            <div className="bg-dark p-1 rounded border">
+            <div className="bg-dark p-1 rounded border align-items-start button_group">
                 {props.children}
             </div>
         </div>

@@ -5,15 +5,12 @@
 
 .settings_bar {
 
-
-    // spacing between the children
-    * {  // FIXME
-        margin-right: 4px;
-        &:last-child {
-            margin-right: 0;
-        }
+    .button_group {
+        display: grid;
+        grid-auto-flow: column;  // single row
+        align-items: start;
+        grid-column-gap: 2px; // space
     }
-
 
     .group_header, .button {
         cursor: pointer;

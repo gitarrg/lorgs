@@ -54,9 +54,10 @@ export default class Fight extends Konva.Group {
     update() {
 
         // update visibility
-        this.visible(this.fight_data.visible)
-        this.background.visible(this.fight_data.visible)
-        if (!this.fight_data.visible) {return}
+        let visible = this.should_be_visible()
+        this.visible(visible)
+        this.background.visible(visible)
+        if (!visible) {return}
 
 
         let w = this.duration * this.stage.scale_x;
@@ -73,5 +74,16 @@ export default class Fight extends Konva.Group {
         // this.background.visible(this.visible())
         // this.background.y(this.y())
     }
+
+    should_be_visible() {
+
+        if (this.fight_data.visible === false) {
+            return false
+        }
+
+        return this.actors.some(actor => actor.should_be_visible())
+    }
+
+
 }
 

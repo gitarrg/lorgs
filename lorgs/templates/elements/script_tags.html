@@ -1,0 +1,14 @@
+{# React #}
+{% if config.LOCAL_FILES %}
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.development.js"crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.development.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% else %}
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js" integrity="sha512-qlzIeUtTg7eBpmEaS12NZgxz52YYZVF5myj89mjJEesBd/oE9UPsYOX2QAXzvOAZYEvQohKdcY8zKE02ifXDmA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js" integrity="sha512-9jGNr5Piwe8nzLLYTk8QrEMPfjGU0px80GYzKZUxi7lmCfrBjtyCc1V5kkS5vxVwwIB7Qpzc7UxLiQxfAN30dw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% endif %}
+
+{# Konva #}
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/konva/8.2.1/konva.min.js" integrity="sha512-Kae4IrvcqQ8H13MSTCuxrsUt9pHxzYOyNjTh3QqDtKhYYeLzexguA1aY4+lUAWZnrCRQ6CFx8zHVO8lKLkC/5A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+{# local js #}
+<script defer src="{{url_for('static',filename='_generated/app.js')}}?tag={{config.BUILD_TAG}}"></script>

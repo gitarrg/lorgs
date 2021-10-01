@@ -145,7 +145,6 @@ export default class Cast extends Konva.Group {
             height: LINE_HEIGHT-1,
         });
         this.add(bbox)
-
         this.y(1);
 
     }

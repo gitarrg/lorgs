@@ -12,7 +12,7 @@
                 {% for spec in role.specs|sort(attribute="full_name_slug") %}
                 <div {{'class="mb-1"' if not loop.last}}>
                     {% if spec.supported %}
-                    <a href="{{url_for('ui.spec_ranking', spec_slug=spec.full_name_slug, boss_slug=boss.name_slug)}}">
+                    <a href="{{url_for('ui.spec_ranking', spec_slug=spec.full_name_slug, boss_slug=boss.full_name_slug)}}">
                     {% else %}
                     <a class="disabled" href="#">
                     {% endif %}
@@ -29,7 +29,7 @@
     <!-- Bosses -->
     <div class="p-1 bg-dark border ml-2 rounded">
         {% for boss2 in bosses if boss2.visible %}
-        <a href="{{url_for('ui.spec_ranking', spec_slug=spec.full_name_slug, boss_slug=boss2.name_slug)}}" class="{{'active' if boss2 == boss}}" data-bs-toggle="tooltip" title="{{boss2.name}}">
+        <a href="{{url_for('ui.spec_ranking', spec_slug=spec.full_name_slug, boss_slug=boss2.full_name_slug)}}" class="{{'active' if boss2 == boss}}" data-bs-toggle="tooltip" title="{{boss2.name}}">
             <img class="icon-spec icon-m border-black rounded" src="{{boss2.icon_path}}" alt="{{boss2.name_slug}}">
         </a>
         {% endfor %}
