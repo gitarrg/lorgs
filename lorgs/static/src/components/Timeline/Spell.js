@@ -38,6 +38,10 @@ export default class Spell {
         this.cast_icon.cache()
         this.cast_icon.perfectDrawEnabled(false);
 
+        if (spell_data.image) {
+            spell_data.image.onload = () => {this.stage.batchDraw()}
+        }
+
         ////////////////
         // Duration
         this.cast_duration = new Konva.Rect({

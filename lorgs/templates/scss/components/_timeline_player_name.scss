@@ -58,7 +58,9 @@
 }
 
 
+.boss_name + .boss_name,
 .boss_name + .player_name,
+.player_name + .boss_name,
 .player_name + .player_name,
 {
     border-top: none;

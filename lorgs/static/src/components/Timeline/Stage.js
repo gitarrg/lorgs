@@ -4,8 +4,8 @@ import Konva from "konva"
 
 import Fight from "./Fight.js"
 import Player from "./Player.js"
-import Spell from "./Spell.js"
 import Ruler from "./Ruler.js"
+import Spell from "./Spell.js"
 import {LINE_HEIGHT} from "./../../constants.js"
 
 
@@ -60,18 +60,10 @@ export default class Stage extends Konva.Stage{
         this.back_layer.add(this.ruler)
 
         // update canvas on window resize
-        window.addEventListener("resize", () => {this.update_size()})
-
+        // window.addEventListener("resize", () => {this.update_size()})
         this.on("dragmove",  this.on_dragmove)
         this.on("wheel",  this.on_wheel)
         this.on("contextmenu", this.contextmenu)
-
-
-        // Button Events
-        document.addEventListener("toggle_cooldown", event => { this.toggle_cooldown(event.show) })
-        document.addEventListener("toggle_duration", event => { this.toggle_duration(event.show) })
-        document.addEventListener("toggle_casttime", event => { this.toggle_casttime(event.show) })
-        document.addEventListener("toggle_spell", event => { this.show_spell(event.spell_id, event.show) })
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -87,13 +79,11 @@ export default class Stage extends Konva.Stage{
         this.zoom_changed = true
         this.longest_fight = 0;
 
-        console.log("this.fights", this.fights)
-
         // update fights
         this.fights.forEach((fight, i) => {
 
             // create/add the fight
-            fight.y(this.ruler.height-1 + (i*LINE_HEIGHT))
+            // fight.y(this.ruler.height-1 + (i*LINE_HEIGHT))
             this.main_layer.add(fight)
             this.back_layer.add(fight.background)
             fight.create();
@@ -102,14 +92,12 @@ export default class Stage extends Konva.Stage{
             this.longest_fight = Math.max(this.longest_fight, fight.duration)
         })
 
-        console.log("longest fight", this.longest_fight)
-
         // Ruler
         this.ruler.duration = this.longest_fight || 5 * 60;
         this.ruler.create();
 
         // update height based on number of fights loaded
-        this.height(this.ruler.height + this.fights.length * LINE_HEIGHT)
+        // this.height(this.ruler.height + this.fights.length * LINE_HEIGHT)
     }
 
     update() {
@@ -118,10 +106,19 @@ export default class Stage extends Konva.Stage{
         this.ruler.update()
 
         // fights
+        let y = this.ruler.height-1;
         this.fights.forEach((fight, i) => {
             fight.update();
+
+            if (fight.visible()) {
+                fight.y(y)
+                fight.background.y(y)
+                // fight.cache()
+                y += LINE_HEIGHT
+            }
         });
 
+        this.height(y)
         this.zoom_changed = false;
         this.batchDraw();
     }
@@ -131,10 +128,11 @@ export default class Stage extends Konva.Stage{
         this.has_selection = spells.some(spell => (spell.selected && spell.show))
     }
 
+  
     ////////////////////////////////////////////////////////////////////////////
     // EVENTS
     //
-
+    
     update_size() {
         // TODO: get parent width (after overflow etc)
         this.width(this.longest_fight * this.scale_x)
@@ -182,13 +180,15 @@ export default class Stage extends Konva.Stage{
     ////////////////////////////////////////////////////////////////////////////
     // INTERACTION
 
-    show_spell(spell_id, show=true) {
+    show_spell(spell_id, show=true, update=true) {
 
         let spell = this.spells[spell_id]
         if (!spell) {
             return
         }
         spell.show = show;
+        if (!update) {return}
+
         this.update_has_selection()
         this.update();
     }
@@ -231,8 +231,16 @@ export default class Stage extends Konva.Stage{
 
         // create fresh instances
         new_fights.forEach((fight) => {
+
+            let boss = fight.boss
+            if (boss && boss.name) {
+                let new_fight = new Fight(this, fight);
+                new_fight.actors.push(new Player(this, boss))
+                this.fights.push(new_fight)
+            }
+            
+            let new_fight = new Fight(this, fight);
             fight.players.forEach(player => {
-                let new_fight = new Fight(this, player.fight);
                 new_fight.actors.push(new Player(this, player))
                 this.fights.push(new_fight)
             })

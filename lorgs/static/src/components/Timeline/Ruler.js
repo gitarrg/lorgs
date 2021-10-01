@@ -268,7 +268,7 @@ export default class Ruler extends Konva.Group {
 
     update_crosshair() {
 
-        if (!this) { return }
+        if (!this.mouse_crosshair_y.visible()) {return}
 
         let pointer = this.stage.getPointerPosition();
         if (!pointer) { return }

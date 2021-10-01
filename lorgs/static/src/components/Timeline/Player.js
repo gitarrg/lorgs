@@ -10,6 +10,8 @@ export default class Player {
         this.casts_group = new Konva.Group()
         this.casts_group.transformsEnabled("position")
 
+        this.player_data = player_data
+
         // load casts
         this.casts = player_data.casts.map(cast_data => new Cast(this.stage, cast_data))
     }
@@ -20,6 +22,11 @@ export default class Player {
     }
 
     update() {
+
+        this.casts_group.visible(this.player_data.visible)
+        if (!this.player_data.visible) {
+            return
+        }
 
         this.casts.forEach(cast => {
 

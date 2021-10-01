@@ -10,9 +10,11 @@ export default class Fight extends Konva.Group {
     constructor(stage, fight_data) {
         super()
         this.name("Fight")
-        this.listening(true)
+        // this.listening(true)
         this.transformsEnabled("position")
+
         this.stage = stage
+        this.fight_data = fight_data
 
         this.duration = fight_data.duration / 1000; // ms to s
         this.duration = Math.ceil(this.duration);
@@ -25,9 +27,6 @@ export default class Fight extends Konva.Group {
             height: LINE_HEIGHT,
         })
 
-        this.background = new Konva.Group()
-        this.background.name("fight_background")
-
         this.background_fill = new Konva.Rect({
             height: LINE_HEIGHT,
             // width: 20,
@@ -39,7 +38,10 @@ export default class Fight extends Konva.Group {
             listening: false,
             transformsEnabled: "position",
         })
+        this.background = new Konva.Group()
+        this.background.name("fight_background")
         this.background.add(this.background_fill)
+        // this.add(this.background)
     }
 
     create() {
@@ -50,6 +52,13 @@ export default class Fight extends Konva.Group {
     }
 
     update() {
+
+        // update visibility
+        this.visible(this.fight_data.visible)
+        this.background.visible(this.fight_data.visible)
+        if (!this.fight_data.visible) {return}
+
+
         let w = this.duration * this.stage.scale_x;
         w = Math.floor(w); // avoid drawing strokes on half pixels
 
@@ -61,8 +70,8 @@ export default class Fight extends Konva.Group {
         this.actors.forEach(actor => {actor.update()})
 
         // reflect changes to the background layer
-        this.background.visible(this.visible())
-        this.background.y(this.y())
+        // this.background.visible(this.visible())
+        // this.background.y(this.y())
     }
 }
 

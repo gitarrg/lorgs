@@ -1,0 +1,47 @@
+
+
+// Styles for Skeleton Loading Elements
+
+
+.loading {
+
+    background: hsl(0, 53%, 51%);
+    opacity: 0.5;
+
+    // animation: loading-animation 1s linear infinite alternate;
+    // transition: none !important;
+
+    img {
+        background: hsl(0, 0%, 75%) !important;
+    }
+
+}
+
+
+@keyframes loading-animation {
+
+    0% {
+        opacity: 0.4;
+    }
+    100% {
+        opacity: 0.5;
+    }
+}
+
+.loading_overlay {
+
+    z-index: 99;
+    position: absolute;    
+    top: 25rem;
+    left: 50%;
+}
+
+.loading_trans {
+    opacity: 0.33;
+    filter: blur(1px);
+}
+
+
+
+
+

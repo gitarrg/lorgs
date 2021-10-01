@@ -45,25 +45,11 @@ Lorgs: {{spec.full_name}} vs. {{boss.name}}
 {# CONTENT #}
 
 {% block content -%}
-<div class="mb-2">
-    {% include "elements/settings_bar.html" %}
-</div>
-
-
-<!-- TIMELINES -->
-<div class="p-2 bg-dark rounded border d-flex">
-
-    <div id=app_root class="d-flex overflow-hidden">
-        {# loading bar #}
-        <div id="canvas_loading" class="position-absolute top-50 start-50">
-            <span class="h1"><i class="fas fa-circle-notch fa-spin"></i></span>
-        </div>
-    </div>
-
-</div>
+    <div id=app_root></div>
 {% endblock %}
 
-
+{##############################################################################}
+{# SCRIPTS #}
 {% block scripts %}
 {{ super() }}
 

@@ -41,15 +41,15 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
     def as_dict(self):
         return {
             "fight_id": self.fight_id,
+            "report_id": self.report.report_id,
 
             "start_time": self.start_time,
             "end_time": self.end_time,
             "duration": self.duration,
 
-            "report_url": self.report_url,
             "num_players": len(self.players),
             "players": [player.as_dict() for player in self.players],
-            "boss": self.boss.as_dict() if self.boss else {}
+            "boss": self.boss.as_dict() if self.boss else {},
         }
 
     ##########################
