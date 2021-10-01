@@ -35,11 +35,9 @@ export default class Spell {
             strokeWidth: 1,
             transformsEnabled: "position",
         })
-        this.cast_icon.cache()
-        this.cast_icon.perfectDrawEnabled(false);
 
         if (spell_data.image) {
-            spell_data.image.onload = () => {this.stage.batchDraw()}
+            spell_data.image.onload = () => {this.stage.schedule_update()}
         }
 
         ////////////////

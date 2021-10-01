@@ -98,6 +98,16 @@ class WowSpec(base.Model):
 
         return sort_key(self) < sort_key(other)
 
+    def as_dict(self):
+
+        return {
+            "name": self.name,
+            "name_slug": self.name_slug,
+            "full_name": self.full_name,
+            "full_name_slug": self.full_name_slug,
+            "role": str(self.role),
+        }
+
     ##########################
     # Methods
     #
@@ -141,20 +151,6 @@ class WowSpell(base.Model):
     # Methods
     #
 
-    def group_info(self):
-
-        if not self.group:
-            return {}
-
-        d = {}
-        d["name"] = self.group.name
-        d["full_name"] = self.group.full_name
-
-        d["role"] = str(self.group.role)
-        d["spec"] = self.group.full_name_slug
-        return d
-
-
     def as_dict(self):
 
         d = {
@@ -170,7 +166,7 @@ class WowSpell(base.Model):
             "tooltip_info": self.wowhead_data,
         }
 
-        d["group"] = self.group_info()
+        d["group"] = self.group and self.group.as_dict() or {}
 
         return d
 

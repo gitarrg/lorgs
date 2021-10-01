@@ -15,7 +15,7 @@ module.exports = {
 
     entry: {
         // main: path.resolve(__dirname, "lorgs/static/main.js"),
-        app: path.resolve(__dirname, "lorgs/static/src/app.jsx"),
+        app: path.resolve(__dirname, "lorgs/static/src/App.jsx"),
         style: path.resolve(__dirname, "lorgs/templates/scss/main.scss"),
     },
 

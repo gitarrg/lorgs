@@ -1,7 +1,7 @@
 
 import React from "react";
 
-import AppDataContext from "./../../AppDataContext.jsx"
+import AppContext from "./../../AppContext/AppContext.jsx"
 import {PlayerName, BossName} from "./PlayerName.jsx"
 
 
@@ -37,23 +37,14 @@ function create_fight(i, fight) {
 }
 
 
-
 export default function PlayerNamesList() {
 
-    const ctx = React.useContext(AppDataContext)
-
-
-/*     <PlayerName key={`boss_${f}`} fight={fight} player={fight.boss} />
-
-    fight.players.filter(player => player.visible).map((player, p) => (
-        <PlayerName key={`player_${p}`} fight={fight} player={player} />
-    )) */
+    const context = AppContext.getData()
 
     return (
-
         <div id="player_names_container" className="player_names_container spec_ranking">
             {
-                ctx.fights.map((fight, i) => (
+                context.fights.map((fight, i) => (
                     create_fight(i, fight)
                 ))
             }

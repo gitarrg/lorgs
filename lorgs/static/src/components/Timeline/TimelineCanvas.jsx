@@ -1,14 +1,14 @@
 
 import React from "react";
 
-import AppDataContext from "./../AppDataContext.jsx"
-import Stage from "./Timeline/Stage.js"
+import AppContext from "./../../AppContext/AppContext.jsx"
+import Stage from "./Stage.js"
 
 
 export default function TimelineCanvas(props) {
 
 
-    const ctx = React.useContext(AppDataContext)
+    const ctx = AppContext.getData()
 
     const ref = React.useRef() // container div for the canvas
     const stage_ref = React.useRef() // canvas itself

@@ -1,7 +1,7 @@
 
 import React from 'react'
 
-import AppDataContext from "./../../../AppDataContext.jsx"
+import AppContext from "./../../../AppContext/AppContext.jsx"
 import ButtonGroup from './../shared/ButtonGroup.jsx'
 import SpellButton from './SpellButton.jsx'
 
@@ -10,7 +10,7 @@ import SpellButton from './SpellButton.jsx'
 function spell_group_key(spell) {
     if (!spell.group) { return "no group" }
     if (spell.group.role == "boss") { return "boss"}
-    return spell.group.spec
+    return spell.group.full_name_slug
 }
 
 
@@ -29,7 +29,7 @@ function create_spell_group(group) {
 
     if (!group) { return }
 
-    let extra_class = "wow-" + group.spec.split("-")[0]
+    let extra_class = "wow-" + group.full_name_slug.split("-")[0]
     if (group.role == "boss") { extra_class = "wow-boss"}
 
     return (
@@ -44,11 +44,11 @@ function create_spell_group(group) {
 
 export default function SpellSettings() {
 
-    const ctx = React.useContext(AppDataContext)
+    const context = AppContext.getData()
 
-    let spell_groups = group_spells(Object.values(ctx.spells))
+    let spell_groups = group_spells(Object.values(context.spells))
     // this is to define the order
-    const groups_names = ["boss", ctx.spec_slug, "other-potions", "other-trinkets"]
+    const groups_names = ["boss", context.spec_slug, "other-potions", "other-trinkets"]
 
     return (
         <>

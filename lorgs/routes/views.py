@@ -66,7 +66,7 @@ def help():
 def spec_ranking(spec_slug, boss_slug):
 
     spec = WowSpec.get(full_name_slug=spec_slug)
-    boss = encounters.RaidBoss.get(name_slug=boss_slug)
+    boss = encounters.RaidBoss.get(full_name_slug=boss_slug)
 
     if not spec:
         flask.abort(404, description="Invalid Spec")

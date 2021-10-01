@@ -64,6 +64,8 @@ export default class Stage extends Konva.Stage{
         this.on("dragmove",  this.on_dragmove)
         this.on("wheel",  this.on_wheel)
         this.on("contextmenu", this.contextmenu)
+
+        document.addEventListener("toggle_spell", event => { this.show_spell(event.spell_id, event.show) })
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -121,6 +123,16 @@ export default class Stage extends Konva.Stage{
         this.height(y)
         this.zoom_changed = false;
         this.batchDraw();
+    }
+
+    schedule_update() {
+
+        if (this.timer) { return }
+        
+        this.timer = setTimeout(() => {
+            this.update()
+            delete this.timer
+        }, 200)
     }
 
     update_has_selection() {

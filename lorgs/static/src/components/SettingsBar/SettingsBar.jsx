@@ -12,6 +12,8 @@ export default function SettingsBar() {
             <DisplaySettings />
             <SpellSettings />
 
+            <div className="flex-grow-1"/>
+
             <FilterSettings />
         </div>
     )

@@ -38,14 +38,16 @@ class RaidBoss(base.Model):
 
     wow_class = {}
 
-    def __init__(self, zone, id, name):
+    def __init__(self, zone, id, name, nick=""):
         self.id = id
         self.zone = zone
-        self.name = name
+        self.name = nick
+        self.full_name = name
         self.visible = True
 
         self.name_slug = utils.slug(self.name, space="-")
-        self.icon = f"bosses/{self.zone.name_slug}/{self.name_slug}.jpg"
+        self.full_name_slug = utils.slug(self.full_name, space="-")
+        self.icon = f"bosses/{self.zone.name_slug}/{self.full_name_slug}.jpg"
 
         # spells or buffs to track
         self.events = []
@@ -55,8 +57,6 @@ class RaidBoss(base.Model):
 
         # alias to match the Spec Interface
         self.role = "boss"
-        self.full_name = self.name
-        self.full_name_slug = self.name_slug
 
     def __repr__(self):
         return f"<RaidBoss(id={self.id} name={self.name})>"
@@ -64,8 +64,11 @@ class RaidBoss(base.Model):
     def as_dict(self):
         return {
             "id": self.id,
+            "role": self.role,
             "name": self.name,
             "name_slug": self.name_slug,
+            "full_name": self.full_name,
+            "full_name_slug": self.full_name_slug,
         }
 
     ##########################

@@ -20,11 +20,10 @@ const SKELETON_PLAYER_NAME = (
 
 
 export function BossName(props) {
+    if (props.fight.loading) { return SKELETON_PLAYER_NAME }
 
     const boss = props.boss;
-    const img_path = `/static/images/bosses/sanctum-of-domination/${boss.name_slug}.jpg`
-
-    if (props.fight.loading) { return SKELETON_PLAYER_NAME }
+    const img_path = `/static/images/bosses/sanctum-of-domination/${boss.full_name_slug}.jpg`
 
     return (
         <div className="boss_name">
@@ -43,7 +42,7 @@ export function PlayerName(props) {
     const player = props.player;
     const fight = player.fight || props.fight;
     let img_path = player.spec_slug && `/static/images/specs/${player.spec_slug}.jpg`
-    img_path = `/static/images/covenants/${player.covenant}.jpg`
+    // img_path = `/static/images/covenants/${player.covenant}.jpg`
 
     if (fight.loading) { return SKELETON_PLAYER_NAME }
 

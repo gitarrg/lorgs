@@ -8,7 +8,7 @@ export default function SpellButton(props) {
 
     let spell = props.spell
     let group = props.spell.group
-    let wow_class = group.spec.split("-")[0]
+    let wow_class = group.full_name_slug.split("-")[0]
     const disabled = !show && "disabled"
 
     function toggle_spell() {

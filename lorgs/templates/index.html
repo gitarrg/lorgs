@@ -50,7 +50,7 @@
 
                     <td>
                         {% for spec in role.specs|sort(attribute="full_name_slug") %}
-                            <a href="{{url_for('ui.spec_ranking', spec_slug=spec.full_name_slug, boss_slug=boss.name_slug)}}" data-bs-toggle="tooltip" title="{{spec.full_name}}">
+                            <a href="{{url_for('ui.spec_ranking', spec_slug=spec.full_name_slug, boss_slug=boss.full_name_slug)}}" data-bs-toggle="tooltip" title="{{spec.full_name}}">
                             <img class="icon-spec icon-m rounded wow-class-border-{{spec.wow_class.name_slug}}" src="{{spec.icon_path}}" alt="{{spec.full_name}}" >
                         </a>
                         {% endfor %}
@@ -67,14 +67,13 @@
         <h3 class="mt-4">Top Reports by Comp:</h3>
         <div class="bg-dark rounded border p-2">
 
+            <div>
+                <a href="{{url_for('ui.comp_ranking', boss_slug=boss.full_name_slug)}}">
+                    <img class="icon-spec icon-m rounded mr-1 wow-border-heal" src="/static/images/roles/healer.jpg">
+                    Comp Reports
+                </a>
+            </div>
 
-            {% for comp in comps %}
-                <div>
-                    <a href="{{url_for('ui.comp_ranking', comp_name=comp.name, boss_slug=boss.name_slug)}}">
-                        <img class="icon-spec icon-s rounded mr-1" src="/static/images/roles/healer.jpg">{{comp.name}}
-                    </a>
-                </div>
-            {% endfor %} {# for comps #}
             <small class="text-muted">(🚧 Work in progress. 🚧)</small>
         </div>
 

@@ -23,8 +23,9 @@ export default class Player {
 
     update() {
 
-        this.casts_group.visible(this.player_data.visible)
-        if (!this.player_data.visible) {
+        let visible = this.should_be_visible()
+        this.casts_group.visible(visible)
+        if (!visible) {
             return
         }
 
@@ -49,9 +50,14 @@ export default class Player {
             }
         })
 
-        this.casts_group.clearCache()
+        this.casts_group.clearCache() // clear to make sure we update (even if eg: all children are hidden)
         if (this.casts_group.hasChildren()) {
             this.casts_group.cache()
         }
     }
+
+    should_be_visible() {
+        return this.player_data.visible !== false
+    }
+
 }
