@@ -32,6 +32,7 @@ function create_boss_group(boss = {}) {
 function create_spec_group(spec = {}, spells=[]) {
 
     const extra_class = "wow-" + spec.full_name_slug.split("-")[0]  // fixme
+
     return (
         <ButtonGroup key={spec.full_name_slug} name={spec.name} side="left" extra_class={extra_class}>
             {_create_spell_buttons(spec, spells) }

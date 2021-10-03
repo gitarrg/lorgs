@@ -124,27 +124,3 @@ class Report(warcraftlogs_base.EmbeddedDocument):
 
         await self.load_report_info(fight_ids)
         await self.load_many(self.fights)
-
-
-class UserReport(me.Document):
-    """docstring for UserReport"""
-
-    report_id = me.StringField(primary_key=True)
-    report = me.EmbeddedDocumentField(Report)
-
-    created = me.DateTimeField(default=datetime.datetime.utcnow)
-    meta = {
-        'indexes': [
-            {'fields': ['created'], 'expireAfterSeconds': 7 * 24 * 60 * 60} # expires after 1 week
-        ]
-    }
-
-    async def load(self, **kwargs):
-        self.report = Report(report_id=self.report_id)
-        await self.report.load(**kwargs)
-
-    @classmethod
-    def get_or_create(cls, **kwargs):
-        obj = cls.objects(**kwargs).first()
-        obj = obj or cls(**kwargs)
-        return obj

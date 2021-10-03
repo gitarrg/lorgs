@@ -37,10 +37,7 @@ function create_role_group(role, app_data) {
 
 export default function DisplaySpecGroup() {
     
-    const shared_classes = "button icon-s rounded border-white"
-    
     const app_data = AppContext.getData()
-
 
     return (
         <>

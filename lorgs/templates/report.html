@@ -43,8 +43,8 @@ Lorgs: Report: {{report.report_id}}
             <div>
                 {% for player in players|sort(attribute="spec.role,spec.name,name") %}
                 {% set spec = player.spec %}
-                <div class="settings_display_player wow-class-{{spec.wow_class.name_slug}}" data-source_id={{player.source_id}} data-role={{role.code}}>
-                    <img class="icon-spec icon-s rounded wow-class-border-{{spec.class_name_slug}}" src="{{spec.icon_path}}">
+                <div class="settings_display_player wow-{{spec.wow_class.name_slug}}" data-source_id={{player.source_id}} data-role={{role.code}}>
+                    <img class="icon-spec icon-s rounded wow-border-{{spec.class_name_slug}}" src="{{spec.icon_path}}">
                     <span>{{player.name}}</span>
                 </div>
                 {% if loop.index is divisibleby(5) %}</div><div>{% endif %}

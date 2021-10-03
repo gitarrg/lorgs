@@ -4,14 +4,24 @@ Redux Data Store
 
 import { createStore } from 'redux'
 
+
+// modes to switch some page related features
+export const MODES = {
+    SPEC_RANKING: "spec_ranking",
+    COMP_RANKING: "comp_ranking",
+}
+
+
 const DEFAULT_STATE  = {
     is_loading: true,
 
-    // mode: MODES.SPEC_RANKING,
+    mode: MODES.SPEC_RANKING,
 
-    boss: {
-        spells: [],
-    },
+    boss: { spells: [] },
+    spec: {},
+
+    bosses: [],
+    roles: [],
 
     // specs currently loaded
     specs: [],
@@ -46,11 +56,13 @@ const DEFAULT_STATE  = {
 
 
 function reducer(state = DEFAULT_STATE, action) {
-    console.log("reducer", action, action.value)
-    console.log("reducer|STATE", state)
+
+    // console.log("reducer", action, action.value)
+    // console.log("reducer|STATE", state)
     
     switch (action.type) {
 
+        // generic update value
         case "update_value":
             state[action.field] = action.value
             state = {...state}
@@ -58,7 +70,6 @@ function reducer(state = DEFAULT_STATE, action) {
             
         case "update_filter":
             state.filters[action.field] = action.value
-            console.log("new value", state.filters)
             state.filters = {...state.filters}
             state = {...state}
             break;

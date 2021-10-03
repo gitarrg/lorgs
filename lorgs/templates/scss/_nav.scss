@@ -1,10 +1,5 @@
 
 
-.parse_spec_link {
-    display: inline-block;
-}
-
-
 .icon-spec {
     border: 1px solid black;
 }
@@ -36,52 +31,59 @@ a:not(.disabled) .icon-spec:not(:hover) {
 }
 
 
+// overall container for the entire navbar
+.navbar_container {
+    display: grid;
+    grid-auto-flow: column;  // single row
+    grid-column-gap: 0.5rem // space
+}
 
-
-.nav-link {
-    padding: 2px !important;
+// sub group of the navbar
+.navbar_group {
+    display: grid;
+    grid-auto-flow: column;  // single row
+    grid-column-gap: 0.25rem; // space
 }
 
 
+////////////////////////////////////////////
+// Hover Dropdown Classes
 
-.ranking-nav {
-    display: inline-block;
+
+.nav_dropdown {
+    
+    cursor: pointer;
     position: relative;
+    display: inline-block;
+
+    // the button thats always visible
+    &__button {
+        
+    }
+
+    // the div that will show/hide
+    &__content {
+        display: none;
+        position: absolute;
+        background-color: #f1f1f1;
+        z-index: 99;
+    }
+
+    // show the content when hovering over the dropdown
+    &:hover &__content {
+        display: block;
+    }
 }
 
 
-.ranking-nav-role-specs {
-    display: none;
-    position: absolute;
-    z-index: 99;
-    left: -0.75rem;
 
-    padding: 0.75rem;
-    padding-top: 0.5rem;
-
+.specs_nav_dropdown {
+    left: -0.5rem;  // offset to align the items from the inside
 }
 
 
-.ranking-nav:hover .ranking-nav-role-specs {
-    display: block;
-}
 
 
-.ranking-nav .disabled,
-.ranking-nav .disabled span,
-.ranking-nav a.disabled,
-.ranking-nav .disabled:hover
-{
-    color: grey;
-    text-decoration: none;
-    cursor: default;
-}
-
-
-.ranking-nav a:not(.disabled):hover
-{
-    font-weight: bold;
-}
 
 
 

@@ -55,15 +55,16 @@ $classes: (
     .wow-border-#{$name} {border: 1px solid $color;}
 
     // old..  should remove the "class"-part
-    .wow-class-#{$name} {color: $color;}
-    .wow-class-bg-#{$name} {background-color: $color;}
-    .wow-class-border-#{$name} {border: 1px solid $color;}
+    // .wow-class-#{$name} {color: $color;}
+    // .wow-class-bg-#{$name} {background-color: $color;}
+    // .wow-class-border-#{$name} {border: 1px solid $color;}
 }
 
 // slightly tuned down the colors for Hunter and Monk
-.wow-class-bg-hunter {background-color: #7e9c54}
-.wow-class-bg-monk {background-color: #38c78d}
+// .wow-bg-hunter {background-color: #7e9c54}
+// .wow-bg-monk {background-color: #38c78d}
+
 
 .wowhead-tooltip-powered {
-    display: none !important;
+    // display: none !important;
 }

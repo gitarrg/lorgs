@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux'
 import AppContext from "./../../AppContext/AppContext.jsx"
 import Stage from "./Stage.js"
 
+const PRINT_CANVAS_UPDATES = false
+
 
 export default function TimelineCanvas(props) {
 
@@ -36,16 +38,16 @@ export default function TimelineCanvas(props) {
     // update when fights or filters get changed
     React.useEffect(() => {
         const stage = stage_ref.current
-        console.time("canvas: set fights")
+        PRINT_CANVAS_UPDATES && console.time("canvas: set fights")
         stage.set_fights(ctx.fights)
-        console.timeEnd("canvas: set fights")
-        console.time("canvas: create")
+        PRINT_CANVAS_UPDATES && console.timeEnd("canvas: set fights")
+        PRINT_CANVAS_UPDATES && console.time("canvas: create")
         stage.create()
-        console.timeEnd("canvas: create")
-        console.time("canvas: update")
+        PRINT_CANVAS_UPDATES && console.timeEnd("canvas: create")
+        PRINT_CANVAS_UPDATES && console.time("canvas: update")
         stage.update()
         stage.update_size()
-        console.timeEnd("canvas: update")
+        PRINT_CANVAS_UPDATES && console.timeEnd("canvas: update")
 
     }, [ctx.fights])
 
@@ -53,10 +55,10 @@ export default function TimelineCanvas(props) {
     // update when fights or filters get changed
     React.useEffect(() => {
         const stage = stage_ref.current
-        console.time("canvas update filters")
+        PRINT_CANVAS_UPDATES && console.time("canvas update filters")
         stage.update()
         stage.update_size()
-        console.timeEnd("canvas update filters")
+        PRINT_CANVAS_UPDATES && console.timeEnd("canvas update filters")
     }, [ctx.fights, ctx.filters])
     
     

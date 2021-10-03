@@ -3,7 +3,7 @@
 
 const ICON_ROOT = "https://wow.zamimg.com/images/wow/icons/medium"
 
-const PRINT_REQUEST_TIMES = true
+const PRINT_REQUEST_TIMES = false
 
 
 const API = {}
@@ -31,6 +31,11 @@ async function fetch_data(url, params={}) {
 }
 
 
+API.load_roles = async function() {
+    return await fetch_data("/api/roles");
+}
+
+
 API.load_specs = async function({include_spells = false}) {
     return await fetch_data("/api/specs", {include_spells: include_spells});
 }
@@ -45,6 +50,12 @@ API.load_multiple_specs = async function(specs=[]) {
     let calls = specs.map(spec => API.load_spec(spec))
     let data = await Promise.all(calls)
     return data
+}
+
+
+API.load_bosses = async function() {
+    const zone_info = await fetch_data(`/api/bosses`);
+    return zone_info.bosses || []
 }
 
 
