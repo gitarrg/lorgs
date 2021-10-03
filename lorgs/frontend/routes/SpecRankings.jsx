@@ -4,13 +4,15 @@ import React from 'react'
 import { useParams } from 'react-router-dom';
 
 import AppContext from "./../AppContext/AppContext.jsx"
+import Header from "./../components/Header.jsx"
 import LoadingOverlay from "./../components/shared/LoadingOverlay.jsx"
+import Navbar from "./../components/Navbar/Navbar.jsx"
 import PlayerNamesList from "./../components/PlayerNames/PlayerNamesList.jsx"
 import SettingsBar from "./../components/SettingsBar/SettingsBar.jsx"
 import TimelineCanvas from "./../components/Timeline/TimelineCanvas.jsx"
-import api from "./../api.js"
+import API from "./../api.js"
 import { apply_filters } from "./../AppContext/filter_logic.js"
-
+import data_store, { MODES } from '../data_store.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Fetch
@@ -45,27 +47,49 @@ async function load_spec_rankings(spec_slug, boss_slug) {
 export default function SpecRankings() {
 
     const { spec_slug, boss_slug } = useParams();
+
+    // old context
     const app_data = AppContext.getData()
     app_data.mode = AppContext.MODES.SPEC_RANKING
     app_data.spec_slug = spec_slug
     app_data.boss_slug = boss_slug
+    
+    // new state
+    const state = data_store.getState()
+    state.mode = MODES.SPEC_RANKING
 
     // load data
+
+    /* load global data */
+    React.useEffect(async () => {
+        const bosses = await API.load_bosses()
+        data_store.dispatch({type: "update_value", field: "bosses", value: bosses})
+        
+        const roles = await API.load_roles()
+        console.log("roles", roles)
+        data_store.dispatch({type: "update_value", field: "roles", value: roles.roles || []})
+    }, [])
+
+
     React.useEffect(async () => {
 
         // send requests  TODO: wrap into a await all group
         console.time("requests")
 
-        app_data.specs = await api.load_multiple_specs([spec_slug, "other-potions", "other-trinkets"])
+        app_data.specs = await API.load_multiple_specs([spec_slug, "other-potions", "other-trinkets"])
         console.log("app_data.specs", app_data.specs)
 
-        app_data.boss = await api.load_boss(boss_slug),
-        app_data.fights = await load_spec_rankings(spec_slug, boss_slug),
+        app_data.boss = await API.load_boss(boss_slug),
+        app_data.fights = await load_spec_rankings(spec_slug, boss_slug)
+
+        const spec = app_data.specs[0]
+        data_store.dispatch({type: "update_value", field: "spec", value: spec})
+        data_store.dispatch({type: "update_value", field: "boss", value: app_data.boss})
 
         console.timeEnd("requests")
 
         // update context
-        api.process_fetched_data(app_data)
+        API.process_fetched_data(app_data)
         app_data.is_loading = false
         app_data.refresh()
 
@@ -77,6 +101,11 @@ export default function SpecRankings() {
 
     return (
         <div>
+
+            <div className="mt-3 flex-row d-flex flex-wrap-reverse">
+                <Header />
+                <Navbar />
+            </div>
 
             <div className={`${app_data.is_loading && "loading_trans"}`}>
                 <SettingsBar />

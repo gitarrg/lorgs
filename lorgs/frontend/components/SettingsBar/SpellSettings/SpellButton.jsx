@@ -1,12 +1,18 @@
 import React from 'react'
 
 
+/* to avoid react rerenders when clicking the <a> tags */
+function no_link(e) {
+    e.preventDefault()
+}
+
+
 export default function SpellButton({spec, spell}) {
 
     if (spell.was_used === false) {return null}
 
     const [show, setShow] = React.useState(spell.show)
-    let wow_class = spec.full_name_slug.split("-")[0]  // TODO: include class_name in api?
+    let wow_class = spec.class.name_slug
     const disabled = !show && "disabled"
 
     function toggle_spell() {
@@ -16,7 +22,7 @@ export default function SpellButton({spec, spell}) {
         setShow(spell.show)
 
         // custom event for the Stage
-        var event = new CustomEvent("toggle_spell");
+        let event = new CustomEvent("toggle_spell");
         event.show = spell.show
         event.spell_id = spell.spell_id
         document.dispatchEvent(event);
@@ -24,7 +30,7 @@ export default function SpellButton({spec, spell}) {
 
     
     return (
-        <a href="#_" data-wowhead={spell.tooltip_info}>
+        <a onClick={no_link} href="" data-wowhead={spell.tooltip_info}>
             <img
                 className={`button icon-s rounded wow-border-${wow_class} ${disabled}`}
                 src={spell.icon_path}

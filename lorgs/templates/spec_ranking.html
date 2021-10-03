@@ -1,21 +1,7 @@
 
-{% macro header_boss(boss, spec) -%}
-<h1 class="m-0">
-    <a href="https://www.warcraftlogs.com/zone/rankings/{{boss.zone.id}}#boss={{boss.id}}&class={{spec.wow_class.name_slug_cap}}&spec={{spec.name_slug_cap}}&metric={{spec.role.metric}}" target="_blank">
-        <span class="wow-class-{{spec.wow_class.name_slug}}">{{spec.full_name}}s</span>
-        <span>vs.</span>
-        <span>{{boss.full_name}}</span>
-    </a>
-</h1>
-{%- endmacro %}
-
-
 {##############################################################################}
 
 {% extends "base.html" %}
-
-{% block head %}{% endblock %}
-
 
 {##############################################################################}
 {# TITLE #}
@@ -24,29 +10,12 @@
 Lorgs: {{spec.full_name}} vs. {{boss.full_name}}
 {%- endblock -%}
 
-
-{##############################################################################}
-{# HEADER #}
-
-{% block header -%}
-<div class="mt-3 flex-row d-flex flex-wrap-reverse">
-    <div class="mb-2">
-    {{ header_boss(boss, spec) }}
-    </div>
-
-    <div class="ml-auto mb-2">
-        {% include "elements/spec_ranking_nav.html" %}
-    </div>
-</div>
-{% endblock %}
-
-
 {##############################################################################}
 {# CONTENT #}
-
 {% block content -%}
     <div id=app_root></div>
 {% endblock %}
+
 
 {##############################################################################}
 {# SCRIPTS #}
@@ -54,5 +23,3 @@ Lorgs: {{spec.full_name}} vs. {{boss.full_name}}
 {{ super() }}
 {% include "elements/script_tags.html" %}
 {% endblock %}
-
-

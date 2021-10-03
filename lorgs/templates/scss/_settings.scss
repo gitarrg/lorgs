@@ -69,7 +69,6 @@
 
     }
 
-
     // exception for the home button
     #home_button {
         background-color: inherit;
@@ -79,76 +78,3 @@
 
 
 }
-
-
-
-/* most stuff below here can go? */
-
-
-#settings_container {
-    display: none;
-}
-
-.spell-checkbox-group-header {
-    font-size:  1.2rem;
-}
-
-.spell-checkbox-group-header .icon {
-    width: auto;
-    height: 1.2rem;
-}
-
-
-.spell-checkbox-group-header label:hover {
-    text-decoration: underline;
-}
-
-.spell-checkbox-group-header input,
-.spell-checkbox-group input,
-#show_settings
-{
-    display: none;
-}
-
-
-.spell-checkbox-group-header input[type="checkbox"]:not(:checked)+label {
-    border: none !important;
-}
-
-
-input[type="checkbox"]+label {
-    cursor: pointer;
-}
-
-input[type="checkbox"]:not(:checked)+label {
-    color: grey;
-    opacity: 30%;
-    filter: saturate(0%) blur(0.5px);
-}
-
- input#show_settings:not(:checked)+label {
-    opacity: 100%;
-    color: white;
-}
-
-
-input#show_settings:not(:checked)+label:hover,
-input[type="checkbox"]:not(:checked)+label:hover {
-    opacity: 100%;
-    filter: saturate(0%) blur(0);
-
-}
-
-
-input#show_settings:checked+label {
-    color: rgb(0, 200, 255);
-}
-
-#settings_hint {
-    position: absolute;
-    z-index: 5000;
-    right: 3.2rem;
-    cursor: pointer;
-}
-
-

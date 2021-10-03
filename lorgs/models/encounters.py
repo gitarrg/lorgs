@@ -25,6 +25,7 @@ class RaidZone(base.Model):
         return {
             "id": self.id,
             "name": self.name,
+            "bosses": [boss.as_dict() for boss in self.bosses]
         }
 
     def add_boss(self, **kwargs):
@@ -36,7 +37,10 @@ class RaidZone(base.Model):
 class RaidBoss(base.Model):
     """A raid boss in the Game."""
 
-    wow_class = {}
+    wow_class = {
+        "name": "Raid Boss",
+        "name_slug": "boss",
+    }
 
     def __init__(self, zone, id, name, nick=""):
         self.id = id
@@ -62,15 +66,21 @@ class RaidBoss(base.Model):
         return f"<RaidBoss(id={self.id} name={self.name})>"
 
     def as_dict(self, include_spells=False):
-        return {
+        d = {
             "id": self.id,
             "role": self.role,
             "name": self.name,
             "name_slug": self.name_slug,
             "full_name": self.full_name,
             "full_name_slug": self.full_name_slug,
-            "spells": [spell.as_dict() for spell in self.spells]
+            "class": self.wow_class,
         }
+
+        if include_spells:
+            d["spells"] = [spell.as_dict() for spell in self.spells]
+
+        return d
+
 
     ##########################
     # Methods

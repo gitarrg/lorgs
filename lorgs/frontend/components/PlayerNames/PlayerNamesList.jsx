@@ -44,7 +44,7 @@ export default function PlayerNamesList() {
 
 
     return (
-        <div id="player_names_container" className={`player_names_container ${context.mode}`}>
+        <div className={`player_names_container ${context.mode}`}>
             {
                 context.fights.map((fight, i) => (
                     create_fight(i, fight)

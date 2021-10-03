@@ -25,6 +25,14 @@ class WowRole(base.Model):
     def __lt__(self, other):
         return self.id < other.id
 
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "code": self.code,
+            "specs": [spec.as_dict(spells=False) for spec in self.specs]
+        }
+
     @property
     def metric(self):
         """str: the preferred metric. aka: dps for all. hps for healers."""

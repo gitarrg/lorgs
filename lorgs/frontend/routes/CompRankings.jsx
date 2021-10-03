@@ -2,12 +2,15 @@
 import React from 'react'
 import { useParams } from 'react-router-dom';
 
+import API from "./../api.js"
 import AppContext from "./../AppContext/AppContext.jsx"
+import Header from "./../components/Header.jsx"
 import LoadingOverlay from "./../components/shared/LoadingOverlay.jsx"
+import Navbar from "./../components/Navbar/Navbar.jsx"
 import PlayerNamesList from "./../components/PlayerNames/PlayerNamesList.jsx"
 import SettingsBar from "./../components/SettingsBar/SettingsBar.jsx"
 import TimelineCanvas from "./../components/Timeline/TimelineCanvas.jsx"
-import API from "./../api.js"
+import data_store, { MODES } from '../data_store.js'
 
 
 /* Returns a list of fights */
@@ -32,14 +35,27 @@ export default function CompRankings() {
     const app_data = AppContext.getData()
     app_data.mode = AppContext.MODES.COMP_RANKING
 
+    const state = data_store.getState()
+    state.mode = MODES.COMP_RANKING
+
 
     //////////////////////
     // load data
-    React.useEffect(async () => {
 
+    /* load global data */
+    React.useEffect(async () => {
+        const bosses = await API.load_bosses()
+        data_store.dispatch({type: "update_value", field: "bosses", value: bosses})
+        console.log("load global data")
+    })
+
+    React.useEffect(async () => {
         // send requests
         console.time("requests")
-        
+
+        const boss = await API.load_boss(boss_slug)
+        data_store.dispatch({type: "update_value", field: "boss", value: boss})
+
         const specs_dict = await API.load_specs({include_spells: true})
         app_data.specs = Object.values(specs_dict.specs)
         // let spell_data = await api.load_spells()
@@ -63,7 +79,11 @@ export default function CompRankings() {
     // return
     return (
         <>
-            <h1>Header: {app_data.boss.name}</h1>
+
+            <div className="mt-3 flex-row d-flex flex-wrap-reverse">
+                <Header />
+                <Navbar />
+            </div>
 
             <div className={`${app_data.is_loading && "loading_trans"}`}>
                 <SettingsBar />

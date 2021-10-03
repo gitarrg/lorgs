@@ -11,7 +11,7 @@ export default function ButtonGroup(props) {
 
         <div className={m}>
 
-            {props.name && <small className={"clear-both " + extra_class}>{props.name}</small>}
+            {props.name && <small className={extra_class}>{props.name}</small>}
             <div className="bg-dark p-1 rounded border align-items-start button_group">
                 {props.children}
             </div>

@@ -1,6 +1,5 @@
 
 
-
 import React from 'react'
 
 
@@ -10,14 +9,9 @@ export default function FilterButton({name, icon_name, full_name="", show_init=t
 
     full_name = full_name || name
     const icon_path = `/static/images/${icon_name}.jpg`
+    const disabled = show ? "" : "disabled"
 
     function toggle_button() {
-
-        // console.log("clicked", name, show)
-        // update the context
-        // context.filters = {...context.filters}  // create new object
-        // context.filters[covenant_slug] = !show
-        // context.refresh()
 
         // update the state
         if (onClick) {
@@ -29,10 +23,9 @@ export default function FilterButton({name, icon_name, full_name="", show_init=t
 
     return (
         <img 
-            className={`button icon-s rounded wow-border-${name} ${!show && "disabled"}`}
+            className={`button icon-s rounded wow-border-${name} ${disabled}`}
             src={icon_path}
-            data-bs-toggle="tooltip"
-            title={full_name}
+            data-tip={full_name}
             alt={full_name}
             onClick={toggle_button}
         />

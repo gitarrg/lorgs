@@ -2,6 +2,7 @@
 import React from "react"
 import { BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import { Provider } from 'react-redux'
+import ReactTooltip from 'react-tooltip';
 
 import AppContext from "./AppContext/AppContext.jsx"
 import CompRankings from "./routes/CompRankings.jsx"
@@ -14,12 +15,18 @@ import data_store from "./data_store.js"
 
 export default function App() {
 
+
     ////////////////////////
     // Output
 
     return (
         <Provider store={data_store}>
         <React.StrictMode>
+            <ReactTooltip 
+                delayShow={25}
+                className="tooltip"
+                disable={true} // for dev mode.. TODO: re-enable before deploy
+            />
             <AppContext.AppContextProvider>
                 <Router>
                     <Switch>
