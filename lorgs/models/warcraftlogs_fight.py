@@ -39,6 +39,9 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
         return f"{self.__class__.__name__}(id={self.fight_id}, players={len(self.players)})"
 
     def as_dict(self):
+
+        players = sorted(self.players, key=lambda player: (player.spec.role, player.spec, player.total))
+
         return {
             "fight_id": self.fight_id,
             "report_id": self.report.report_id,
@@ -48,7 +51,7 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
             "duration": self.duration,
 
             "num_players": len(self.players),
-            "players": [player.as_dict() for player in self.players],
+            "players": [player.as_dict() for player in players],
             "boss": self.boss.as_dict() if self.boss else {},
         }
 
@@ -193,8 +196,6 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
             player.source_id = composition_data.get("id")
             player.name = composition_data.get("name")
             player.total = total
-
-            player.process_death_events(death_events)
 
     def process_query_result(self, query_result):
 

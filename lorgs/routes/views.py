@@ -11,7 +11,6 @@ from lorgs import forms
 from lorgs import utils
 from lorgs.cache import cache
 from lorgs.models import encounters
-from lorgs.models import warcraftlogs_comps
 from lorgs.models import warcraftlogs_report
 from lorgs.models.specs import WowSpec
 
@@ -44,7 +43,7 @@ def index():
     kwargs = {}
     kwargs["boss"] = data.DEFAULT_BOSS
     kwargs["roles"] = data.ROLES
-    kwargs["comps"] = warcraftlogs_comps.CompConfig.objects
+    kwargs["comps"] = [] # warcraftlogs_comps.CompConfig.objects
     return flask.render_template("index.html", **kwargs)
 
 
@@ -90,19 +89,24 @@ def spec_ranking(spec_slug, boss_slug):
 ################################################################################
 
 
-@blueprint.route("/comp_ranking/<string:comp_name>/<string:boss_slug>")
+@blueprint.route("/comp_ranking/<string:boss_slug>")
 @cache.cached(timeout=60)
-def comp_ranking(comp_name, boss_slug):
-    comp_ranking = warcraftlogs_comps.CompRating.get_or_create(comp=comp_name, boss_slug=boss_slug)
+def comp_ranking(boss_slug):
+
+    # comp_ranking = warcraftlogs_comps.CompRating.get_or_create(comp=comp_name, boss_slug=boss_slug)
+    boss = encounters.RaidBoss.get(full_name_slug=boss_slug)
+
+    if not boss:
+        flask.abort(404, description="Invalid Boss")
 
     kwargs = {}
-    kwargs["comp_ranking"] = comp_ranking
-    kwargs["all_spells"] = comp_ranking.spells_used
-    kwargs["timeline_duration"] = max(fight.duration for fight in comp_ranking.fights) if comp_ranking.fights else 0
+    kwargs["boss"] = boss
+    # kwargs["comp_ranking"] = comp_ranking
+    # kwargs["all_spells"] = comp_ranking.spells_used
+    # kwargs["timeline_duration"] = max(fight.duration for fight in comp_ranking.fights) if comp_ranking.fights else 0
 
     kwargs["roles"] = data.ROLES
-    kwargs["bosses"] = comp_ranking.boss.zone.bosses
-
+    kwargs["bosses"] = boss.zone.bosses
     return flask.render_template("comp_ranking.html", **kwargs)
 
 

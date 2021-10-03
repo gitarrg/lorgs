@@ -43,7 +43,7 @@ class RaidBoss(base.Model):
         self.zone = zone
         self.name = nick
         self.full_name = name
-        self.visible = True
+        self.visible = True # todo: is this used anywhere?
 
         self.name_slug = utils.slug(self.name, space="-")
         self.full_name_slug = utils.slug(self.full_name, space="-")
@@ -61,7 +61,7 @@ class RaidBoss(base.Model):
     def __repr__(self):
         return f"<RaidBoss(id={self.id} name={self.name})>"
 
-    def as_dict(self):
+    def as_dict(self, include_spells=False):
         return {
             "id": self.id,
             "role": self.role,
@@ -69,6 +69,7 @@ class RaidBoss(base.Model):
             "name_slug": self.name_slug,
             "full_name": self.full_name,
             "full_name_slug": self.full_name_slug,
+            "spells": [spell.as_dict() for spell in self.spells]
         }
 
     ##########################
@@ -98,7 +99,8 @@ class RaidBoss(base.Model):
             self.events.append(end_event)
 
         # spell instance used for UI things
+        kwargs.setdefault("spell_type", "boss")
         spell = WowSpell(**kwargs)
-        spell.group = self
-        spell.spec = self
+
+        spell.specs = [self]
         self.spells.append(spell)

@@ -14,7 +14,7 @@ from lorgs.models.warcraftlogs_actor import Boss
 from lorgs.models.warcraftlogs_fight import Fight
 
 
-class Report(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
+class Report(warcraftlogs_base.EmbeddedDocument):
 
     report_id = me.StringField(primary_key=True)
     start_time = me.IntField(default=0)
@@ -31,14 +31,6 @@ class Report(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
 
     def __str__(self):
         return f"<BaseReport({self.report_id}, num_fights={len(self.fights)})>"
-
-    def as_dict(self):
-        return {
-            "code": self.report_id,
-            "start_time": self.start_time,
-            "num_fights": len(self.fights),
-            "fights": [fight.as_dict() for fight in self.fights]
-        }
 
     ##########################
     # Attributes

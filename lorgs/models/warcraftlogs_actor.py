@@ -161,12 +161,12 @@ class Player(BaseActor):
             "total": int(self.total),
 
             "source_id": self.source_id,
-            "spec_slug": self.spec_slug,
-            "class_slug": self.spec.wow_class.name_slug,
-
             "covenant": self.covenant.name_slug,
+            "casts": [cast.as_dict() for cast in self.casts],
 
-            "casts": [cast.as_dict() for cast in self.casts]
+            "spec": self.spec_slug,
+            "role": self.spec.role.code,
+            "class": self.spec.wow_class.name_slug,
         }
 
     ##########################

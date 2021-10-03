@@ -49,7 +49,7 @@
 
     &__name,
     &__rank {
-        left: 35px;
+        margin-left: 4px;
     }
 
     &__total {
@@ -57,14 +57,6 @@
     }
 }
 
-
-.boss_name + .boss_name,
-.boss_name + .player_name,
-.player_name + .boss_name,
-.player_name + .player_name,
-{
-    border-top: none;
-}
 
 
 
@@ -101,4 +93,36 @@
             transition-delay: 1s;
         }
     }
+
+    // hide top border only for the very first row
+    // and for all player lanes
+    .player_names_fight:not(:first-child) .boss_name,
+    .player_name {
+        border-top: none;
+    }
 }
+
+
+.comp_ranking {
+
+  
+    .player_names_fight {
+        margin-bottom: 10px;
+    }
+
+    
+    .boss_name {
+        border-top-left-radius: 0.25rem;
+    }
+    
+    .player_name:last-of-type {
+        border-bottom-left-radius: 0.25rem;
+    }
+
+    // hide top border for all, except topmost row
+    .boss_name:not(:first-child), .player_name:not(:first-child) {
+        border-top: none;
+    }
+}
+
+
