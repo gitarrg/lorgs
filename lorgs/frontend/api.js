@@ -3,7 +3,7 @@
 
 const ICON_ROOT = "https://wow.zamimg.com/images/wow/icons/medium"
 
-const PRINT_REQUEST_TIMES = false
+const PRINT_REQUEST_TIMES = true
 
 
 const API = {}
@@ -31,8 +31,13 @@ async function fetch_data(url, params={}) {
 }
 
 
+
+
 API.load_roles = async function() {
-    return await fetch_data("/api/roles");
+    let roles = await fetch_data("/api/roles")
+    roles = roles.roles // take array from dict
+    roles.sort((a, b) => (a.id > b.id) ? 1 : -1  )
+    return roles;
 }
 
 
@@ -93,6 +98,29 @@ export function process_spells(spells = {}) {
     return spells;
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//                  PAGE RELATED
+//
+////////////////////////////////////////////////////////////////////////////////
+
+/* Returns a list of fights */
+API.load_spec_rankings = async function(spec_slug, boss_slug) {
+
+    let url = `/api/spec_ranking/${spec_slug}/${boss_slug}?limit=100`;
+    const fight_data = await fetch_data(url);
+
+    // post process
+    return fight_data.fights.map((fight, i) => {
+        fight.players.forEach(player => {
+            player.rank = i+1  // insert ranking data
+        })
+        return fight
+    })
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 //                  Post Processing
@@ -139,21 +167,24 @@ function filter_unused_spells(spells = [], fights = []) {
 }
 
 
-API.process_fetched_data = function(app_data) {
+API.process_fetched_data = function(state) {
+
+    console.log("process_fetched_data", state)
 
     // build flat list of spells
-    app_data.spells = [] 
-    app_data.spells = [...app_data.boss.spells]
-    Object.values(app_data.specs).forEach(spec => {
-        app_data.spells = [...app_data.spells, ...(spec.spells || [])]
+    state.spells = [] 
+    state.spells = [...state.boss.spells]
+    Object.values(state.specs).forEach(spec => {
+        state.spells = [...state.spells, ...(spec.spells || [])]
     })
     
     // apply some filtering
-    app_data.spells = filter_unused_spells(app_data.spells, app_data.fights)
-    
+    state.spells = filter_unused_spells(state.spells, state.fights)
+    console.log("state.spells", state.spells)
     
     // additonal loading
-    process_spells(app_data.boss.spells)
-    app_data.specs.forEach(spec => process_spells(spec.spells))
-}
+    process_spells(state.boss.spells)
+    state.specs.forEach(spec => process_spells(spec.spells))
 
+    return state
+}

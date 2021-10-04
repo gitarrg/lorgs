@@ -1,6 +1,9 @@
 
 import React  from "react";
-import AppContext from "./../../AppContext/AppContext.jsx"
+import { useSelector } from 'react-redux'
+
+import { MODES } from "../../data_store.js";
+import { WCL_URL } from "./../../constants.js"
 
 
 function spec_ranking_color(i = 0) {
@@ -37,24 +40,24 @@ export function BossName(props) {
 }
 
 
-export function PlayerName({player, fight}) {
-
-    const context = AppContext.getData()
-
-    // console.log(props, props.player)
-    let spec_img_path = player.spec && `/static/images/specs/${player.spec}.jpg`
-    let role_img_path = player.spec && `/static/images/roles/${player.role}.jpg`
-    // img_path = `/static/images/covenants/${player.covenant}.jpg`
-
-    const mode_spec = context.mode == AppContext.MODES.SPEC_RANKING
-    const mode_comp = context.mode == AppContext.MODES.COMP_RANKING
+export function PlayerName({fight, player}) {
 
     if (fight.loading) { return SKELETON_PLAYER_NAME }
+
+    const mode = useSelector(state => state.mode)
+    const mode_spec = mode == MODES.SPEC_RANKING
+    const mode_comp = mode == MODES.COMP_RANKING
+
+    const spec_img_path = player.spec && `/static/images/specs/${player.spec}.jpg`
+    const role_img_path = player.spec && `/static/images/roles/${player.role}.jpg`
+
+    const report_url = `${WCL_URL}/reports/${fight.report_id}#fight=${fight.fight_id}`
+
 
     return (
         <div className={"player_name " + spec_ranking_color(player.rank)}>
 
-            <a target="_blank" href={fight.report_url}>
+            <a target="_blank" href={report_url}>
                 {mode_comp && <img className="player_name__role_icon" src={role_img_path}></img>}
                 <img className="player_name__spec_icon" src={spec_img_path}></img>
 
