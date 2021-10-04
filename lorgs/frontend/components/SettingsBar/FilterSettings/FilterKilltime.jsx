@@ -19,7 +19,6 @@ function FilterKilltimeInput({name, start=0, placeholder="0:00" }) {
     const ref = React.useRef(null);
     const [text, setText] = React.useState(null); // time as text
     const [seconds, setSeconds] = React.useState(start) // time in seconds
-    // const context = AppContext.getData()
 
     function handle_input() {
         setText(ref.current.value)

@@ -2,7 +2,7 @@ import React from 'react'
 
 import DisplaySettings from './DisplaySettings.jsx'
 import FilterSettings from "./FilterSettings/FilterSettings.jsx"
-import RoleSpecDisplay from './RoleSpecDisplay/RoleSpecDisplay.jsx'
+import RoleSpecDisplay from './RoleSpecDisplay.jsx'
 import SpellSettings from './SpellSettings/SpellSettings.jsx'
 import data_store, { MODES } from '../../data_store.js'
 

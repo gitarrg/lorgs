@@ -169,8 +169,6 @@ function filter_unused_spells(spells = [], fights = []) {
 
 API.process_fetched_data = function(state) {
 
-    console.log("process_fetched_data", state)
-
     // build flat list of spells
     state.spells = [] 
     state.spells = [...state.boss.spells]
@@ -180,7 +178,6 @@ API.process_fetched_data = function(state) {
     
     // apply some filtering
     state.spells = filter_unused_spells(state.spells, state.fights)
-    console.log("state.spells", state.spells)
     
     // additonal loading
     process_spells(state.boss.spells)

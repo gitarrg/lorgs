@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import { Provider } from 'react-redux'
 import ReactTooltip from 'react-tooltip';
 
-import AppContext from "./AppContext/AppContext.jsx"
 import CompRankings from "./routes/CompRankings.jsx"
 import SpecRankings from "./routes/SpecRankings.jsx"
 import data_store from "./data_store.js"
@@ -25,16 +24,14 @@ export default function App() {
             <ReactTooltip 
                 delayShow={25}
                 className="tooltip"
-                disable={true} // for dev mode.. TODO: re-enable before deploy
+                // disable={true} // for dev mode.. TODO: re-enable before deploy
             />
-            <AppContext.AppContextProvider>
-                <Router>
-                    <Switch>
-                        <Route path="/spec_ranking/:spec_slug/:boss_slug"> <SpecRankings /> </Route>
-                        <Route path="/comp_ranking/:boss_slug"> <CompRankings /> </Route>
-                    </Switch>
-                </Router>
-            </AppContext.AppContextProvider>
+            <Router>
+                <Switch>
+                    <Route path="/spec_ranking/:spec_slug/:boss_slug"> <SpecRankings /> </Route>
+                    <Route path="/comp_ranking/:boss_slug"> <CompRankings /> </Route>
+                </Switch>
+            </Router>
         </React.StrictMode>
         </Provider>
     )
