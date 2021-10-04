@@ -1,6 +1,5 @@
 
 import React from 'react'
-import { NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux'
 
 import { MODES } from "../../data_store.js"
@@ -14,7 +13,7 @@ import NavbarSpecGroup from "./NavbarSpecGroup.jsx"
 function HomeButton() {
     /* regular link for now */
     return (
-        <a href="/" title="home">
+        <a href="/" title="home" data-tip="back to start page">
             <i className="fas fa-home fa-2x"/>
         </a>
     )
@@ -27,6 +26,7 @@ function HomeButton() {
 function NavbarGroup({children}) {
     
     if (!children) return null
+
     
     return (
         <div className="navbar_group p-1 bg-dark border rounded">

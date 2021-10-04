@@ -26,6 +26,8 @@ export default function NavbarBossButton({boss}) {
                 className="icon-spec icon-m border-black rounded"
                 src={icon_path}
                 alt={boss.name}
+                data-tip={boss.full_name}
+                alt={boss.full_name}
             />
         </NavLink>
     )

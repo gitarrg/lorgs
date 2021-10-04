@@ -3,6 +3,7 @@
 import React from 'react'
 import { useParams } from 'react-router-dom';
 import { useSelector, batch } from 'react-redux'
+import ReactTooltip from 'react-tooltip';
 
 import API from "./../api.js"
 import Header from "./../components/Header.jsx"
@@ -24,6 +25,9 @@ async function load_global_data() {
     
     const roles = await API.load_roles()
     data_store.dispatch({type: "update_value", field: "roles", value: roles || []})
+
+    // needs to rebuild when the nav bar changes
+    ReactTooltip.rebuild()
 }
 
 
