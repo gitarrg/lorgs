@@ -1,10 +1,8 @@
 
 import React from "react";
+import { useSelector } from 'react-redux'
 
-import AppContext from "./../../AppContext/AppContext.jsx"
 import {PlayerName, BossName} from "./PlayerName.jsx"
-
-
 
 
 function create_boss(fight) {
@@ -39,14 +37,18 @@ function create_fight(i, fight) {
 
 export default function PlayerNamesList() {
 
-    const context = AppContext.getData()
-    
+    // get data
+    const mode = useSelector(state => state.mode)
+    const fights = useSelector(state => state.fights)
 
+    // include this as it affects the display for the fights
+    const filters = useSelector(state => state.filters)
 
+    // render
     return (
-        <div className={`player_names_container ${context.mode}`}>
+        <div className={`player_names_container ${mode}`}>
             {
-                context.fights.map((fight, i) => (
+                fights.map((fight, i) => (
                     create_fight(i, fight)
                 ))
             }

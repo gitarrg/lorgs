@@ -1,7 +1,7 @@
 
 import React from 'react'
+import { useSelector } from 'react-redux'
 
-import AppContext from "./../../../AppContext/AppContext.jsx"
 import ButtonGroup from './../shared/ButtonGroup.jsx'
 import SpellButton from './SpellButton.jsx'
 
@@ -44,12 +44,13 @@ function create_spec_group(spec = {}, spells=[]) {
 
 export default function SpellSettings() {
 
-    const app_data = AppContext.getData()
+    const boss = useSelector(state => state.boss)
+    const specs = useSelector(state => state.specs)
 
     return (
         <>
-            {create_boss_group(app_data.boss)}
-            {app_data.specs.map(spec => create_spec_group(spec))}
+            {create_boss_group(boss)}
+            {specs.map(spec => create_spec_group(spec))}
         </>
     )
 }

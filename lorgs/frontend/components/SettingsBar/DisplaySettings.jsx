@@ -9,7 +9,7 @@ import data_store from '../../data_store.js'
 function Button({attr_name, icon_name, tooltip=""}) {
 
     const attr_value = useSelector(state => state[attr_name])
-    const disabled = show ? "" : "disabled"
+    const disabled = attr_value ? "" : "disabled"
     
     function onClick() {
         data_store.dispatch({
