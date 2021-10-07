@@ -36,9 +36,9 @@ function get_header_spec_rankings(spec, boss) {
 
     return (
         <a href={url} target="_blank">
-            <span className={class_name}>{spec_name}</span>
+            <span className="wow-boss">{boss.full_name}</span>
             <span> vs. </span>
-            <span>{boss.full_name}</span>
+            <span className={class_name}>{spec_name}</span>
         </a>
     )
 }

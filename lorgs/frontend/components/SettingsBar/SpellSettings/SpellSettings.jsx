@@ -7,8 +7,7 @@ import SpellButton from './SpellButton.jsx'
 
 
 
-function _create_spell_buttons(spec = {}, spells=[]) {
-    spells = spells || spec.spells || []
+function _create_spell_buttons(spec = {}) {
     return spec.spells.map(spell => <SpellButton key={`${spec.full_name_slug}/${spell.spell_id}`} spec={spec} spell={spell} />)
 }
 
@@ -17,7 +16,10 @@ function _create_spell_buttons(spec = {}, spells=[]) {
 // BOSS
 //
 
-function create_boss_group(boss = {}) {
+export function BossSpellsGroup() {
+
+    const boss = useSelector(state => state.boss)
+
     return (
         <ButtonGroup key="boss" name={boss.name} side="left" extra_class="wow-boss">
             {_create_spell_buttons(boss) }
@@ -29,27 +31,25 @@ function create_boss_group(boss = {}) {
 // SPECS
 //
 
-function create_spec_group(spec = {}, spells=[]) {
+function create_spec_group(spec = {}) {
 
     const extra_class = "wow-" + spec.full_name_slug.split("-")[0]  // fixme
 
     return (
         <ButtonGroup key={spec.full_name_slug} name={spec.name} side="left" extra_class={extra_class}>
-            {_create_spell_buttons(spec, spells) }
+            {_create_spell_buttons(spec) }
         </ButtonGroup>
     )
-
 }
 
 
 export default function SpellSettings() {
 
-    const boss = useSelector(state => state.boss)
     const specs = useSelector(state => state.specs)
 
     return (
         <>
-            {create_boss_group(boss)}
+            <BossSpellsGroup />
             {specs.map(spec => create_spec_group(spec))}
         </>
     )

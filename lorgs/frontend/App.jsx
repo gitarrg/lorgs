@@ -1,10 +1,11 @@
 
 import React from "react"
+import ReactTooltip from 'react-tooltip';
 import { BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import { Provider } from 'react-redux'
-import ReactTooltip from 'react-tooltip';
 
 import CompRankings from "./routes/CompRankings.jsx"
+import CompSearch from "./routes/CompSearch.jsx"
 import SpecRankings from "./routes/SpecRankings.jsx"
 import data_store from "./data_store.js"
 
@@ -14,22 +15,29 @@ import data_store from "./data_store.js"
 
 export default function App() {
 
-
     ////////////////////////
     // Output
-
     return (
         <Provider store={data_store}>
         <React.StrictMode>
             <ReactTooltip 
                 delayShow={25}
                 className="tooltip"
-                // disable={true} // for dev mode.. TODO: re-enable before deploy
+                effect="solid"
+                disable={LORRGS_DEBUG}
             />
             <Router>
                 <Switch>
-                    <Route path="/spec_ranking/:spec_slug/:boss_slug"> <SpecRankings /> </Route>
-                    <Route path="/comp_ranking/:boss_slug"> <CompRankings /> </Route>
+                    <Route path="/spec_ranking/:spec_slug/:boss_slug">
+                        <SpecRankings />
+                    </Route>
+
+                    <Route path="/comp_ranking/search">
+                        <CompSearch />
+                    </Route>
+                    <Route path="/comp_ranking/:boss_slug">
+                        <CompRankings />
+                    </Route>
                 </Switch>
             </Router>
         </React.StrictMode>

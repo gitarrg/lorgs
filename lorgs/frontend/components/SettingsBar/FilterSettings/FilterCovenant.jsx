@@ -1,9 +1,12 @@
 import React from 'react'
 import data_store from '../../../data_store.js'
+
 import FilterButton from '../shared/FilterButton.jsx'
+import ButtonGroup from '../shared/ButtonGroup.jsx'
 
 
-export default function FilterCovenant({covenant}) {
+
+function FilterCovenantButton({covenant}) {
 
     const covenant_slug = covenant.toLowerCase()
 
@@ -24,5 +27,18 @@ export default function FilterCovenant({covenant}) {
             full_name={covenant}
             icon_name={`covenants/${covenant_slug}`}
         />
+    )
+}
+
+
+
+export default function FilterCovenantGroup() {
+    return (
+        <ButtonGroup side="right" name="Covenant">
+            <FilterCovenantButton covenant="Kyrian" />
+            <FilterCovenantButton covenant="Venthyr" />
+            <FilterCovenantButton covenant="Nightfae" />
+            <FilterCovenantButton covenant="Necrolord" />
+        </ButtonGroup>
     )
 }

@@ -1,0 +1,361 @@
+/*
+    Styles for the Comp Ranking Search Form
+
+
+    TODO: remove unused classes
+*/
+
+
+
+// Wrapper to Position the Form Layout
+.comp-search-container {
+
+    // display: flex;
+    // justify-content: center;
+    // align-items: center;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;  // 3 rows. middle=auto + sides both same share
+
+    // border: 1px solid yellow;
+
+    hr {
+        margin: 0;
+        height: 0px;
+        grid-column: 1 / end;  // stretch first until last column
+    }
+}
+
+
+.search_input_group {
+
+
+    /*remove border from form inputs,*/
+    /*and add a tiny inner shadow*/
+    .input-group-text,
+    .form-control {
+        border: none;
+    }
+
+    .form-control {
+        -webkit-box-shadow: inset -5px 5px 10px 0px rgba(0,0,0,0.05);
+        -moz-box-shadow: inset -5px 5px 10px 0px rgba(0,0,0,0.05);
+        box-shadow: inset -5px 5px 10px 0px rgba(0,0,0,0.05);
+    }
+
+
+    // dropdowns to select the ">", "=" etc 
+    .op-dropdown {
+        color: black;
+        text-align: center;
+
+        cursor: pointer;
+        max-width: 4ch;
+        background-color: #ccc;
+    }
+
+    /*set default colors/backgrounds*/
+    input2, selec2t {
+        background-color: hsl(0, 0%, 40%);
+        color: rgb(240, 240, 240);
+
+        border: 1px solid black;
+
+        &:focus {
+            background-color: hsl(0, 0%, 45%);
+            color: white;
+            font-weight: bold;
+        }
+    }
+
+}
+
+
+.search-form {
+
+
+    // a group that contains multiple search fields
+    &__group {
+        // border: 2px solid yellow;
+        margin-right: 0.5rem;
+        
+        &__content {
+            display: grid;
+            grid-template-rows: repeat(7, 1fr);
+            grid-auto-flow: column;
+            // grid-auto-columns: 1fr;
+            // row-count: 3;
+            gap: 0.25rem;
+        }
+    } // group
+
+
+    // a single input to search for a count (role or specs)
+    &__input-group {
+        border: 1px solid greenyellow;
+        // margin-bottom: 0.25rem;
+        // fade out empty inputs
+
+
+
+
+        &.empty {
+
+                // border: none !important;
+                // opacity: 0.1;
+                // color: grey !important;
+  
+                img {
+                    border: none !important;
+                    filter: saturate(75%);
+                    opacity: 50%;
+                }
+                
+                input, select {
+                    opacity: 10%;
+                    // background-color: hsl(0, 0%, 50%);
+                }
+            }
+    }
+}
+
+
+.boss-search-container {
+
+
+    
+    .boss-button-container {
+        display: flex;
+        gap: 0.25rem; // space
+    }
+
+    .boss-button {
+
+        cursor: pointer;
+    
+        &.active {
+            border-width: 2px;
+            border-color: white;
+        }
+        
+        &:not(.active):not(:hover) {
+            opacity: 30%;
+            border-width: 0;
+        }
+    }
+}
+
+
+// a row for the role/spec search
+.search_spec_row {
+    // min-height: 75px;   // to force both roles and specs to have the same height
+    
+    // height: 1.5rem;
+
+    &:last-child {
+        min-height: 0;
+    }
+}
+
+
+.player-role-search, .player-spec-search {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+
+}
+
+
+.player-role-search {
+
+    // hack to align the 2 row dps spots
+    .search_spec_row:last-of-type {
+        margin-top: 24px; // height of 1 row
+    }
+}
+
+.player-spec-search {
+}
+
+
+.player-spec-search-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-auto-flow: rows;
+
+}
+
+
+
+
+.role-specs-group {
+
+    // grid-auto-columns: 1fr;
+    // row-count: 3;
+    // gap: 0.25rem;
+}
+
+
+// Styles for the input
+.count-input-group {
+
+    width: calc(24px + 2ch + 3ch);
+    border-radius: 0.25rem;
+    overflow: hidden;
+    display: flex;
+
+    input, select {
+        height: 1.5rem;
+        &:focus {
+            outline: none; // outline when you select it
+        }
+    }
+
+    ////////////////////////
+    // Operator Dropdown
+   
+    .op-dropdown {
+        @include select_no_dropdown_arrow;
+
+        width: 2ch;
+        background: hsl(0, 0%, 50%);
+        text-align: center;
+        cursor: pointer;
+
+        // border in the side
+        border-color: black;
+        border-width: 0.5px;
+        border-top: none;
+        border-bottom: none;
+
+        &:hover {
+            background: white;
+            font-weight: bold;
+        }
+    }
+
+    ////////////////////////
+    // Number Input
+    .count-number {
+
+        @include input_no_spinner;
+
+        width: 3ch;
+        border: none;
+        // border-top-right-radius: var(--border-radius);
+        // border-bottom-right-radius: var(--border-radius);
+    }
+
+    // empty state
+    &.empty:not(:hover) {
+        
+        border-color: transparent; // avoid spacing issues
+
+        img {
+            opacity: 0.3;
+        }
+
+        .op-dropdown, .count-number {
+            opacity: 0.1;
+        }
+    }
+
+    // focus state
+    &:focus, &:focus-within {
+        border-color: white;
+        opacity: 1.0;
+
+        img {
+            opacity: 1.0;
+        }
+        
+        .op-dropdown, .count-number {
+            opacity: 1.0;
+        }
+    }
+
+
+}
+
+
+
+
+
+.player-selection {
+
+
+    &__icon {
+        position: relative;
+        // height: 3.23rem; // icon-l height
+
+        // display: flex;
+        // align-items: center;
+
+        &__img {
+            border: 1px solid lime;
+            overflow: hidden;  // hide blurred edges
+
+            height: 3.25rem;
+            margin-top: 2px;
+
+            img {
+                filter: blur(0.5px);
+                margin: -2px; // hide blurred edges
+            }
+        }
+
+
+    }
+
+    // text label above the icon
+    &__label {
+
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        // bottom: 7px;
+        // right: 3px;
+        transform: translate(-50%, -50%);
+        // border: 1px solid lime;
+
+        width: 3.25rem;
+        height: 3.25rem;
+        text-align: center;
+
+        font-size: 2.5rem;
+        font-weight: bolder;
+
+        // text outline
+        // -webkit-text-fill-color: white; /* Will override color (regardless of order) */
+        -webkit-text-stroke: 1px black;
+        text-shadow: 0px 0px 5px black;
+    }
+
+    &__icon.excluded {
+
+        img {
+            filter: saturate(0);
+        }
+        color: red;
+    }
+}
+
+
+.search_submit_button {
+
+    &:hover {
+        // border: 1px solid white;
+        border-color: white;
+    }
+
+    &:disabled {
+        opacity: 0.3;
+        border: none;
+    }
+
+
+
+}
+
+
+
+

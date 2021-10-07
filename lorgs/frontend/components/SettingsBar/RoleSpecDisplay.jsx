@@ -35,7 +35,7 @@ function create_display_spec_button(spec) {
 }
 
 
-function RoleSpecsGroup({role}) {
+export function RoleSpecsGroup({role}) {
 
     const show_role = useSelector(state => state.filters[role.code])
     if (show_role === false) { return null}
@@ -49,10 +49,12 @@ function RoleSpecsGroup({role}) {
 
 
 
-export default function RoleSpecDisplay() {
+export default function RoleSpecDisplay({roles}) {
 
-    let roles = useSelector(state => state.roles)
-    roles = roles.filter(role => role.id <= 1000) // filter out data roles
+    if (!roles) {
+        roles = roles || useSelector(state => state.roles)
+        roles = roles.filter(role => role.id <= 1000) // filter out data roles
+    }
 
     return (
         <>

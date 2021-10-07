@@ -20,11 +20,16 @@ import data_store, { MODES } from '../data_store.js'
 
 
 async function load_global_data() {
-    const bosses = await API.load_bosses()
-    data_store.dispatch({type: "update_value", field: "bosses", value: bosses})
-    
-    const roles = await API.load_roles()
-    data_store.dispatch({type: "update_value", field: "roles", value: roles || []})
+
+    const [bosses, roles] = await Promise.all([
+        API.load_bosses(),
+        API.load_roles(),
+    ])
+
+    batch(() => {
+        data_store.dispatch({type: "update_value", field: "bosses", value: bosses})
+        data_store.dispatch({type: "update_value", field: "roles", value: roles})
+    })
 
     // needs to rebuild when the nav bar changes
     ReactTooltip.rebuild()
@@ -34,20 +39,22 @@ async function load_global_data() {
 async function load_spec_ranking_data(spec_slug, boss_slug) {
 
     console.log("load_data start")
-    console.time("load_data")
-
+    console.time("load_data 1")
+    
     data_store.dispatch({type: "update_value", field: "is_loading", value: true})
-
-    // load boss
-    const boss = await API.load_boss(boss_slug)
     
-    // load spec (+extra specs)
-    const specs = await API.load_multiple_specs([spec_slug, "other-potions", "other-trinkets"])
-    const [spec] = [...specs]
+    const [boss, specs, fights] = await Promise.all([
+        // load boss
+        API.load_boss(boss_slug),
+        // specs
+        API.load_multiple_specs([spec_slug, "other-potions", "other-trinkets"]),
+        // fights
+        API.load_spec_rankings(spec_slug, boss_slug),
+    ])
+    const [spec] = [...specs] // first spec loaded is the "main"-spec
+    console.timeEnd("load_data 1")
     
-    // fights
-    const fights = await API.load_spec_rankings(spec_slug, boss_slug)
-    
+    console.time("update state")
     batch(() => {
 
         // set all new values
@@ -63,9 +70,7 @@ async function load_spec_ranking_data(spec_slug, boss_slug) {
         // mark as loaded
         data_store.dispatch({type: "update_value", field: "is_loading", value: false})
     })
-
-    // await new Promise(r => setTimeout(r, 2000));
-    console.timeEnd("load_data")
+    console.timeEnd("update state")
 }
 
 

@@ -9,6 +9,7 @@ import { apply_filters } from './AppContext/filter_logic'
 
 // modes to switch some page related features
 export const MODES = {
+    NONE: "none",
     SPEC_RANKING: "spec_ranking",
     COMP_RANKING: "comp_ranking",
 }
@@ -18,7 +19,7 @@ const DEFAULT_STATE  = {
 
     is_loading: true,
 
-    mode: MODES.SPEC_RANKING,
+    mode: MODES.NONE,
 
     boss: { spells: [] },
     spec: {},
@@ -65,7 +66,7 @@ function set_filter_attribute(state, attr, value) {
 
 function filters_apply(state) {
     let new_state = {...state}
-    apply_filters(new_state.fights, new_state.filters)
+    apply_filters(new_state, new_state.fights, new_state.filters)
     return new_state
 
 }
@@ -101,6 +102,9 @@ function reducer(state = DEFAULT_STATE, action) {
     } // switch
 }
 
-const data_store = createStore(reducer)
+const data_store = createStore(
+    reducer,
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+)
 export default data_store
 

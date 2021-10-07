@@ -226,7 +226,7 @@ export default class Cast extends Konva.Group {
                     this.tooltip = new CastTooltip(this)
                     this.stage.overlay_layer.add(this.tooltip)
                     this.tooltip.absolutePosition(this.absolutePosition())
-                    this.tooltip.move({x: 40, y: -30})
+                    this.tooltip.move({x: 0, y: -50})
                     this.stage.overlay_layer.batchDraw()
                 }, 500)
             }
