@@ -50,7 +50,7 @@
 
                     <td>
                         {% for spec in role.specs|sort(attribute="full_name_slug") %}
-                            <a href="{{url_for('ui.spec_ranking', spec_slug=spec.full_name_slug, boss_slug=boss.full_name_slug)}}" data-bs-toggle="tooltip" title="{{spec.full_name}}">
+                            <a href="/spec_ranking/{{spec.full_name_slug}}/{{boss.full_name_slug}}" data-bs-toggle="tooltip" title="{{spec.full_name}}">
                             <img class="icon-spec icon-m rounded wow-border-{{spec.wow_class.name_slug}}" src="{{spec.icon_path}}" alt="{{spec.full_name}}" >
                         </a>
                         {% endfor %}
@@ -68,8 +68,8 @@
         <div class="bg-dark rounded border p-2">
 
             <div>
-                <a href="{{url_for('ui.comp_ranking', boss_slug=boss.full_name_slug)}}">
-                    <img class="icon-spec icon-m rounded mr-1 wow-border-heal" src="/static/images/roles/healer.jpg">
+                <a href="/comp_ranking/search">
+                    <img class="icon-spec icon-m rounded mr-1 wow-border-heal" src="/static/images/roles/heal.jpg">
                     Comp Reports
                 </a>
             </div>

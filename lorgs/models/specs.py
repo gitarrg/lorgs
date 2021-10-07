@@ -177,9 +177,6 @@ class WowSpell(base.Model):
         # str: type/category of spell
         self.spell_type = kwargs.get("spell_type") or ""
 
-        # list(str)
-        self.groups = []
-
         # list(<WowSpec>): specs this spell is useable by
         self.specs = []
 
@@ -190,11 +187,17 @@ class WowSpell(base.Model):
         return f"<Spell({self.spell_id}, cd={self.cooldown})>"
 
 
-    @property
-    def group(self):
-        """backport so prev code works. new code should look at self.specs instead."""
-        if self.specs:
-            return self.specs[0]
+    def is_item_spell(self):
+        """bool: true if this spell from an item."""
+        return self.spell_type in (self.TYPE_TRINKET, self.TYPE_POTION)
+
+    def is_healing_cooldown(self):
+        """bool: true if a spell is what we call a healer cooldown."""
+        if self.is_item_spell():
+            return False
+        if self.spell_type in (self.TYPE_PERSONAL):
+            return False
+        return True
 
     ##########################
     # Methods
@@ -207,7 +210,6 @@ class WowSpell(base.Model):
             "duration": self.duration,
             "cooldown": self.cooldown,
             "spell_type": self.spell_type,
-            # "groups": self.groups,
 
             # display attributes
             "name": self.name,
@@ -216,10 +218,6 @@ class WowSpell(base.Model):
             "show": self.show,
             "tooltip_info": self.wowhead_data,
         }
-
-        # d["group"] = self.group and self.group.as_dict() or {}
-        # d["specs"] = [spec.full_name_slug for spec in self.specs]
-        # return d
 
     @property
     def icon_path(self):

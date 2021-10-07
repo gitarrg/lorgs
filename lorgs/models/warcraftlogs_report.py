@@ -4,7 +4,9 @@
 import datetime
 
 # IMPORT THIRD PARTY LIBRARIES
+import arrow
 import mongoengine as me
+import mongoengine_arrow
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import data
@@ -17,7 +19,8 @@ from lorgs.models.warcraftlogs_fight import Fight
 class Report(warcraftlogs_base.EmbeddedDocument):
 
     report_id = me.StringField(primary_key=True)
-    start_time = me.IntField(default=0)
+
+    start_time: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField()
 
     title = me.StringField()
 
