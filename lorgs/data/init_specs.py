@@ -147,12 +147,15 @@ COL_MANA  = "#5397ed"
 #
 ################################################################################
 
+# alises
+TYPE_RAID = WowSpell.TYPE_RAID
+
 #################################################################################################################################################################################################
 #   Warrior
 WARRIOR.add_spell(             spell_id=324143, cooldown=120, duration=15, color=COL_NECRO, name="Conqueror's Banner",              icon="ability_maldraxxus_warriorplantbanner.jpg")
 WARRIOR.add_spell(             spell_id=325886, cooldown=75,  duration=12, color=COL_NF,    name="Ancient Aftershock",              icon="ability_ardenweald_warrior.jpg")  # 15sec CD reduction with Conduit
 WARRIOR.add_spell(             spell_id=307865, cooldown=60,               color=COL_KYR,   name="Spear of Bastion",                icon="ability_bastion_warrior.jpg")
-WARRIOR.add_spell(             spell_id=97462,  cooldown=180, duration=10,                  name="Rallying Cry",                    icon="ability_warrior_rallyingcry.jpg",           show=False)
+WARRIOR.add_spell(             spell_id=97462,  cooldown=180, duration=10,                  name="Rallying Cry",                    icon="ability_warrior_rallyingcry.jpg",           show=False, spell_type=TYPE_RAID)
 WARRIOR_FURY.add_spell(        spell_id=1719,   cooldown=60,  duration=10,                  name="Recklessness",                    icon="warrior_talent_icon_innerrage.jpg")
 WARRIOR_FURY.add_spell(        spell_id=46924,  cooldown=60,  duration=4,                   name="Bladestorm",                      icon="ability_warrior_bladestorm.jpg")
 WARRIOR_PROTECTION.add_spell(  spell_id=107574, cooldown=50,  duration=20,                  name="Avatar",                          icon="warrior_talent_icon_avatar.jpg",            show=False)  # CD reduced by Talent per Rage spend
@@ -239,7 +242,7 @@ for spec in (PRIEST_SHADOW, PRIEST_DISCIPLINE):
 DEATHKNIGHT.add_spell(         spell_id=312202, cooldown=60,  duration=14, color=COL_KYR,   name="Shackle the Unworthy",            icon="ability_bastion_deathknight.jpg",          show=False)
 DEATHKNIGHT.add_spell(         spell_id=311648, cooldown=60,  duration=8,  color=COL_VENTR, name="Swarming Mist",                   icon="ability_revendreth_deathknight.jpg")
 DEATHKNIGHT.add_spell(         spell_id=315443, cooldown=120, duration=12, color=COL_NECRO, name="Abomination Limb",                icon="ability_maldraxxus_deathknight.jpg",       show=False)
-DEATHKNIGHT.add_spell(         spell_id=51052,  cooldown=120, duration=10, color="#d58cff", name="Anti-Magic Zone",                 icon="spell_deathknight_antimagiczone.jpg",      show=False)
+DEATHKNIGHT.add_spell(         spell_id=51052,  cooldown=120, duration=10, color="#d58cff", name="Anti-Magic Zone",                 icon="spell_deathknight_antimagiczone.jpg",      show=False, spell_type=TYPE_RAID)
 DEATHKNIGHT.add_spell(         spell_id=48707,  cooldown=60,  duration=5,  color="#8ced53", name="Anti-Magic Shell",                icon="spell_shadow_antimagicshell.jpg",          show=False)
 DEATHKNIGHT.add_spell(         spell_id=48792,  cooldown=180, duration=8,  color="#53aaed", name="Icebound Fortitude",              icon="spell_deathknight_iceboundfortitude.jpg")
 DEATHKNIGHT.add_spell(         spell_id=49039,  cooldown=120, duration=10, color="#999999", name="Lichborne",                       icon="spell_shadow_raisedead.jpg")
@@ -349,7 +352,7 @@ DEMONHUNTER.add_spell(         spell_id=306830, cooldown=60,               color
 DEMONHUNTER.add_spell(         spell_id=323639, cooldown=90,  duration=6,  color=COL_NF,    name="The Hunt",                        icon="ability_ardenweald_demonhunter.jpg")
 DEMONHUNTER.add_spell(         spell_id=317009, cooldown=60,               color=COL_VENTR, name="Sinful Brand",                    icon="ability_revendreth_demonhunter.jpg")
 DEMONHUNTER_HAVOC.add_spell(   spell_id=200166, cooldown=240, duration=30, color="#348540", name="Metamorphosis",                   icon="ability_demonhunter_metamorphasisdps.jpg")
-DEMONHUNTER_HAVOC.add_spell(   spell_id=196718, cooldown=180, duration=8,                   name="Darkness",                        icon="ability_demonhunter_darkness.jpg",          show=False)
+DEMONHUNTER_HAVOC.add_spell(   spell_id=196718, cooldown=180, duration=8,                   name="Darkness",                        icon="ability_demonhunter_darkness.jpg",          show=False, spell_type=TYPE_RAID)
 DEMONHUNTER_HAVOC.add_spell(   spell_id=196555, cooldown=180, duration=5,                   name="Netherwalk",                      icon="spell_warlock_demonsoul.jpg",               show=False)
 
 DEMONHUNTER_VENGEANCE.add_spell(spell_id=204021, cooldown=60,  duration=8,  color="#7aeb34", name="Fiery Brand",                    icon="ability_demonhunter_fierybrand.jpg")
