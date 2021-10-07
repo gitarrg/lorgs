@@ -2,17 +2,23 @@
 
 import os
 
+
 class BaseConfig:
     """Default Config."""
 
     SECRET_KEY = os.getenv("SECRET_KEY") or "giga-secret_key-nobody-will-ever-find-out"
 
+    # str: id for google analytics
     GOOGLE_ANALYTICS_ID = ""
 
-    CACHE_DEFAULT_TIMEOUT = 300
+    # str: discord invite link
+    DISCORD_LINK = os.getenv("DISCORD_LINK") or "https://discord.gg/jZWj6djJk2"
+
+    # cache settings
+    CACHE_DEFAULT_TIMEOUT = 5 * 60 # seconds
     CACHE_TYPE = "SimpleCache"
 
-    DISCORD_LINK = os.getenv("DISCORD_LINK") or "https://discord.gg/jZWj6djJk2"
+    JSONIFY_PRETTYPRINT_REGULAR = False
 
     # switch used to use non mimified js files
     LOCAL_FILES = False
@@ -26,15 +32,14 @@ class BaseConfig:
 class DevelopmentConfig(BaseConfig):
     """Config used for Development."""
 
-    SEND_FILE_MAX_AGE_DEFAULT = 0  # for DEV. updates static files
-    TEMPLATES_AUTO_RELOAD = True
-
-    # pretty json (i just like them more)
-    JSONIFY_PRETTYPRINT_REGULAR = True
-
+    # bool: use local/dev files
     LOCAL_FILES = True
 
-    CACHE_TYPE = "NullCache"
+    SEND_FILE_MAX_AGE_DEFAULT = 0  # for DEV. updates static files
+    SEND_FILE_MAX_AGE_DEFAULT = 1000
+    TEMPLATES_AUTO_RELOAD = True
+
+    CACHE_TYPE = "SimpleCache" # NullCache
     CACHE_NO_NULL_WARNING = True
 
 
