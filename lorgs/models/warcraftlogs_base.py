@@ -1,5 +1,7 @@
 # IMPORT STANRD LIBRARIES
 import abc
+import re
+import json
 
 # IMPORT THIRD PARTY LIBRARIES
 import mongoengine as me
@@ -7,6 +9,66 @@ import mongoengine as me
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
 from lorgs.client import WarcraftlogsClient
+
+
+VALID_OPS = ["eq", "lt", "lte", "gt", "gte"]
+RE_KEY = fr"([\w\-]+)"  # expr to match the key/attr name. eg.: spec or role name
+RE_OPS = fr"|".join(VALID_OPS)
+RE_VAL = fr"\d+"
+
+QUERY_ARG_RE = fr"(?P<key>{RE_KEY})\.((?P<op>{RE_OPS})\.)?(?P<value>{RE_VAL})"
+
+
+def query_args_to_mongo(*query_args, prefix=""):
+    """Takes a list of query strings and converts them into mongoengine-style kwargs.
+
+    Args:
+        query_args(list[str]): the arguments to convert.
+            Expected format is: "key:op:value"
+        prefix(str, optional): prefix to add to the keys
+
+    Example:
+        >>> query_args = ["tank.2", "heal.lt.5"]
+        >>> query_args_to_mongo(*query_args, prefix="something)
+        {
+            'something__tank': '2',
+            'something__heal__lt': '5'
+        }
+
+    """
+    mongo_kwargs = {}
+
+    for arg in query_args:
+
+        m = re.match(QUERY_ARG_RE, arg)
+        if not m:
+            print("invalid query arg", m)
+            continue
+
+        # split re.match
+        key = m.group("key")
+        op = m.group("op")
+        value = json.loads(m.group("value"))
+
+        # special case for equals
+        if op == "eq":
+            op = "" # no operator suffix.
+
+            # unless...
+            # check for non existence, as there will be no field with value 0
+            if value == 0:
+                op = "not.exists"
+
+        # assamble the parts
+        parts = [prefix, key, op]
+        parts = [part for part in parts if part] # filter eg.: no-prefix or no-op
+        key = ".".join(parts)
+        key = key.replace(".", "__")
+
+        # update the dict
+        mongo_kwargs[key] = value 
+
+    return mongo_kwargs
 
 
 class wclclient_mixin:

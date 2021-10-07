@@ -126,7 +126,7 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
 
             cast = Cast()
             cast.spell_id = cast_data["abilityGameID"]
-            cast.timestamp = cast_data["timestamp"] - self.fight.start_time
+            cast.timestamp = cast_data["timestamp"] - self.fight.start_time_rel
             self.casts.append(cast)
 
             # if this is the only player in the dataset --> fetch the source ID
@@ -136,7 +136,6 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
         # Filter out same event at the same time (eg.: raid wide debuff apply)
         self.casts = utils.uniqify(self.casts, key=lambda cast: (cast.spell_id, cast.timestamp))
         self.casts = list(self.casts) # `utils.uniqify` returns dict values, which mongoengine doesn't like
-        # print("CASTS", self.casts)
 
 
 class Player(BaseActor):

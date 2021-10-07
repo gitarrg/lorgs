@@ -20,8 +20,8 @@ from lorgs import utils
 from lorgs.cache import cache
 from lorgs.logger import logger
 from lorgs.models import encounters, specs
-from lorgs.models import warcraftlogs_ranking
 from lorgs.models import warcraftlogs_comp_ranking
+from lorgs.models import warcraftlogs_ranking
 
 
 blueprint = flask.Blueprint("api", __name__, cli_group=None)
@@ -52,9 +52,6 @@ def get_roles():
     return flask.jsonify({
         "roles": [role.as_dict() for role in specs.WowRole.all]
     })
-    return {}
-       
-    
 
 
 @blueprint.get("/spells/<int:spell_id>")
@@ -91,7 +88,7 @@ def get_specs_all():
 
 
 @blueprint.get("/specs/<string:spec_slug>")
-@cache.cached(query_string=True)
+@cache.cached()
 def get_spec(spec_slug):
     spec = specs.WowSpec.get(full_name_slug=spec_slug)
     if not spec:
@@ -111,7 +108,7 @@ def get_bosses(zone_id=28):
 
 
 @blueprint.get("/boss/<string:boss_slug>")
-@cache.cached()
+@cache.cached(query_string=True)
 def get_boss(boss_slug):
     include_spells = flask.request.args.get("include_spells", default=True, type=json.loads)
     boss = encounters.RaidBoss.get(full_name_slug=boss_slug)
@@ -175,29 +172,35 @@ def comp(name):
 
 
 @blueprint.route("/comp_ranking/<string:boss_slug>")
+@cache.cached(query_string=True)
 def comp_ranking(boss_slug):
+
     limit = flask.request.args.get("limit", default=50, type=int)
 
+    # get search inputs
+    search = {}
+    search["fights.composition.roles"] = flask.request.args.getlist("role")
+    search["fights.composition.specs"] = flask.request.args.getlist("spec")
+    search["fights.composition.classes"] = flask.request.args.getlist("class")
+
+    # lookup DB
     comp_ranking = warcraftlogs_comp_ranking.CompRanking(boss_slug=boss_slug)
-    reports = comp_ranking.get_reports(limit=limit)
+    reports = comp_ranking.get_reports(limit=limit, search=search)
 
-    # DEV LIMIT
-    for r in reports:
-        r.fight.players = r.fight.players[:20]
-
+    # return
     return {
         "fights": [report.fight.as_dict() for report in reports if report.fight],
         "updated": comp_ranking.updated,
     }
 
 
+# FIXME
 @blueprint.route("/load_comp_rankings/<string:comp_name>/<string:boss_slug>")
 async def load_comp_rankings(comp_name, boss_slug):
     limit = flask.request.args.get("limit", default=50, type=int)
     clear = flask.request.args.get("clear", default=False, type=json.loads)
 
     comp_config = warcraftlogs_comps.CompConfig.objects(name=comp_name).first()
-
     scr = await comp_config.load_reports(boss_slug=boss_slug, limit=limit, clear_old=clear)
     scr.save()
     comp_config.save()
