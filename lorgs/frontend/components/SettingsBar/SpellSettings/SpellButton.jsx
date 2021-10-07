@@ -11,6 +11,8 @@ export default function SpellButton({spec, spell}) {
 
     if (spell.was_used === false) {return null}
 
+    spec = spec || spell.spec
+
     const [show, setShow] = React.useState(spell.show)
     let wow_class = spec.class.name_slug
     const disabled = !show && "disabled"

@@ -6,6 +6,7 @@
 
 import React from 'react'
 import data_store from '../../../data_store';
+import ButtonGroup from '../shared/ButtonGroup.jsx';
 
 
 const CHANGE_RATE = 5; // seconds to incr/decr per scroll event
@@ -90,14 +91,15 @@ function FilterKilltimeInput({name, start=0, placeholder="0:00" }) {
 
 
 
-export default function FilterKilltime() {
-
+export default function FilterKilltimeGroup() {
 
     return (
-        <div className="input-group input-group-sm killtime_input">
-            <FilterKilltimeInput name="killtime_min" placeholder="0:00" />
-            <span className="input-group-text">-</span>
-            <FilterKilltimeInput name="killtime_max" placeholder="9:00" start={9*60} />
-        </div>
+        <ButtonGroup name="Killtime" side="right">
+            <div className="input-group input-group-sm killtime_input">
+                <FilterKilltimeInput name="killtime_min" placeholder="0:00" />
+                <span className="input-group-text">-</span>
+                <FilterKilltimeInput name="killtime_max" placeholder="9:00" start={9*60} />
+            </div>
+        </ButtonGroup>
     )
 }

@@ -25,6 +25,7 @@ module.exports = {
         'konva': 'Konva',
         "redux": "Redux",
         'react-redux': "ReactRedux",
+        'react-hook-form': "ReactHookForm",
     },
 
     module: {
@@ -71,5 +72,4 @@ module.exports = {
     plugins: [
         new MiniCssExtractPlugin(),
     ],
-
 }

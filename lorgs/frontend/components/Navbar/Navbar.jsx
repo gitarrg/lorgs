@@ -23,13 +23,11 @@ function HomeButton() {
 ////////////////////////////////////////////////////////////////////////////////
 
 
-function NavbarGroup({children}) {
-    
-    if (!children) return null
+function NavbarGroup({children, className}) {
 
-    
+    if (!children) return null
     return (
-        <div className="navbar_group p-1 bg-dark border rounded">
+        <div className={`navbar_group p-1 bg-dark border rounded ${className}`}>
             {children}
         </div>
     )
@@ -55,7 +53,7 @@ export default function Navbar() {
                     </NavbarGroup>
                 )}
 
-                <NavbarGroup>
+                <NavbarGroup className="navbar_boss">
                     {bosses.map(boss =>
                         <NavbarBossButton key={boss.full_name_slug} boss={boss} />
                     )}

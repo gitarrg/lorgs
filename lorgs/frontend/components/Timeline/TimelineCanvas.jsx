@@ -21,18 +21,23 @@ export default function TimelineCanvas(props) {
     const spells = useSelector(state => state.spells)
     const mode = useSelector(state => state.mode)
 
+    
     // initial creation
     React.useEffect(() => {
         console.time("init canvas")
-        
         // create the konva stage
         let stage = new Stage({container: ref.current})
-        stage.FIGHT_SPACE = mode == MODES.SPEC_RANKING ? 0 : 10
         stage_ref.current = stage
-
         console.timeEnd("init canvas")
         return
     }, [])
+
+
+    React.useEffect(() => {
+        console.log("INIT CANVAS", mode)
+        const stage = stage_ref.current
+        stage.FIGHT_SPACE = mode == MODES.SPEC_RANKING ? 0 : 10
+    }, [mode])
 
 
     React.useEffect(() => {

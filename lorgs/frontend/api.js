@@ -94,7 +94,6 @@ export function process_spells(spells = {}) {
             spell.image.src = spell.icon_path
         }
     })
-
     return spells;
 }
 
@@ -127,20 +126,6 @@ API.load_spec_rankings = async function(spec_slug, boss_slug) {
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-/*
-function attach_spells_to_specs(specs = [], spells = []) {
-
-    if (!specs) { return}
-    if (!spells) { return}
-
-    for (const [spec_slug, spec] of Object.entries(specs)) {
-        // replace list of spell ids with spell dicts
-        spec.spells = spec.spells.map(spell_id => spells[spell_id])
-        spec.spells = spec.spells.filter(spell => spell !== undefined)
-    }
-}
-*/
-
 function filter_unused_spells(spells = [], fights = []) {
 
     if (!spells) { return []}
@@ -169,17 +154,27 @@ function filter_unused_spells(spells = [], fights = []) {
 
 API.process_fetched_data = function(state) {
 
+    // backref the spec on each spell
+    Object.values(state.specs).forEach(spec => {
+        spec.spells.forEach(spell => {
+            spell.spec = spec
+        })
+    })
+
     // build flat list of spells
     state.spells = [] 
     state.spells = [...state.boss.spells]
     Object.values(state.specs).forEach(spec => {
         state.spells = [...state.spells, ...(spec.spells || [])]
     })
-    
+
+    // filter out duplicates (eg.: class spells that occur on multiple specs)
+    state.spells = [...new Map(state.spells.map(spell => [spell["spell_id"], spell])).values()];
+
     // apply some filtering
     state.spells = filter_unused_spells(state.spells, state.fights)
-    
-    // additonal loading
+
+    // additional loading
     process_spells(state.boss.spells)
     state.specs.forEach(spec => process_spells(spec.spells))
 

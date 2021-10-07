@@ -16,18 +16,15 @@ a:not(.disabled) .icon-spec:not(:hover) {
 }
 
 
-
-
 .disabled .icon-spec {
     border: none !important;
-    filter: saturate(0%) blur(1px);
+    filter: saturate(50%) blur(1px);
     opacity: 30%;
     cursor: default;
 }
 
 .active .icon-spec {
     border-width: 2px;
-    border-color: white;
 }
 
 
@@ -43,12 +40,22 @@ a:not(.disabled) .icon-spec:not(:hover) {
     display: grid;
     grid-auto-flow: column;  // single row
     grid-column-gap: 0.25rem; // space
+
+}
+
+.navbar_boss {
+
+    a:not(.active) {
+        .icon-spec:not(:hover) {
+            opacity: 30%;
+            border-width: 0;
+        }
+    }
 }
 
 
 ////////////////////////////////////////////
 // Hover Dropdown Classes
-
 
 .nav_dropdown {
     
@@ -58,14 +65,12 @@ a:not(.disabled) .icon-spec:not(:hover) {
 
     // the button thats always visible
     &__button {
-        
     }
 
     // the div that will show/hide
     &__content {
         display: none;
         position: absolute;
-        background-color: #f1f1f1;
         z-index: 99;
     }
 
@@ -76,14 +81,32 @@ a:not(.disabled) .icon-spec:not(:hover) {
 }
 
 
-
 .specs_nav_dropdown {
     left: -0.5rem;  // offset to align the items from the inside
+
+    // indicator for the currently selected spec
+    a.active {
+        font-weight: bold;
+        border-width: 0;
+        padding-left: 2px;
+
+        ::after {
+            content: " •";
+        }
+
+        img {
+            border-width: 2px;
+            opacity: 100%;
+        }
+    }
+
+    /* underline on hover
+       added to directly to the span that has the correct text color. */
+    a:hover span {
+        text-decoration: underline;
+    }
+    
+
+    /* Styles for the non-selected specs */
+    // a:not(.active) {}
 }
-
-
-
-
-
-
-

@@ -14,14 +14,14 @@ function SpecButton({spec}) {
     const link = `/${state.mode}/${spec.full_name_slug}/${state.boss.full_name_slug}`
 
     return (
-        <NavLink to={link} activeClassName="active">
+
+        <NavLink to={link} className={`wow-${class_name}`} activeClassName={`active`}>
             <img
                 className={`mr-1 icon-spec icon-m rounded wow-border-${class_name}`}
                 src={icon_path}
                 alt={spec.full_name}
                 title={spec.full_name}
             />
-
             <span className={`wow-${class_name}`}>
                 {spec.full_name}
             </span>
