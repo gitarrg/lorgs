@@ -3,6 +3,7 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { get_spec } from '../../store/specs.js'
+import { set_filter } from '../../store/ui.js'
 
 import ButtonGroup from './shared/ButtonGroup.jsx'
 import FilterButton from './shared/FilterButton.jsx'
@@ -30,11 +31,17 @@ function create_role_button(role) {
 */
 function SpecDisplayButton({spec_slug}) {
 
+    const dispatch = useDispatch()
     const spec = useSelector(state => get_spec(state, spec_slug))
     if (!spec) { return null } // not loaded yet
 
+    function onClick({value}) {
+        dispatch(set_filter({ group: "spec", name: spec_slug, value: value }))
+    }
+
     return (
         <FilterButton
+            onClick={onClick}
             name={spec.class.name_slug}
             full_name={spec.full_name_slug}
             icon_name={`specs/${spec.full_name_slug}`}

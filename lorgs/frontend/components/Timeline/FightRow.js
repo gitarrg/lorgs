@@ -4,7 +4,7 @@ This basically just wraps a number of Boss/Player Rows.
 
 */
 
-import { LINE_HEIGHT } from "./constants.js";
+import * as constants from "./constants.js";
 import PlayerRow from "./PlayerRow.js";
 
 
@@ -42,8 +42,10 @@ export default class FightRow {
 
     layout_children() {
 
-        this.rows.forEach((row, i) => {
-            row.y(i * LINE_HEIGHT)
+        let y = 0 // accumulate the height over time, to take into account visibility
+        this.rows.forEach((row) => {
+            row.y(y)
+            y += row.height()
         })
     }
 
@@ -52,9 +54,8 @@ export default class FightRow {
     //
 
     height() {
-
-        return this.rows.length * LINE_HEIGHT;
-        // return this.background.height();
+        const heights = this.rows.map(row => row.height())
+        return heights.reduce((a, b) => a + b, 0)
     }
 
     y(y) {
@@ -71,12 +72,17 @@ export default class FightRow {
     //////////////////////////////
     // Methods
     //
+    _handle_apply_filters() {
+        this.layout_children()
+    }
+
     handle_event(event_name, payload) {
         this.rows.forEach(row => row.handle_event(event_name, payload))
+        if (event_name === constants.EVENT_APPLY_FILTERS ) { this._handle_apply_filters(payload)}
     }
 
     update_display_settings(settings) {
         this.rows.forEach(row => row.update_display_settings(settings))
-        // this.foreground.update_display_settings(settings)
+        this.foreground.update_display_settings(settings)
     }
 }

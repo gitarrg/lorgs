@@ -21,12 +21,12 @@ export default configureStore({
 
     // preloadedState: DEFAULT_STATE,
     reducer: {
-        ui: ui_reducer,
         bosses: bosses_reducer,
         fights: fights_reducer,
         roles: roles_reducer,
         specs: specs_reducer,
         spells: spells_reducer,
+        ui: ui_reducer,
     },
     devTools: LORRGS_DEBUG,
 })

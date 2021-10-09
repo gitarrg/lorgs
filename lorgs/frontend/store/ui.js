@@ -21,6 +21,14 @@ export function get_value(state, attr_name) {
     return state.ui[attr_name]
 }
 
+export function get_filters(state) {
+    return state.ui.filters
+}
+
+export function get_filter_value(state, attr_name) {
+    return state.ui.filters[attr_name]
+}
+
 
 /* add a prefix to the input, to aid with sorting */
 function _sort_spell_type_sort_key(spell_type) {
@@ -65,6 +73,14 @@ const SLICE = createSlice({
         show_casttime: true,
         show_duration: true,
         show_cooldown: true,
+
+        // fight/player filter settings
+        filters: {
+            role: {},
+            class: {},
+            spec: {},
+            covenant: {},
+        },
     },
 
     reducers: {
@@ -79,6 +95,20 @@ const SLICE = createSlice({
             return { ...state, ...action.payload}
         },
 
+        set_filter: (state, action) => {
+            const { group, name, value } = action.payload
+
+            state.filters[group] = state.filters[group] || {}
+            state.filters[group][name] = value
+            // state.filters = {...state.filters, ...action.payload}
+            return state
+        },
+
+        set_filters: (state, action) => {
+            state.filters = {...state.filters, ...action.payload}
+            return state
+        },
+
         set_mode: (state, action) => {
             state.mode = action.payload
             return state
@@ -88,11 +118,13 @@ const SLICE = createSlice({
 
 
 export const {
+    set_boss,
+    set_filter,
+    set_filters,
+    set_mode,
+    set_spec,
     set_value,
     set_values,
-    set_mode,
-    set_boss,
-    set_spec,
 
 } = SLICE.actions
 

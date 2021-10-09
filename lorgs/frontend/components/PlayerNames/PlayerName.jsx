@@ -2,6 +2,7 @@
 import React  from "react";
 import { useSelector } from 'react-redux'
 
+import FILTERS from "../../filter_logic.js";
 import { MODES } from "../../store/ui.js";
 import { WCL_URL } from "./../../constants.js"
 
@@ -42,17 +43,18 @@ export function BossName(props) {
 
 export function PlayerName({fight, player}) {
 
-    if (fight.loading) { return SKELETON_PLAYER_NAME }
-
     const mode = useSelector(state => state.ui.mode)
+    const filters = useSelector(state => state.ui.filters)
     const mode_spec = mode == MODES.SPEC_RANKING
     const mode_comp = mode == MODES.COMP_RANKING
 
+    if (!player) { return null}
+    if (!FILTERS.is_player_visible(player, filters)) { return null}
+
+    // TODO: fetch from slice
     const spec_img_path = player.spec && `/static/images/specs/${player.spec}.jpg`
     const role_img_path = player.spec && `/static/images/roles/${player.role}.jpg`
-
     const report_url = `${WCL_URL}/reports/${fight.report_id}#fight=${fight.fight_id}`
-
 
     return (
         <div className={"player_name " + spec_ranking_color(player.rank)}>

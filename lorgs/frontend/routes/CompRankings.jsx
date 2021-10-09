@@ -14,6 +14,18 @@ import { load_fights } from '../store/fights.js';
 
 
 
+const INITIAL_FILTERS = {
+
+    // hide raid cd's by default
+    class: {
+        "warrior": false,
+        "deathknight": false,
+        "demonhunter": false,
+    }
+
+}
+
+
 export default function CompRankings() {
 
     ////////////////////////////////////////////////////////////////////////////
@@ -31,6 +43,11 @@ export default function CompRankings() {
     /* set current mode */
     React.useEffect(() => {
         dispatch(ui_store.set_mode(mode))
+
+        // initial page values
+        dispatch(ui_store.set_filters(INITIAL_FILTERS))
+
+
     }, [])
 
     // set current boss

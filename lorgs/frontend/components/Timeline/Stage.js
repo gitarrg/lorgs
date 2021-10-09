@@ -160,6 +160,10 @@ export default class Stage extends Konva.Stage{
         this.handle_event(constants.EVENT_IMAGES_LOADED)
     }
 
+    _handle_apply_filters() {
+        this.layout_children()
+    }
+
     handle_event(event_name, payload) {
 
         if (event_name === constants.EVENT_SPELL_SELECTED ) { this._handle_spell_selected(payload)}
@@ -168,6 +172,8 @@ export default class Stage extends Konva.Stage{
         // pass to children
         this.ruler.handle_event(event_name, payload)
         this.rows.forEach(row => row.handle_event(event_name, payload))
+
+        if (event_name === constants.EVENT_APPLY_FILTERS ) { this._handle_apply_filters(payload)}
 
         this.batchDraw() // for now, just assume we need to redraw after every event
     }
