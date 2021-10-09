@@ -53,6 +53,7 @@ export default function SpecRankings() {
 
     // load fights
     React.useEffect(() => {
+        dispatch(ui_store.set_values({is_loading: true}))
         dispatch(load_spells([spec_slug, boss_slug]))
         dispatch(load_fights(mode, {spec_slug, boss_slug}))
     }, [spec_slug, boss_slug])

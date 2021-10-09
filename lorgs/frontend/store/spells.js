@@ -128,11 +128,8 @@ const SLICE = createSlice({
             }
 
             state.selected_spells = Array.from(selected_spells)
-
-            console.log("reducer: spell_selected", spell_id, selected, deselect_others, state.selected_spells)
             return state
         }
-
     }, // reducers
 
     extraReducers: (builder) => {

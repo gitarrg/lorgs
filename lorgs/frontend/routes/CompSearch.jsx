@@ -61,8 +61,6 @@ function build_new_url(data) {
 
 export default function CompSearch() {
 
-    React.useEffect(load_global_data, [])
-
     const form_methods = useForm();
     const history = useHistory();
 

@@ -6,19 +6,22 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { useWatch } from "react-hook-form";
 
+import { get_boss } from '../../store/bosses.js';
+
 
 export default function BossSelection({}) {
 
     let header_content = <div className="text-muted">select a boss</div>
 
+    // currently selected boss name
     const boss_name_slug = useWatch({name: "boss_name_slug"}) 
-    const boss = useSelector(state => state.bosses.find(boss => boss.full_name_slug == boss_name_slug))
+    const boss = useSelector(state => get_boss(state, boss_name_slug))
 
-    if (boss) {
-        const icon_path = `/static/images/bosses/sanctum-of-domination/${boss.full_name_slug}.jpg`
+
+    if (boss && boss.full_name) {
         header_content = <>
-            <span className="wow-boss">{boss.name || boss.full_name}</span>
-            <img className="icon-l rounded shadow wow-border-boss ml-2" src={icon_path} alt={boss.name}></img>
+            <span className="wow-boss">{boss.full_name}</span>
+            <img className="icon-l rounded shadow wow-border-boss ml-2" src={boss.icon_path} alt={boss.name}></img>
         </>
     }
 
