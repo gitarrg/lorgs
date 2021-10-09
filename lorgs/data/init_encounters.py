@@ -20,7 +20,7 @@ from lorgs.models.encounters import RaidZone
 #   Tier: 26 Castle Nathria
 #
 ################################################################################################################################################################
-CASTLE_NATHRIA = RaidZone(id=26, name="Castle Nathria")
+""" CASTLE_NATHRIA = RaidZone(id=26, name="Castle Nathria")
 
 ################################################################################
 # 01: Shriekwing
@@ -77,7 +77,7 @@ SIRE_DENATHRIUS.add_event(event_type="cast", spell_id=332937, duration=6,   colo
 SIRE_DENATHRIUS.add_event(event_type="cast", spell_id=332619, duration=3,   color="#0083ff", name="Shattering Pain",       icon="sha_spell_fire_blueflamestrike_nightmare.jpg")
 
 CASTLE_NATHRIA_BOSSES = CASTLE_NATHRIA.bosses
-
+ """
 
 ################################################################################################################################################################
 #
