@@ -1,16 +1,20 @@
 
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, createSelector } from '@reduxjs/toolkit'
+// import { createSelector } from 'reselect'
+
 import API from '../api.js'
-import { MODES, set_values } from './ui.js'
+import { get_filters, MODES, set_values } from './ui.js'
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Actions
 //
 
-export function get_fights(state) {
+export function get_all_fights(state) {
     return state.fights
 }
+
+export const get_fights = get_all_fights;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -27,8 +31,9 @@ const SLICE = createSlice({
         set_fights: (state, action) => {
             return action.payload
         },
-    },
-})
+    }, // reducers
+
+}) // slice
 
 
 export const { set_fights } = SLICE.actions

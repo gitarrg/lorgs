@@ -25,8 +25,6 @@ function create_players(fight) {
 
 
 function create_fight(i, fight) {
-    if (fight.visible === false) { return }
-
     return (
         <div key={`fight_${i}`} className="player_names_fight">
             {create_boss(fight)}
@@ -42,17 +40,12 @@ export default function PlayerNamesList() {
     const mode = useSelector(state => state.ui.mode)
     const fights = useSelector(state => get_fights(state))
 
-    // include this as it affects the display for the fights
-    const filters = useSelector(state => state.filters)
-
     // render
     return (
         <div className={`player_names_container ${mode}`}>
-            {
-                fights.map((fight, i) => (
-                    create_fight(i, fight)
-                ))
-            }
+            {fights.map((fight, i) => (
+                create_fight(i, fight)
+            ))}
         </div>
     )
 }

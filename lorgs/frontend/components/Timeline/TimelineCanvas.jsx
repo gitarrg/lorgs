@@ -26,7 +26,7 @@ export default function TimelineCanvas(props) {
     const ui_settings = useSelector(state => state.ui)
     const spell_display = useSelector(state => state.spells.spell_display)
     const selected_spells = useSelector(state => state.spells.selected_spells)
-    // const filters = useSelector(state => state.filters)
+    const filters = useSelector(state => state.ui.filters)
 
     //////////////////////////////////////
     // Listeners
@@ -47,8 +47,9 @@ export default function TimelineCanvas(props) {
         if (is_loading) { return }
 
         // TODO: set or at least check for spells
-        console.log("canvas: loading done!", fights)
+        // console.log("canvas: loading done!", fights)
         stage_ref.current.set_fights(fights)
+        stage_ref.current.handle_event(constants.EVENT_APPLY_FILTERS, filters)
 
     }, [fights, is_loading])
 
@@ -67,6 +68,9 @@ export default function TimelineCanvas(props) {
         stage_ref.current.handle_event(constants.EVENT_SPELL_SELECTED, selected_spells)
     }, [selected_spells])
 
+    React.useEffect(() => {
+        stage_ref.current.handle_event(constants.EVENT_APPLY_FILTERS, filters)
+    }, [filters])
 
     // update when fights or filters get changed
     // React.useEffect(() => {
