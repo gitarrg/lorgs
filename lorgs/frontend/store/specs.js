@@ -16,6 +16,15 @@ export function get_spec(state, spec_slug="") {
     return state.specs[spec_slug]
 }
 
+/* Find the first spec that can use a given spell */
+export function get_spec_for_spell_id(state, spell_id) {
+    return Object.values(state.specs).find(spec => {
+        return Object.values(spec.spells_by_type).some(spell_group => {
+            return spell_group.includes(spell_id)
+        }) // spell group
+    }) // specs
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Slice
@@ -49,9 +58,8 @@ const SLICE = createSlice({
             state[spec.full_name_slug] = _process_spec(spec)
             return state
         }
+    }, // reducers
 
-
-    },
 })
 
 export const { set_specs, set_spec } = SLICE.actions

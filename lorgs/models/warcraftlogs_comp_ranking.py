@@ -70,6 +70,12 @@ class CompRanking(warcraftlogs_base.Document):
     # Attributes
     #
     @property
+    def valid(self):
+        if not self.boss:
+            return False
+        return True
+
+    @property
     def boss(self) -> encounters.RaidBoss:
         return encounters.RaidBoss.get(full_name_slug=self.boss_slug)
 

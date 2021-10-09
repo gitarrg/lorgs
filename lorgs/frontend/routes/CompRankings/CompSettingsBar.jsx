@@ -16,21 +16,17 @@ import SettingsBar from '../../components/SettingsBar/SettingsBar.jsx'
 import SpellButton from '../../components/SettingsBar/SpellSettings/SpellButton.jsx'
 import { BossSpellsGroup } from '../../components/SettingsBar/SpellSettings/SpellSettings.jsx'
 import { RoleSpecsGroup } from '../../components/SettingsBar/RoleSpecDisplay.jsx'
-
-
-function get_spells_by_type(state, spell_type) {
-    const all_spells = Object.values(state.spells)
-    return all_spells.filter(spell => spell.spell_type == spell_type)
-}
-
+import { get_role } from '../../store/roles.js'
+import { get_spells_by_type } from '../../store/spells.js'
 
 
 export default function CompSettingsBar() {
 
 
     // Get State Values
-    const raid_cds = useSelector(state => get_spells_by_type(state, "raid"))
-    const role_healer = useSelector(state => state.roles.find(role => role.code == "heal"))
+    const spells_by_type = useSelector(state => get_spells_by_type(state))
+    const raid_cds = spells_by_type["raid"] || []
+    const role_healer = useSelector(state => get_role(state, "heal"))
 
     // Render
     return (
@@ -43,8 +39,8 @@ export default function CompSettingsBar() {
             {role_healer && <RoleSpecsGroup role={role_healer} />}
 
             <ButtonGroup name="Raid CDs" side="left">
-                {raid_cds.map(spell => 
-                    <SpellButton key={`raid_cd/${spell.spell_id}`} spell={spell} />
+                {raid_cds.map(spell =>
+                    <SpellButton key={`raid_cd/${spell.spell_id}`} spell_id={spell.spell_id} />
                 )}
             </ButtonGroup>
 

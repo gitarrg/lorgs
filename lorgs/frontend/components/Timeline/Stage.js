@@ -5,6 +5,7 @@ import Ruler from "./Ruler.js"
 import Spell from "./Spell.js"
 import PlayerRow from "./PlayerRow.js";
 import * as constants from "./constants.js";
+import FightRow from "./FightRow.js";
 
 
 // for performance
@@ -151,7 +152,7 @@ export default class Stage extends Konva.Stage{
     _handle_check_images_loaded() {
         // Emit a EVENT_IMAGES_LOADED event once all images have been loaded.
         // until then, periodically emit new "check"-events
-        const has_pending = this.rows.some(row => row.foreground.casts.some(cast => cast.image_is_loaded == false))
+        const has_pending = false; //this.rows.some(row => row.foreground.casts.some(cast => cast.image_is_loaded == false))
         if (has_pending) {
             setTimeout(() => { this.handle_event(constants.EVENT_CHECK_IMAGES_LOADED) }, 200)
             return
@@ -182,35 +183,25 @@ export default class Stage extends Konva.Stage{
         })
     }
 
-    add_row(fight, player) {
-
-        if (!(player && player.name)) { return}
-
-        const row = new PlayerRow(fight, player)
-        this.rows.push(row)
-
-        this.back_layer.add(row.background)
-        this.main_layer.add(row.foreground)
-
-        // todo: don't do this in here
-        this.longest_fight = Math.max(this.longest_fight, row.duration)
-    }
-
     set_fights(new_fights) {
 
         // clear any old rows
         this.rows.forEach(row => {
             row.destroy()
         })
-        this.fights = []
+
         this.longest_fight = 0
         this.rows = []
 
         // create fresh instances
         new_fights.forEach((fight) => {
 
-            this.add_row(fight, fight.boss)
-            fight.players.forEach(player => this.add_row(fight, player))
+            const row = new FightRow(fight)
+            this.back_layer.add(row.background)
+            this.main_layer.add(row.foreground)
+            this.longest_fight = Math.max(this.longest_fight, row.duration)
+
+            this.rows.push(row)
         })
 
         this.layout_children()

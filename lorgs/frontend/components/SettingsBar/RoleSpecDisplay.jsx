@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { get_spec } from '../../store/specs.js'
 
 import ButtonGroup from './shared/ButtonGroup.jsx'
 import FilterButton from './shared/FilterButton.jsx'
@@ -24,10 +25,16 @@ function create_role_button(role) {
 }
 
 
-function create_display_spec_button(spec) {
+/*
+    Button to show/display a single spec
+*/
+function SpecDisplayButton({spec_slug}) {
+
+    const spec = useSelector(state => get_spec(state, spec_slug))
+    if (!spec) { return null } // not loaded yet
+
     return (
         <FilterButton
-            key={spec.full_name_slug}
             name={spec.class.name_slug}
             full_name={spec.full_name_slug}
             icon_name={`specs/${spec.full_name_slug}`}
@@ -38,12 +45,12 @@ function create_display_spec_button(spec) {
 
 export function RoleSpecsGroup({role}) {
 
-    const show_role = useSelector(state => state.filters[role.code])
-    if (show_role === false) { return null}
+    // const show_role = useSelector(state => state.filters[role.code])
+    // if (show_role === false) { return null}
 
     return (
         <ButtonGroup name={role.name} side="left" extra_class={`wow-${role.code}`}>
-            { role.specs.map(spec => create_display_spec_button(spec)) }
+            { role.specs.map(spec_slug => <SpecDisplayButton key={spec_slug} spec_slug={spec_slug} /> )}
         </ButtonGroup>
     )
 }
