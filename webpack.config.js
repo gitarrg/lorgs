@@ -26,6 +26,7 @@ module.exports = {
         "redux": "Redux",
         'react-redux': "ReactRedux",
         'react-hook-form': "ReactHookForm",
+        "reselect": "Reselect",
     },
 
     module: {

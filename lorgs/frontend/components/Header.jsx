@@ -31,10 +31,7 @@ function get_header_spec_rankings(spec, boss) {
 
     const spec_name = spec.full_name + "s"
     const class_name = "wow-" + spec.class.name_slug
-
     const url = get_spec_ranking_url(spec, boss)
-    
-    // `${WCL_URL}/zone/rankings/28#boss=2423&class=Druid&spec=Restoration&metric=hps`
 
     return (
         <a href={url} target="_blank">
@@ -47,12 +44,14 @@ function get_header_spec_rankings(spec, boss) {
 
 
 function get_header_comp_rankings(boss) {
+    if (!boss) { return null }
 
-    const boss_icon_path = `/static/images/bosses/sanctum-of-domination/${boss.full_name_slug}.jpg`
+    // TODO:
+    // - add url
+    // - add "vs."-part
     return (
         <>
-            <img className="icon-l rounded shadow border-white mr-2" src={boss_icon_path} alt={boss.name} target="_blank"></img>
-            <span>{boss.full_name}</span>
+            <span className="wow-boss">{boss.full_name}</span>
         </>
     )
 }

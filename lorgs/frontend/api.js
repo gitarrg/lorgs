@@ -110,6 +110,20 @@ API.load_spec_rankings = async function(spec_slug, boss_slug) {
 }
 
 
+/* Returns a list of fights */
+API.load_comp_rankings = async function(boss_slug, search="") {
+
+    let url = `/api/comp_ranking/${boss_slug}${search}`;
+    let response = await fetch(url);
+    if (response.status != 200) {
+        return [];
+    }
+    const fight_data = await response.json();
+    return fight_data.fights || []
+}
+
+
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 //                  Post Processing

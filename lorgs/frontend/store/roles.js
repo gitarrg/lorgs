@@ -16,6 +16,10 @@ export function get_roles(state) {
     return roles
 }
 
+export function get_role(state, role_name) {
+    return state.roles[role_name]
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Slice

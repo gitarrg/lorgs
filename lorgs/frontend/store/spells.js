@@ -1,5 +1,7 @@
 
 import { createSlice } from '@reduxjs/toolkit'
+import { createSelector } from 'reselect'
+
 import API from '../api.js'
 import { set_fights } from './fights.js'
 
@@ -20,6 +22,30 @@ export function get_spell(state, spell_id) {
 export function get_spells(state, spell_ids=[]) {
     return state.spells.all_spells
 }
+
+/*
+    Note: returns a new list each time. useMemo this one!
+*/
+
+export const get_spells_by_type = createSelector(
+    get_spells,
+    (spells) => {
+        const v = {}
+        Object.values(spells).forEach(spell => {
+            v[spell.spell_type] = v[spell.spell_type] || []
+            v[spell.spell_type].push(spell)
+
+        })
+        return v
+    }
+)
+
+
+// export function get_spells_by_type(state, spell_type) {
+//     const all_spells = Object.values(state.spells.all_spells)
+//     return all_spells.filter(spell => spell.spell_type == spell_type)
+// }
+
 
 export function get_spell_visible(state, spell_id) {
     // undefined is considered true in this case
@@ -55,6 +81,7 @@ export function filter_used_spells(spells, fights) {
 // add the image and img path
 export function process_spells(spells = {}) {
     Object.values(spells).forEach(spell => {
+        spell.specs = spell.specs || []
         spell.icon = spell.icon || "" // check mostly due to the loading data
         spell.icon_path = spell.icon.startsWith("/") ? spell.icon : `${ICON_ROOT}/${spell.icon}`
     })
@@ -134,14 +161,16 @@ const SLICE = createSlice({
 
     extraReducers: (builder) => {
 
-        builder.addCase(set_fights, (state, action) => {
+        builder
+
+        .addCase(set_fights, (state, action) => {
             const fights = action.payload
 
             state.used_spell_ids = filter_used_spells(state.all_spells, fights)
             return state
         })
     }, // extraReducers
-})
+}) // slice
 
 
 export const {

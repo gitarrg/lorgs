@@ -1,6 +1,7 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
+import { get_spec_for_spell_id } from '../../../store/specs.js'
 import { get_spell, set_spell_visible, get_spell_visible } from '../../../store/spells.js'
 
 
@@ -12,10 +13,14 @@ function no_link(e) {
 
 export default function SpellButton({spec, spell_id}) {
 
+
     // Hooks
     const dispatch = useDispatch()
     const spell = useSelector(state => get_spell(state, spell_id))
+    spec = spec || useSelector(state => get_spec_for_spell_id(state, spell_id))
     const visible = useSelector(state => get_spell_visible(state, spell.spell_id))
+
+    if (!spec) { return null}
 
     // Vars
     let wow_class = spec.class.name_slug

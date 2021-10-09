@@ -117,6 +117,9 @@ def comp_ranking(boss_slug):
 
     # lookup DB
     comp_ranking = warcraftlogs_comp_ranking.CompRanking(boss_slug=boss_slug)
+    if not comp_ranking.valid:
+        return "Invalid Boss.", 404
+
     reports = comp_ranking.get_reports(limit=limit, search=search)
 
     # return
