@@ -7,7 +7,7 @@ import { Provider } from 'react-redux'
 import CompRankings from "./routes/CompRankings.jsx"
 import CompSearch from "./routes/CompSearch.jsx"
 import SpecRankings from "./routes/SpecRankings.jsx"
-import data_store from "./data_store.js"
+import data_store from "./store/store.js"
 import GlobalDataLoader from "./components/GlobalDataLoader.jsx";
 
 ////////////////////////////////////////////////////////////////////////////////
