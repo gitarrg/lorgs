@@ -19,12 +19,15 @@ from lorgs import data
 from lorgs import utils
 from lorgs.cache import cache
 from lorgs.logger import logger
-from lorgs.models import encounters, specs
 from lorgs.models import warcraftlogs_comp_ranking
 from lorgs.models import warcraftlogs_ranking
+from lorgs.routes import api_world_data
 
 
 blueprint = flask.Blueprint("api", __name__, cli_group=None)
+
+# Child Blueprints
+blueprint.register_blueprint(api_world_data.blueprint, url_prefix="/")
 
 
 ###############################################################################
@@ -45,77 +48,6 @@ def ping():
 #       World Data
 #
 ###############################################################################
-
-@blueprint.get("/roles")
-@cache.cached()
-def get_roles():
-    return flask.jsonify({
-        "roles": [role.as_dict() for role in specs.WowRole.all]
-    })
-
-
-@blueprint.get("/spells/<int:spell_id>")
-@cache.cached()
-def spells_one(spell_id):
-    spell = specs.WowSpell.get(spell_id=spell_id)
-    if not spell:
-        flask.abort(404, description="Spell not found")
-    return spell.as_dict()
-
-
-@blueprint.get("/spells")
-@cache.cached(query_string=True)
-def spells_all():
-
-    spells = specs.WowSpell.all
-
-    # filter by group
-    groups = flask.request.args.getlist("group") #, default="", type=str)
-    if groups:
-        spells = [spell for spell in spells if spell.group and spell.group.full_name_slug in groups]
-
-    return {spell.spell_id: spell.as_dict() for spell in spells}
-
-
-@blueprint.get("/specs")
-@cache.cached(query_string=True)
-def get_specs_all():
-    include_spells = flask.request.args.get("include_spells", default=False, type=json.loads)
-
-    all_specs = sorted(specs.WowSpec.all)
-    all_specs = [specs.as_dict(spells=include_spells) for specs in all_specs]
-    return {"specs": all_specs}
-
-
-@blueprint.get("/specs/<string:spec_slug>")
-@cache.cached()
-def get_spec(spec_slug):
-    spec = specs.WowSpec.get(full_name_slug=spec_slug)
-    if not spec:
-        return "Invalid Spec.", 404
-    return spec.as_dict()
-
-
-@blueprint.get("/bosses")
-@blueprint.get("/zone/bosses")
-@blueprint.get("/zone/<int:zone_id>/bosses")
-@cache.cached()
-def get_bosses(zone_id=28):
-    zone = encounters.RaidZone.get(id=zone_id)
-    if not zone:
-        return "Invalid Zone.", 404
-    return zone.as_dict()
-
-
-@blueprint.get("/boss/<string:boss_slug>")
-@cache.cached(query_string=True)
-def get_boss(boss_slug):
-    include_spells = flask.request.args.get("include_spells", default=True, type=json.loads)
-    boss = encounters.RaidBoss.get(full_name_slug=boss_slug)
-    if not boss:
-        return "Invalid Boss.", 404
-    return boss.as_dict(include_spells=include_spells)
-
 
 
 ###############################################################################
@@ -175,7 +107,7 @@ def comp(name):
 @cache.cached(query_string=True)
 def comp_ranking(boss_slug):
 
-    limit = flask.request.args.get("limit", default=50, type=int)
+    limit = flask.request.args.get("limit", default=20, type=int)
 
     # get search inputs
     search = {}

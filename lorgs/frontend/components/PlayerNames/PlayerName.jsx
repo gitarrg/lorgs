@@ -2,7 +2,7 @@
 import React  from "react";
 import { useSelector } from 'react-redux'
 
-import { MODES } from "../../data_store.js";
+import { MODES } from "../../store/ui.js";
 import { WCL_URL } from "./../../constants.js"
 
 
@@ -44,7 +44,7 @@ export function PlayerName({fight, player}) {
 
     if (fight.loading) { return SKELETON_PLAYER_NAME }
 
-    const mode = useSelector(state => state.mode)
+    const mode = useSelector(state => state.ui.mode)
     const mode_spec = mode == MODES.SPEC_RANKING
     const mode_comp = mode == MODES.COMP_RANKING
 

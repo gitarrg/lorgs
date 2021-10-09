@@ -2,76 +2,19 @@
 
 import React from 'react'
 import { useParams } from 'react-router-dom';
-import { useSelector, batch } from 'react-redux'
-import ReactTooltip from 'react-tooltip';
+import { useSelector, useDispatch } from 'react-redux'
 
-import API from "./../api.js"
+import * as ui_store from "../store/ui.js"
 import Header from "./../components/Header.jsx"
 import LoadingOverlay from "./../components/shared/LoadingOverlay.jsx"
 import Navbar from "./../components/Navbar/Navbar.jsx"
 import PlayerNamesList from "./../components/PlayerNames/PlayerNamesList.jsx"
-import SettingsBar from "./../components/SettingsBar/SettingsBar.jsx"
+import SpecSettingsBar from './SpecRankings/SpecSettingsBar.jsx';
 import TimelineCanvas from "./../components/Timeline/TimelineCanvas.jsx"
-import data_store, { MODES } from '../data_store.js'
+import { load_fights } from "../store/fights.js"
+import { load_spec } from "../store/specs.js"
+import { load_spells } from '../store/spells.js';
 
-////////////////////////////////////////////////////////////////////////////////
-// Fetch
-//
-
-
-async function load_global_data() {
-
-    const [bosses, roles] = await Promise.all([
-        API.load_bosses(),
-        API.load_roles(),
-    ])
-
-    batch(() => {
-        data_store.dispatch({type: "update_value", field: "bosses", value: bosses})
-        data_store.dispatch({type: "update_value", field: "roles", value: roles})
-    })
-
-    // needs to rebuild when the nav bar changes
-    ReactTooltip.rebuild()
-}
-
-
-async function load_spec_ranking_data(spec_slug, boss_slug) {
-
-    console.log("load_data start")
-    console.time("load_data 1")
-    
-    data_store.dispatch({type: "update_value", field: "is_loading", value: true})
-    
-    const [boss, specs, fights] = await Promise.all([
-        // load boss
-        API.load_boss(boss_slug),
-        // specs
-        API.load_multiple_specs([spec_slug, "other-potions", "other-trinkets"]),
-        // fights
-        API.load_spec_rankings(spec_slug, boss_slug),
-    ])
-    const [spec] = [...specs] // first spec loaded is the "main"-spec
-    console.timeEnd("load_data 1")
-    
-    console.time("update state")
-    batch(() => {
-
-        // set all new values
-        data_store.dispatch({type: "update_value", field: "boss", value: boss})
-        data_store.dispatch({type: "update_value", field: "spec", value: spec})
-        data_store.dispatch({type: "update_value", field: "specs", value: specs})
-        data_store.dispatch({type: "update_value", field: "fights", value: fights})
-        
-        // apply some processing
-        data_store.dispatch({type: "process_fetched_data"})
-        data_store.dispatch({type: "filters/apply"})
-
-        // mark as loaded
-        data_store.dispatch({type: "update_value", field: "is_loading", value: false})
-    })
-    console.timeEnd("update state")
-}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -80,21 +23,44 @@ async function load_spec_ranking_data(spec_slug, boss_slug) {
 
 export default function SpecRankings() {
 
+    // Hooks
     const { spec_slug, boss_slug } = useParams();
+    const dispatch = useDispatch()
+    const is_loading = useSelector(state => state.ui.is_loading)
 
-    // new state
-    const state = data_store.getState()
-    state.mode = MODES.SPEC_RANKING // use dispatch?
+    // Vars
+    const mode = ui_store.MODES.SPEC_RANKING
 
-    const is_loading = useSelector(state => state.is_loading)
+    ////////////////////////////////////////////////////////////////////////////
+    // Update State
+    //
 
     /* load global data */
-    React.useEffect(load_global_data, [])
+    React.useEffect(() => {
+        dispatch(ui_store.set_mode(mode))
+    }, [])
 
-    React.useEffect(async () => {
-        await load_spec_ranking_data(spec_slug, boss_slug)
+    // set current boss
+    React.useEffect(() => {
+        dispatch(ui_store.set_values({boss_slug: boss_slug}))
+    }, [boss_slug])
+
+    // load and set current spec
+    React.useEffect(() => {
+        // dispatch(load_spec(spec_slug))
+        dispatch(ui_store.set_values({spec_slug: spec_slug}))
+    }, [spec_slug])
+
+    // load fights
+    React.useEffect(() => {
+        dispatch(load_spells([spec_slug, boss_slug]))
+        dispatch(load_fights(mode, {spec_slug, boss_slug}))
     }, [spec_slug, boss_slug])
 
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Render
+    //
     return (
         <div>
 
@@ -103,10 +69,9 @@ export default function SpecRankings() {
                 <Navbar />
             </div>
 
-            <div className={`${is_loading && "loading_trans"}`}>
-                <SettingsBar />
+             <div className={`${is_loading ? "loading_trans" : ""}`}>
+                <SpecSettingsBar />
             </div>
-            
             {is_loading && <LoadingOverlay />}
 
             <div className={`p-2 bg-dark rounded border d-flex overflow-hidden ${is_loading && "loading_trans"}`}>

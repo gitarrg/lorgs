@@ -6,6 +6,7 @@ html,
 body {
   height: 100%;
   margin: 0;
+
 }
 
 
@@ -17,6 +18,9 @@ body {
     font-size: 16px;
     line-height: 1.25;
     /*background: #36393f;*/
+
+    // always show scrollbar, to avoid weird layout changes
+    overflow-y: scroll;
 }
 
 * {

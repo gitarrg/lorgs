@@ -2,7 +2,9 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { WCL_URL } from '../constants.js'
-import { MODES } from "../data_store.js"
+import { MODES } from "../store/ui.js"
+import { get_boss } from '../store/bosses.js'
+import { get_spec } from '../store/specs.js'
 
 
 
@@ -58,9 +60,9 @@ function get_header_comp_rankings(boss) {
 
 export default function Header() {
 
-    const boss = useSelector(state => state.boss)
-    const spec = useSelector(state => state.spec)
-    const mode = useSelector(state => state.mode)
+    const boss = useSelector(state => get_boss(state))
+    const spec = useSelector(state => get_spec(state))
+    const mode = useSelector(state => state.ui.mode)
 
     let header_content = "loading..."
     switch (mode) {

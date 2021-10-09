@@ -2,9 +2,11 @@
 import { useSelector } from 'react-redux'
 import { NavLink, useLocation } from 'react-router-dom';
 
-import { MODES } from "../../data_store.js"
+import { MODES } from '../../store/ui.js';
+import { get_spec } from "../../store/specs.js"
 
-function get_link(mode, boss, spec) {
+
+function get_link(mode, boss = {}, spec = {}) {
     // is this the time to rename "mode" ?
     if (mode == MODES.COMP_RANKING) { return `/${mode}/${boss.full_name_slug}` }
     if (mode == MODES.SPEC_RANKING) { return `/${mode}/${spec.full_name_slug}/${boss.full_name_slug}` }
@@ -13,14 +15,12 @@ function get_link(mode, boss, spec) {
 
 
 export default function NavbarBossButton({boss}) {
-    
-    
+
     // todo: include zone in api?
-    const icon_path = `/static/images/bosses/sanctum-of-domination/${boss.full_name_slug}.jpg`
-    const mode = useSelector(state => state.mode)
-    const spec = useSelector(state => state.spec)
+    const mode = useSelector(state => state.ui.mode)
+    const spec = useSelector(state => get_spec(state))
     const link = get_link(mode, boss, spec)
-    
+
     // preserve query string
     const { search } = useLocation();
     const full_link = `${link}${search}`
@@ -29,7 +29,7 @@ export default function NavbarBossButton({boss}) {
         <NavLink to={full_link} activeClassName="active">
             <img
                 className="icon-spec icon-m wow-border-boss rounded"
-                src={icon_path}
+                src={boss.icon_path}
                 alt={boss.name}
                 data-tip={boss.full_name}
                 alt={boss.full_name}

@@ -1,5 +1,5 @@
 import React from 'react'
-import data_store from '../../../data_store.js'
+import { useSelector, useDispatch } from 'react-redux'
 
 import FilterButton from '../shared/FilterButton.jsx'
 import ButtonGroup from '../shared/ButtonGroup.jsx'
@@ -9,10 +9,11 @@ import ButtonGroup from '../shared/ButtonGroup.jsx'
 function FilterCovenantButton({covenant}) {
 
     const covenant_slug = covenant.toLowerCase()
+    const dispatch = useDispatch()
 
     function onClick({value}) {
 
-        data_store.dispatch({
+        dispatch({
             type: "update_filter",
             field: covenant_slug,
             value: !value

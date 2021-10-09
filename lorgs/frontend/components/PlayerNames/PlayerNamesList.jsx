@@ -1,6 +1,7 @@
 
 import React from "react";
 import { useSelector } from 'react-redux'
+import { get_fights } from "../../store/fights.js";
 
 import {PlayerName, BossName} from "./PlayerName.jsx"
 
@@ -38,8 +39,8 @@ function create_fight(i, fight) {
 export default function PlayerNamesList() {
 
     // get data
-    const mode = useSelector(state => state.mode)
-    const fights = useSelector(state => state.fights)
+    const mode = useSelector(state => state.ui.mode)
+    const fights = useSelector(state => get_fights(state))
 
     // include this as it affects the display for the fights
     const filters = useSelector(state => state.filters)

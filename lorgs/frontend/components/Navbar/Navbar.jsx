@@ -2,10 +2,10 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 
-import { MODES } from "../../data_store.js"
-
 import NavbarBossButton from "./NavbarBossButton.jsx"
 import NavbarSpecGroup from "./NavbarSpecGroup.jsx"
+import { MODES } from '../../store/ui.js'
+import { get_bosses } from '../../store/bosses.js'
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -33,14 +33,25 @@ function NavbarGroup({children, className}) {
     )
 }
 
+function NavbarBossGroup({ }) {
+    const bosses = useSelector(state => get_bosses(state))
+
+    return (
+        <NavbarGroup className = "navbar_boss">
+            {Object.values(bosses).map(boss =>
+                <NavbarBossButton key={boss.full_name_slug} boss={boss} />
+            )}
+        </NavbarGroup>
+    )
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
 
 export default function Navbar() {
 
-    const bosses = useSelector(state => state.bosses)
-    const mode = useSelector(state => state.mode)
+    const mode = useSelector(state => state.ui.mode)
 
     return (
         <div className="ml-auto">
@@ -53,11 +64,7 @@ export default function Navbar() {
                     </NavbarGroup>
                 )}
 
-                <NavbarGroup className="navbar_boss">
-                    {bosses.map(boss =>
-                        <NavbarBossButton key={boss.full_name_slug} boss={boss} />
-                    )}
-                </NavbarGroup>
+                <NavbarBossGroup />
 
                 <NavbarGroup>
                     <HomeButton />

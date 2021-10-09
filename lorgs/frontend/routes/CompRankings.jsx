@@ -10,8 +10,9 @@ import Header from "./../components/Header.jsx"
 import LoadingOverlay from "./../components/shared/LoadingOverlay.jsx"
 import Navbar from "./../components/Navbar/Navbar.jsx"
 import PlayerNamesList from "./../components/PlayerNames/PlayerNamesList.jsx"
-import TimelineCanvas from "./../components/Timeline/TimelineCanvas.jsx"
-import data_store, { MODES } from '../data_store.js'
+// import TimelineCanvas from "./../components/Timeline/TimelineCanvas.jsx"
+import data_store from '../store/store.js'
+import {MODES } from "../store/ui.js"
 
 
 /* Returns a list of fights */
@@ -86,8 +87,6 @@ export default function CompRankings() {
     const { boss_slug } = useParams();
     const { search } = useLocation();
 
-    console.log("CompRankings", boss_slug)
-
     // const state = data_store.getState()
     const is_loading = useSelector(state => state.is_loading)
 
@@ -122,7 +121,7 @@ export default function CompRankings() {
 
             <div className={`p-2 bg-dark rounded border d-flex overflow-hidden ${is_loading && "loading_trans"}`}>
                 <PlayerNamesList />
-                <TimelineCanvas />
+                {/* <TimelineCanvas /> */}
             </div>
         </>
     )

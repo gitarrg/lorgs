@@ -1,17 +1,18 @@
 
 
 import React from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 
 import ButtonGroup from './shared/ButtonGroup.jsx'
 import FilterButton from './shared/FilterButton.jsx'
-import data_store from '../../data_store.js'
 
 
 function create_role_button(role) {
 
+    const dispatch = useDispatch()
+
     function onClick({value}) {
-        data_store.dispatch({ type: "update_filter", field: role.code, value: value})
+        dispatch({ type: "update_filter", field: role.code, value: value})
     }
     return <FilterButton
         onClick={onClick}

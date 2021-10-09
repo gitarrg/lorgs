@@ -12,7 +12,7 @@ import PlayerRoleSearch from './CompSearch/PlayerRoleSearch.jsx'
 import PlayerSelection from './CompSearch/PlayerSelection.jsx'
 import PlayerSpecSearch from './CompSearch/PlayerSpecSearch.jsx'
 import SearchSubmitButton from './CompSearch/SearchSubmitButton.jsx'
-import data_store from "./../data_store.js"
+import data_store from "./../store/store.js"
 
 
 async function load_global_data() {

@@ -66,7 +66,7 @@ class RaidBoss(base.Model):
         return f"<RaidBoss(id={self.id} name={self.name})>"
 
     def as_dict(self, include_spells=False):
-        d = {
+        return {
             "id": self.id,
             "role": self.role,
             "name": self.name,
@@ -74,12 +74,8 @@ class RaidBoss(base.Model):
             "full_name": self.full_name,
             "full_name_slug": self.full_name_slug,
             "class": self.wow_class,
+            "spells": [spell.spell_id for spell in self.spells]
         }
-
-        if include_spells:
-            d["spells"] = [spell.as_dict() for spell in self.spells]
-
-        return d
 
 
     ##########################

@@ -2,23 +2,29 @@
 import { useSelector } from 'react-redux'
 import { NavLink } from 'react-router-dom';
 
-import data_store from "../../data_store.js"
+import { get_spec } from "../../store/specs.js"
 
 
-function SpecButton({spec}) {
+function SpecButton({spec_slug}) {
 
-    const icon_path = `/static/images/specs/${spec.full_name_slug}.jpg`
+
+    const mode = useSelector(state => state.ui.mode)
+    const boss_slug = useSelector(state => state.ui.boss_slug)
+    const spec = useSelector(state => get_spec(state, spec_slug))
+
+    // const state = data_store.getState() // not using hook to avoid some event listeners
+    // const spec = get_spec(state, spec_slug)
+    if (!spec) { return <p>nope: {spec_slug}</p>}
+
     const class_name = spec.class.name_slug
-
-    const state = data_store.getState()
-    const link = `/${state.mode}/${spec.full_name_slug}/${state.boss.full_name_slug}`
+    const link = `/${mode}/${spec.full_name_slug}/${boss_slug}`
 
     return (
 
         <NavLink to={link} className={`wow-${class_name}`} activeClassName={`active`}>
             <img
                 className={`mr-1 icon-spec icon-m rounded wow-border-${class_name}`}
-                src={icon_path}
+                src={spec.icon_path}
                 alt={spec.full_name}
                 title={spec.full_name}
             />
@@ -33,12 +39,11 @@ function SpecButton({spec}) {
 function SpecsDropdown({specs}) {
 
     // <div class="ranking-nav-role-specs bg-dark border rounded"></div>
-
     return (
         <div className="nav_dropdown__content specs_nav_dropdown bg-dark border rounded">
             <div className="p-2 d-grid gap-1">
-                {specs.map(spec => 
-                    <SpecButton key={spec.full_name_slug} spec={spec} />
+                {specs.map(spec_slug => 
+                    <SpecButton key={spec_slug} spec_slug={spec_slug} />
                 )}
             </div>
         </div>
@@ -48,14 +53,13 @@ function SpecsDropdown({specs}) {
 
 function RoleButton({role}) {
 
-    const icon_path = `/static/images/roles/${role.code}.jpg`
     const class_name = `wow-border-${role.code}`
 
     return (
         <div className="nav_dropdown">
             <img
                 className={`icon-spec icon-m border-black rounded ${class_name}`}
-                src={icon_path}
+                src={role.icon_path}
                 alt={role}
             />
 
@@ -68,7 +72,7 @@ function RoleButton({role}) {
 export default function NavbarSpecGroup() {
 
     let roles = useSelector(state => state.roles)
-    roles = roles.filter(role => role.id <= 1000) // filter out data roles
+    roles = Object.values(roles).filter(role => role.id < 1000)
 
     return (
         <>
