@@ -1,59 +1,39 @@
 
 import Cast from "./Cast.js"
-import {LINE_HEIGHT} from "./../../constants.js"
+import * as constants from "./constants.js"
+
 
 export default class Player extends Konva.Group {
 
-    constructor(stage, player_data) {
+    constructor(row, player_data) {
         super()
-        this.stage = stage
+        this.row = row
         this.transformsEnabled("position")
-        // this.casts_group = new Konva.Group()
-        
+
+        this.clip({
+            x: 0,
+            y: 1,
+            width: this.row.duration * constants.DEFAULT_ZOOM,
+            height: constants.LINE_HEIGHT,
+        })
+
         this.player_data = player_data
 
         // load casts
-        this.casts = (player_data.casts || []).map(cast_data => new Cast(this.stage, cast_data))
+        this.casts = (player_data.casts || []).map(cast_data => new Cast(cast_data))
         this.casts = this.casts.filter(cast => cast.spell)
-        this.casts.forEach(cast => { cast.create() })
 
-        // create background
-        this.background_fill = new Konva.Rect({
-            height: LINE_HEIGHT,
-            width: 20,
-            x: -0.5,
-            y: 0.5,
-            fill: "#222",
-            stroke: "black",
-            strokeWidth: 1,
-            listening: false,
-            transformsEnabled: "position",
-        })
-        this.background = new Konva.Group()
-        this.background.name("fight_background")
-        this.background.add(this.background_fill)
-        // this.add(this.background)
+        this.layout_children()
     }
 
-    create() {
-    }
 
-    update() {
-
-        let visible = this.should_be_visible()
-        this.visible(visible)
-        this.background.visible(visible)
-        if (!visible) {
-            return
-        }
-        // this.stage.back_layer.add(this.background)
+    layout_children() {
 
         this.casts.forEach(cast => {
 
-            if (cast.spell && cast.spell.show) {
+             if (cast.spell && cast.visible()) {
 
-                cast.update()
-
+                // add cast if its not added yet
                 if (cast.getParent() == undefined) {
                     this.add(cast)
                 }
@@ -62,20 +42,63 @@ export default class Player extends Konva.Group {
                 // assuming they are sorted by time.. this should fix overlaps
                 cast.moveToTop()
 
-            } else {
+            } else { // dont show
+
+                // remove cast if its currently added
                 if (cast.getParent() != undefined) {
                     cast.remove()
                 }
             }
         })
+    }
+
+    schedule_cache() {
 
         this.clearCache() // clear to make sure we update (even if eg: all children are hidden)
         if (this.hasChildren()) {
-            this.cache()
+            this.cache() // TODO: add throttle?
         }
+        return
+
+        console.log("schedule_cache")
+
+        if (this.schedule_cache_timer) {
+            // console.log("schedule_cache -- > clear")
+            return
+            //clearTimeout(this.schedule_cache_timer)
+        }
+
+        this.clearCache() // clear to make sure we update (even if eg: all children are hidden)
+        console.log("schedule_cache -- > create")
+        this.schedule_cache_timer = setTimeout(() => {
+            // fixme: breaks hover(again)
+            console.log("schedule_cache -- > run")
+            if (this.hasChildren()) {
+                this.cache() // TODO: add throttle?
+            }
+            this.schedule_cache_timer = undefined
+        }, 1000)
     }
 
-    should_be_visible() {
-        return this.player_data.visible !== false
+    //////////////////////////////
+    // Events
+    //
+
+    _handle_spell_display() {
+        this.layout_children()
+    }
+
+    _handle_zoom_change(scale_x) {
+        this.clipWidth(this.row.duration * scale_x)
+    }
+
+    handle_event(event_name, payload) {
+        if (event_name === constants.EVENT_ZOOM_CHANGE) { this._handle_zoom_change(payload)}
+        this.casts.forEach(cast => cast.handle_event(event_name, payload))
+
+        // after cast update, so we can handle the cast visibility in there
+        if (event_name === constants.EVENT_SPELL_DISPLAY) {this._handle_spell_display(payload)}
+
+        this.schedule_cache()
     }
 }

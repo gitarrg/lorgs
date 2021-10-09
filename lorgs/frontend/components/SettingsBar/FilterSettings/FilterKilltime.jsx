@@ -5,7 +5,7 @@
 */
 
 import React from 'react'
-import data_store from '../../../data_store';
+import { useDispatch } from 'react-redux'
 import ButtonGroup from '../shared/ButtonGroup.jsx';
 
 
@@ -20,6 +20,7 @@ function FilterKilltimeInput({name, start=0, placeholder="0:00" }) {
     const ref = React.useRef(null);
     const [text, setText] = React.useState(null); // time as text
     const [seconds, setSeconds] = React.useState(start) // time in seconds
+    const dispatch = useDispatch()
 
     function handle_input() {
         setText(ref.current.value)
@@ -59,7 +60,7 @@ function FilterKilltimeInput({name, start=0, placeholder="0:00" }) {
         // update text whenever seconds get changed
         const new_text = seconds == start ? null : seconds_to_time(seconds, {padding: false})
         setText(new_text)
-        
+
         // pass seconds to the context.filters
         // context.filters = {...context.filters}
         // context.filters[name] = seconds
@@ -67,7 +68,7 @@ function FilterKilltimeInput({name, start=0, placeholder="0:00" }) {
         // update the context
         // context.update() // create new object
 
-        data_store.dispatch({
+        dispatch({
             type: "update_filter",
             field: name,
             value: seconds,

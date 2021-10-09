@@ -8,6 +8,7 @@ import CompRankings from "./routes/CompRankings.jsx"
 import CompSearch from "./routes/CompSearch.jsx"
 import SpecRankings from "./routes/SpecRankings.jsx"
 import data_store from "./data_store.js"
+import GlobalDataLoader from "./components/GlobalDataLoader.jsx";
 
 ////////////////////////////////////////////////////////////////////////////////
 // APP
@@ -26,6 +27,9 @@ export default function App() {
                 effect="solid"
                 disable={LORRGS_DEBUG}
             />
+
+            <GlobalDataLoader />
+
             <Router>
                 <Switch>
                     <Route path="/spec_ranking/:spec_slug/:boss_slug">

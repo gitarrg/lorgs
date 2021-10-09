@@ -1,4 +1,7 @@
 import React from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+
+import { get_spell, set_spell_visible, get_spell_visible } from '../../../store/spells.js'
 
 
 /* to avoid react rerenders when clicking the <a> tags */
@@ -7,30 +10,27 @@ function no_link(e) {
 }
 
 
-export default function SpellButton({spec, spell}) {
+export default function SpellButton({spec, spell_id}) {
 
-    if (spell.was_used === false) {return null}
+    // Hooks
+    const dispatch = useDispatch()
+    const spell = useSelector(state => get_spell(state, spell_id))
+    const visible = useSelector(state => get_spell_visible(state, spell.spell_id))
 
-    spec = spec || spell.spec
-
-    const [show, setShow] = React.useState(spell.show)
+    // Vars
     let wow_class = spec.class.name_slug
-    const disabled = !show && "disabled"
+    const disabled = visible ? "" : "disabled"
 
+    // onClick Callback
     function toggle_spell() {
 
-        // update the spell
-        spell.show = !spell.show
-        setShow(spell.show)
-
-        // custom event for the Stage
-        let event = new CustomEvent("toggle_spell");
-        event.show = spell.show
-        event.spell_id = spell.spell_id
-        document.dispatchEvent(event);
+        dispatch(set_spell_visible({
+            spell_id: spell.spell_id,
+            visible: !visible
+        }))
     }
 
-    
+    // Render
     return (
         <a onClick={no_link} href="" data-wowhead={spell.tooltip_info}>
             <img

@@ -1,8 +1,6 @@
 // Not the actual api... but all the connections to it and some post processing
 
 
-const ICON_ROOT = "https://wow.zamimg.com/images/wow/icons/medium"
-
 const PRINT_REQUEST_TIMES = true
 
 
@@ -13,9 +11,12 @@ export default API
 async function fetch_data(url, params={}) {
 
 
-    if (params) {
+    if (Object.keys(params).length) {
         let search = new URLSearchParams(params)
-        url = url + "?" + search
+        console.log("params", params, search)
+        if (search) {
+            url = url + "?" + search
+        }
     }
 
     const console_key = `request: ${url}`
@@ -31,6 +32,7 @@ async function fetch_data(url, params={}) {
 }
 
 
+////////////////////////////////////////////////////////////////////////////////
 
 
 API.load_roles = async function() {
@@ -41,8 +43,9 @@ API.load_roles = async function() {
 }
 
 
-API.load_specs = async function({include_spells = false}) {
-    return await fetch_data("/api/specs", {include_spells: include_spells});
+API.load_specs = async function({include_spells = false} = {}) {
+    const specs = await fetch_data("/api/specs", { include_spells: include_spells });
+    return specs.specs || []
 }
 
 
@@ -75,7 +78,7 @@ API.load_boss = async function(boss_slug) {
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-export async function load_spells(groups = []) {
+API.load_spells = async function(groups = []) {
 
     let params = new URLSearchParams(groups.map(g => ["group", g]))
     let url ="/api/spells?" + params
@@ -84,18 +87,6 @@ export async function load_spells(groups = []) {
 }
 
 
-export function process_spells(spells = {}) {
-    Object.values(spells).forEach(spell => {
-
-        if (spell.icon) { // check mostly due to the loading data
-            spell.icon_path = spell.icon.startsWith("/") ? spell.icon : `${ICON_ROOT}/${spell.icon}`
-            // kind of shit.. but better then setting up all the callback stuff for image loading in konva
-            spell.image = document.createElement("img")
-            spell.image.src = spell.icon_path
-        }
-    })
-    return spells;
-}
 
 
 ////////////////////////////////////////////////////////////////////////////////

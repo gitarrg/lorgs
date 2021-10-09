@@ -1,12 +1,10 @@
-
-
 import Konva from "konva"
 
-import Fight from "./Fight.js"
-import Player from "./Player.js"
+
 import Ruler from "./Ruler.js"
 import Spell from "./Spell.js"
-import {LINE_HEIGHT} from "./../../constants.js"
+import PlayerRow from "./PlayerRow.js";
+import * as constants from "./constants.js";
 
 
 // for performance
@@ -18,13 +16,10 @@ export default class Stage extends Konva.Stage{
     ZOOM_RATE = 1.1
     ZOOM_MIN = 0.5
 
+    THROTTLE = 200 // max update rate in ms
+
     FIGHT_SPACE = 10 // distance between fights in pixels
 
-    // global display options
-    display_cooldown = true
-    display_duration = true
-    display_casttime = true
-    display_casticon = true
 
     constructor(options) {
         options.draggable = true
@@ -34,9 +29,8 @@ export default class Stage extends Konva.Stage{
         /////////////////////////////////
         // custom attributes
         this.scale_x = 4;
-        this.fights = []
         this.spells = {}
-        this.longest_fight = 0;
+        this.rows = []
 
         // bool: true if any spell is selected
         this.has_selection = false;
@@ -62,97 +56,52 @@ export default class Stage extends Konva.Stage{
         this.back_layer.add(this.ruler)
 
         // update canvas on window resize
-        // window.addEventListener("resize", () => {this.update_size()})
         this.on("dragmove",  this.on_dragmove)
         this.on("wheel",  this.on_wheel)
         this.on("contextmenu", this.contextmenu)
+    }
 
-        document.addEventListener("toggle_spell", event => { this.show_spell(event.spell_id, event.show) })
+    ////////////////////////////////////////////////////////////////////////////
+    // Attributes
+    //
+
+    has_values() {
+        if (this.fights.length == 0) { return false}
+        if (Object.keys(this.spells).length == 0) { return false}
+
+        return true;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // CREATION AND DRAW
     //
-    contextmenu(event) {
-        event.evt.preventDefault();
+    update_width() {
+        this.width(this.longest_fight * this.scale_x)
+        this.batchDraw()
     }
 
-    create() {
+    update_display_settings(settings) {
+        this.rows.forEach(row => row.update_display_settings(settings))
+    }
 
-        this.clear()
-        this.zoom_changed = true
-        this.longest_fight = 0;
+    layout_children() {
 
-        // update fights
-        this.fights.forEach((fight, i) => {
+        let y = this.ruler.height-1;
 
-            // create/add the fight
-            // fight.y(this.ruler.height-1 + (i*LINE_HEIGHT))
-            this.main_layer.add(fight)
-            // this.back_layer.add(fight.background)
-            fight.create();
-
-            // background need to be added separately
-            fight.actors.forEach(actor => {this.back_layer.add(actor.background)})
-
-            // get longest fight (for the ruler)
-            this.longest_fight = Math.max(this.longest_fight, fight.duration)
+        this.rows.forEach(row => {
+            row.y(y)
+            y += row.height() + this.FIGHT_SPACE  // TODO: add FightRow that can have subrows
         })
 
-        // Ruler
-        this.ruler.duration = this.longest_fight || 5 * 60;
-        this.ruler.create();
-
-        // update height based on number of fights loaded
-        // this.height(this.ruler.height + this.fights.length * LINE_HEIGHT)
-    }
-
-    update() {
-
-        // ruler
-        this.ruler.update()
-
-        // fights
-        let y = this.ruler.height-1;
-        this.fights.forEach((fight, i) => {
-            fight.update();
-
-            if (fight.visible()) {
-                fight.y(y)
-                // fight.background.y(y)
-                // fight.cache()
-                y += fight.height() + this.FIGHT_SPACE
-            }
-        });
-
         this.height(y)
-        this.batchDraw();
-        this.zoom_changed = false;
     }
 
-    schedule_update() {
-
-        if (this.timer) { return }
-        
-        this.timer = setTimeout(() => {
-            this.update()
-            delete this.timer
-        }, 300)
-    }
-
-    update_has_selection() {
-        let spells = Object.values(this.spells)
-        this.has_selection = spells.some(spell => (spell.selected && spell.show))
-    }
-
-  
     ////////////////////////////////////////////////////////////////////////////
     // EVENTS
     //
-    
-    update_size() {
-        // TODO: get parent width (after overflow etc)
-        this.width(this.longest_fight * this.scale_x)
+
+    contextmenu(event) {
+        event.evt.preventDefault();
     }
 
     _limit_movement() {
@@ -180,7 +129,6 @@ export default class Stage extends Konva.Stage{
 
         this.scale_x = event.evt.deltaY < 0 ? this.scale_x * this.ZOOM_RATE : this.scale_x / this.ZOOM_RATE;
         this.scale_x = Math.max(this.scale_x, this.ZOOM_MIN)
-        this.zoom_changed = true
 
         let new_offset = (old_offset * this.scale_x); // distance between 0:00 and cursor (new scale)
         let new_x = pointer.x - new_offset;
@@ -190,39 +138,37 @@ export default class Stage extends Konva.Stage{
 
         ////////////////////////////////////
         // update scale
-
-        this.update();
+        this.handle_event(constants.EVENT_ZOOM_CHANGE, this.scale_x)
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // INTERACTION
 
-    show_spell(spell_id, show=true, update=true) {
+    _handle_spell_selected(selected_spells) {
+        this.has_selection = selected_spells.length > 0;
+    }
 
-        let spell = this.spells[spell_id]
-        if (!spell) {
+    _handle_check_images_loaded() {
+        // Emit a EVENT_IMAGES_LOADED event once all images have been loaded.
+        // until then, periodically emit new "check"-events
+        const has_pending = this.rows.some(row => row.foreground.casts.some(cast => cast.image_is_loaded == false))
+        if (has_pending) {
+            setTimeout(() => { this.handle_event(constants.EVENT_CHECK_IMAGES_LOADED) }, 200)
             return
         }
-        spell.show = show;
-        if (!update) {return}
-
-        this.update_has_selection()
-        this.update();
+        this.handle_event(constants.EVENT_IMAGES_LOADED)
     }
 
-    toggle_cooldown(show=true) {
-        this.display_cooldown = show;
-        this.update()
-    }
+    handle_event(event_name, payload) {
 
-    toggle_duration(show=true) {
-        this.display_duration = show;
-        this.update()
-    }
+        if (event_name === constants.EVENT_SPELL_SELECTED ) { this._handle_spell_selected(payload)}
+        if (event_name === constants.EVENT_CHECK_IMAGES_LOADED ) { return this._handle_check_images_loaded() } // return here, as this event should not be passed on
 
-    toggle_casttime(show=true) {
-        this.display_casttime = show;
-        this.update()
+        // pass to children
+        this.ruler.handle_event(event_name, payload)
+        this.rows.forEach(row => row.handle_event(event_name, payload))
+
+        this.batchDraw() // for now, just assume we need to redraw after every event
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -230,58 +176,49 @@ export default class Stage extends Konva.Stage{
     //
 
     set_spells(spells) {
-
         // create Spell Instances
         Object.values(spells).forEach(spell => {
             this.spells[spell.spell_id] = new Spell(this, spell);
         })
     }
 
+    add_row(fight, player) {
+
+        if (!(player && player.name)) { return}
+
+        const row = new PlayerRow(fight, player)
+        this.rows.push(row)
+
+        this.back_layer.add(row.background)
+        this.main_layer.add(row.foreground)
+
+        // todo: don't do this in here
+        this.longest_fight = Math.max(this.longest_fight, row.duration)
+    }
+
     set_fights(new_fights) {
 
-        // clear any old fights
-        this.fights.forEach(fight => {
-            fight.destroy()
-            // fight.background.destroy()
+        // clear any old rows
+        this.rows.forEach(row => {
+            row.destroy()
         })
         this.fights = []
+        this.longest_fight = 0
+        this.rows = []
 
         // create fresh instances
         new_fights.forEach((fight) => {
 
-            const new_fight = new Fight(this, fight);
-            this.fights.push(new_fight)
+            this.add_row(fight, fight.boss)
+            fight.players.forEach(player => this.add_row(fight, player))
         })
 
+        this.layout_children()
 
-/*             let boss = fight.boss
-            if (boss && boss.name) {
-                let new_fight = new Fight(this, fight);
-                new_fight.actors.push(new Player(this, boss))
-                this.fights.push(new_fight)
-            }
-            
-            let new_fight = new Fight(this, fight);
-            fight.players.forEach(player => {
-                new_fight.actors.push(new Player(this, player))
-                this.fights.push(new_fight)
-            }) */
-        // })
-    }
+        this.ruler.update_duration(this.longest_fight)
+        this.update_width()
 
-    ////////////////////////////////////////////////////////////////////////////
-    // DEBUGGIN
-    //
-
-    print_tree() {
-        // Debug
-        let n = 0;
-        this.find(node => {
-            const d = node.getDepth()
-            console.log("node", "\t".repeat(d), node.getType(), node.name(), node.visible())
-            n+=1;
-        })
-        console.log("num stage objects:", n)
+        this.handle_event(constants.EVENT_ZOOM_CHANGE, this.scale_x)
+        this.handle_event(constants.EVENT_CHECK_IMAGES_LOADED)
     }
 }
-

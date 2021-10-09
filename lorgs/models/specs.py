@@ -1,8 +1,30 @@
 """Models for Classes, Specs, Spells and Roles."""
 
+# IMPORT STANDARD LIBRARIES
+from collections import defaultdict
+import typing
+
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
 from lorgs.models import base
+
+
+def spells_by_type(spells: typing.List["WowSpell"]) -> dict:
+    """Groups the given spells by their spell_type.
+
+    Note:
+        only returns the IDs (because thats the only thing I need now)
+    """
+    groups = defaultdict(list)
+
+    for spell in spells:
+        groups[spell.spell_type] += [spell]
+
+    return dict(groups)
+
+
+def spell_ids(spells) -> typing.List[int]:
+    return [spell.spell_id for spell in spells]
 
 
 class WowRole(base.Model):
@@ -30,7 +52,7 @@ class WowRole(base.Model):
             "id": self.id,
             "name": self.name,
             "code": self.code,
-            "specs": [spec.as_dict(spells=False) for spec in self.specs]
+            "specs": [spec.full_name_slug for spec in self.specs]
         }
 
     @property
@@ -105,7 +127,6 @@ class WowSpec(base.Model):
 
         self.icon = f"specs/{self.full_name_slug}.jpg"
 
-
     def __repr__(self):
         return f"<Spec({self.full_name})>"
 
@@ -118,6 +139,8 @@ class WowSpec(base.Model):
 
     def as_dict(self, **kwargs):
 
+        spell_groups = spells_by_type(self.spells)
+
         data = {
             "name": self.name,
             "name_slug": self.name_slug,
@@ -125,16 +148,8 @@ class WowSpec(base.Model):
             "full_name_slug": self.full_name_slug,
             "role": str(self.role),
             "class": self.wow_class.as_dict(),
-
+            "spells": {group: spell_ids(spells) for group, spells in spell_groups.items()},
         }
-
-        spells = self.spells
-        if not self.wow_class.name_slug == "other":
-            spells = [spell for spell in spells if not spell.spell_type.startswith("other-")]
-
-        if kwargs.get("spells", True):
-            data["spells"] = [spell.as_dict() for spell in spells]
-
         return data
 
     ##########################
@@ -158,11 +173,12 @@ class WowSpell(base.Model):
     # yoink
     ICON_ROOT = "https://wow.zamimg.com/images/wow/icons/medium"
 
+    # TODO: those should be constants somewhere
     TYPE_RAID = "raid"
     TYPE_PERSONAL = "personal"
     TYPE_EXTERNAL = "external"
-    TYPE_TRINKET = "other-trinket"
-    TYPE_POTION = "other-potion"
+    TYPE_TRINKET = "other-trinkets"
+    TYPE_POTION = "other-potions"
 
     def __init__(self, spell_id: int, cooldown: int = 0, duration: int = 0, show: bool = True, **kwargs):
         self.spell_id = spell_id
@@ -186,7 +202,6 @@ class WowSpell(base.Model):
     def __repr__(self):
         return f"<Spell({self.spell_id}, cd={self.cooldown})>"
 
-
     def is_item_spell(self):
         """bool: true if this spell from an item."""
         return self.spell_type in (self.TYPE_TRINKET, self.TYPE_POTION)
@@ -198,6 +213,12 @@ class WowSpell(base.Model):
         if self.spell_type in (self.TYPE_PERSONAL):
             return False
         return True
+
+    @property
+    def group(self):
+        """backport so prev code works. new code should look at self.specs instead."""
+        if self.specs:
+            return self.specs[0]
 
     ##########################
     # Methods

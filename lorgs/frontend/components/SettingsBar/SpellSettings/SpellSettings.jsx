@@ -4,11 +4,13 @@ import { useSelector } from 'react-redux'
 
 import ButtonGroup from './../shared/ButtonGroup.jsx'
 import SpellButton from './SpellButton.jsx'
+import { get_boss } from '../../../store/bosses.js'
 
+// TODO: is this even used anymore?
 
-
-function _create_spell_buttons(spec = {}) {
-    return spec.spells.map(spell => <SpellButton key={`${spec.full_name_slug}/${spell.spell_id}`} spec={spec} spell={spell} />)
+function _create_spell_buttons(spec) {
+    if ( !spec.spells ) { return }
+    return spec.spells.map(spell_id => <SpellButton key={`${spec.full_name_slug}/${spell_id}`} spec={spec} spell_id={spell_id} />)
 }
 
 
@@ -18,7 +20,7 @@ function _create_spell_buttons(spec = {}) {
 
 export function BossSpellsGroup() {
 
-    const boss = useSelector(state => state.boss)
+    const boss = useSelector(state => get_boss(state))
 
     return (
         <ButtonGroup key="boss" name={boss.name} side="left" extra_class="wow-boss">
@@ -35,6 +37,10 @@ function create_spec_group(spec = {}) {
 
     const extra_class = "wow-" + spec.full_name_slug.split("-")[0]  // fixme
 
+
+    const spells = spec.spells || []
+    if (!spells) { return }
+
     return (
         <ButtonGroup key={spec.full_name_slug} name={spec.name} side="left" extra_class={extra_class}>
             {_create_spell_buttons(spec) }
@@ -45,12 +51,13 @@ function create_spec_group(spec = {}) {
 
 export default function SpellSettings() {
 
-    const specs = useSelector(state => state.specs)
+    const specs = useSelector(state =>  state.specs)
+    console.log("SpellSettings", specs)
 
     return (
         <>
             <BossSpellsGroup />
-            {specs.map(spec => create_spec_group(spec))}
+            {Object.values(specs).map(spec => create_spec_group(spec))}
         </>
     )
 }
