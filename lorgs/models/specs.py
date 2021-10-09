@@ -162,7 +162,8 @@ class WowSpec(base.Model):
         kwargs.setdefault("spell_type", self.full_name_slug)
 
         spell = WowSpell(**kwargs)
-        self.spells.append(spell)
+        spell.specs.append(self)
+        self.spells.append(spell)  # Important to keep a ref in memory
 
         return spell
 
