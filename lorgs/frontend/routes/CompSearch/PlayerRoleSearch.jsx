@@ -26,7 +26,8 @@ function RoleSearchInput({role}) {
 /* Group to search by role */
 export default function PlayerRoleSearch() {
 
-    const roles = useSelector(state => state.roles.filter(role => role.id < 1000))
+    let roles = useSelector(state => state.roles)
+    roles = Object.values(roles).filter(role => role.id < 1000)
 
     return (
         <FormGroup name="Roles:" className="player-role-search">

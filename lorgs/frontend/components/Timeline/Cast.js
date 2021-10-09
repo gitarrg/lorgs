@@ -276,7 +276,7 @@ export default class Cast extends Konva.Group {
     }
 
     select(event) {
-        data_store.dispatch({
+        store.dispatch({
             type: constants.EVENT_SPELL_SELECTED,
             payload: {
                 spell_id: this.spell_id,

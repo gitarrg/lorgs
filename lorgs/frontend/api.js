@@ -13,7 +13,6 @@ async function fetch_data(url, params={}) {
 
     if (Object.keys(params).length) {
         let search = new URLSearchParams(params)
-        console.log("params", params, search)
         if (search) {
             url = url + "?" + search
         }

@@ -1,15 +1,20 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
+import { get_spec } from '../../store/specs.js'
 import CountFilterGroup from './SearchCountInput.jsx'
 
 
-function create_spec_search_input(spec) {
+function SpecSearchInput({spec_name}) {
 
-    const icon_path = `/static/images/specs/${spec.full_name_slug}.jpg`
+    const spec = useSelector(state => get_spec(state, spec_name))
+    if (!spec) {
+        // this can happen when the roles are already loaded, but the specs are not (yet)
+        return null
+    }
+
     return <CountFilterGroup
-        key={spec.full_name_slug}
         name={`spec.${spec.full_name_slug}`}
-        icon_path={icon_path}
+        icon_path={spec.icon_path}
         class_name={spec.class.name_slug}
     />
 }
@@ -17,7 +22,7 @@ function create_spec_search_input(spec) {
 function create_spec_search_input_for_role(role) {
     return (
         <div key={role.code} className="player-spec-search-row">
-            {role.specs.map(spec => create_spec_search_input(spec))}
+            {role.specs.map(spec_name => <SpecSearchInput key={spec_name} spec_name={spec_name} /> )}
         </div>
     )
 }
@@ -25,7 +30,9 @@ function create_spec_search_input_for_role(role) {
 
 export default function PlayerSpecSearch() {
 
-    const roles = useSelector(state => state.roles.filter(role => role.id < 1000))
+    let roles = useSelector(state => state.roles)
+    roles = Object.values(roles).filter(role => role.id < 1000)
+
     return (
         <div className="ml-2">
             <h4 className="mb-0">Specs:</h4>
