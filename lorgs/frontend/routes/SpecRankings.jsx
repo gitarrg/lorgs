@@ -12,8 +12,8 @@ import PlayerNamesList from "./../components/PlayerNames/PlayerNamesList.jsx"
 import SpecSettingsBar from './SpecRankings/SpecSettingsBar.jsx';
 import TimelineCanvas from "./../components/Timeline/TimelineCanvas.jsx"
 import { load_fights } from "../store/fights.js"
-import { load_spec } from "../store/specs.js"
-import { load_spells } from '../store/spells.js';
+// import { load_spec } from "../store/specs.js"
+// import { load_spells } from '../store/spells.js';
 
 
 
@@ -23,19 +23,18 @@ import { load_spells } from '../store/spells.js';
 
 export default function SpecRankings() {
 
+    ////////////////////////////////////////////////////////////////////////////
     // Hooks
     const { spec_slug, boss_slug } = useParams();
     const dispatch = useDispatch()
     const is_loading = useSelector(state => state.ui.is_loading)
-
-    // Vars
     const mode = ui_store.MODES.SPEC_RANKING
 
     ////////////////////////////////////////////////////////////////////////////
     // Update State
     //
 
-    /* load global data */
+    /* set current mode */
     React.useEffect(() => {
         dispatch(ui_store.set_mode(mode))
     }, [])
@@ -54,7 +53,6 @@ export default function SpecRankings() {
     // load fights
     React.useEffect(() => {
         dispatch(ui_store.set_values({is_loading: true}))
-        dispatch(load_spells([spec_slug, boss_slug]))
         dispatch(load_fights(mode, {spec_slug, boss_slug}))
     }, [spec_slug, boss_slug])
 
