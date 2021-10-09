@@ -54,57 +54,40 @@ class OldSpecRanking(me.Document):
     }
 
 
+def fix_fight_duration(report, fight):
+    fight.start_time = report.start_time.shift(seconds=fight.start_time.timestamp/1000)
+    end_time = report.start_time.shift(seconds=fight.end_time.timestamp/1000)
+
+    # d = end_time - fight.start_time
+    fight.duration = (end_time.timestamp - fight.start_time.timestamp) * 1000
+
+    print("\tF: s", fight.start_time, "-", end_time, fight.duration)
 
 
-async def load_one_spec_ranking(boss, spec, limit=5):
+def fix_duration(boss=None, spec=None):
+    """Find all Spec Rankings without duration attribute."""
 
-    print("loading", boss, "vs", spec)
-    old_rankings = OldSpecRanking.objects(boss_slug=boss.full_name_slug, spec_slug=spec.full_name_slug).first()
+    old_rankings = OldSpecRanking.objects()
+    if boss:
+        old_rankings = old_rankings.filter(boss_slug=boss.full_name_slug)
+    if spec:
+        old_rankings = old_rankings.filter(spec_slug=spec.full_name_slug)
+    old_rankings = old_rankings.filter(reports__fights__duration__not__exists=1)
+    old_rankings = old_rankings.all()
 
-    # loop over old reports, try to match the keys and set the new ids
-    for report in old_rankings.reports:
-        report.start_time = report.start_time.shift(microseconds=1)  # simply resave
-        for fight in report.fights:
-
-            if fight.duration > 1000:
-                print("fight already converted")
-                continue
-
-            fight.start_time = report.start_time.shift(seconds=fight.start_time.timestamp/1000)
-            end_time = report.start_time.shift(seconds=fight.end_time.timestamp/1000)
-
-            # d = end_time - fight.start_time
-            fight.duration = (end_time.timestamp - fight.start_time.timestamp) * 1000
-
-            print("\tF: s", fight.start_time, "-", end_time, fight.duration)
-            # print("\tF: e", fight.end_time)
-            # print("\tF: d", fight.duration)
+    for ranking in old_rankings:
+        print("R", ranking, ranking.boss_slug, ranking.spec_slug)
+        for report in ranking.reports:
+            print("\t", report, report.report_id)
+            for fight in report.fights:
+                fix_fight_duration(report, fight)
+        ranking.save()
 
 
-    # await ranking.load(limit=limit, clear_old=True)
-    old_rankings.save()
-
-async def load_spec_ranking():
-    ########################################
-    # Vars
-    limit = 60
-    bosses = data.SANCTUM_OF_DOMINATION.bosses[1:]
-    specs = data.SPECS
-        
-    for boss in bosses:
-        # tasks = []
-        for spec in specs:
-            await load_one_spec_ranking(boss, spec, limit=limit)
-        # await asyncio.gather(*tasks)
-
-
-async def main():
-    await load_one_spec_ranking(data.PAINSMITH, data.DEATHKNIGHT_FROST)
-    # await load_spec_ranking()
-    # await remove_invalid()
+def main():
+    fix_duration()
     print("done")
-    
 
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    main()
