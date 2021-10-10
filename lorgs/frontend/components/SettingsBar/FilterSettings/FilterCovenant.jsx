@@ -1,9 +1,9 @@
 import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 import FilterButton from '../shared/FilterButton.jsx'
 import ButtonGroup from '../shared/ButtonGroup.jsx'
-
+import { set_filter } from '../../../store/ui.js'
 
 
 function FilterCovenantButton({covenant}) {
@@ -12,12 +12,7 @@ function FilterCovenantButton({covenant}) {
     const dispatch = useDispatch()
 
     function onClick({value}) {
-
-        dispatch({
-            type: "update_filter",
-            field: covenant_slug,
-            value: !value
-        })
+        dispatch(set_filter({ group: "covenant", name: covenant_slug, value: value }))
     }
 
     return (
@@ -30,7 +25,6 @@ function FilterCovenantButton({covenant}) {
         />
     )
 }
-
 
 
 export default function FilterCovenantGroup() {

@@ -1,6 +1,3 @@
-
-
-
 import React from 'react'
 
 import ButtonGroup from '../shared/ButtonGroup.jsx'
