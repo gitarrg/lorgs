@@ -24,7 +24,7 @@ export default function SpecSettingsBar() {
             {spec && <SpecGroup spec={spec} />}
 
             {/* spacer to push filter settings to the right side */}
-            <div class="ml-auto"></div>
+            <div className="ml-auto"></div>
 
             <FilterSettings />
         </SettingsBar>

@@ -73,10 +73,9 @@ class RaidBoss(base.Model):
             "name_slug": self.name_slug,
             "full_name": self.full_name,
             "full_name_slug": self.full_name_slug,
-            "class": self.wow_class,
+            "class": "boss",
             "spells": [spell.spell_id for spell in self.spells]
         }
-
 
     ##########################
     # Methods
