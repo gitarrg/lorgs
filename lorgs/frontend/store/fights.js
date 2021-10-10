@@ -29,7 +29,27 @@ const SLICE = createSlice({
 
     reducers: {
         set_fights: (state, action) => {
-            return action.payload
+
+
+            // little hack to make sure the first fight always remains visible
+            let fights = action.payload
+            const [first_fight, ...others] = fights
+            if (first_fight) {
+
+                // extract the boss-fight
+                let pinned_fight = {...first_fight}
+                pinned_fight.pinned = true
+                pinned_fight.players = []
+                pinned_fight.boss.pinned = true
+
+                // remove the boss from the original
+                first_fight.boss = {}
+
+                fights = [pinned_fight, first_fight, ...others]
+            }
+
+
+            return fights
         },
     }, // reducers
 

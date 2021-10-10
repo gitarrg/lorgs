@@ -92,7 +92,7 @@ export default class Stage extends Konva.Stage{
             y += row.height() + this.FIGHT_SPACE  // TODO: add FightRow that can have subrows
         })
 
-        this.height(y)
+        this.height(y+1) // 1 extra to show the border
     }
 
     ////////////////////////////////////////////////////////////////////////////

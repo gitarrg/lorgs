@@ -76,10 +76,15 @@ const SLICE = createSlice({
 
         // fight/player filter settings
         filters: {
+
+            // player filters
             role: {},
-            class: {},
+            class: { boss: false },  // for now, bosses are hidden by default (except the pinned ones)
             spec: {},
             covenant: {},
+
+            // fight filters
+            killtime: {min: undefined, max: undefined},
         },
     },
 

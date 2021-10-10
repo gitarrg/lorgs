@@ -6,6 +6,7 @@
 
 import React from 'react'
 import { useDispatch } from 'react-redux'
+import { set_filter } from '../../../store/ui.js';
 import ButtonGroup from '../shared/ButtonGroup.jsx';
 
 
@@ -14,14 +15,19 @@ const KEY_UP = "38"
 const KEY_DOWN = "40"
 
 
-
 function FilterKilltimeInput({name, start=0, placeholder="0:00" }) {
 
+    //////////////////////////
+    // Hooks
+    //
     const ref = React.useRef(null);
     const [text, setText] = React.useState(null); // time as text
     const [seconds, setSeconds] = React.useState(start) // time in seconds
     const dispatch = useDispatch()
 
+    //////////////////////////
+    // Events
+    //
     function handle_input() {
         setText(ref.current.value)
 
@@ -61,21 +67,13 @@ function FilterKilltimeInput({name, start=0, placeholder="0:00" }) {
         const new_text = seconds == start ? null : seconds_to_time(seconds, {padding: false})
         setText(new_text)
 
-        // pass seconds to the context.filters
-        // context.filters = {...context.filters}
-        // context.filters[name] = seconds
-        // context.refresh()
-        // update the context
-        // context.update() // create new object
-
-        dispatch({
-            type: "update_filter",
-            field: name,
-            value: seconds,
-        })
+        dispatch(set_filter({ group: "killtime", name: name, value: seconds }))
     }, [seconds])
 
 
+    //////////////////////////
+    // Render
+    //
     return (
         <input
             ref={ref}
@@ -97,9 +95,9 @@ export default function FilterKilltimeGroup() {
     return (
         <ButtonGroup name="Killtime" side="right">
             <div className="input-group input-group-sm killtime_input">
-                <FilterKilltimeInput name="killtime_min" placeholder="0:00" />
+                <FilterKilltimeInput name="min" placeholder="0:00" />
                 <span className="input-group-text">-</span>
-                <FilterKilltimeInput name="killtime_max" placeholder="9:00" start={9*60} />
+                <FilterKilltimeInput name="max" placeholder="9:00" start={9*60} />
             </div>
         </ButtonGroup>
     )
