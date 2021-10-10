@@ -8,10 +8,18 @@ import * as ui_store from "../store/ui.js"
 import LoadingOverlay from "./../components/shared/LoadingOverlay.jsx"
 import Navbar from "./../components/Navbar/Navbar.jsx"
 import PlayerNamesList from "./../components/PlayerNames/PlayerNamesList.jsx"
+import SpecRankingsHeader from './SpecRankings/SpecRankingsHeader.jsx';
 import SpecSettingsBar from './SpecRankings/SpecSettingsBar.jsx';
 import TimelineCanvas from "./../components/Timeline/TimelineCanvas.jsx"
 import { load_fights } from "../store/fights.js"
-import SpecRankingsHeader from './SpecRankings/SpecRankingsHeader.jsx';
+import { get_boss } from '../store/bosses.js';
+import { get_spec } from '../store/specs.js';
+
+
+function update_title(boss, spec) {
+    if (!boss || !spec) { return }
+    document.title = `Lorrgs: ${spec.full_name} vs. ${boss.full_name}`
+}
 
 
 
@@ -26,31 +34,26 @@ export default function SpecRankings() {
     const { spec_slug, boss_slug } = useParams();
     const dispatch = useDispatch()
     const is_loading = useSelector(state => state.ui.is_loading)
+    const boss = useSelector(state => get_boss(state, boss_slug))
+    const spec = useSelector(state => get_spec(state, spec_slug))
+
+    // const
     const mode = ui_store.MODES.SPEC_RANKING
 
     ////////////////////////////////////////////////////////////////////////////
     // Update State
     //
 
-    /* set current mode */
-    React.useEffect(() => {
-        dispatch(ui_store.set_mode(mode))
-    }, [])
+    /* set UI values */
+    React.useEffect(() => { dispatch(ui_store.set_mode(mode)) }, [])
+    React.useEffect(() => { dispatch(ui_store.set_values({boss_slug: boss_slug})) }, [boss_slug])
+    React.useEffect(() => { dispatch(ui_store.set_values({spec_slug: spec_slug})) }, [spec_slug])
 
-    // set current boss
-    React.useEffect(() => {
-        dispatch(ui_store.set_values({boss_slug: boss_slug}))
-    }, [boss_slug])
-
-    // load and set current spec
-    React.useEffect(() => {
-        // dispatch(load_spec(spec_slug))
-        dispatch(ui_store.set_values({spec_slug: spec_slug}))
-    }, [spec_slug])
+    // update title once boss & spec are loaded
+    React.useEffect(() => { update_title(boss, spec)  }, [boss, spec])
 
     // load fights
     React.useEffect(() => {
-        dispatch(ui_store.set_values({is_loading: true}))
         dispatch(load_fights(mode, {spec_slug, boss_slug}))
     }, [spec_slug, boss_slug])
 
