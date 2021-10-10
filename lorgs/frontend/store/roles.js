@@ -51,7 +51,9 @@ export default SLICE.reducer
 export function load_roles() {
 
     return async dispatch => {
+        dispatch({type: "ui/set_loading", key: "roles", value: true})
         const roles = await API.load_roles()
         dispatch(set_roles(roles))
+        dispatch({type: "ui/set_loading", key: "roles", value: false})
     }
 }

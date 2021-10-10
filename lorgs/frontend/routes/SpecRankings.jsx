@@ -33,9 +33,11 @@ export default function SpecRankings() {
     // Hooks
     const { spec_slug, boss_slug } = useParams();
     const dispatch = useDispatch()
-    const is_loading = useSelector(state => state.ui.is_loading)
+    const is_loading = useSelector(state => ui_store.get_is_loading(state))
     const boss = useSelector(state => get_boss(state, boss_slug))
     const spec = useSelector(state => get_spec(state, spec_slug))
+
+    console.log("is_loading", is_loading)
 
     // const
     const mode = ui_store.MODES.SPEC_RANKING
