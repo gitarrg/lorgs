@@ -52,21 +52,6 @@
         max-width: 4ch;
         background-color: #ccc;
     }
-
-    /*set default colors/backgrounds*/
-    input2, selec2t {
-        background-color: hsl(0, 0%, 40%);
-        color: rgb(240, 240, 240);
-
-        border: 1px solid black;
-
-        &:focus {
-            background-color: hsl(0, 0%, 45%);
-            color: white;
-            font-weight: bold;
-        }
-    }
-
 }
 
 

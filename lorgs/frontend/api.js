@@ -27,7 +27,7 @@ async function fetch_data(url, params={}) {
     if (response.status != 200) {
         return {}
     }
-    return await response.json()
+    return response.json()
 }
 
 
@@ -49,7 +49,7 @@ API.load_specs = async function({include_spells = false} = {}) {
 
 
 API.load_spec = async function(spec_slug) {
-    return await fetch_data(`/api/specs/${spec_slug}`);
+    return fetch_data(`/api/specs/${spec_slug}`);
 }
 
 
@@ -67,7 +67,7 @@ API.load_bosses = async function() {
 
 
 API.load_boss = async function(boss_slug) {
-    return await fetch_data(`/api/boss/${boss_slug}`);
+    return fetch_data(`/api/boss/${boss_slug}`);
 }
 
 
@@ -82,7 +82,7 @@ API.load_spells = async function(groups = []) {
     let params = new URLSearchParams(groups.map(g => ["group", g]))
     let url ="/api/spells?" + params
 
-    return await fetch_data(url);
+    return fetch_data(url);
 }
 
 

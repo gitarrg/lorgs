@@ -9,7 +9,7 @@ import { useWatch } from "react-hook-form";
 import { get_boss } from '../../store/bosses.js';
 
 
-export default function BossSelection({}) {
+export default function BossSelection() {
 
     let header_content = <div className="text-muted">select a boss</div>
 

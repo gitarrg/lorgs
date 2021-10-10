@@ -2,34 +2,15 @@
 
 import React from 'react'
 import { useHistory } from 'react-router-dom';
-import { batch } from 'react-redux'
 import { useForm, FormProvider } from "react-hook-form";
 
-import API from '../api.js'
 import BossSelect from './CompSearch/BossSelect.jsx'
 import BossSelection from './CompSearch/BossSelection.jsx'
 import PlayerRoleSearch from './CompSearch/PlayerRoleSearch.jsx'
 import PlayerSelection from './CompSearch/PlayerSelection.jsx'
 import PlayerSpecSearch from './CompSearch/PlayerSpecSearch.jsx'
 import SearchSubmitButton from './CompSearch/SearchSubmitButton.jsx'
-import data_store from "./../store/store.js"
 
-
-async function load_global_data() {
-
-    const [bosses, roles, specs] = await Promise.all([
-        API.load_bosses(),
-        API.load_roles(),
-    ])
-
-    batch(() => {
-        data_store.dispatch({type: "update_value", field: "bosses", value: bosses})
-        data_store.dispatch({type: "update_value", field: "roles", value: roles})
-    })
-
-    // needs to rebuild when the nav bar changes
-    // ReactTooltip.rebuild()
-}
 
 /* Takes the form data dict and generates the search string.*/
 function build_search_string(from_data) {
@@ -48,7 +29,8 @@ function build_search_string(from_data) {
     })
     return search.toString()
 }
- 
+
+
 /* Generate the new url from the form data.*/
 function build_new_url(data) {
 

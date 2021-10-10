@@ -45,7 +45,7 @@ function FilterKilltimeInput({name, start=0, placeholder="0:00" }) {
 
         const change = CHANGE_RATE * (event.deltaY > 0 ? -1 : 1)
         update_seconds(change)
-    };
+    }
 
     // setting "onWheel"-property had passive event listener issues
     React.useEffect(() => {
@@ -54,10 +54,9 @@ function FilterKilltimeInput({name, start=0, placeholder="0:00" }) {
         return () => {
             element.removeEventListener("wheel", handleWheel);
         };
-    }, []);
+    }, [])
 
     function handleKeyDown(event) {
-        event = event || window.event;
         if (event.keyCode == KEY_UP)   { update_seconds(+CHANGE_RATE) }
         if (event.keyCode == KEY_DOWN) { update_seconds(-CHANGE_RATE) }
     }

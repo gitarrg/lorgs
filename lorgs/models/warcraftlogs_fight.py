@@ -6,7 +6,6 @@ import typing
 # IMPORT THIRD PARTY LIBRARIES
 import arrow
 import mongoengine as me
-import mongoengine_arrow
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import data
@@ -16,6 +15,7 @@ from lorgs.models.encounters import RaidBoss
 from lorgs.models.specs import WowSpec
 from lorgs.models.warcraftlogs_actor import Boss
 from lorgs.models.warcraftlogs_actor import Player
+from lorgs.lib import mongoengine_arrow
 
 
 def get_composition(players: typing.List[Player]) -> dict:
@@ -202,7 +202,6 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
 
         total_damage = players_data.get("damageDone", [])
         total_healing = players_data.get("healingDone", [])
-        death_events = players_data.get("deathEvents", [])
 
         for composition_data in players_data.get("composition", []):
 

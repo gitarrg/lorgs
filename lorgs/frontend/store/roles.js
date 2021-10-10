@@ -8,13 +8,9 @@ import API from '../api.js'
 //
 
 export function get_roles(state) {
-
     return state.roles
-
-    let roles = Object.values(state.roles)
-    roles = roles.filter(role => role.id <= 1000) // filter out data roles
-    return roles
 }
+
 
 export function get_role(state, role_name) {
     return state.roles[role_name]

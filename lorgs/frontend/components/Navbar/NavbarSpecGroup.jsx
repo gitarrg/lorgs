@@ -12,8 +12,6 @@ function SpecButton({spec_slug}) {
     const boss_slug = useSelector(state => state.ui.boss_slug)
     const spec = useSelector(state => get_spec(state, spec_slug))
 
-    // const state = data_store.getState() // not using hook to avoid some event listeners
-    // const spec = get_spec(state, spec_slug)
     if (!spec) { return <p>nope: {spec_slug}</p>}
 
     const class_name = spec.class.name_slug
@@ -38,7 +36,6 @@ function SpecButton({spec_slug}) {
 
 function SpecsDropdown({specs}) {
 
-    // <div class="ranking-nav-role-specs bg-dark border rounded"></div>
     return (
         <div className="nav_dropdown__content specs_nav_dropdown bg-dark border rounded">
             <div className="p-2 d-grid gap-1">
