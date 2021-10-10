@@ -21,7 +21,6 @@ export default function TimelineCanvas(props) {
     const mode = useSelector(state => state.ui.mode)
     const is_loading = useSelector(state => state.ui.is_loading)
     const fights = useSelector(state => get_fights(state))
-    // const spells = useSelector(state => get_spells(state))
 
     const ui_settings = useSelector(state => state.ui)
     const spell_display = useSelector(state => state.spells.spell_display)

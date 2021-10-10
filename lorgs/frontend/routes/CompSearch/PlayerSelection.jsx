@@ -15,6 +15,8 @@ export default function PlayerSelection() {
     const specs = useWatch({name: "spec"})
 
     // Build Content
-    let header_content = <CompPreview roles={roles} specs={specs} placeholder="any comp"/>
-    return <h1 className="m-0 mr-auto">{header_content}</h1>
+    const placeholder = <h1>any comp</h1>
+    let header_content = <CompPreview roles={roles} specs={specs} placeholder={placeholder} />
+
+    return header_content
 }

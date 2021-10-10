@@ -48,9 +48,6 @@ export default class Stage extends Konva.Stage{
         this.overlay_layer = new Konva.Layer()
         this.add(this.overlay_layer);
 
-        // this.debug_layer = new Konva.Layer()
-        // this.add(this.debug_layer);
-
         this.ruler = new Ruler(this);
         this.back_layer.add(this.ruler)
 
