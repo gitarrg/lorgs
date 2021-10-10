@@ -5,12 +5,12 @@ import { useSelector, useDispatch } from 'react-redux'
 
 import * as ui_store from "../store/ui.js"
 import CompSettingsBar from './CompRankings/CompSettingsBar.jsx';
-import Header from "./../components/Header.jsx"
 import LoadingOverlay from "./../components/shared/LoadingOverlay.jsx"
 import Navbar from "./../components/Navbar/Navbar.jsx"
 import PlayerNamesList from "./../components/PlayerNames/PlayerNamesList.jsx"
 import TimelineCanvas from "./../components/Timeline/TimelineCanvas.jsx"
 import { load_fights } from '../store/fights.js';
+import CompRankingsHeader from './CompRankings/CompRankingsHeader.jsx';
 
 
 
@@ -66,7 +66,7 @@ export default function CompRankings() {
     return (
         <>
             <div className="mt-3 flex-row d-flex flex-wrap-reverse">
-                <Header />
+                <CompRankingsHeader />
                 <Navbar />
             </div>
 

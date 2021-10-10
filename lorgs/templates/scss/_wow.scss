@@ -1,5 +1,42 @@
 
 
+:root {
+    --wow-deathknight: #C41E3A;
+    --wow-demonhunter: #A330C9;
+    --wow-druid: #FF7C0A;
+    --wow-hunter: #AAD372;
+    --wow-mage: #3FC7EB;
+    --wow-monk: #00FF98;
+    --wow-paladin: #F48CBA;
+    --wow-priest: #FFFFFF;
+    --wow-rogue: #FFF468;
+    --wow-shaman: #0070DD;
+    --wow-warlock: #8788EE;
+    --wow-warrior: #C69B6D;
+
+    --wow-other: #888;
+    --wow-boss: hsl(175, 50%, 60%);
+
+    --wow-tank: #1980e0;
+    --wow-heal: #4dcf29;
+    --wow-mdps: #C41E3A;
+    --wow-rdps: #ffb405;
+
+    --wow-kyrian: LightSkyBlue;
+    --wow-venthyr: FireBrick;
+    --wow-nightfae: #8d5ca1;
+    --wow-necrolord: MediumSeaGreen;
+
+    --wow-common: #ccc;
+    --wow-uncommon: #0f8000;
+    --wow-rare: #0070ff;
+    --wow-epic: rgb(163,53,238);
+    --wow-legendary: rgb(255,128,0);
+    --wow-astounding: rgb(226,104,168);
+    --wow-artifact: rgb(229,204,128);
+}
+
+
 /* Colors yoinked from Warcraftlogs*/
 $qualities: (
     "common": #ccc,
@@ -14,49 +51,73 @@ $qualities: (
 
 @each $name, $color in $qualities {
     .text-#{$name} {color: $color;}
-    .bg-#{$name} {background: $color}
 }
 
 
 $classes: (
-    "deathknight": #C41E3A,
-    "demonhunter": #A330C9,
-    "druid": #FF7C0A,
-    "hunter": #AAD372,
-    "mage": #3FC7EB,
-    "monk": #00FF98,
-    "paladin": #F48CBA,
-    "priest": #FFFFFF,
-    "rogue": #FFF468,
-    "shaman": #0070DD,
-    "warlock": #8788EE,
-    "warrior": #C69B6D,
+    // qualities
+    "common",
+    "uncommon",
+    "rare",
+    "epic",
+    "legendary",
+    "astounding",
+    "artifact",
 
-    "other": #888,
-    "boss": hsl(175, 50%, 60%),
+    // classes
+    "deathknight",
+    "demonhunter",
+    "druid",
+    "hunter",
+    "mage",
+    "monk",
+    "paladin",
+    "priest",
+    "rogue",
+    "shaman",
+    "warlock",
+    "warrior",
+    "other",
+    "boss",
 
-    "tank": #1980e0,
-    "heal": #4dcf29,
-    "mdps": #C41E3A,
-    "rdps": #ffb405,
+    // roles
+    "tank",
+    "heal",
+    "mdps",
+    "rdps",
 
-    "kyrian": LightSkyBlue,
-    "venthyr": FireBrick,
-    "nightfae": #8d5ca1,
-    "necrolord": MediumSeaGreen,
+    // covenants
+    "kyrian",
+    "venthyr",
+    "nightfae",
+    "necrolord",
 );
 
 
-@each $name, $color in $classes {
+@each $name in $classes {
 
     .wow-#{$name} {
-        color: $color;
-        text-decoration-color: $color;
+        --wow-color: var(--wow-#{$name});
+        color: var(--wow-#{$name});
+        text-decoration-color: var(--wow-#{$name});
     }
 
-    .wow-bg-#{$name} {background-color: $color;}
-    .wow-border-#{$name} {border: 1px solid $color;}
+    .wow-border-#{$name} {
+        border: 1px solid var(--wow-#{$name});
+    }
+    // .wow-bg-#{$name} {background-color: $color;} // Never used so far
 }
+
+// to be used with eg.: ".wow-druid"
+.wow-text {
+    color: var(--wow-color);
+    text-decoration-color: var(--wow-color);
+}
+
+.wow-border {
+    border: 1px solid var(--wow-color);
+}
+
 
 // slightly tuned down the colors for Hunter and Monk
 // .wow-bg-hunter {background-color: #7e9c54}

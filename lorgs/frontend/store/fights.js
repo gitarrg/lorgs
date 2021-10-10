@@ -52,6 +52,7 @@ export function load_fights(mode, {boss_slug, spec_slug, search}) {
         switch (mode) {
             case MODES.SPEC_RANKING:
                 fights = await API.load_spec_rankings(spec_slug, boss_slug)
+                break;
             case MODES.COMP_RANKING:
                 fights = await API.load_comp_rankings(boss_slug, search)
             default:

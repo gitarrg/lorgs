@@ -1,0 +1,58 @@
+
+
+
+.comp-preview {
+
+    display: flex;
+    gap: 0.5rem;
+}
+
+
+.comp-preview__icon {
+    position: relative;
+
+    // display: flex;
+    // align-items: center;
+    border: 1px solid yellow;
+    height: 3.23rem; // icon-l height
+
+
+    overflow: hidden;  // hide blurred edges
+
+    img {
+        vertical-align: top; // align inside the div
+        filter: blur(1px);
+    }
+
+    &.excluded {
+        img {
+            filter: blur(1px) saturate(0);
+        }
+        color: red;
+    }
+}
+
+
+// text label above the icon
+.comp-preview__label {
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    // bottom: 7px;
+    // right: 3px;
+    transform: translate(-50%, -50%); // tiny offset because font not centered
+    // border: 1px solid lime;
+
+    width: 3.25rem;
+    height: 3.25rem;
+    text-align: center;
+
+    font-size: 2.5rem;
+    font-weight: bolder;
+
+    // text outline
+    // -webkit-text-fill-color: white; /* Will override color (regardless of order) */
+    -webkit-text-stroke: 1px black;
+    text-shadow: 0px 0px 5px black;
+}
