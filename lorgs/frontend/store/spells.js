@@ -41,15 +41,17 @@ export const get_spells_by_type = createSelector(
 )
 
 
-// export function get_spells_by_type(state, spell_type) {
-//     const all_spells = Object.values(state.spells.all_spells)
-//     return all_spells.filter(spell => spell.spell_type == spell_type)
-// }
-
-
 export function get_spell_visible(state, spell_id) {
     // undefined is considered true in this case
     return state.spells.spell_display[spell_id] !== false;
+}
+
+/* check if a given spell was ever used.
+   Used to eg.: avoid creating spell buttons for ever possible trinket,
+   even if nobody is using it.
+*/
+export function get_used_spells(state) {
+    return state.spells.used_spell_ids
 }
 
 
