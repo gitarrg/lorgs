@@ -191,7 +191,9 @@ export default SLICE.reducer
 export function load_spells(groups = []) {
 
     return async dispatch => {
+        dispatch({type: "ui/set_loading", key: "spells", value: true})
         const spells = await API.load_spells(groups)
         dispatch(set_spells(spells))
+        dispatch({type: "ui/set_loading", key: "spells", value: false})
     }
 }

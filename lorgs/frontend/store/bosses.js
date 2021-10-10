@@ -73,7 +73,11 @@ export default SLICE.reducer
 export function load_bosses() {
 
     return async dispatch => {
+
+        dispatch({type: "ui/set_loading", key: "bosses", value: true})
+
         const bosses = await API.load_bosses()
         dispatch(set_bosses(bosses))
+        dispatch({type: "ui/set_loading", key: "bosses", value: false})
     }
 }

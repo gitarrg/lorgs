@@ -73,8 +73,10 @@ export default SLICE.reducer
 export function load_specs() {
 
     return async dispatch => {
+        dispatch({type: "ui/set_loading", key: "specs", value: true})
         const specs = await API.load_specs()
         dispatch(set_specs(specs))
+        dispatch({type: "ui/set_loading", key: "specs", value: false})
     }
 }
 

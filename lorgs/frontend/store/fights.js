@@ -66,6 +66,9 @@ export default SLICE.reducer
 export function load_fights(mode, {boss_slug, spec_slug, search}) {
 
     return async dispatch => {
+
+        dispatch({type: "ui/set_loading", key: "fights", value: true})
+
         // load
         let fights = []
         switch (mode) {
@@ -81,6 +84,6 @@ export function load_fights(mode, {boss_slug, spec_slug, search}) {
 
         // set
         dispatch(set_fights(fights))
-        dispatch(set_values({is_loading: false}))
+        dispatch({type: "ui/set_loading", key: "fights", value: false})
     } // async dispatch
 }

@@ -1,10 +1,10 @@
 
 import React from "react";
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 
 import * as constants from "./constants.js";
 import Stage from "./Stage.js"
-import { MODES } from "../../store/ui.js";
+import { get_is_loading, MODES } from "../../store/ui.js";
 import { get_fights } from "../../store/fights.js";
 
 
@@ -14,12 +14,15 @@ export default function TimelineCanvas(props) {
     //////////////////////////////////////
     // HOOKS
     //
+    const dispatch = useDispatch()
     const ref = React.useRef() // container div for the canvas
     const stage_ref = React.useRef() // canvas itself
 
     // state vars
     const mode = useSelector(state => state.ui.mode)
-    const is_loading = useSelector(state => state.ui.is_loading)
+    const is_loading = useSelector(state => get_is_loading(state))
+    const fights_loading = useSelector(state => get_is_loading(state, "fights"))
+    const spells_loading = useSelector(state => get_is_loading(state, "spells"))
     const fights = useSelector(state => get_fights(state))
 
     const ui_settings = useSelector(state => state.ui)
@@ -33,6 +36,7 @@ export default function TimelineCanvas(props) {
 
     // initial creation
     React.useEffect(() => {
+        dispatch({type: "ui/set_loading", key: "stage", value: true})
         stage_ref.current = new Stage({container: ref.current})
     }, [])
 
@@ -42,16 +46,17 @@ export default function TimelineCanvas(props) {
     }, [mode])
 
     React.useEffect(() => {
-
-        if (is_loading) { return }
-
-        // TODO: set or at least check for spells
-        // console.log("canvas: loading done!", fights)
+        // not ready yet
+        if (fights_loading || spells_loading) { return }
         stage_ref.current.set_fights(fights)
         stage_ref.current.handle_event(constants.EVENT_APPLY_FILTERS, filters)
+        dispatch({type: "ui/set_loading", key: "stage", value: false})
 
-    }, [fights, is_loading])
+    }, [fights_loading, spells_loading])
 
+    React.useEffect(() => {
+
+    }, [is_loading])
 
     // Pass trough UI Settings like "show_cooldown", "show_duration"
     React.useEffect(() => {

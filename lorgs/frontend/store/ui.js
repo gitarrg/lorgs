@@ -30,6 +30,16 @@ export function get_filter_value(state, attr_name) {
 }
 
 
+export function get_is_loading(state, key) {
+
+    if (key) {
+        return state.ui._loading[key]
+    }
+    return Object.values(state.ui._loading).some(v => v == true)
+
+}
+
+
 /* add a prefix to the input, to aid with sorting */
 function _sort_spell_type_sort_key(spell_type) {
 
@@ -63,7 +73,8 @@ const SLICE = createSlice({
 
     initialState: {
         mode: MODES.NONE,
-        is_loading: true,
+
+        _loading: {}, // elements that are loading
 
         spec_slug: undefined, // currently selected spec
         boss_slug: undefined, // currently selected boss
@@ -100,9 +111,9 @@ const SLICE = createSlice({
             return { ...state, ...action.payload}
         },
 
+        // Filters
         set_filter: (state, action) => {
             const { group, name, value } = action.payload
-
             state.filters[group] = state.filters[group] || {}
             state.filters[group][name] = value
             // state.filters = {...state.filters, ...action.payload}
@@ -111,6 +122,12 @@ const SLICE = createSlice({
 
         set_filters: (state, action) => {
             state.filters = {...state.filters, ...action.payload}
+            return state
+        },
+
+        // loading
+        set_loading: (state, {key, value}) => {
+            state._loading[key] = value
             return state
         },
 
