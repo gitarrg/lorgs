@@ -2,8 +2,6 @@ import Konva from "konva"
 
 
 import Ruler from "./Ruler.js"
-import Spell from "./Spell.js"
-import PlayerRow from "./PlayerRow.js";
 import * as constants from "./constants.js";
 import FightRow from "./FightRow.js";
 
@@ -152,11 +150,16 @@ export default class Stage extends Konva.Stage{
     _handle_check_images_loaded() {
         // Emit a EVENT_IMAGES_LOADED event once all images have been loaded.
         // until then, periodically emit new "check"-events
-        const has_pending = false; //this.rows.some(row => row.foreground.casts.some(cast => cast.image_is_loaded == false))
-        if (has_pending) {
+        const cast_icons = this.find(".cast_icon") // finds them by name
+        const is_loading = cast_icons.some(icon => icon.loading)
+
+        // try again later
+        if (is_loading) {
             setTimeout(() => { this.handle_event(constants.EVENT_CHECK_IMAGES_LOADED) }, 200)
             return
         }
+
+        // update now
         this.handle_event(constants.EVENT_IMAGES_LOADED)
     }
 
@@ -181,13 +184,6 @@ export default class Stage extends Konva.Stage{
     ////////////////////////////////////////////////////////////////////////////
     // LOAD
     //
-
-    set_spells(spells) {
-        // create Spell Instances
-        Object.values(spells).forEach(spell => {
-            this.spells[spell.spell_id] = new Spell(this, spell);
-        })
-    }
 
     set_fights(new_fights) {
 
