@@ -7,6 +7,7 @@ import ButtonGroup from '../shared/ButtonGroup.jsx'
 import SpellButton from './SpellButton.jsx'
 import { get_spec } from '../../../store/specs.js'
 import { sort_spell_types } from '../../../store/ui.js'
+import { get_used_spells } from '../../../store/spells.js'
 
 
 // spell types that will be combined with the main spec
@@ -27,6 +28,10 @@ function SpellTypeGroup({spec, spell_type}) {
     const type_spec = useSelector(state => get_spec(state, spell_type))
     spec = type_spec || spec
     const extra_class = "wow-" + spec.class.name_slug
+
+    const was_used_spells = useSelector(state => get_used_spells(state))
+    spells = spells.filter(spell_id =>  was_used_spells.includes(spell_id))
+    if (spells.length == 0) { return null}
 
     return (
         <ButtonGroup name={spec.name} side="left" extra_class={extra_class}>
