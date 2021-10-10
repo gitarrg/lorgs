@@ -47,3 +47,4 @@ const LORRGS_DEBUG = {{ "true" if config.LOCAL_FILES else "false" }}
 
 {# local js #}
 <script defer src="{{url_for('static',filename='_generated/app.js')}}?tag={{config.BUILD_TAG}}"></script>
+<script defer src="{{url_for('static',filename='_generated/vendor.js')}}?tag={{config.BUILD_TAG}}"></script>

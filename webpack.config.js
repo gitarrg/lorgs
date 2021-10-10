@@ -2,6 +2,7 @@
 // Imports
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const path = require("path")
 
 // Constants
@@ -59,6 +60,20 @@ module.exports = {
 
     // for testing
     optimization: {
+
+        usedExports: true,  // tree shacking
+
+        splitChunks: {
+            cacheGroups: {
+                // group for all the node modules
+                vendors: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: "vendor",
+                    chunks: "all",
+                }
+            }
+        },
+
         minimize: process.env.NODE_ENV == "production",
         minimizer: [new TerserPlugin({
             terserOptions: {
@@ -71,5 +86,6 @@ module.exports = {
 
     plugins: [
         new MiniCssExtractPlugin(),
+        // new BundleAnalyzerPlugin(),
     ],
 }
