@@ -21,7 +21,7 @@ function NavbarGroup({children, className}) {
     )
 }
 
-function NavbarBossGroup({ }) {
+function NavbarBossGroup() {
     const bosses = useSelector(state => get_bosses(state))
 
     return (

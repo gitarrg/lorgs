@@ -59,25 +59,6 @@ export default class Player extends Konva.Group {
             this.cache() // TODO: add throttle?
         }
         return
-
-        console.log("schedule_cache")
-
-        if (this.schedule_cache_timer) {
-            // console.log("schedule_cache -- > clear")
-            return
-            //clearTimeout(this.schedule_cache_timer)
-        }
-
-        this.clearCache() // clear to make sure we update (even if eg: all children are hidden)
-        console.log("schedule_cache -- > create")
-        this.schedule_cache_timer = setTimeout(() => {
-            // fixme: breaks hover(again)
-            console.log("schedule_cache -- > run")
-            if (this.hasChildren()) {
-                this.cache() // TODO: add throttle?
-            }
-            this.schedule_cache_timer = undefined
-        }, 1000)
     }
 
     //////////////////////////////

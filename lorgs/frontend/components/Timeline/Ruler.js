@@ -179,9 +179,6 @@ export default class Ruler extends Konva.Group {
 
     }
 
-    create() {};
-
-
     create_ticks() {
 
         // reset
@@ -237,9 +234,6 @@ export default class Ruler extends Konva.Group {
     update_duration(new_duration) {
         this.duration = new_duration;
         this.create_ticks()
-        // this.update_width()
-        // this._handle_zoom_change(DEFAULT_ZOOM)
-        // this.cache()
     }
 
     update() {

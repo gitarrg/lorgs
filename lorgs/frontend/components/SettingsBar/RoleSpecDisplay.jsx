@@ -51,10 +51,6 @@ function SpecDisplayButton({spec_slug}) {
 
 
 export function RoleSpecsGroup({role}) {
-
-    // const show_role = useSelector(state => state.filters[role.code])
-    // if (show_role === false) { return null}
-
     return (
         <ButtonGroup name={role.name} side="left" extra_class={`wow-${role.code}`}>
             { role.specs.map(spec_slug => <SpecDisplayButton key={spec_slug} spec_slug={spec_slug} /> )}

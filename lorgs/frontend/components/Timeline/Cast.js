@@ -109,8 +109,6 @@ export default class Cast extends Konva.Group {
         // Internal Attrs
         this.hovering = false
         this.selected = false // cached value to avoid reading from redux all the time
-        this.tooltip;
-        this.tooltip_timer;
 
 
         ////////////////////////////

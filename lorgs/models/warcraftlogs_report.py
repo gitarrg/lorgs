@@ -6,7 +6,6 @@ import datetime
 # IMPORT THIRD PARTY LIBRARIES
 import arrow
 import mongoengine as me
-import mongoengine_arrow
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import data
@@ -14,6 +13,7 @@ from lorgs import utils
 from lorgs.models import warcraftlogs_base
 from lorgs.models.warcraftlogs_actor import Boss
 from lorgs.models.warcraftlogs_fight import Fight
+from lorgs.lib import mongoengine_arrow
 
 
 class Report(warcraftlogs_base.EmbeddedDocument):

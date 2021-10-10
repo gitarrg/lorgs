@@ -6,8 +6,7 @@ import os
 
 import arrow
 import mongoengine as me
-import mongoengine_arrow
-
+from lorgs.lib import mongoengine_arrow
 
 import dotenv
 dotenv.load_dotenv() # pylint: disable=wrong-import-position

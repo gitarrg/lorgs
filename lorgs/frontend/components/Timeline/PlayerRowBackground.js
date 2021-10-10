@@ -2,7 +2,7 @@
 import * as constants from "./constants.js"
 
 
-export default class FightBackground extends Konva.Group {
+export default class PlayerRowBackground extends Konva.Group {
 
     constructor(row) {
         super()

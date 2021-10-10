@@ -1,9 +1,8 @@
 
-import { createSlice, createSelector } from '@reduxjs/toolkit'
-// import { createSelector } from 'reselect'
+import { createSlice } from '@reduxjs/toolkit'
 
 import API from '../api.js'
-import { get_filters, MODES, set_values } from './ui.js'
+import { MODES, set_values } from './ui.js'
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -75,6 +74,7 @@ export function load_fights(mode, {boss_slug, spec_slug, search}) {
                 break;
             case MODES.COMP_RANKING:
                 fights = await API.load_comp_rankings(boss_slug, search)
+                break;
             default:
                 break;
         } // switch

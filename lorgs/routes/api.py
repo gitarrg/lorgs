@@ -93,15 +93,6 @@ async def load_spec_rankings(spec_slug, boss_slug):
 #
 ###############################################################################
 
-"""
-@blueprint.route("/comp_ranking/<string:name>")
-def comp(name):
-    comp = warcraftlogs_comps.CompConfig.objects(name=name).first()
-    if not comp:
-        flask.abort(404, description="Comp not found")
-    return comp.as_dict()
-"""
-
 
 @blueprint.route("/comp_ranking/<string:boss_slug>")
 @cache.cached(query_string=True)

@@ -41,11 +41,8 @@ def get_roles():
 @blueprint.get("/specs")
 @cache.cached(query_string=True)
 def get_specs_all():
-    include_spells = flask.request.args.get("include_spells", default=False, type=json.loads)
-    include_spells = True
-
     all_specs = sorted(specs.WowSpec.all)
-    all_specs = [specs.as_dict(spells=include_spells) for specs in all_specs]
+    all_specs = [specs.as_dict(spells=True) for specs in all_specs]
     return {"specs": all_specs}
 
 
