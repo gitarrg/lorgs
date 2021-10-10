@@ -37,12 +37,13 @@ function create_cast_duration(spell) {
 
 function create_cast_icon(spell) {
 
+    // is the browser smart enough to not load the same image 100x?
     const image_obj = new Image();
     image_obj.src = spell.icon_path
 
     // create the konva image
     const icon = new Konva.Image({
-        name: "icon",
+        name: "cast_icon",
         image: image_obj,
         listening: false,
         x: 3.5, // padding
@@ -55,12 +56,10 @@ function create_cast_icon(spell) {
         perfectDrawEnabled: false,
     })
 
-    // load the actual image
-    // image_obj.onload = () => {
-    //     console.log("is cached", icon.isCached())
-    //     // icon.cache()
-    // }
-    // image_obj.src = spell.icon_path
+    icon.loading = image_obj.loading // custom flag to check is the img was loaded
+    image_obj.onload = () => {
+        icon.loading = false
+    }
 
     return icon
 }
@@ -94,7 +93,6 @@ export default class Cast extends Konva.Group {
         this.listening(true)
         this.transformsEnabled("position")
         this.name("Cast")
-        // this.stage = stage
 
         // get redux store
         const state = store.getState()
@@ -113,7 +111,6 @@ export default class Cast extends Konva.Group {
         this.selected = false // cached value to avoid reading from redux all the time
         this.tooltip;
         this.tooltip_timer;
-        this.image_is_loaded = false
 
 
         ////////////////////////////
@@ -127,11 +124,6 @@ export default class Cast extends Konva.Group {
 
         this.cast_icon = create_cast_icon(this.spell)
         this.cast_icon && this.add(this.cast_icon)
-        // this.cast_icon && this.cast_icon.cache()
-
-        this.cast_icon.image().onload = () => {
-            this.image_is_loaded = true
-        }
 
         this.cast_text = create_cast_text(this)
         this.cast_text && this.add(this.cast_text)
