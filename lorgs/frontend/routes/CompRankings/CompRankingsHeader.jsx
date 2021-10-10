@@ -15,8 +15,6 @@ function parse_comp_search_string(search) {
     const result = {}
     const params = new URLSearchParams(search)
     for(let [group, value] of params.entries()) {
-        console.log("SP", group, "=", value)
-
         group = `${group}s` // pluralize "role" --> "roles"
         let [key, op, count] = value.split(".") // assume "tank.eq.2"
 
@@ -24,8 +22,6 @@ function parse_comp_search_string(search) {
         result[group] = result[group] || {}
         result[group][key] = {op, count}
     }
-
-    console.log("result", result)
     return result
 }
 

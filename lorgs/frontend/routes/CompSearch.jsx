@@ -43,9 +43,22 @@ function build_new_url(data) {
 
 export default function CompSearch() {
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Hooks
     const form_methods = useForm();
     const history = useHistory();
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Hooks Part2
+    //
+    React.useEffect(() => {
+        document.title = "Lorrgs: Comp Search"
+    }, [])
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Callbacks
+    //
     function onSubmit(data) {
 
         // build the new url
@@ -57,7 +70,10 @@ export default function CompSearch() {
         history.push(rel_url);
     }
 
+
+    ////////////////////////////////////////////////////////////////////////////
     // Render
+    //
     return (
 
         <FormProvider {...form_methods}>
