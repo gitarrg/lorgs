@@ -12,8 +12,6 @@ import SpecSettingsBar from './SpecRankings/SpecSettingsBar.jsx';
 import TimelineCanvas from "./../components/Timeline/TimelineCanvas.jsx"
 import { load_fights } from "../store/fights.js"
 import SpecRankingsHeader from './SpecRankings/SpecRankingsHeader.jsx';
-// import { load_spec } from "../store/specs.js"
-// import { load_spells } from '../store/spells.js';
 
 
 

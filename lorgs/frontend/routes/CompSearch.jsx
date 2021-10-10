@@ -67,9 +67,13 @@ export default function CompSearch() {
             <div className="mt-5 d-flex flex-column justify-content-center">
                 <div className="comp-search-container">
 
-                    <BossSelection />
+                    <div className="m-0 ml-auto d-flex align-items-center">
+                        <BossSelection />
+                    </div>
                     <h1 className="my-0 mx-3">vs.</h1>
-                    <PlayerSelection />
+                    <div className="m-0 mr-auto d-flex align-items-center">
+                        <PlayerSelection />
+                    </div>
 
                     <hr className="my-2" />
 

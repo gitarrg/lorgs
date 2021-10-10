@@ -10,13 +10,8 @@
 // Wrapper to Position the Form Layout
 .comp-search-container {
 
-    // display: flex;
-    // justify-content: center;
-    // align-items: center;
     display: grid;
-    grid-template-columns: 1fr auto 1fr;  // 3 rows. middle=auto + sides both same share
-
-    // border: 1px solid yellow;
+    grid-template-columns: 1fr 5rem 1fr;  // 3 rows. middle=auto + sides both same share
 
     hr {
         margin: 0;
