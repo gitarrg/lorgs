@@ -5,13 +5,13 @@ import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux'
 
 import * as ui_store from "../store/ui.js"
-import Header from "./../components/Header.jsx"
 import LoadingOverlay from "./../components/shared/LoadingOverlay.jsx"
 import Navbar from "./../components/Navbar/Navbar.jsx"
 import PlayerNamesList from "./../components/PlayerNames/PlayerNamesList.jsx"
 import SpecSettingsBar from './SpecRankings/SpecSettingsBar.jsx';
 import TimelineCanvas from "./../components/Timeline/TimelineCanvas.jsx"
 import { load_fights } from "../store/fights.js"
+import SpecRankingsHeader from './SpecRankings/SpecRankingsHeader.jsx';
 // import { load_spec } from "../store/specs.js"
 // import { load_spells } from '../store/spells.js';
 
@@ -64,7 +64,7 @@ export default function SpecRankings() {
         <div>
 
             <div className="mt-3 flex-row d-flex flex-wrap-reverse">
-                <Header />
+                <SpecRankingsHeader spec_slug={spec_slug} />
                 <Navbar />
             </div>
 
