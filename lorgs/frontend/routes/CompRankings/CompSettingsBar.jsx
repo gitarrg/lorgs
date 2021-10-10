@@ -9,21 +9,19 @@
 */
 import React from 'react'
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom';
 
 import ButtonGroup from '../../components/SettingsBar/shared/ButtonGroup.jsx'
 import DisplaySettings from '../../components/SettingsBar/DisplaySettings.jsx'
+import RaidCDSpellButton from './RaidCDSpellButton.jsx'
 import SettingsBar from '../../components/SettingsBar/SettingsBar.jsx'
 import { BossSpellsGroup } from '../../components/SettingsBar/SpellSettings/SpellSettings.jsx'
 import { RoleSpecsGroup } from '../../components/SettingsBar/RoleSpecDisplay.jsx'
 import { get_role } from '../../store/roles.js'
 import { get_spells_by_type } from '../../store/spells.js'
-import RaidCDSpellButton from './RaidCDSpellButton.jsx'
-
-
 
 
 export default function CompSettingsBar() {
-
 
     // Get State Values
     const spells_by_type = useSelector(state => get_spells_by_type(state))
@@ -47,6 +45,11 @@ export default function CompSettingsBar() {
             </ButtonGroup>
 
             <div className="flex-grow-1"/>
+
+            <Link to="/comp_ranking/search" className="comp-search-button btn btn-primary shadow">
+                Search
+            </Link>
+
         </SettingsBar>
     )
 }

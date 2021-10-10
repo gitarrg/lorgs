@@ -39,7 +39,7 @@ export default function CompRankings() {
     const { boss_slug } = useParams();
     const dispatch = useDispatch()
     const { search } = useLocation();
-    const is_loading = useSelector(state => state.ui.is_loading)
+    const is_loading = useSelector(state => ui_store.get_is_loading(state))
     const boss = useSelector(state => get_boss(state, boss_slug))
 
     // const

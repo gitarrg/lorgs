@@ -57,15 +57,7 @@ function create_icons(prefix, items) {
 }
 
 
-
-
-
-
 export default function CompPreview({roles={}, specs={}, placeholder=""}) {
-
-
-    console.log("roles", roles)
-    console.log("specs", specs)
 
     let icons = []
     icons.push(...create_icons("roles", roles))
