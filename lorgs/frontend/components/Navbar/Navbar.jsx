@@ -10,18 +10,6 @@ import { get_bosses } from '../../store/bosses.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 
-function HomeButton() {
-    /* regular link for now */
-    return (
-        <a href="/" title="home" data-tip="back to start page">
-            <i className="fas fa-home fa-2x"/>
-        </a>
-    )
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-
 
 function NavbarGroup({children, className}) {
 
@@ -57,7 +45,6 @@ export default function Navbar() {
         <div className="ml-auto">
             <div className="navbar_container">
 
-
                 { mode == MODES.SPEC_RANKING && (
                     <NavbarGroup>
                         <NavbarSpecGroup />
@@ -65,10 +52,6 @@ export default function Navbar() {
                 )}
 
                 <NavbarBossGroup />
-
-                <NavbarGroup>
-                    <HomeButton />
-                </NavbarGroup>
             </div>
         </div>
     )
