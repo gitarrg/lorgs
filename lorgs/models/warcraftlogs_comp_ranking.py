@@ -38,7 +38,6 @@ class CompRankingReport(warcraftlogs_base.Document):
     ##########################
     # Attributes
     #
-
     @property
     def key(self):
         """tuple: a unique key to identify this report."""
@@ -50,12 +49,6 @@ class CompRankingReport(warcraftlogs_base.Document):
         for fight in self.report.fights:
             return fight
 
-    @classmethod
-    def save_many(cls, items):
-        if items:
-            cls.objects.insert(items)
-
-
 
 class CompRanking(warcraftlogs_base.Document):
     """A Group/List of reports for a given Boss."""
@@ -65,6 +58,9 @@ class CompRanking(warcraftlogs_base.Document):
 
     # datetime: timetamp of last update
     updated = me.DateTimeField(default=datetime.datetime.utcnow)
+
+    # list(CompRankingReport): reports for this boss
+    reports = me.ListField(me.ReferenceField(CompRankingReport))
 
     ##########################
     # Attributes
@@ -82,7 +78,6 @@ class CompRanking(warcraftlogs_base.Document):
     ##########################
     # Methods
     #
-
     def get_reports(self, search: dict = None, limit: int = 50) -> typing.List[CompRankingReport]:
         """list: reports for this group."""
 
@@ -100,11 +95,17 @@ class CompRanking(warcraftlogs_base.Document):
             filter_kwargs.update(search_kwargs)
 
         # Query
-        reports = CompRankingReport.objects
+        reports = CompRankingReport.objects  # todo: find a way to use the self.reports list field instead
         reports = reports.filter(**filter_kwargs)
-        reports = limit and reports[:limit]
-        # TODO: reports.order("-deaths", "-killtime")
-        return reports.all()
+        reports = reports.order_by("+report__fights__deaths", "+report__fights__duration")
+        reports = reports[:limit] if limit else reports
+        return reports
+
+    def save(self, *args, **kwargs):
+        """Custom Cascade safe."""
+        for report in self.reports:
+            report.save()
+        return super().save(*args, **kwargs)
 
     ############################################################################
     # Query
@@ -224,11 +225,11 @@ class CompRanking(warcraftlogs_base.Document):
 
     async def update_reports(self, limit=50, clear_old=False) -> typing.List[CompRankingReport]:
         """Fetch reports for this BossRanking.
-        
+
         params:
             limit (int): maximum number of reports to load.
             clear_old (bool): if true old reports will be deleted.
-        
+
         """
         old_reports = self.get_reports()
 
@@ -236,6 +237,7 @@ class CompRanking(warcraftlogs_base.Document):
         if clear_old:
             old_reports.delete()
             old_reports = []
+            self.reports = []
 
         # new reports
         new_reports = await self.load_new_reports(limit=limit)
@@ -250,4 +252,4 @@ class CompRanking(warcraftlogs_base.Document):
         fights = fights[:limit] # should already be enforced from the "load_new_reports"... but better safe then sorry
         await self.load_many(fights, filters=[self.get_filter()], chunk_size=5)
 
-        return new_reports
+        self.reports += new_reports

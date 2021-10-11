@@ -16,17 +16,17 @@ from google.cloud import tasks_v2
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import data
-from lorgs import utils
 from lorgs.cache import cache
 from lorgs.logger import logger
-from lorgs.models import warcraftlogs_comp_ranking
 from lorgs.models import warcraftlogs_ranking
+from lorgs.routes import api_comp_rankings
 from lorgs.routes import api_world_data
 
 
 blueprint = flask.Blueprint("api", __name__, cli_group=None)
 
 # Child Blueprints
+blueprint.register_blueprint(api_comp_rankings.blueprint, url_prefix="/")
 blueprint.register_blueprint(api_world_data.blueprint, url_prefix="/")
 
 
@@ -41,13 +41,6 @@ def page_not_found(path):
 @blueprint.get("/ping")
 def ping():
     return {"reply": "Hi!", "time": datetime.datetime.utcnow().isoformat()}
-
-
-###############################################################################
-#
-#       World Data
-#
-###############################################################################
 
 
 ###############################################################################
@@ -84,53 +77,6 @@ async def load_spec_rankings(spec_slug, boss_slug):
     spec_ranking.save()
 
     logger.info("DONE | spec=%s | boss=%s | limit=%d", spec_slug, boss_slug, limit)
-    return "done"
-
-
-###############################################################################
-#
-#       Comps
-#
-###############################################################################
-
-
-@blueprint.route("/comp_ranking/<string:boss_slug>")
-@cache.cached(query_string=True)
-def comp_ranking(boss_slug):
-
-    limit = flask.request.args.get("limit", default=20, type=int)
-
-    # get search inputs
-    search = {}
-    search["fights.composition.roles"] = flask.request.args.getlist("role")
-    search["fights.composition.specs"] = flask.request.args.getlist("spec")
-    search["fights.composition.classes"] = flask.request.args.getlist("class")
-
-    # lookup DB
-    comp_ranking = warcraftlogs_comp_ranking.CompRanking(boss_slug=boss_slug)
-    if not comp_ranking.valid:
-        return "Invalid Boss.", 404
-
-    reports = comp_ranking.get_reports(limit=limit, search=search)
-
-    # return
-    return {
-        "fights": [report.fight.as_dict() for report in reports if report.fight],
-        "updated": comp_ranking.updated,
-    }
-
-
-# FIXME
-@blueprint.route("/load_comp_rankings/<string:comp_name>/<string:boss_slug>")
-async def load_comp_rankings(comp_name, boss_slug):
-    limit = flask.request.args.get("limit", default=50, type=int)
-    clear = flask.request.args.get("clear", default=False, type=json.loads)
-
-    comp_config = warcraftlogs_comps.CompConfig.objects(name=comp_name).first()
-    scr = await comp_config.load_reports(boss_slug=boss_slug, limit=limit, clear_old=clear)
-    scr.save()
-    comp_config.save()
-
     return "done"
 
 

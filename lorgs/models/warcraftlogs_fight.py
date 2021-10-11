@@ -104,14 +104,16 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
     @property
     def start_time_rel(self) -> int:
         """Fight start time, relative to its parent report (in milliseconds)."""
-        report_start = self.report.start_time.timestamp
-        return (self.start_time.timestamp - report_start) * 1000
+        start_time = self.start_time.timestamp() - self.report.start_time.timestamp()
+        start_time = start_time * 1000
+        return int(start_time)
 
     @property
     def end_time_rel(self) -> int:
         """fight end time, relative to its parent report (in milliseconds)."""
-        report_start = self.report.start_time.timestamp
-        return (self.end_time.timestamp - report_start) * 1000
+        end_time = self.end_time.timestamp() -  self.report.start_time.timestamp()
+        end_time = end_time * 1000
+        return int(end_time)
 
     @property
     def report_url(self) -> str:
