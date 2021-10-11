@@ -109,10 +109,17 @@ SUPPORTED_SPECS = [spec for spec in SPECS if spec.supported]
 #
 ################################################################################
 
+
 ROLE_ITEM     = WowRole(id=1001, code="item", name="Items")
 OTHER         = WowClass(id=1001, name="Other", color="#cccccc")
 OTHER_POTION  = WowSpec(role=ROLE_ITEM, wow_class=OTHER, name="Potions")
 OTHER_TRINKET = WowSpec(role=ROLE_ITEM, wow_class=OTHER, name="Trinkets")
+
+BOSS_ROLE     = WowRole(id=2001, code="boss", name="Boss")
+BOSS_CLASS    = WowClass(id=2001, name="Boss")
+BOSS_SPEC     = WowSpec(role=BOSS_ROLE, wow_class=BOSS_CLASS, name="Boss")
+BOSS_SPEC.full_name = "Boss"  # otherwise its class-spec --> boss-boss
+BOSS_SPEC.full_name_slug = "boss"
 
 ################################################################################
 #

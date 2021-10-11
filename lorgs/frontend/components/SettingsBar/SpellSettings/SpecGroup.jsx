@@ -18,7 +18,12 @@ function SpellTypeGroup({spec, spell_type}) {
 
     // fetch spells for combined types
     let spells = []
-    const all_types = [spell_type, ...COMBINED_TYPES ]
+
+    let all_types = [spell_type]
+    if (!spell_type.startsWith("other-")) {
+        all_types = [...all_types, ...COMBINED_TYPES ]  // if its not an "other"-type, we merge in the combined types
+    }
+
     all_types.forEach(type => {
         const type_spells = spec.spells_by_type[type] || []
         spells = [...spells, ...type_spells]
@@ -27,14 +32,14 @@ function SpellTypeGroup({spec, spell_type}) {
     // check if there is a dedicated "spec" for the type (eg.: trinkets and potions)
     const type_spec = useSelector(state => get_spec(state, spell_type))
     spec = type_spec || spec
-    const extra_class = "wow-" + spec.class.name_slug
+    const extra_class = "wow-text wow-" + spec.class.name_slug
 
     const was_used_spells = useSelector(state => get_used_spells(state))
     spells = spells.filter(spell_id =>  was_used_spells.includes(spell_id))
     if (spells.length == 0) { return null}
 
     return (
-        <ButtonGroup name={spec.name} side="left" extra_class={extra_class}>
+        <ButtonGroup name={spec.name || spec.full_name} side="left" extra_class={extra_class}>
             {spells.map(spell_id => <SpellButton key={spell_id} spec={spec} spell_id={spell_id} />)}
         </ButtonGroup>
     )

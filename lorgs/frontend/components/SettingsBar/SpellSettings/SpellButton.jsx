@@ -21,7 +21,7 @@ export default function SpellButton({spec, spell_id, onClick}) {
     if (!spec) { return null}
 
     // Vars
-    let wow_class = spec.class.name_slug
+    let wow_class = spec.class.name_slug || spec.class // if its an object or string
     const disabled = visible ? "" : "disabled"
 
     // onClick Callback
