@@ -147,8 +147,13 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
     def table_query_args(self) -> str:
         return f"fightIDs: {self.fight_id}, startTime: {self.start_time_rel}, endTime: {self.end_time_rel}"
 
-    def _build_cast_query(self, filters: typing.List[str] = None) -> str:
+    def _build_cast_query(self, filters: typing.List[str] = None, cast_limit=1000) -> str:
+        """
+        Args:
+            cast_limit (int): maximum number of casts to query.
+            (not sure if we need to loop trough pages..)
 
+        """
         if not filters:
             # we gonna query for all spells
             spell_ids = [spell.spell_id for spell in data.ALL_SPELLS]
@@ -160,6 +165,7 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
 
         return f"""\
             casts: events(
+                limit: {cast_limit}
                 {self.table_query_args},
                 dataType: Casts,
                 filterExpression: "{filters}")
