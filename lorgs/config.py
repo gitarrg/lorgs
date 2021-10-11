@@ -33,7 +33,7 @@ class DevelopmentConfig(BaseConfig):
     """Config used for Development."""
 
     # bool: use dev files
-    LORRGS_DEBUG = False
+    LORRGS_DEBUG = True
 
     SEND_FILE_MAX_AGE_DEFAULT = 0  # for DEV. updates static files
     SEND_FILE_MAX_AGE_DEFAULT = 1000

@@ -23,7 +23,7 @@ export function BossSpellsGroup() {
     const boss = useSelector(state => get_boss(state))
 
     return (
-        <ButtonGroup key="boss" name={boss.name} side="left" extra_class="wow-boss">
+        <ButtonGroup key="boss" name={boss.name} side="left" extra_class="wow-text wow-boss">
             {_create_spell_buttons(boss) }
         </ButtonGroup>
     )
@@ -35,8 +35,7 @@ export function BossSpellsGroup() {
 
 function create_spec_group(spec = {}) {
 
-    const extra_class = "wow-" + spec.full_name_slug.split("-")[0]  // fixme
-
+    const extra_class = "wow-text wow-" + spec.class.name_slug
 
     const spells = spec.spells || []
     if (!spells) { return }
