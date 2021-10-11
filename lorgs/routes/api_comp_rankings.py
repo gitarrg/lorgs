@@ -6,8 +6,10 @@ import json
 import flask
 
 # IMPORT LOCAL LIBRARIES
+from lorgs import data
 from lorgs.cache import cache
 from lorgs.models import warcraftlogs_comp_ranking
+from lorgs.routes import api_tasks
 
 
 blueprint = flask.Blueprint("api.comp_rankings", __name__)
@@ -56,7 +58,7 @@ def get_comp_ranking(boss_slug):
 
 
 @blueprint.route("/load_comp_ranking/<string:boss_slug>")
-async def load_comp_rankings(boss_slug):
+async def load_comp_ranking(boss_slug):
     """Load Comp Rankings from Warcraftlogs and save them in our DB.
 
     Args:
@@ -81,3 +83,20 @@ async def load_comp_rankings(boss_slug):
     comp_ranking.save()
 
     return "done"
+
+
+################################################################################
+# Tasks
+#
+
+@blueprint.route("/task/load_comp_ranking")
+@blueprint.route("/task/load_comp_ranking/all")
+@blueprint.route("/task/load_comp_ranking/<string:boss_slug>")
+def task_load_comp_rankings(boss_slug=""):
+
+    bosses = [boss_slug] if boss_slug else [boss.full_name_slug for boss in data.SANCTUM_OF_DOMINATION_BOSSES]
+
+    for boss_slug in bosses:
+        url = f"/api/load_comp_ranking/{boss_slug}"
+        api_tasks.create_task(url)
+    return f"{len(bosses)} tasks queued"
