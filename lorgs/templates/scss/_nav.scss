@@ -23,6 +23,7 @@ a:not(.disabled) .icon-spec:not(:hover) {
     cursor: default;
 }
 
+.active.icon-spec,
 .active .icon-spec {
     border-width: 2px;
 }
@@ -43,8 +44,10 @@ a:not(.disabled) .icon-spec:not(:hover) {
 
 }
 
+
 .navbar_boss {
 
+    // dim the non active bosses
     a:not(.active) {
         .icon-spec:not(:hover) {
             opacity: 30%;
@@ -54,11 +57,21 @@ a:not(.disabled) .icon-spec:not(:hover) {
 }
 
 
+.navbar_specs {
+
+    // dim the non active roles
+    .role_button:not(.active):not(:hover) {
+        opacity: 30%;
+        border-width: 0;
+    }
+}
+
+
 ////////////////////////////////////////////
 // Hover Dropdown Classes
 
 .nav_dropdown {
-    
+
     cursor: pointer;
     position: relative;
     display: inline-block;
@@ -105,8 +118,6 @@ a:not(.disabled) .icon-spec:not(:hover) {
     a:hover span {
         text-decoration: underline;
     }
-    
-
     /* Styles for the non-selected specs */
     // a:not(.active) {}
 }
