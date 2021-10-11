@@ -4,6 +4,7 @@
 import datetime
 
 # IMPORT THIRD PARTY LIBRARIES
+import arrow
 import mongoengine as me
 
 # IMPORT LOCAL LIBRARIES
@@ -12,12 +13,14 @@ from lorgs import utils
 from lorgs.models import warcraftlogs_base
 from lorgs.models.warcraftlogs_actor import Boss
 from lorgs.models.warcraftlogs_fight import Fight
+from lorgs.lib import mongoengine_arrow
 
 
-class Report(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
+class Report(warcraftlogs_base.EmbeddedDocument):
 
     report_id = me.StringField(primary_key=True)
-    start_time = me.IntField(default=0)
+
+    start_time: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField()
 
     title = me.StringField()
 
@@ -31,14 +34,6 @@ class Report(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
 
     def __str__(self):
         return f"<BaseReport({self.report_id}, num_fights={len(self.fights)})>"
-
-    def as_dict(self):
-        return {
-            "code": self.report_id,
-            "start_time": self.start_time,
-            "num_fights": len(self.fights),
-            "fights": [fight.as_dict() for fight in self.fights]
-        }
 
     ##########################
     # Attributes
@@ -132,27 +127,3 @@ class Report(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
 
         await self.load_report_info(fight_ids)
         await self.load_many(self.fights)
-
-
-class UserReport(me.Document):
-    """docstring for UserReport"""
-
-    report_id = me.StringField(primary_key=True)
-    report = me.EmbeddedDocumentField(Report)
-
-    created = me.DateTimeField(default=datetime.datetime.utcnow)
-    meta = {
-        'indexes': [
-            {'fields': ['created'], 'expireAfterSeconds': 7 * 24 * 60 * 60} # expires after 1 week
-        ]
-    }
-
-    async def load(self, **kwargs):
-        self.report = Report(report_id=self.report_id)
-        await self.report.load(**kwargs)
-
-    @classmethod
-    def get_or_create(cls, **kwargs):
-        obj = cls.objects(**kwargs).first()
-        obj = obj or cls(**kwargs)
-        return obj

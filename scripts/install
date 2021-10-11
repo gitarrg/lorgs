@@ -8,8 +8,9 @@ project_name=lorgs
 
 
 # vars
-venv_root=~/.envs
-venv_dir=$venv_root/$project_name
+# venv_root=~/.envs
+# venv_dir=$venv_root/$project_name
+venv_dir=./venv
 
 
 ################################################################################
@@ -23,7 +24,7 @@ fi
 source $venv_dir/bin/activate
 
 # install requirements
-pip install -U -r lorgs/requirements.txt
+pip install -U -r requirements.txt
 
 
 

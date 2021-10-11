@@ -1,7 +1,10 @@
 # IMPORT STANRD LIBRARIES
+from collections import defaultdict
 import textwrap
+import typing
 
 # IMPORT THIRD PARTY LIBRARIES
+import arrow
 import mongoengine as me
 
 # IMPORT LOCAL LIBRARIES
@@ -12,18 +15,52 @@ from lorgs.models.encounters import RaidBoss
 from lorgs.models.specs import WowSpec
 from lorgs.models.warcraftlogs_actor import Boss
 from lorgs.models.warcraftlogs_actor import Player
+from lorgs.lib import mongoengine_arrow
+
+
+def get_composition(players: typing.List[Player]) -> dict:
+    """Generate a Composition Dict from a list of Players."""
+    players = players or []
+
+    comp = {
+        "roles": defaultdict(int),
+        "specs": defaultdict(int),
+        "classes": defaultdict(int),
+    }
+
+    for player in players:
+        comp["roles"][player.spec.role.code] += 1
+        comp["classes"][player.spec.wow_class.name_slug] += 1
+        comp["specs"][player.spec.full_name_slug] += 1
+
+    comp["roles"] = dict(comp["roles"])
+    comp["classes"] = dict(comp["classes"])
+    comp["specs"] = dict(comp["specs"])
+    return comp
 
 
 class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
 
     fight_id = me.IntField(primary_key=True)
-    start_time = me.IntField(default=0)
-    end_time = me.IntField(default=99999999)
+
+    start_time: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField()
+    duration = me.IntField(default=0)
+
+    # deprecated in favor of "duration".
+    end_time_old: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField(db_field="end_time")
 
     boss_id = me.IntField()
-
     players = me.ListField(me.EmbeddedDocumentField(Player))
     boss = me.EmbeddedDocumentField(Boss)
+
+    composition = me.DictField()
+    deaths = me.IntField(default=0)
+    ilvl = me.FloatField(default=0)
+    damage_taken = me.IntField(default=0)
+
+    meta = {
+        "strict": False # ignore non existing properties
+    }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -38,46 +75,65 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
     def __str__(self):
         return f"{self.__class__.__name__}(id={self.fight_id}, players={len(self.players)})"
 
-    def as_dict(self):
+    def as_dict(self) -> dict:
+        players = sorted(self.players, key=lambda player: (player.spec.role, player.spec, player.total))
+
         return {
             "fight_id": self.fight_id,
-
-            "start_time": self.start_time,
-            "end_time": self.end_time,
-            "duration": self.duration,
-
-            "report_url": self.report_url,
-            "num_players": len(self.players),
-            "players": [player.as_dict() for player in self.players],
-            "boss": self.boss.as_dict() if self.boss else {}
+            "report_id": self.report.report_id,
+            "duration": self.duration_fix,
+            "players": [player.as_dict() for player in players],
+            "boss": self.boss.as_dict() if self.boss else {},
         }
 
     ##########################
     # Attributes
 
     @property
-    def duration(self):
-        return self.end_time - self.start_time
+    def duration_fix(self) -> int:
+        # fix for old report, that have no "duration"-field
+        if self.duration:
+            return self.duration
+        duration = self.end_time_old - self.start_time
+        return duration.total_seconds()
 
     @property
-    def report_url(self):
+    def end_time(self) -> arrow.Arrow:
+        return self.start_time.shift(seconds=self.duration_fix)
+
+    @property
+    def start_time_rel(self) -> int:
+        """Fight start time, relative to its parent report (in milliseconds)."""
+        start_time = self.start_time.timestamp() - self.report.start_time.timestamp()
+        start_time = start_time * 1000
+        return int(start_time)
+
+    @property
+    def end_time_rel(self) -> int:
+        """fight end time, relative to its parent report (in milliseconds)."""
+        end_time = self.end_time.timestamp() -  self.report.start_time.timestamp()
+        end_time = end_time * 1000
+        return int(end_time)
+
+    @property
+    def report_url(self) -> str:
         return f"{self.report.report_url}#fight={self.fight_id}"
 
     @property
-    def raid_boss(self):
+    def raid_boss(self) -> RaidBoss:
         return RaidBoss.get(id=self.boss_id)
 
     #################################
     # Methods
     #
 
-    def add_player(self, **kwargs):
+    def add_player(self, **kwargs) -> Player:
         player = Player(**kwargs)
         player.fight = self
         self.players.append(player)
         return player
 
-    def add_boss(self, boss_id):
+    def add_boss(self, boss_id) -> RaidBoss:
         self.boss_id = boss_id
         self.boss = Boss(boss_id=boss_id)
         self.boss.fight = self
@@ -88,11 +144,16 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
     #
 
     @property
-    def table_query_args(self):
-        return f"fightIDs: {self.fight_id}, startTime: {self.start_time}, endTime: {self.end_time}"
+    def table_query_args(self) -> str:
+        return f"fightIDs: {self.fight_id}, startTime: {self.start_time_rel}, endTime: {self.end_time_rel}"
 
-    def _build_cast_query(self, filters=None):
+    def _build_cast_query(self, filters: typing.List[str] = None, cast_limit=1000) -> str:
+        """
+        Args:
+            cast_limit (int): maximum number of casts to query.
+            (not sure if we need to loop trough pages..)
 
+        """
         if not filters:
             # we gonna query for all spells
             spell_ids = [spell.spell_id for spell in data.ALL_SPELLS]
@@ -104,13 +165,14 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
 
         return f"""\
             casts: events(
+                limit: {cast_limit}
                 {self.table_query_args},
                 dataType: Casts,
                 filterExpression: "{filters}")
             {{data}}
         """
 
-    def get_query(self, filters=None):
+    def get_query(self, filters: typing.List[str] = None) -> str:
 
         filters = list(filters or [])
 
@@ -159,7 +221,6 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
 
         total_damage = players_data.get("damageDone", [])
         total_healing = players_data.get("healingDone", [])
-        death_events = players_data.get("deathEvents", [])
 
         for composition_data in players_data.get("composition", []):
 
@@ -194,10 +255,8 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
             player.name = composition_data.get("name")
             player.total = total
 
-            player.process_death_events(death_events)
-
     def process_query_result(self, query_result):
-
+        logger.debug("start")
         report_data = query_result.get("report") or {}
 
         if self.boss:
@@ -206,12 +265,19 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
 
         # load players
         if not self.players: # only if they arn't loaded yet
+            logger.debug("create players")
             players_data = report_data.get("players", {}).get("data", {})
             self.process_fight_players(players_data)
 
+            # call this before filtering to always get the full comp
+            self.composition = get_composition(self.players)
+
         # load player casts
         if self.players:
+            logger.debug("create player casts")
             casts_data = report_data.get("casts", {})
+            logger.debug("num casts: %d", len(casts_data.get("data", [])))
+
             for player in self.players:
                 player.process_query_result(casts_data)
 

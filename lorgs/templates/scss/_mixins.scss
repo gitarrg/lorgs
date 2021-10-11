@@ -1,0 +1,27 @@
+
+
+
+@mixin select_no_dropdown_arrow {
+    // hide the dropdown arrow
+    &::-ms-expand {
+        display: none;
+    }
+    -moz-appearance: none;
+    -webkit-appearance: none;
+}
+
+
+/* Hide the Number Spinners (+/- buttons) */
+@mixin input_no_spinner {
+
+    -moz-appearance:textfield;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        margin: 0;
+    }
+}
+

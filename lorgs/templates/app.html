@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{# TITLE #}
+{% block title %}
+Lorgs: FIXME
+{% endblock %}
+
+{##############################################################################}
+{# CONTENT #}
+{% block content -%}
+    <div id=app_root></div>
+{% endblock %}
+
+{##############################################################################}
+{# SCRIPTS #}
+{% block scripts %}
+{{ super() }}
+{% include "elements/script_tags.html" %}
+{% endblock %}

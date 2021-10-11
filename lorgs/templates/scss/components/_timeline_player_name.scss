@@ -1,4 +1,11 @@
 
+
+.player_names_container {
+
+    // space for the timeline ruler
+    margin-top: $timeline-height;
+}
+
 /********************************
         Player Names
 *********************************/
@@ -6,26 +13,14 @@
 
 .player_name,
 .boss_name {
+
     width: 175px;
     height: $timeline-height;
-
-    background: hsl(0, 0%, 30%);
-
     padding-right: 5px;
-    // margin-bottom: 2px;
 
     border: 1px solid black;
-
-    // outline: 1px solid black;
-    // border-top-left-radius: 0.25rem;
-    // border-bottom-left-radius: 0.25rem;
     overflow: hidden;
-
     position: relative;
-
-    &:hover {
-        background: hsl(0, 0%, 40%);
-    }
 
     &__spec_icon,
     &__role_icon {
@@ -49,7 +44,7 @@
 
     &__name,
     &__rank {
-        left: 35px;
+        margin-left: 4px;
     }
 
     &__total {
@@ -58,20 +53,22 @@
 }
 
 
-.boss_name + .player_name,
-.player_name + .player_name,
-{
-    border-top: none;
+.player_name {
+    background: hsl(0, 0%, 30%);
+
+    &:hover {
+        background: hsl(0, 0%, 40%);
+    }
 }
 
 
-
 .boss_name {
-    background: hsl(0, 40%, 35%);
-    color: hsl(0, 30%, 75%);
+    background: hsl(175, 20%, 55%);
+    color:  hsl(175, 20%, 20%);
+    font-weight: bold;
 
     &:hover {
-        background: hsl(0, 40%, 50%);
+        background:  hsl(175, 50%, 60%);
     }
 
 }
@@ -98,5 +95,33 @@
             transition-duration: 4s;
             transition-delay: 1s;
         }
+    }
+
+    // hide top border only for the very first row
+    // and for all player lanes
+    .player_names_fight:not(:first-child) .boss_name,
+    .player_name {
+        border-top: none;
+    }
+}
+
+
+.comp_ranking {
+
+    .player_names_fight {
+        margin-bottom: 10px;
+    }
+
+    // round of the corners per fight
+    .boss_name {
+        border-top-left-radius: 0.25rem;
+    }
+    .player_name:last-of-type {
+        border-bottom-left-radius: 0.25rem;
+    }
+
+    // hide top border for all, except topmost row
+    .boss_name:not(:first-child), .player_name:not(:first-child) {
+        border-top: none;
     }
 }

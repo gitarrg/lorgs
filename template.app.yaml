@@ -7,7 +7,10 @@
 service: default
 runtime: python39
 
-default_expiration: "1h"  # static files cache
+default_expiration: "7d"  # static files cache
+
+automatic_scaling:
+  max_instances: 2  # lets see how this goes..
 
 
 entrypoint: >

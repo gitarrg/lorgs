@@ -61,7 +61,7 @@ Lorgs: Admin Page
                             <td></td>
                         {% endif %}
 
-                        <td><img class="icon-s rounded wow-class-border-{{wow_class.name_slug}}" src="{{spec.icon_path}}" data-toggle="tooltip" title="{{spec.full_name}}"></td>
+                        <td><img class="icon-s rounded wow-border-{{wow_class.name_slug}}" src="{{spec.icon_path}}" data-toggle="tooltip" title="{{spec.full_name}}"></td>
 
 
                     {% for boss in bosses %}
@@ -79,7 +79,7 @@ Lorgs: Admin Page
 
             {#
             <tr>
-                <td class="wow-class-{{wow_class.name_slug}}">{{spec.name}}</td>
+                <td class="wow-{{wow_class.name_slug}}">{{spec.name}}</td>
 
                 {% for boss in bosses %}
                     {% set n = spec_rankings.get((spec.id, boss.id)) or 0 %}
