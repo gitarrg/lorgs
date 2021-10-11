@@ -40,6 +40,11 @@ export function get_is_loading(state, key) {
 }
 
 
+export function get_tooltip(state) {
+    return state.ui.tooltip
+}
+
+
 /* add a prefix to the input, to aid with sorting */
 function _sort_spell_type_sort_key(spell_type) {
 
@@ -80,10 +85,12 @@ const SLICE = createSlice({
         boss_slug: undefined, // currently selected boss
 
         // Timeline Options
-        show_casticon: true,
-        show_casttime: true,
-        show_duration: true,
-        show_cooldown: true,
+        settings: {
+            show_casticon: true,
+            show_casttime: true,
+            show_duration: true,
+            show_cooldown: true,
+        },
 
         // fight/player filter settings
         filters: {
@@ -97,6 +104,11 @@ const SLICE = createSlice({
             // fight filters
             killtime: {min: undefined, max: undefined},
         },
+
+        tooltip: {
+            content: "",
+            position: {x: 0, y: 0}
+        }
     },
 
     reducers: {
@@ -109,6 +121,11 @@ const SLICE = createSlice({
 
         set_values: (state, action) => {
             return { ...state, ...action.payload}
+        },
+
+        update_settings: (state, action) => {
+            state.settings = {...state.settings, ...action.payload}
+            return state
         },
 
         // Filters
@@ -135,6 +152,13 @@ const SLICE = createSlice({
             state.mode = action.payload
             return state
         },
+
+        set_tooltip: (state, action) => {
+            const {content, position } = action.payload
+            state.tooltip.content = content
+            state.tooltip.position = position
+            return state
+        }
     },
 })
 
@@ -145,9 +169,10 @@ export const {
     set_filters,
     set_mode,
     set_spec,
+    set_tooltip,
     set_value,
     set_values,
-
+    update_settings,
 } = SLICE.actions
 
 

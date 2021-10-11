@@ -80,7 +80,7 @@ export default function CompRankings() {
 
             {is_loading && <LoadingOverlay />}
 
-            <div className={`p-2 bg-dark rounded border d-flex overflow-hidden ${is_loading && "loading_trans"}`}>
+            <div className={`p-2 bg-dark rounded border d-flex ${is_loading ? "loading_trans" : ""}`}>
                 <PlayerNamesList />
                 <TimelineCanvas />
             </div>

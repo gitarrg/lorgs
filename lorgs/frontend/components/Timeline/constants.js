@@ -18,3 +18,10 @@ export const EVENT_SPELL_SELECTED = "spells/spell_selected"
 
 // triggered when fight/player filters have changed
 export const EVENT_APPLY_FILTERS = "apply_filters"
+
+// event to show/hide the tooltip.
+// WARNING: must match the name of the stores ui/set_tooltip action
+// payload should include
+// - content (string)
+// - position (vector)
+export const EVENT_SHOW_TOOLTIP = "ui/set_tooltip"

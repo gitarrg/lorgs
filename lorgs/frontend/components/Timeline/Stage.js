@@ -5,7 +5,6 @@ import Ruler from "./Ruler.js"
 import * as constants from "./constants.js";
 import FightRow from "./FightRow.js";
 
-
 // for performance
 Konva.autoDrawEnabled = false;
 
