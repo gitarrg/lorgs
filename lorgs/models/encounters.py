@@ -69,7 +69,7 @@ class RaidBoss(base.Model):
         return {
             "id": self.id,
             "role": self.role,
-            "name": self.name,
+            "name": self.name or self.full_name,
             "name_slug": self.name_slug,
             "full_name": self.full_name,
             "full_name_slug": self.full_name_slug,
