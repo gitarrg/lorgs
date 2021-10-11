@@ -55,6 +55,10 @@ export default class Stage extends Konva.Stage{
         this.on("dragmove",  this.on_dragmove)
         this.on("wheel",  this.on_wheel)
         this.on("contextmenu", this.contextmenu)
+
+        // update canvas on window resize
+        window.addEventListener("resize", () => {this.update_width()})
+        this.update_width() // initial update
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -72,8 +76,8 @@ export default class Stage extends Konva.Stage{
     // CREATION AND DRAW
     //
     update_width() {
-        this.width(this.longest_fight * this.scale_x)
-        this.batchDraw()
+        let container = this.container()
+        this.width(container.offsetWidth)
     }
 
     update_display_settings(settings) {
@@ -206,8 +210,6 @@ export default class Stage extends Konva.Stage{
         this.layout_children()
 
         this.ruler.update_duration(this.longest_fight)
-        this.update_width()
-
         this.handle_event(constants.EVENT_ZOOM_CHANGE, this.scale_x)
         this.handle_event(constants.EVENT_CHECK_IMAGES_LOADED)
     }
