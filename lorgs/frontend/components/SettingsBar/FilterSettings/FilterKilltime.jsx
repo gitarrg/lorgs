@@ -96,7 +96,7 @@ export default function FilterKilltimeGroup() {
             <div className="input-group input-group-sm killtime_input">
                 <FilterKilltimeInput name="min" placeholder="0:00" />
                 <span className="input-group-text">-</span>
-                <FilterKilltimeInput name="max" placeholder="9:00" start={9*60} />
+                <FilterKilltimeInput name="max" placeholder="9:00" />
             </div>
         </ButtonGroup>
     )
