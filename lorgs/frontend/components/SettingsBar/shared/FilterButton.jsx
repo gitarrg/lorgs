@@ -17,17 +17,17 @@ export default function FilterButton({name, icon_name, full_name="", show_init=t
         if (onClick) {
             onClick({value: !show})
         }
-
         setShow(!show)
     }
 
     return (
-        <img 
-            className={`button icon-s rounded wow-border-${name} ${disabled}`}
-            src={icon_path}
-            data-tip={full_name} // for tooltip
-            alt={full_name}
-            onClick={toggle_button}
-        />
+        <div data-tooltip={full_name}>
+            <img
+                className={`button icon-s rounded wow-border-${name} ${disabled}`}
+                src={icon_path}
+                alt={full_name}
+                onClick={toggle_button}
+            />
+        </div>
     )
 }

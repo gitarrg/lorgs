@@ -26,12 +26,10 @@ export default function NavbarBossButton({boss}) {
     const full_link = `${link}${search}`
 
     return (
-        <NavLink to={full_link} activeClassName="active">
+        <NavLink to={full_link} activeClassName="active" data-tooltip={boss.full_name} data-tooltip-dir="down">
             <img
-                className="icon-spec icon-m wow-border-boss rounded"
+                className="icon-spec icon-m wow-boss wow-border rounded"
                 src={boss.icon_path}
-                alt={boss.name}
-                data-tip={boss.full_name}
                 alt={boss.full_name}
             />
         </NavLink>

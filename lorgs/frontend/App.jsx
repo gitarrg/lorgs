@@ -1,6 +1,5 @@
 
 import React from "react"
-import ReactTooltip from 'react-tooltip';
 import { BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import { Provider } from 'react-redux'
 
@@ -21,12 +20,6 @@ export default function App() {
     return (
         <Provider store={data_store}>
         <React.StrictMode>
-            <ReactTooltip 
-                delayShow={25}
-                className="tooltip"
-                effect="solid"
-                disable={LORRGS_DEBUG}
-            />
 
             <GlobalDataLoader />
 
