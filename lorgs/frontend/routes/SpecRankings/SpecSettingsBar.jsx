@@ -6,6 +6,7 @@ import DisplaySettings from '../../components/SettingsBar/DisplaySettings.jsx'
 import FilterSettings from '../../components/SettingsBar/FilterSettings/FilterSettings.jsx'
 import SettingsBar from '../../components/SettingsBar/SettingsBar.jsx'
 import SpecGroup from '../../components/SettingsBar/SpellSettings/SpecGroup.jsx'
+import { BossSpellsGroup } from '../../components/SettingsBar/SpellSettings/SpellSettings.jsx'
 import { get_boss } from '../../store/bosses.js'
 import { get_spec } from '../../store/specs.js'
 
@@ -20,7 +21,7 @@ export default function SpecSettingsBar() {
     return (
         <SettingsBar>
             <DisplaySettings />
-            {boss && <SpecGroup spec={boss} />}
+            <BossSpellsGroup />
             {spec && <SpecGroup spec={spec} />}
 
             {/* spacer to push filter settings to the right side */}
