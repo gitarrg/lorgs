@@ -1,0 +1,11 @@
+
+.comp-search-button {
+    margin-top: 1rem; // simulate the group-title
+    padding: 0.3rem 0.75rem;  // 0.25rem  to match setting groups + 0.05 because w/e
+
+    border-color: none;
+
+    &:hover {
+        border-color: white;
+    }
+}

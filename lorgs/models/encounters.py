@@ -25,6 +25,7 @@ class RaidZone(base.Model):
         return {
             "id": self.id,
             "name": self.name,
+            "bosses": [boss.as_dict() for boss in self.bosses]
         }
 
     def add_boss(self, **kwargs):
@@ -36,16 +37,21 @@ class RaidZone(base.Model):
 class RaidBoss(base.Model):
     """A raid boss in the Game."""
 
-    wow_class = {}
+    wow_class = {
+        "name": "Raid Boss",
+        "name_slug": "boss",
+    }
 
-    def __init__(self, zone, id, name):
+    def __init__(self, zone, id, name, nick=""):
         self.id = id
         self.zone = zone
-        self.name = name
-        self.visible = True
+        self.name = nick
+        self.full_name = name
+        self.visible = True # todo: is this used anywhere?
 
         self.name_slug = utils.slug(self.name, space="-")
-        self.icon = f"bosses/{self.zone.name_slug}/{self.name_slug}.jpg"
+        self.full_name_slug = utils.slug(self.full_name, space="-")
+        self.icon = f"bosses/{self.zone.name_slug}/{self.full_name_slug}.jpg"
 
         # spells or buffs to track
         self.events = []
@@ -54,17 +60,21 @@ class RaidBoss(base.Model):
         self.spells = []
 
         # alias to match the Spec Interface
-        self.full_name = self.name
-        self.full_name_slug = self.name_slug
+        self.role = "boss"
 
     def __repr__(self):
         return f"<RaidBoss(id={self.id} name={self.name})>"
 
-    def as_dict(self):
+    def as_dict(self, include_spells=False):
         return {
             "id": self.id,
-            "name": self.name,
+            "role": self.role,
+            "name": self.name or self.full_name,
             "name_slug": self.name_slug,
+            "full_name": self.full_name,
+            "full_name_slug": self.full_name_slug,
+            "class": "boss",
+            "spells": [spell.spell_id for spell in self.spells]
         }
 
     ##########################
@@ -94,7 +104,8 @@ class RaidBoss(base.Model):
             self.events.append(end_event)
 
         # spell instance used for UI things
+        kwargs.setdefault("spell_type", "boss")
         spell = WowSpell(**kwargs)
-        spell.group = self
-        spell.spec = self
+
+        spell.specs = [self]
         self.spells.append(spell)

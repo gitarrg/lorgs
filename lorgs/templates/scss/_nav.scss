@@ -1,10 +1,5 @@
 
 
-.parse_spec_link {
-    display: inline-block;
-}
-
-
 .icon-spec {
     border: 1px solid black;
 }
@@ -21,67 +16,97 @@ a:not(.disabled) .icon-spec:not(:hover) {
 }
 
 
-
-
 .disabled .icon-spec {
     border: none !important;
-    filter: saturate(0%) blur(1px);
+    filter: saturate(50%) blur(1px);
     opacity: 30%;
     cursor: default;
 }
 
 .active .icon-spec {
     border-width: 2px;
-    border-color: white;
 }
 
 
+// overall container for the entire navbar
+.navbar_container {
+    display: grid;
+    grid-auto-flow: column;  // single row
+    grid-column-gap: 0.5rem // space
+}
 
+// sub group of the navbar
+.navbar_group {
+    display: grid;
+    grid-auto-flow: column;  // single row
+    grid-column-gap: 0.25rem; // space
 
-.nav-link {
-    padding: 2px !important;
+}
+
+.navbar_boss {
+
+    a:not(.active) {
+        .icon-spec:not(:hover) {
+            opacity: 30%;
+            border-width: 0;
+        }
+    }
 }
 
 
+////////////////////////////////////////////
+// Hover Dropdown Classes
 
-.ranking-nav {
-    display: inline-block;
+.nav_dropdown {
+    
+    cursor: pointer;
     position: relative;
+    display: inline-block;
+
+    // the button thats always visible
+    &__button {
+    }
+
+    // the div that will show/hide
+    &__content {
+        display: none;
+        position: absolute;
+        z-index: 99;
+    }
+
+    // show the content when hovering over the dropdown
+    &:hover &__content {
+        display: block;
+    }
 }
 
 
-.ranking-nav-role-specs {
-    display: none;
-    position: absolute;
-    z-index: 99;
-    left: -0.75rem;
+.specs_nav_dropdown {
+    left: -0.5rem;  // offset to align the items from the inside
 
-    padding: 0.75rem;
-    padding-top: 0.5rem;
+    // indicator for the currently selected spec
+    a.active {
+        font-weight: bold;
+        border-width: 0;
+        padding-left: 2px;
 
+        ::after {
+            content: " •";
+        }
+
+        img {
+            border-width: 2px;
+            opacity: 100%;
+        }
+    }
+
+    /* underline on hover
+       added to directly to the span that has the correct text color. */
+    a:hover span {
+        text-decoration: underline;
+    }
+    
+
+    /* Styles for the non-selected specs */
+    // a:not(.active) {}
 }
-
-
-.ranking-nav:hover .ranking-nav-role-specs {
-    display: block;
-}
-
-
-.ranking-nav .disabled,
-.ranking-nav .disabled span,
-.ranking-nav a.disabled,
-.ranking-nav .disabled:hover
-{
-    color: grey;
-    text-decoration: none;
-    cursor: default;
-}
-
-
-.ranking-nav a:not(.disabled):hover
-{
-    font-weight: bold;
-}
-
-
-

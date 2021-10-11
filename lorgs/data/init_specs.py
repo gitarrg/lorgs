@@ -12,6 +12,7 @@ but at the end of the day, this was the most straight forward way
 
 
 # IMPORT LOCAL LIBRARIES
+from lorgs import utils
 from lorgs.models.specs import WowClass
 from lorgs.models.specs import WowRole
 from lorgs.models.specs import WowSpec
@@ -23,10 +24,10 @@ from lorgs.models.specs import WowCovenant
 #   ROLES
 #
 ################################################################################
-TANK = WowRole(code="tank", name="Tank")
-HEAL = WowRole(code="heal", name="Healer")
-MDPS = WowRole(code="mdps", name="Melee")
-RDPS = WowRole(code="rdps", name="Range")
+TANK = WowRole(id=1, code="tank", name="Tank")
+HEAL = WowRole(id=2, code="heal", name="Healer")
+MDPS = WowRole(id=3, code="mdps", name="Melee")
+RDPS = WowRole(id=4, code="rdps", name="Range")
 ROLES = [TANK, HEAL, MDPS, RDPS]
 
 ################################################################################
@@ -108,10 +109,17 @@ SUPPORTED_SPECS = [spec for spec in SPECS if spec.supported]
 #
 ################################################################################
 
-ROLE_ITEM     = WowRole(code="item", name="Items")
+
+ROLE_ITEM     = WowRole(id=1001, code="item", name="Items")
 OTHER         = WowClass(id=1001, name="Other", color="#cccccc")
 OTHER_POTION  = WowSpec(role=ROLE_ITEM, wow_class=OTHER, name="Potions")
 OTHER_TRINKET = WowSpec(role=ROLE_ITEM, wow_class=OTHER, name="Trinkets")
+
+BOSS_ROLE     = WowRole(id=2001, code="boss", name="Boss")
+BOSS_CLASS    = WowClass(id=2001, name="Boss")
+BOSS_SPEC     = WowSpec(role=BOSS_ROLE, wow_class=BOSS_CLASS, name="Boss")
+BOSS_SPEC.full_name = "Boss"  # otherwise its class-spec --> boss-boss
+BOSS_SPEC.full_name_slug = "boss"
 
 ################################################################################
 #
@@ -146,13 +154,15 @@ COL_MANA  = "#5397ed"
 #
 ################################################################################
 
+# alises
+TYPE_RAID = WowSpell.TYPE_RAID
+
 #################################################################################################################################################################################################
 #   Warrior
 WARRIOR.add_spell(             spell_id=324143, cooldown=120, duration=15, color=COL_NECRO, name="Conqueror's Banner",              icon="ability_maldraxxus_warriorplantbanner.jpg")
 WARRIOR.add_spell(             spell_id=325886, cooldown=75,  duration=12, color=COL_NF,    name="Ancient Aftershock",              icon="ability_ardenweald_warrior.jpg")  # 15sec CD reduction with Conduit
 WARRIOR.add_spell(             spell_id=307865, cooldown=60,               color=COL_KYR,   name="Spear of Bastion",                icon="ability_bastion_warrior.jpg")
-WARRIOR.add_spell(             spell_id=97462,  cooldown=180, duration=10,                  name="Rallying Cry",                    icon="ability_warrior_rallyingcry.jpg",           show=False)
-WARRIOR_FURY.add_spell(        spell_id=1719,   cooldown=60,  duration=10,                  name="Recklessness",                    icon="warrior_talent_icon_innerrage.jpg")
+WARRIOR.add_spell(             spell_id=97462,  cooldown=180, duration=10,                  name="Rallying Cry",                    icon="ability_warrior_rallyingcry.jpg",           show=False, spell_type=TYPE_RAID)
 WARRIOR_FURY.add_spell(        spell_id=1719,   cooldown=60,  duration=10,                  name="Recklessness",                    icon="warrior_talent_icon_innerrage.jpg")
 WARRIOR_FURY.add_spell(        spell_id=46924,  cooldown=60,  duration=4,                   name="Bladestorm",                      icon="ability_warrior_bladestorm.jpg")
 WARRIOR_PROTECTION.add_spell(  spell_id=107574, cooldown=50,  duration=20,                  name="Avatar",                          icon="warrior_talent_icon_avatar.jpg",            show=False)  # CD reduced by Talent per Rage spend
@@ -169,10 +179,10 @@ WARRIOR_ARMS.add_spell(        spell_id=772,    cooldown=15,                    
 PALADIN.add_spell(             spell_id=304971, cooldown=60,               color=COL_KYR,   name="Divine Toll",                     icon="ability_bastion_paladin.jpg",               show=False)
 PALADIN.add_spell(             spell_id=316958, cooldown=240, duration=30, color=COL_VENTR, name="Ashen Hallow",                    icon="ability_revendreth_paladin.jpg")
 PALADIN.add_spell(             spell_id=31884,  cooldown=120, duration=20, color="#ffc107", name="Avenging Wrath",                  icon="spell_holy_avenginewrath.jpg")
-PALADIN.add_spell(             spell_id=6940,   cooldown=120, duration=12,                  name="Blessing of Sacrifice",           icon="spell_holy_sealofsacrifice.jpg")
-PALADIN_HOLY.add_spell(        spell_id=31821,  cooldown=180, duration=8,  color="#dc65f5", name="Aura Mastery",                    icon="spell_holy_auramastery.jpg")
-PALADIN_PROTECTION.add_spell(  spell_id=31850,  cooldown=120, duration=8,  color="#fcea74", name="Ardent Defender",                 icon="spell_holy_ardentdefender.jpg")
-PALADIN_PROTECTION.add_spell(  spell_id=212641, cooldown=300, duration=8,                   name="Guardian of Ancient Kings",       icon="spell_holy_heroism.jpg")
+PALADIN.add_spell(             spell_type=WowSpell.TYPE_EXTERNAL, spell_id=6940,   cooldown=120, duration=12,                  name="Blessing of Sacrifice",           icon="spell_holy_sealofsacrifice.jpg")
+PALADIN_HOLY.add_spell(                                     spell_id=31821,  cooldown=180, duration=8,  color="#dc65f5", name="Aura Mastery",                    icon="spell_holy_auramastery.jpg")
+PALADIN_PROTECTION.add_spell(  spell_type=WowSpell.TYPE_PERSONAL, spell_id=31850,  cooldown=120, duration=8,  color="#fcea74", name="Ardent Defender",                 icon="spell_holy_ardentdefender.jpg")
+PALADIN_PROTECTION.add_spell(  spell_type=WowSpell.TYPE_PERSONAL, spell_id=212641, cooldown=300, duration=8,                   name="Guardian of Ancient Kings",       icon="spell_holy_heroism.jpg")
 
 
 #################################################################################################################################################################################################
@@ -239,7 +249,7 @@ for spec in (PRIEST_SHADOW, PRIEST_DISCIPLINE):
 DEATHKNIGHT.add_spell(         spell_id=312202, cooldown=60,  duration=14, color=COL_KYR,   name="Shackle the Unworthy",            icon="ability_bastion_deathknight.jpg",          show=False)
 DEATHKNIGHT.add_spell(         spell_id=311648, cooldown=60,  duration=8,  color=COL_VENTR, name="Swarming Mist",                   icon="ability_revendreth_deathknight.jpg")
 DEATHKNIGHT.add_spell(         spell_id=315443, cooldown=120, duration=12, color=COL_NECRO, name="Abomination Limb",                icon="ability_maldraxxus_deathknight.jpg",       show=False)
-DEATHKNIGHT.add_spell(         spell_id=51052,  cooldown=120, duration=10, color="#d58cff", name="Anti-Magic Zone",                 icon="spell_deathknight_antimagiczone.jpg",      show=False)
+DEATHKNIGHT.add_spell(         spell_id=51052,  cooldown=120, duration=10, color="#d58cff", name="Anti-Magic Zone",                 icon="spell_deathknight_antimagiczone.jpg",      show=False, spell_type=TYPE_RAID)
 DEATHKNIGHT.add_spell(         spell_id=48707,  cooldown=60,  duration=5,  color="#8ced53", name="Anti-Magic Shell",                icon="spell_shadow_antimagicshell.jpg",          show=False)
 DEATHKNIGHT.add_spell(         spell_id=48792,  cooldown=180, duration=8,  color="#53aaed", name="Icebound Fortitude",              icon="spell_deathknight_iceboundfortitude.jpg")
 DEATHKNIGHT.add_spell(         spell_id=49039,  cooldown=120, duration=10, color="#999999", name="Lichborne",                       icon="spell_shadow_raisedead.jpg")
@@ -349,7 +359,7 @@ DEMONHUNTER.add_spell(         spell_id=306830, cooldown=60,               color
 DEMONHUNTER.add_spell(         spell_id=323639, cooldown=90,  duration=6,  color=COL_NF,    name="The Hunt",                        icon="ability_ardenweald_demonhunter.jpg")
 DEMONHUNTER.add_spell(         spell_id=317009, cooldown=60,               color=COL_VENTR, name="Sinful Brand",                    icon="ability_revendreth_demonhunter.jpg")
 DEMONHUNTER_HAVOC.add_spell(   spell_id=200166, cooldown=240, duration=30, color="#348540", name="Metamorphosis",                   icon="ability_demonhunter_metamorphasisdps.jpg")
-DEMONHUNTER_HAVOC.add_spell(   spell_id=196718, cooldown=180, duration=8,                   name="Darkness",                        icon="ability_demonhunter_darkness.jpg",          show=False)
+DEMONHUNTER_HAVOC.add_spell(   spell_id=196718, cooldown=180, duration=8,                   name="Darkness",                        icon="ability_demonhunter_darkness.jpg",          show=False, spell_type=TYPE_RAID)
 DEMONHUNTER_HAVOC.add_spell(   spell_id=196555, cooldown=180, duration=5,                   name="Netherwalk",                      icon="spell_warlock_demonsoul.jpg",               show=False)
 
 DEMONHUNTER_VENGEANCE.add_spell(spell_id=204021, cooldown=60,  duration=8,  color="#7aeb34", name="Fiery Brand",                    icon="ability_demonhunter_fierybrand.jpg")
@@ -372,16 +382,16 @@ _specs_agi = [HUNTER, ROGUE, SHAMAN_ENHANCEMENT, MONK_WINDWALKER, DRUID_FERAL, D
 _specs_str = [WARRIOR, PALADIN_RETRIBUTION, DEATHKNIGHT]
 
 for s in HEAL.specs:
-    s.add_spell(group=OTHER_POTION, spell_id=307161, cooldown=300, duration=10, color=COL_MANA,  name="Potion of Spiritual Clarity",  icon="inv_alchemy_80_elixir01orange.jpg")
-    s.add_spell(group=OTHER_POTION, spell_id=307193, cooldown=300,              color=COL_MANA,  name="Spiritual Mana Potion",        icon="inv_alchemy_70_blue.jpg")
+    s.add_spell(spell_type=WowSpell.TYPE_POTION, spell_id=307161, cooldown=300, duration=10, color=COL_MANA,  name="Potion of Spiritual Clarity",  icon="inv_alchemy_80_elixir01orange.jpg")
+    s.add_spell(spell_type=WowSpell.TYPE_POTION, spell_id=307193, cooldown=300,              color=COL_MANA,  name="Spiritual Mana Potion",        icon="inv_alchemy_70_blue.jpg")
 for s in _specs_int:
-    s.add_spell(group=OTHER_POTION, spell_id=307162, cooldown=300, duration=25, color="#b576e8", name="Potion of Spectral Intellect", icon="trade_alchemy_potionc4.jpg")
+    s.add_spell(spell_type=WowSpell.TYPE_POTION, spell_id=307162, cooldown=300, duration=25, color="#b576e8", name="Potion of Spectral Intellect", icon="trade_alchemy_potionc4.jpg")
 for s in _specs_agi:
-    s.add_spell(group=OTHER_POTION, spell_id=307159, cooldown=300, duration=25, color="#b576e8", name="Potion of Spectral Agility",   icon="trade_alchemy_potionc6.jpg")
+    s.add_spell(spell_type=WowSpell.TYPE_POTION, spell_id=307159, cooldown=300, duration=25, color="#b576e8", name="Potion of Spectral Agility",   icon="trade_alchemy_potionc6.jpg")
 for s in _specs_str:
-    s.add_spell(group=OTHER_POTION, spell_id=307164, cooldown=300, duration=25, color="#b576e8", name="Potion of Spectral Strength",  icon="trade_alchemy_potionc2.jpg")
+    s.add_spell(spell_type=WowSpell.TYPE_POTION, spell_id=307164, cooldown=300, duration=25, color="#b576e8", name="Potion of Spectral Strength",  icon="trade_alchemy_potionc2.jpg")
 for s in SPECS:
-    s.add_spell(group=OTHER_POTION, spell_id=307495, cooldown=300, duration=25, color="#57bd8b", name="Potion of Phantom Fire",       icon="inv_alchemy_90_combat1_green.jpg")
+    s.add_spell(spell_type=WowSpell.TYPE_POTION, spell_id=307495, cooldown=300, duration=25, color="#57bd8b", name="Potion of Phantom Fire",       icon="inv_alchemy_90_combat1_green.jpg")
 
 ################################################################################
 #
@@ -392,34 +402,36 @@ for s in SPECS:
 maxilvl = "&ilvl=252"
 mythic = "&bonus=6646"
 
+spell_type = WowSpell.TYPE_TRINKET
+
 # everyone
 for s in SPECS:
-    s.add_spell(group=OTHER_POTION, spell_id=6262,                                  name="Healthstone",                 icon="warlock_-healthstone.jpg", wowhead_data="item=5512")
-    s.add_spell(group=OTHER_POTION, spell_id=307192, cooldown=300, color="#e35f5f", name="Spiritual Healing Potion",    icon="inv_alchemy_70_red.jpg",   wowhead_data="item=171267")
+    s.add_spell(spell_type=WowSpell.TYPE_POTION, spell_id=6262,                                  name="Healthstone",                 icon="warlock_-healthstone.jpg", wowhead_data="item=5512")
+    s.add_spell(spell_type=WowSpell.TYPE_POTION, spell_id=307192, cooldown=300, color="#e35f5f", name="Spiritual Healing Potion",    icon="inv_alchemy_70_red.jpg",   wowhead_data="item=171267")
 
     # Dungeon
-    s.add_spell(group=OTHER_TRINKET, spell_id=330323, cooldown=180,                 name="Inscrutable Quantum Device",  icon="inv_trinket_80_titan02a.jpg", wowhead_data=f"item=179350{mythic}{maxilvl}")
-    s.add_spell(group=OTHER_TRINKET, spell_id=345539, cooldown=180, duration=35,    name="Empyreal Ordnance",           icon="spell_animabastion_nova.jpg", wowhead_data=f"item=180117{mythic}{maxilvl}")
+    s.add_spell(spell_type=WowSpell.TYPE_TRINKET, spell_id=330323, cooldown=180,                 name="Inscrutable Quantum Device",  icon="inv_trinket_80_titan02a.jpg", wowhead_data=f"item=179350{mythic}{maxilvl}")
+    s.add_spell(spell_type=WowSpell.TYPE_TRINKET, spell_id=345539, cooldown=180, duration=35,    name="Empyreal Ordnance",           icon="spell_animabastion_nova.jpg", wowhead_data=f"item=180117{mythic}{maxilvl}")
 
     # Other Trinkets
-    s.add_spell(group=OTHER_TRINKET, spell_id=348139, cooldown=90,  duration=9,     name="Instructor's Divine Bell",    icon="inv_misc_bell_01.jpg",        wowhead_data="item=184842&&bonus=1472:5894:6646")
+    s.add_spell(spell_type=WowSpell.TYPE_TRINKET, spell_id=348139, cooldown=90,  duration=9,     name="Instructor's Divine Bell",    icon="inv_misc_bell_01.jpg",        wowhead_data="item=184842&&bonus=1472:5894:6646")
 
 for s in _specs_int:
-    s.add_spell(group=OTHER_TRINKET, spell_id=345801, cooldown=120, duration=15, name="Soulletting Ruby", icon="inv_jewelcrafting_livingruby_01.jpg", wowhead_data=f"item=178809{mythic}{maxilvl}")
-    s.add_spell(group=OTHER_TRINKET, spell_id=355321, cooldown=120, duration=40, name="Shadowed Orb of Torment", icon="spell_animamaw_orb.jpg", wowhead_data=f"item=186428{mythic}{maxilvl}")
+    s.add_spell(spell_type=WowSpell.TYPE_TRINKET, spell_id=345801, cooldown=120, duration=15, name="Soulletting Ruby", icon="inv_jewelcrafting_livingruby_01.jpg", wowhead_data=f"item=178809{mythic}{maxilvl}")
+    s.add_spell(spell_type=WowSpell.TYPE_TRINKET, spell_id=355321, cooldown=120, duration=40, name="Shadowed Orb of Torment", icon="spell_animamaw_orb.jpg", wowhead_data=f"item=186428{mythic}{maxilvl}")
 
 
 for s in _specs_agi:
-    s.add_spell(group=OTHER_TRINKET, spell_id=345530, cooldown=90, duration=6, name="Overcharged Anima Battery", icon="inv_battery_01.jpg", wowhead_data=f"item=180116{mythic}{maxilvl}")
-    s.add_spell(group=OTHER_TRINKET, spell_id=355333, cooldown=90, duration=20, name="Salvaged Fusion Amplifier", icon="spell_progenitor_missile.jpg", wowhead_data=f"item=186432{mythic}{maxilvl}")
+    s.add_spell(spell_type=WowSpell.TYPE_TRINKET, spell_id=345530, cooldown=90, duration=6, name="Overcharged Anima Battery", icon="inv_battery_01.jpg", wowhead_data=f"item=180116{mythic}{maxilvl}")
+    s.add_spell(spell_type=WowSpell.TYPE_TRINKET, spell_id=355333, cooldown=90, duration=20, name="Salvaged Fusion Amplifier", icon="spell_progenitor_missile.jpg", wowhead_data=f"item=186432{mythic}{maxilvl}")
 
 for s in _specs_str:
-    s.add_spell(group=OTHER_TRINKET, spell_id=329831, cooldown=90, duration=15, name="Overwhelming Power Crystal", icon="spell_mage_focusingcrystal.jpg", wowhead_data=f"item=179342{mythic}{maxilvl}")
+    s.add_spell(spell_type=WowSpell.TYPE_TRINKET, spell_id=329831, cooldown=90, duration=15, name="Overwhelming Power Crystal", icon="spell_mage_focusingcrystal.jpg", wowhead_data=f"item=179342{mythic}{maxilvl}")
 
 
 for s in [DRUID_FERAL, HUNTER_SURVIVAL, MONK_BREWMASTER, DRUID_GUARDIAN]:
     # 2h Agi on use weapon https://www.wowhead.com/item=186404/jotungeirr-destinys-call?bonus=7757
-    s.add_spell(group=OTHER_TRINKET, spell_id=357773, cooldown=180, duration=30, color="#7f4af0", name="Jotungeirr, Destiny's Call", icon="inv_polearm_2h_mawraid_d_01.jpg", wowhead_data=f"item=186404{mythic}{maxilvl}")
+    s.add_spell(spell_type=WowSpell.TYPE_TRINKET, spell_id=357773, cooldown=180, duration=30, color="#7f4af0", name="Jotungeirr, Destiny's Call", icon="inv_polearm_2h_mawraid_d_01.jpg", wowhead_data=f"item=186404{mythic}{maxilvl}")
 
 
 ################################################################################
@@ -428,5 +440,10 @@ for s in [DRUID_FERAL, HUNTER_SURVIVAL, MONK_BREWMASTER, DRUID_GUARDIAN]:
 ALL_SPELLS = list(WowSpell.all)
 
 for spell in ALL_SPELLS:
-    if spell.group.role is ROLE_ITEM:
+    if spell.spell_type in (WowSpell.TYPE_TRINKET, WowSpell.TYPE_POTION):
         spell.show = False
+
+OTHER_TRINKET.spells = [spell for spell in ALL_SPELLS if spell.spell_type == WowSpell.TYPE_TRINKET]
+OTHER_TRINKET.spells = utils.uniqify(OTHER_TRINKET.spells, key=lambda spell: spell.spell_id)
+OTHER_POTION.spells = [spell for spell in ALL_SPELLS if spell.spell_type == WowSpell.TYPE_POTION]
+OTHER_POTION.spells = utils.uniqify(OTHER_POTION.spells, key=lambda spell: spell.spell_id)

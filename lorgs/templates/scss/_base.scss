@@ -6,6 +6,7 @@ html,
 body {
   height: 100%;
   margin: 0;
+
 }
 
 
@@ -17,6 +18,9 @@ body {
     font-size: 16px;
     line-height: 1.25;
     /*background: #36393f;*/
+
+    // always show scrollbar, to avoid weird layout changes
+    overflow-y: scroll;
 }
 
 * {
@@ -31,28 +35,19 @@ a, a:hover, a:visited, a:active {
  }
 
 
-label {
-    user-select: none;
-}
+.tooltip {
+    padding: .4rem 0 !important;
 
+    // from bootstrap tooltip-inner
+    padding: 0.25rem 0.5rem !important;
+    margin: 0 !important;
 
-.disable-hover,
-.disable-hover * {
-    pointer-events: none;
-}
+    color: #fff !important;
+    background-color: #000 !important;
+    opacity: .9;
+    border-radius: 0.25rem !important;
 
-
-.inner_shadow:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-
-
-    box-shadow: inset 2px 2px 5px 0px rgba(0, 0, 0, 0.1);
-
-
+    font-size: 16px !important;
+    font-family: "Lato", sans-serif !important;
 }
 

@@ -5,24 +5,28 @@
 
 .settings_bar {
 
+    .button_group {
+        display: grid;
+        grid-auto-flow: column;  // single row
+        align-items: start;
+        grid-column-gap: 2px; // space
+    }
 
-    .group_header, .button {
+    // shared styles for the group and header
+    .group_header,
+    .button {
         cursor: pointer;
         user-select: none;
 
-        &.disabled {
-            filter: saturate(0%) blur(0.5px);
-            opacity: 30%;
-        }
+        border-width: 1.25px;
 
         &:hover, &.disabled:hover {
             opacity: initial;
         }
 
-        &.disabled:hover {
-            filter: saturate(0%);
+        &.disabled {
+            opacity: 30%;
         }
-
     }
 
     // header specific
@@ -41,21 +45,26 @@
     // button specific
     .button {
 
-
-        &.disabled {
-            box-shadow: inset 1px 1px 2px #000000;
-        }
-
-        &:hover, &.disabled:hover {
+        &:hover{
             border: 1px solid white;
-            transform: scale(1.2);
         }
 
         &:not(:hover) {
             transition: transform 0.5s 0.1s;
         }
+    }
+
+    img.button {
+        &.disabled {
+            filter: saturate(75%) blur(0.5px);
+            opacity: 30%;
+            border: none;
+        }
 
     }
+
+
+
 
     .fas {
         text-align: center;
@@ -70,7 +79,6 @@
 
     }
 
-
     // exception for the home button
     #home_button {
         background-color: inherit;
@@ -80,76 +88,3 @@
 
 
 }
-
-
-
-/* most stuff below here can go? */
-
-
-#settings_container {
-    display: none;
-}
-
-.spell-checkbox-group-header {
-    font-size:  1.2rem;
-}
-
-.spell-checkbox-group-header .icon {
-    width: auto;
-    height: 1.2rem;
-}
-
-
-.spell-checkbox-group-header label:hover {
-    text-decoration: underline;
-}
-
-.spell-checkbox-group-header input,
-.spell-checkbox-group input,
-#show_settings
-{
-    display: none;
-}
-
-
-.spell-checkbox-group-header input[type="checkbox"]:not(:checked)+label {
-    border: none !important;
-}
-
-
-input[type="checkbox"]+label {
-    cursor: pointer;
-}
-
-input[type="checkbox"]:not(:checked)+label {
-    color: grey;
-    opacity: 30%;
-    filter: saturate(0%) blur(0.5px);
-}
-
- input#show_settings:not(:checked)+label {
-    opacity: 100%;
-    color: white;
-}
-
-
-input#show_settings:not(:checked)+label:hover,
-input[type="checkbox"]:not(:checked)+label:hover {
-    opacity: 100%;
-    filter: saturate(0%) blur(0);
-
-}
-
-
-input#show_settings:checked+label {
-    color: rgb(0, 200, 255);
-}
-
-#settings_hint {
-    position: absolute;
-    z-index: 5000;
-    right: 3.2rem;
-    cursor: pointer;
-}
-
-

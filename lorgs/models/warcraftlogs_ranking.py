@@ -42,7 +42,7 @@ class SpecRanking(warcraftlogs_base.Document):
 
     @property
     def boss(self):
-        return encounters.RaidBoss.get(name_slug=self.boss_slug)
+        return encounters.RaidBoss.get(full_name_slug=self.boss_slug)
 
     @property
     def fights(self):
@@ -148,17 +148,17 @@ class SpecRanking(warcraftlogs_base.Document):
 
             ################
             # Report
-            report = report = warcraftlogs_report.Report()
+            report = warcraftlogs_report.Report()
             report.report_id = report_data.get("code", "")
-            report.start_time = report_data.get("startTime", 0)
+            report.start_time = arrow.get(report_data.get("startTime", 0))
             self.reports.append(report)
 
             ################
             # Fight
             fight = report.add_fight()
             fight.fight_id = report_data.get("fightID")
-            fight.start_time = ranking_data.get("startTime", 0) - report.start_time
-            fight.end_time = fight.start_time + ranking_data.get("duration", 0)
+            fight.start_time = arrow.get(ranking_data.get("startTime", 0))
+            fight.duration = ranking_data.get("duration", 0)
 
             ################
             # Player

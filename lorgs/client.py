@@ -10,8 +10,6 @@ import os
 import aiohttp
 
 # IMPORT LOCAL LIBRARIES
-# from lorgs import models
-# from lorgs import utils
 from lorgs.cache import cache
 from lorgs.logger import logger
 

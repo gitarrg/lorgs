@@ -1,0 +1,29 @@
+
+
+
+.header-logo {
+    vertical-align: top; // align inside the div
+    mix-blend-mode: multiply;
+    margin-top: -1.25px; // offset for border
+}
+
+
+.header-logo-container {
+
+    height: 3.23rem; // icon-l height
+    position: relative;
+
+    background-color: var(--wow-color);
+    overflow: hidden;
+
+    &:hover {
+        background-color: white;
+        border-color: white;
+        cursor: pointer;
+        transform: scale(1.1);
+    }
+
+    &:not(:hover) {
+        transition: all 0.5s 0.1s;
+    }
+}
