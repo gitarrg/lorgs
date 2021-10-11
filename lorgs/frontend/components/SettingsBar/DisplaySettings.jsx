@@ -3,19 +3,18 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import ButtonGroup from './shared/ButtonGroup.jsx'
-import { set_value, get_value } from '../../store/ui.js'
+import { update_settings } from '../../store/ui.js'
 
 
 function Button({attr_name, icon_name, tooltip=""}) {
 
-    const attr_value = useSelector(state => get_value(state, attr_name))
+    const attr_value = useSelector(state => state.ui.settings[attr_name])
     const dispatch = useDispatch()
     const disabled = attr_value ? "" : "disabled"
 
     function onClick() {
-        dispatch(set_value({
-            field: attr_name,
-            value: !attr_value,
+        dispatch(update_settings({
+            [attr_name]: !attr_value
         }))
     }
 

@@ -1,0 +1,38 @@
+
+
+.timeline_tooltip {
+
+    --arrow-size: 10px;
+    --tooltip-color: black;
+
+    position: fixed;
+    z-index: 1060;
+
+    transform:
+        translateX(-50%) // center in X
+        translateY(calc(-100% - var(--arrow-size)))
+    ;
+
+    &_content {
+        padding: 0.4rem;
+        border-radius: .3rem;
+        // text-align: center;
+        width: max-content;
+        background: var(--tooltip-color);
+        z-index: 1060;
+        font-size: small;
+    }
+
+    // the arrow
+    &_arrow {
+        content: '';
+        z-index: 1061;
+        position: absolute;
+
+        border: var(--arrow-size) solid transparent;
+        border-top-color: var(--tooltip-color);
+
+        left: 50%; // center in middle of parent
+        transform: translateX(-50%); // center to its own middle
+    }
+}

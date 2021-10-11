@@ -144,6 +144,11 @@ export default class Cast extends Konva.Group {
         this.mouse_event_bbox.on('mousedown', (e) => this.handle_mousedown(e));  // TODO: only on left click
         this.mouse_event_bbox.on('mouseover', () => {this.hover(true)});
         this.mouse_event_bbox.on('mouseout', () => {this.hover(false)});
+
+        // prepare the tooltip content, as it doesn't change
+        this.tooltip_content = `${this.spell.name}`
+        this.tooltip_content += "<br>"
+        this.tooltip_content += `${toMMSS(this.timestamp)}`
     }
 
     update_style() {
@@ -225,7 +230,6 @@ export default class Cast extends Konva.Group {
     ////////////////////////////////////////////////////////////////////////////
     // Mouse Events
     //
-
     hover(hovering) {
 
         this.hovering = hovering;
@@ -236,33 +240,25 @@ export default class Cast extends Konva.Group {
         const stage = this.getStage()
         stage.container().style.cursor = this.hovering ? "pointer" : "grab";
         stage.batchDraw()
-        return
 
-        // Hacky Tooltip logic FIXME
-        if (this.hovering) {
+        //////////////////
+        // handle tooltip
+        const position = this.absolutePosition()
 
-            if (this.tooltip_timer === undefined) {
-                this.tooltip_timer = setTimeout(() => {
-                    this.tooltip = new CastTooltip(this)
-                    this.stage.overlay_layer.add(this.tooltip)
-                    this.tooltip.absolutePosition(this.absolutePosition())
-                    this.tooltip.move({x: 0, y: -50})
-                    this.stage.overlay_layer.batchDraw()
-                }, 500)
-            }
-        } else {
+        // add stage global position
+        const container = stage.container()
+        const container_position = container.getBoundingClientRect()
+        position.x += container_position.x
+        position.y += container_position.y
 
-            if (this.tooltip_timer) {
-                clearTimeout(this.tooltip_timer)
-                this.tooltip_timer = undefined
-            }
-
-            if (this.tooltip) {
-                this.tooltip.hide()
-                this.tooltip.remove()
-                this.tooltip = undefined
-            }
-        }
+        position.x += this.cast_icon.x() + (this.cast_icon.width() / 2) // center above the icon
+        store.dispatch({
+            type: constants.EVENT_SHOW_TOOLTIP,
+            payload: {
+                content: this.hovering ? this.tooltip_content : "",
+                position: position
+            },
+        })
     }
 
     select(event) {

@@ -6,9 +6,10 @@ import * as constants from "./constants.js";
 import Stage from "./Stage.js"
 import { get_is_loading, MODES } from "../../store/ui.js";
 import { get_fights } from "../../store/fights.js";
+import TimelineTooltip from "./TimelineTooltip.jsx";
 
 
-export default function TimelineCanvas(props) {
+export default function TimelineCanvas() {
 
 
     //////////////////////////////////////
@@ -25,7 +26,7 @@ export default function TimelineCanvas(props) {
     const spells_loading = useSelector(state => get_is_loading(state, "spells"))
     const fights = useSelector(state => get_fights(state))
 
-    const ui_settings = useSelector(state => state.ui)
+    const ui_settings = useSelector(state => state.ui.settings)
     const spell_display = useSelector(state => state.spells.spell_display)
     const selected_spells = useSelector(state => state.spells.selected_spells)
     const filters = useSelector(state => state.ui.filters)
@@ -76,20 +77,13 @@ export default function TimelineCanvas(props) {
         stage_ref.current.handle_event(constants.EVENT_APPLY_FILTERS, filters)
     }, [filters])
 
-    // update when fights or filters get changed
-    // React.useEffect(() => {
-    //     console.time("canvas update filters 2")
-    //     const stage = stage_ref.current
-    //     stage.schedule_update()
-    //     stage.update_size()
-    //     console.timeEnd("canvas update filters 2")
-    // }, [filters])
-
-
     //////////////////////////////////////
     // Render
     //
     return (
-        <div ref={ref} id="player_timelines_container" className="flex-grow-1" />
+        <div className="flex-grow-1 overflow-hidden">
+            <div ref={ref} id="player_timelines_container"/>
+            <TimelineTooltip />
+        </div>
     )
 }
