@@ -41,10 +41,11 @@ export default function SpecRankingsHeader({spec_slug, boss_slug}) {
     return (
         <h1 className="m-0 d-flex align-items-center">
             <HeaderLogo wow_class={class_name} />
+            <div className="ml-2" />
             <a href={url} target="_blank">
-                <span className="wow-boss wow-text ml-2">{boss.full_name}</span>
-                <span>&nbsp;vs.&nbsp;</span>
                 <span className={class_name}>{spec_name}</span>
+                <span>&nbsp;vs.&nbsp;</span>
+                <span className="wow-boss wow-text">{boss.full_name}</span>
             </a>
         </h1>
     )

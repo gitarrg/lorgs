@@ -20,17 +20,18 @@ function Button({attr_name, icon_name, tooltip=""}) {
     }
 
     return (
-        <div
-            className={`button icon-s rounded border-white ${icon_name} ${disabled}`}
-            data-tip={tooltip}
-            onClick={onClick}
-        />
+        <div data-tooltip={tooltip}>
+            <div
+                className={`button icon-s rounded border-white ${icon_name} ${disabled}`}
+                onClick={onClick}
+            />
+        </div>
     )
 }
 
 
 export default function DisplaySettings() {
-    
+
     return (
         <>
             <ButtonGroup name="Display" side="left">
