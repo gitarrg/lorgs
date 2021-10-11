@@ -46,6 +46,9 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
     start_time: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField()
     duration = me.IntField(default=0)
 
+    # deprecated in favor of "duration".
+    end_time_old: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField(db_field="end_time")
+
     boss_id = me.IntField()
     players = me.ListField(me.EmbeddedDocumentField(Player))
     boss = me.EmbeddedDocumentField(Boss)
@@ -78,7 +81,7 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
         return {
             "fight_id": self.fight_id,
             "report_id": self.report.report_id,
-            "duration": self.duration,
+            "duration": self.duration_fix,
             "players": [player.as_dict() for player in players],
             "boss": self.boss.as_dict() if self.boss else {},
         }
@@ -87,8 +90,16 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
     # Attributes
 
     @property
+    def duration_fix(self) -> int:
+        # fix for old report, that have no "duration"-field
+        if self.duration:
+            return self.duration
+        duration = self.end_time_old - self.start_time
+        return duration.total_seconds()
+
+    @property
     def end_time(self) -> arrow.Arrow:
-        return self.start_time.shift(seconds=self.duration)
+        return self.start_time.shift(seconds=self.duration_fix)
 
     @property
     def start_time_rel(self) -> int:
