@@ -11,6 +11,9 @@ import filter_logic from "../../filter_logic.js";
 
 export default class FightRow {
 
+    // offset for the killtime text
+    KILLTIME_MARGIN = 5
+
     constructor(fight_data) {
 
         this._visible = true
@@ -29,6 +32,9 @@ export default class FightRow {
         this.add_row(fight_data, fight_data.boss)
         fight_data.players.forEach(player => this.add_row(fight_data, player))
 
+        this.killtime_text = this.create_killtime_text()
+        this.foreground.add(this.killtime_text)
+
         this.layout_children()
 
     }
@@ -42,6 +48,24 @@ export default class FightRow {
 
         this.foreground.add(row.foreground)
         this.background.add(row.background)
+    }
+
+    create_killtime_text() {
+        return new Konva.Text({
+            name: "cast_text",
+            text: toMMSS(this.duration),
+            x: this.KILLTIME_MARGIN + (this.duration * constants.DEFAULT_ZOOM) ,
+            y: 0,
+            fontSize: 14,
+
+            height: constants.LINE_HEIGHT,
+            verticalAlign: 'middle',
+
+            fontFamily: "Lato",
+            fill: "#999",
+            listening: false,
+            transformsEnabled: "position",
+        })
     }
 
     layout_children() {
@@ -84,6 +108,11 @@ export default class FightRow {
     //////////////////////////////
     // Methods
     //
+
+    _handle_zoom_change(scale_x) {
+        this.killtime_text.x(this.KILLTIME_MARGIN + (this.duration * scale_x))
+    }
+
     _handle_apply_filters_pre(filters) {
         const visible = filter_logic.is_fight_visible(this.fight_data, filters)
         this.visible(visible)
@@ -100,6 +129,7 @@ export default class FightRow {
         if (event_name === constants.EVENT_APPLY_FILTERS ) { this._handle_apply_filters_pre(payload)}
         if (!this.visible()) { return }
 
+        if (event_name === constants.EVENT_ZOOM_CHANGE) { this._handle_zoom_change(payload)}
         this.rows.forEach(row => row.handle_event(event_name, payload))
 
         // postprocess after filters applied (in case height change due to child rows updating)
