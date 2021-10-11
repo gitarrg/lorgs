@@ -37,8 +37,6 @@ export default function SpecRankings() {
     const boss = useSelector(state => get_boss(state, boss_slug))
     const spec = useSelector(state => get_spec(state, spec_slug))
 
-    console.log("is_loading", is_loading)
-
     // const
     const mode = ui_store.MODES.SPEC_RANKING
 

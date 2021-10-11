@@ -1,7 +1,7 @@
 
 {# some dev vars #}
 <script>
-const LORRGS_DEBUG = {{ "true" if config.LOCAL_FILES else "false" }}
+const LORRGS_DEBUG = {{ 1 if config.LORRGS_DEBUG else 0 }}
 </script>
 
 
@@ -19,7 +19,7 @@ const LORRGS_DEBUG = {{ "true" if config.LOCAL_FILES else "false" }}
 <script defer src="{{url_for('static',filename='utils.js')}}"></script>
 
 {# React #}
-{% if config.LOCAL_FILES %}
+{% if config.LORRGS_DEBUG %}
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.development.js"crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.development.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 {% else %}
@@ -31,7 +31,7 @@ const LORRGS_DEBUG = {{ "true" if config.LOCAL_FILES else "false" }}
 
 
 {# Redux #}
-{% if config.LOCAL_FILES %}
+{% if config.LORRGS_DEBUG %}
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/redux/4.1.1/redux.js" integrity="sha512-VSziEhiRlxaN8AZfc5UQiEnrcwM3KOp0GRITlYcQ7BCsEPq/VQMApwoZoh8zL69oo/Of+uVt/nygZbJAMst6jA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/react-redux/7.2.5/react-redux.js" integrity="sha512-/Z5dRgJCwIquRCBYKNv6yFHqkgs887HHCSYKTeHNteepvTQRtAUP1xBrCP/bVmVw9eznv/rEBrrgTA0FTe/9Mw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 {% else %}

@@ -20,8 +20,8 @@ class BaseConfig:
 
     JSONIFY_PRETTYPRINT_REGULAR = False
 
-    # switch used to use non mimified js files
-    LOCAL_FILES = False
+    # bool: use dev files
+    LORRGS_DEBUG = False
 
     # custom tag to force refreshes on js and css files
     BUILD_TAG = os.getenv("BUILD_TAG", "BUILD_TAG")
@@ -32,8 +32,8 @@ class BaseConfig:
 class DevelopmentConfig(BaseConfig):
     """Config used for Development."""
 
-    # bool: use local/dev files
-    LOCAL_FILES = True
+    # bool: use dev files
+    LORRGS_DEBUG = False
 
     SEND_FILE_MAX_AGE_DEFAULT = 0  # for DEV. updates static files
     SEND_FILE_MAX_AGE_DEFAULT = 1000
