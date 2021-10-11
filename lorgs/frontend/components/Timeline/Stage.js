@@ -27,7 +27,7 @@ export default class Stage extends Konva.Stage{
 
         /////////////////////////////////
         // custom attributes
-        this.scale_x = 4;
+        this.scale_x = constants.DEFAULT_ZOOM
         this.spells = {}
         this.rows = []
 
@@ -97,7 +97,7 @@ export default class Stage extends Konva.Stage{
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    // EVENTS
+    // STANDARD EVENTS
     //
 
     contextmenu(event) {
@@ -142,7 +142,7 @@ export default class Stage extends Konva.Stage{
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    // INTERACTION
+    // CUSTOM EVENTS
 
     _handle_spell_selected(selected_spells) {
         this.has_selection = selected_spells.length > 0;
