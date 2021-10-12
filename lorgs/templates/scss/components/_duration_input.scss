@@ -1,0 +1,33 @@
+
+
+
+.duration_input {
+
+    height: initial;  // BS set some fixed large height
+    max-width: 7ch;
+    text-align: center;
+    padding: 2px 4px; // slightly smaller padding than BS
+
+    &:not(:placeholder-shown) {
+        font-weight: bold;
+    }
+
+    &:not(:placeholder-shown):not(:focus):valid {
+        border: var(--success) solid 2px;
+    }
+
+    &:invalid {
+        border: var(--danger) solid 2px;
+        color: var(--danger);
+    }
+}
+
+
+// not used as of now.. but in case its needed later
+// .duration_input__group {}
+
+
+// style for the dash
+.duration_input__dash {
+    line-height: initial; // BS set some fixed large height
+}

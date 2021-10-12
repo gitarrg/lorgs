@@ -126,36 +126,8 @@
 
 .killtime-search {
 
-
     .duration_input__group.empty:not(:hover) {
         opacity: 0.3;
-    }
-
-    input {
-        // line-height: 1.25;
-        height: initial;  // BS set some fixed large height
-        max-width: 7ch;
-        text-align: center;
-        padding: 2px 4px; // slightly smaller padding than BS
-
-        &:not(:placeholder-shown) {
-            font-weight: bold;
-        }
-
-        &:not(:placeholder-shown):not(:focus):valid {
-            border: var(--success) solid 2px;
-            // color: var(--success);
-        }
-
-        &:invalid {
-            border: var(--danger) solid 2px;
-            color: var(--danger);
-        }
-    }
-
-    // style for the dash
-    span {
-        line-height: initial; // BS set some fixed large height
     }
 
 }
