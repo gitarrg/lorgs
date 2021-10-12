@@ -21,7 +21,7 @@ export default function FilterKilltimeGroup() {
 
     // Render
     return (
-        <ButtonGroup name="Killtime 23" side="right">
+        <ButtonGroup name="Killtime" side="right">
             <DurationInputGroup onChange={onChange} className="input-group-sm killtime_input" />
         </ButtonGroup>
     )
