@@ -113,7 +113,7 @@ export default function DurationInput({start, placeholder="0:00", onChange}) {
             onKeyDown={handleKeyDown}
             type="text"
             value={text || ""}
-            className="form-control"
+            className="duration_input form-control"
             placeholder={placeholder}
             pattern="\d+:\d{2}"
         />
