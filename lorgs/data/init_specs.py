@@ -156,6 +156,8 @@ COL_MANA  = "#5397ed"
 
 # alises
 TYPE_RAID = WowSpell.TYPE_RAID
+TAG_DYNAMIC_CD = WowSpell.TAG_DYNAMIC_CD
+
 
 #################################################################################################################################################################################################
 #   Warrior
@@ -232,7 +234,7 @@ PRIEST_DISCIPLINE.add_spell(   spell_id=47536,  cooldown=90,  duration=8,       
 PRIEST_DISCIPLINE.add_spell(   spell_id=246287, cooldown=90,                                name="Evangelism",                      icon="spell_holy_divineillumination.jpg")
 PRIEST_DISCIPLINE.add_spell(   spell_id=194509, cooldown=20,              color="#edbb2f",  name="Power Word: Radiance",            icon="spell_priest_power-word.jpg",               show=False)
 PRIEST_HOLY.add_spell(         spell_id=64843,  cooldown=180, duration=8, color="#d7abdb",  name="Divine Hymn",                     icon="spell_holy_divinehymn.jpg")
-PRIEST_HOLY.add_spell(         spell_id=265202, cooldown=240,                               name="Holy Word: Salvation",            icon="ability_priest_archangel.jpg")
+PRIEST_HOLY.add_spell(         spell_id=265202, cooldown=240,                               name="Holy Word: Salvation",            icon="ability_priest_archangel.jpg",                           tags=[TAG_DYNAMIC_CD])
 PRIEST_HOLY.add_spell(         spell_id=200183, cooldown=120, duration=20,                  name="Apotheosis",                      icon="ability_priest_ascension.jpg",              show=False)
 PRIEST_SHADOW.add_spell(       spell_id=228260, cooldown=90,  duration=15, color="#b330e3", name="Voidform",                        icon="spell_priest_voidform.jpg")  # tooltip: 228264
 PRIEST_SHADOW.add_spell(       spell_id=263165, cooldown=30,  duration=3,                   name="Void Torrent",                    icon="spell_priest_voidsear.jpg",                 show=False)
@@ -255,9 +257,9 @@ DEATHKNIGHT.add_spell(         spell_id=48792,  cooldown=180, duration=8,  color
 DEATHKNIGHT.add_spell(         spell_id=49039,  cooldown=120, duration=10, color="#999999", name="Lichborne",                       icon="spell_shadow_raisedead.jpg")
 DEATHKNIGHT_BLOOD.add_spell(   spell_id=49028,  cooldown=120, duration=8,  color="#ffbd24", name="Dancing Rune Weapon",             icon="inv_sword_07.jpg")
 DEATHKNIGHT_BLOOD.add_spell(   spell_id=55233,  cooldown=90,  duration=10,                  name="Vampiric Blood",                  icon="spell_shadow_lifedrain.jpg")
-DEATHKNIGHT_UNHOLY.add_spell(  spell_id=42650,  cooldown=240, duration=30,                  name="Army of the Dead",                icon="spell_deathknight_armyofthedead.jpg")
-DEATHKNIGHT_UNHOLY.add_spell(  spell_id=275699, cooldown=45,  duration=15,                  name="Apocalypse",                      icon="artifactability_unholydeathknight_deathsembrace.jpg")
-DEATHKNIGHT_UNHOLY.add_spell(  spell_id=63560,  cooldown=45,  duration=15,                  name="Dark Transformation",             icon="achievement_boss_festergutrotface.jpg")
+DEATHKNIGHT_UNHOLY.add_spell(  spell_id=42650,  cooldown=240, duration=30,                  name="Army of the Dead",                icon="spell_deathknight_armyofthedead.jpg", tags=[TAG_DYNAMIC_CD])
+DEATHKNIGHT_UNHOLY.add_spell(  spell_id=275699, cooldown=45,  duration=15,                  name="Apocalypse",                      icon="artifactability_unholydeathknight_deathsembrace.jpg", tags=[TAG_DYNAMIC_CD])
+DEATHKNIGHT_UNHOLY.add_spell(  spell_id=63560,  cooldown=45,  duration=15,                  name="Dark Transformation",             icon="achievement_boss_festergutrotface.jpg", tags=[TAG_DYNAMIC_CD])
 DEATHKNIGHT_UNHOLY.add_spell(  spell_id=115989, cooldown=45,  duration=14, color="#58c437", name="Unholy Blight",                   icon="spell_shadow_contagion.jpg")
 DEATHKNIGHT_FROST.add_spell(   spell_id=51271,  cooldown=60,  duration=12,                  name="Pillar of Frost",                 icon="ability_deathknight_pillaroffrost.jpg",    show=False)
 DEATHKNIGHT_FROST.add_spell(   spell_id=46585,  cooldown=120, duration=60, color="#c7ba28", name="Raise Dead",                      icon="inv_pet_ghoul.jpg",                        show=False)
@@ -291,11 +293,11 @@ MAGE.add_spell(                spell_id=314791, cooldown=60,  duration=3,  color
 MAGE.add_spell(                spell_id=307443, cooldown=30,  duration=10, color=COL_KYR,   name="Radiant Spark",                   icon="ability_bastion_mage.jpg",                  show=False)
 MAGE.add_spell(                spell_id=324220, cooldown=180, duration=25, color=COL_NECRO, name="Deathborne",                      icon="ability_maldraxxus_mage.jpg")
 MAGE.add_spell(                spell_id=116011, cooldown=45,  duration=12,                  name="Rune of Power",                   icon="spell_mage_runeofpower.jpg",                show=False)
-MAGE_FIRE.add_spell(           spell_id=190319, cooldown=60,  duration=10, color="#e3b02d", name="Combustion",                      icon="spell_fire_sealoffire.jpg")
+MAGE_FIRE.add_spell(           spell_id=190319, cooldown=60,  duration=10, color="#e3b02d", name="Combustion",                      icon="spell_fire_sealoffire.jpg", tags=[TAG_DYNAMIC_CD])
 MAGE_FIRE.add_spell(           spell_id=153561, cooldown=45,                                name="Meteor",                          icon="spell_mage_meteor.jpg",                     show=False)
 MAGE_ARCANE.add_spell(         spell_id=12042,  cooldown=100, duration=10,                  name="Arcane Power",                    icon="spell_nature_lightning.jpg")  # 2min base cd / reduced by conduit
 MAGE_ARCANE.add_spell(         spell_id=321507, cooldown=45,  duration=8,                   name="Touch of the Magi",               icon="spell_mage_icenova.jpg")
-MAGE_FROST.add_spell(          spell_id=12472,  cooldown=60,  duration=20,                  name="Icy Veins",                       icon="spell_frost_coldhearted.jpg") # 3min base cd / reduced by conduit
+MAGE_FROST.add_spell(          spell_id=12472,  cooldown=60,  duration=20,                  name="Icy Veins",                       icon="spell_frost_coldhearted.jpg", tags=[TAG_DYNAMIC_CD]) # 3min base cd / reduced by conduit
 MAGE_FROST.add_spell(          spell_id=257537, cooldown=45,                                name="Ebonbolt",                        icon="artifactability_frostmage_ebonbolt.jpg")
 MAGE_FROST.add_spell(          spell_id=84714,  cooldown=60,                                name="Frozen Orb",                      icon="spell_frost_frozenorb.jpg")
 
@@ -305,7 +307,7 @@ WARLOCK.add_spell(             spell_id=325640, cooldown=60,  duration=8,  color
 WARLOCK_AFFLICTION.add_spell(  spell_id=205180, cooldown=180, duration=8,  color="#49ad6e", name="Summon Darkglare",                icon="inv_beholderwarlock.jpg")
 WARLOCK_AFFLICTION.add_spell(  spell_id=113860, cooldown=120, duration=20, color="#c35ec4", name="Dark Soul: Misery",               icon="spell_warlock_soulburn.jpg")
 WARLOCK_AFFLICTION.add_spell(  spell_id=205179, cooldown=45,  duration=16, color="#7833b0", name="Phantom Singularity",             icon="inv_enchant_voidsphere.jpg")
-WARLOCK_DEMONOLOGY.add_spell(  spell_id=265187, cooldown=60,  duration=15, color="#9150ad", name="Summon Demonic Tyrant",           icon="inv_summondemonictyrant.jpg")
+WARLOCK_DEMONOLOGY.add_spell(  spell_id=265187, cooldown=60,  duration=15, color="#9150ad", name="Summon Demonic Tyrant",           icon="inv_summondemonictyrant.jpg", tags=[TAG_DYNAMIC_CD])
 WARLOCK_DEMONOLOGY.add_spell(  spell_id=111898, cooldown=120, duration=17, color="#c46837", name="Grimoire: Felguard",              icon="spell_shadow_summonfelguard.jpg")
 WARLOCK_DEMONOLOGY.add_spell(  spell_id=264119, cooldown=45,  duration=15, color="#69b851", name="Summon Vilefiend",                icon="inv_argusfelstalkermount.jpg")
 WARLOCK_DEMONOLOGY.add_spell(  spell_id=267217, cooldown=180, duration=15,                  name="Nether Portal",                   icon="inv_netherportal.jpg")
@@ -325,7 +327,7 @@ MONK_MISTWEAVER.add_spell(     spell_id=325197, cooldown=180, duration=25, color
 MONK_WINDWALKER.add_spell(     spell_id=123904, cooldown=120, duration=24, color="#8cdbbc", name="Invoke Xuen, the White Tiger",    icon="ability_monk_summontigerstatue.jpg")
 MONK_WINDWALKER.add_spell(     spell_id=137639, cooldown=90,  duration=15, color="#be53db", name="Storm, Earth, and Fire",          icon="spell_nature_giftofthewild.jpg")
 MONK_BREWMASTER.add_spell(     spell_id=322507, cooldown=60,  duration=0,  color="#45f9ff", name="Celestial Brew",                  icon="ability_monk_ironskinbrew.jpg",              show=False)
-MONK_BREWMASTER.add_spell(     spell_id=132578, cooldown=105, duration=25,                  name="Invoke Niuzao the Black Ox",      icon="spell_monk_brewmaster_spec.jpg")  # base cd =3min / reduced with conduit
+MONK_BREWMASTER.add_spell(     spell_id=132578, cooldown=105, duration=25,                  name="Invoke Niuzao the Black Ox",      icon="spell_monk_brewmaster_spec.jpg", tags=[TAG_DYNAMIC_CD])  # base cd =3min / reduced with conduit
 MONK_BREWMASTER.add_spell(     spell_id=122278, cooldown=120, duration=10, color="#fcba03", name="Dampen Harm",                     icon="ability_monk_dampenharm.jpg")
 MONK_BREWMASTER.add_spell(     spell_id=115176, cooldown=300, duration=8,                   name="Zen Meditation",                  icon="ability_monk_zenmeditation.jpg")
 MONK_BREWMASTER.add_spell(     spell_id=115203, cooldown=360, duration=15, color="#ffb145", name="Fortifying Brew",                 icon="ability_monk_fortifyingale_new.jpg")
