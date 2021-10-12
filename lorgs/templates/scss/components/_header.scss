@@ -1,29 +1,29 @@
 
 
 
-.header-logo {
-    vertical-align: top; // align inside the div
-    mix-blend-mode: multiply;
-    margin-top: -1.25px; // offset for border
+
+.header-logo-container {
+    height: 3.23rem; // icon-l height
+    position: relative;
 }
 
 
-.header-logo-container {
+.header-logo {
+    vertical-align: top; // align inside the div
+    margin-top: -1.25px; // offset for border
 
-    height: 3.23rem; // icon-l height
-    position: relative;
-
-    background-color: var(--wow-color);
+    // background-color: var(--wow-color);
     overflow: hidden;
+    fill: var(--wow-color);
 
     &:hover {
-        background-color: white;
+        fill: white;
         border-color: white;
         cursor: pointer;
         transform: scale(1.1);
     }
 
     &:not(:hover) {
-        transition: all 0.5s 0.1s;
+        transition: all 0.75s 0.25s ease;
     }
 }
