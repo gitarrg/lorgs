@@ -85,6 +85,7 @@ export default class FightRow {
         if (value !== undefined) {
             this._visible = value
             this.rows.forEach(row => row.visible(value))
+            this.killtime_text.visible(value)
         }
         return this._visible
     }
