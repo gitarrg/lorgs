@@ -45,7 +45,7 @@ class RaidBoss(base.Model):
     def __init__(self, zone, id, name, nick=""):
         self.id = id
         self.zone = zone
-        self.name = nick
+        self.name = nick or name
         self.full_name = name
         self.visible = True # todo: is this used anywhere?
 
@@ -69,7 +69,7 @@ class RaidBoss(base.Model):
         return {
             "id": self.id,
             "role": self.role,
-            "name": self.name or self.full_name,
+            "name": self.name,
             "name_slug": self.name_slug,
             "full_name": self.full_name,
             "full_name_slug": self.full_name_slug,
