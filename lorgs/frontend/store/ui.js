@@ -1,5 +1,6 @@
 
 import { createSlice } from '@reduxjs/toolkit'
+import { createSelector } from 'reselect'
 
 
 // modes to switch some page related features
@@ -30,14 +31,12 @@ export function get_filter_value(state, attr_name) {
 }
 
 
-export function get_is_loading(state, key) {
-
-    if (key) {
-        return state.ui._loading[key]
+export const get_is_loading = createSelector(
+    (state) => state.ui._loading, // dependency
+    (loading_state) => {
+        return Object.values(loading_state).some(v => v == true)
     }
-    return Object.values(state.ui._loading).some(v => v == true)
-
-}
+)
 
 
 export function get_tooltip(state) {

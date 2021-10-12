@@ -3,9 +3,6 @@
 eg.: spells, classes, specs
 """
 
-# IMPORT STANDARD LIBRARIES
-import json
-
 # IMPORT THIRD PARTY LIBRARIES
 import flask
 
@@ -42,7 +39,7 @@ def get_roles():
 @cache.cached(query_string=True)
 def get_specs_all():
     all_specs = sorted(specs.WowSpec.all)
-    all_specs = [specs.as_dict(spells=True) for specs in all_specs]
+    all_specs = [specs.as_dict(spells=False) for specs in all_specs]
     return {"specs": all_specs}
 
 
@@ -54,6 +51,20 @@ def get_spec(spec_slug):
         return "Invalid Spec.", 404
     return spec.as_dict()
 
+
+@blueprint.get("/specs/<string:spec_slug>/spells")
+@cache.cached()
+def get_spec_spells(spec_slug):
+    """Get all spells for a given spec.
+
+    Args:
+        spec_slug (str): name of the spec
+
+    """
+    spec = specs.WowSpec.get(full_name_slug=spec_slug)
+    if not spec:
+        return "Invalid Spec.", 404
+    return {spell.spell_id: spell.as_dict() for spell in spec.spells}
 
 
 ###############################################################################
@@ -75,15 +86,8 @@ def spells_one(spell_id):
 @blueprint.get("/spells")
 @cache.cached()
 def spells_all():
-
+    """Get all Spells."""
     spells = specs.WowSpell.all
-
-    # filter by group
-    # groups = flask.request.args.getlist("group") #, default="", type=str)
-    # if groups:
-    #     # TODO: change this to use `spell.specs` or some other method
-    #     spells = [spell for spell in spells if spell.group and spell.group.full_name_slug in groups]
-
     return {spell.spell_id: spell.as_dict() for spell in spells}
 
 
@@ -98,6 +102,12 @@ def spells_all():
 @blueprint.get("/zone/<int:zone_id>/bosses")
 @cache.cached()
 def get_bosses(zone_id=28):
+    """Get all Bosses for a given Zone.
+
+    Args:
+        zone_id (int, optional)
+
+    """
     zone = encounters.RaidZone.get(id=zone_id)
     if not zone:
         return "Invalid Zone.", 404
@@ -107,8 +117,28 @@ def get_bosses(zone_id=28):
 @blueprint.get("/boss/<string:boss_slug>")
 @cache.cached(query_string=True)
 def get_boss(boss_slug):
-    include_spells = flask.request.args.get("include_spells", default=True, type=json.loads)
+    """Get a single Boss.
+
+    Args:
+        boss_slug (string): name of the boss
+
+    """
     boss = encounters.RaidBoss.get(full_name_slug=boss_slug)
     if not boss:
         return "Invalid Boss.", 404
-    return boss.as_dict(include_spells=include_spells)
+    return boss.as_dict()
+
+
+@blueprint.get("/boss/<string:boss_slug>/spells")
+def get_boss_spells(boss_slug):
+    """Get Spells for a given Boss.
+
+    Args:
+        boss_slug (string): name of the boss
+
+    """
+    boss = encounters.RaidBoss.get(full_name_slug=boss_slug)
+    if not boss:
+        return "Invalid Boss.", 404
+    return {spell.spell_id: spell.as_dict() for spell in boss.spells}
+

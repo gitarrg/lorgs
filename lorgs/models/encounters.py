@@ -65,7 +65,7 @@ class RaidBoss(base.Model):
     def __repr__(self):
         return f"<RaidBoss(id={self.id} name={self.name})>"
 
-    def as_dict(self, include_spells=False):
+    def as_dict(self):
         return {
             "id": self.id,
             "role": self.role,
@@ -74,7 +74,6 @@ class RaidBoss(base.Model):
             "full_name": self.full_name,
             "full_name_slug": self.full_name_slug,
             "class": "boss",
-            "spells": [spell.spell_id for spell in self.spells]
         }
 
     ##########################

@@ -42,14 +42,19 @@ API.load_roles = async function() {
 }
 
 
-API.load_specs = async function({include_spells = false} = {}) {
-    const specs = await fetch_data("/api/specs", { include_spells: include_spells });
+API.load_specs = async function() {
+    const specs = await fetch_data("/api/specs");
     return specs.specs || []
 }
 
 
 API.load_spec = async function(spec_slug) {
     return fetch_data(`/api/specs/${spec_slug}`);
+}
+
+
+API.load_spec_spells = async function(spec_slug) {
+    return fetch_data(`/api/specs/${spec_slug}/spells`);
 }
 
 
@@ -68,6 +73,10 @@ API.load_bosses = async function() {
 
 API.load_boss = async function(boss_slug) {
     return fetch_data(`/api/boss/${boss_slug}`);
+}
+
+API.load_boss_spells = async function(boss_slug) {
+    return fetch_data(`/api/boss/${boss_slug}/spells`);
 }
 
 

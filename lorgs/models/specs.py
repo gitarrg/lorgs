@@ -139,8 +139,6 @@ class WowSpec(base.Model):
 
     def as_dict(self, **kwargs):
 
-        spell_groups = spells_by_type(self.spells)
-
         data = {
             "name": self.name,
             "name_slug": self.name_slug,
@@ -148,8 +146,12 @@ class WowSpec(base.Model):
             "full_name_slug": self.full_name_slug,
             "role": str(self.role),
             "class": self.wow_class.as_dict(),
-            "spells": {group: spell_ids(spells) for group, spells in spell_groups.items()},
         }
+
+        if kwargs.get("spells"):
+            spell_groups = spells_by_type(self.spells)
+            data["spells"] = {group: spell_ids(spells) for group, spells in spell_groups.items()},
+
         return data
 
     ##########################
