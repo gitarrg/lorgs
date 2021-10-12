@@ -1,6 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { get_spec } from '../../store/specs.js'
+import FormGroup from './FormGroup.jsx'
 import CountFilterGroup from './SearchCountInput.jsx'
 
 
@@ -28,17 +29,16 @@ function create_spec_search_input_for_role(role) {
 }
 
 
-export default function PlayerSpecSearch() {
+export default function PlayerSpecSearch({className}) {
 
     let roles = useSelector(state => state.roles)
     roles = Object.values(roles).filter(role => role.id < 1000)
 
     return (
-        <div className="ml-2">
-            <h4 className="mb-0">Specs:</h4>
-            <div className="player-spec-search bg-dark p-1 rounded border">
+        <div className={className}>
+            <FormGroup name="Specs:" className="player-spec-search">
                 {roles.map(role => create_spec_search_input_for_role(role))}
-            </div>
+            </FormGroup>
         </div>
     )
 }

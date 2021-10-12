@@ -4,6 +4,7 @@
 import { useSelector } from 'react-redux'
 import { useFormContext, useWatch } from "react-hook-form";
 import { get_bosses } from '../../store/bosses';
+import FormGroup from './FormGroup.jsx';
 
 
 
@@ -15,7 +16,7 @@ function BossButton({boss}) {
     const selected_boss_name_slug = useWatch({name: "boss_name_slug"})
 
     // Constants
-    const is_active = (selected_boss_name_slug == boss.full_name_slug ? "active" : "")
+    const is_selected = (selected_boss_name_slug == boss.full_name_slug ? "active" : "")
 
     function onClick() {
         form_methods.setValue("boss_name_slug", boss.full_name_slug)
@@ -23,14 +24,14 @@ function BossButton({boss}) {
 
     // Render
     return (
-        <img
-            className={`boss-button icon-spec icon-m border-black rounded ${is_active}`}
-            src={boss.icon_path}
-            alt={boss.name}
-            data-tip={boss.full_name}
-            alt={boss.full_name}
-            onClick={onClick}
-        />
+        <div data-tooltip={boss.full_name}>
+            <img
+                className={`boss-button icon-spec icon-m border-black rounded ${is_selected}`}
+                src={boss.icon_path}
+                alt={boss.name}
+                onClick={onClick}
+            />
+        </div>
     )
 }
 
@@ -41,18 +42,13 @@ export default function BossSelect() {
 
 
     return (
-
-        <div className="boss-search-container ml-auto">
-            <h4 className="mb-0">Boss:</h4>
-
-            <div className="boss-button-container bg-dark p-1 rounded border">
-                {Object.values(bosses).map(boss =>
-                    <BossButton
-                        key={boss.full_name_slug}
-                        boss={boss}
-                    />
-                )}
-            </div>
-        </div>
+        <FormGroup name="Boss:" className="boss-button-container">
+            {Object.values(bosses).map(boss =>
+                <BossButton
+                key={boss.full_name_slug}
+                boss={boss}
+                />
+            )}
+        </FormGroup>
     )
 }

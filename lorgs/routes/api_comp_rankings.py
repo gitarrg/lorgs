@@ -43,6 +43,14 @@ def get_comp_ranking(boss_slug):
     search["fights.composition.specs"] = flask.request.args.getlist("spec")
     search["fights.composition.classes"] = flask.request.args.getlist("class")
 
+    search["fights"] = []
+    killtime_min = flask.request.args.get("killtime_min", type=int, default=0)
+    killtime_max = flask.request.args.get("killtime_max", type=int, default=0)
+    if killtime_min:
+        search["fights"] += [f"duration.gt.{killtime_min * 1000}"]
+    if killtime_max:
+        search["fights"] += [f"duration.lt.{killtime_max * 1000}"]
+
     # lookup DB
     comp_ranking = warcraftlogs_comp_ranking.CompRanking(boss_slug=boss_slug)
     if not comp_ranking.valid:
