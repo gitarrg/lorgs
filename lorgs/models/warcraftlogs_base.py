@@ -42,7 +42,7 @@ def query_args_to_mongo(*query_args, prefix=""):
 
         m = re.match(QUERY_ARG_RE, arg)
         if not m:
-            print("invalid query arg", m)
+            print("invalid query arg", arg)
             continue
 
         # split re.match
@@ -57,7 +57,7 @@ def query_args_to_mongo(*query_args, prefix=""):
             # unless...
             # check for non existence, as there will be no field with value 0
             if value == 0:
-                op = "not.exists"
+                op = "exists"  # exists + value=0 --> non existant
 
         # assamble the parts
         parts = [prefix, key, op]
@@ -66,7 +66,7 @@ def query_args_to_mongo(*query_args, prefix=""):
         key = key.replace(".", "__")
 
         # update the dict
-        mongo_kwargs[key] = value 
+        mongo_kwargs[key] = value
 
     return mongo_kwargs
 
