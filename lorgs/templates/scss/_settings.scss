@@ -13,7 +13,7 @@
     }
 
     // shared styles for the group and header
-    .group_header,
+    .button_group_header,
     .button {
         cursor: pointer;
         user-select: none;
@@ -30,7 +30,7 @@
     }
 
     // header specific
-    .group_header {
+    .button_group_header {
 
         &:hover {
             text-decoration: underline;
