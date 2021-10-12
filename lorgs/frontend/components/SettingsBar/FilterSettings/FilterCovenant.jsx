@@ -8,6 +8,7 @@ import { set_filter } from '../../../store/ui.js'
 
 function FilterCovenantButton({covenant}) {
 
+    // Hooks
     const covenant_slug = covenant.toLowerCase()
     const dispatch = useDispatch()
 
@@ -15,6 +16,7 @@ function FilterCovenantButton({covenant}) {
         dispatch(set_filter({ group: "covenant", name: covenant_slug, value: value }))
     }
 
+    // Render
     return (
         <FilterButton
             key={covenant_slug}
