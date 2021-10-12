@@ -61,6 +61,10 @@ export default function SpellButton({spec, spell_id, onClick}) {
             spell_id: spell.spell_id,
             visible: group_active
         }))
+
+        // Invoke any additional onClick Callbacks
+        onClick && onClick(group_active)
+
     }, [group_active])
 
     ////////////////////////////////
