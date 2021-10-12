@@ -10,6 +10,7 @@ export default function RaidCDSpellButton({spell_id}) {
 
     const dispatch = useDispatch()
     const spec = useSelector(state => get_spec_for_spell_id(state, spell_id))
+    if (!spec) { return null}
 
     function onClick(value) {
         dispatch(set_filter({

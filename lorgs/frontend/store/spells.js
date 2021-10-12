@@ -5,9 +5,29 @@ import { createSelector } from 'reselect'
 import API from '../api.js'
 import { set_fights } from './fights.js'
 
-
 const ICON_ROOT = "https://wow.zamimg.com/images/wow/icons/small"
 
+
+////////////////////////////////////////////////////////////////////////////////
+// Utils
+//
+
+/**
+ * Group spells by spell_type
+ *
+ * @param {object} spells values should be spells
+ * @returns {object} [spell_type:list[spell_ids]]
+ */
+export function group_spells_by_type(spells) {
+
+    const spells_by_type = {}
+    Object.values(spells).forEach(spell => {
+        const spell_type = spell.spell_type
+        spells_by_type[spell_type] = spells_by_type[spell_type] || []
+        spells_by_type[spell_type].push(spell.spell_id)
+    })
+    return spells_by_type
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -96,6 +116,25 @@ export function process_spells(spells = {}) {
 // Slice
 //
 
+/**
+ * Shared logic to append new spells to the slice
+ * @param {object} state current slice state
+ * @param {object} spells spells by spell_id
+ * @returns {object} updated state
+ */
+function _add_spells_to_state(state, new_spells) {
+
+    new_spells = process_spells(new_spells)
+    state.all_spells = {...state.all_spells, ...new_spells}
+
+    Object.values(state.all_spells).forEach(spell => {
+        state.spell_display[spell.spell_id] = spell.show;
+    })
+    return state
+
+}
+
+
 const SLICE = createSlice({
     name: "spells",
 
@@ -118,14 +157,19 @@ const SLICE = createSlice({
     reducers: {
 
         set_spells: (state, action) => {
-            state.all_spells = action.payload
-            state.all_spells = process_spells(state.all_spells)
+            state = initialState
+            return _add_spells_to_state(state, action.payload)
+        },
 
-            Object.values(state.all_spells).forEach(spell => {
-                state.spell_display[spell.spell_id] = spell.show;
-            })
-
-            return state
+        /**
+         * Adds/Appends addition spells to the state
+         *
+         * @param {object} state current state
+         * @param {object} action payload = spells to add
+         * @returns new state
+         */
+        add_spells: (state, action) => {
+            return _add_spells_to_state(state, action.payload)
         },
 
         update_used_spells: (state, action) => {
@@ -171,6 +215,22 @@ const SLICE = createSlice({
             state.used_spell_ids = filter_used_spells(state.all_spells, fights)
             return state
         })
+
+        /**
+         * Add spells to slice when a spec was loaded
+         */
+        .addCase("specs/set_spec_spells", (state, action) => {
+            return _add_spells_to_state(state, action.payload.spells)
+        })
+
+        /**
+         * Add spells to slice when a boss was loaded
+         */
+        .addCase("bosses/set_boss_spells", (state, action) => {
+            return _add_spells_to_state(state, action.payload.spells)
+        })
+
+
     }, // extraReducers
 }) // slice
 

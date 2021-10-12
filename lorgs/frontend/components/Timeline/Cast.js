@@ -183,10 +183,6 @@ export default class Cast extends Konva.Group {
             this.cast_duration && this.cast_duration.opacity(0.75)
             this.cast_cooldown && this.cast_cooldown.opacity(0.3)
         }
-
-        // this.cache()
-        let layer = this.getLayer()
-        layer.batchDraw()
     }
 
     ////////////////////////////////////////////////////////////////////////////

@@ -11,9 +11,9 @@ import PlayerNamesList from "./../components/PlayerNames/PlayerNamesList.jsx"
 import SpecRankingsHeader from './SpecRankings/SpecRankingsHeader.jsx';
 import SpecSettingsBar from './SpecRankings/SpecSettingsBar.jsx';
 import TimelineCanvas from "./../components/Timeline/TimelineCanvas.jsx"
+import { get_boss, load_boss_spells } from '../store/bosses.js';
+import { get_spec, load_spec_spells } from '../store/specs.js';
 import { load_fights } from "../store/fights.js"
-import { get_boss } from '../store/bosses.js';
-import { get_spec } from '../store/specs.js';
 
 
 function update_title(boss, spec) {
@@ -44,10 +44,22 @@ export default function SpecRankings() {
     // Update State
     //
 
-    /* set UI values */
+    // set UI values
     React.useEffect(() => { dispatch(ui_store.set_mode(mode)) }, [])
     React.useEffect(() => { dispatch(ui_store.set_values({boss_slug: boss_slug})) }, [boss_slug])
     React.useEffect(() => { dispatch(ui_store.set_values({spec_slug: spec_slug})) }, [spec_slug])
+
+    React.useEffect(() => {
+        if (!spec) { return }
+        if (spec.loaded) { return } // skip if we already have them
+        dispatch(load_spec_spells(spec.full_name_slug))
+    }, [spec])
+
+    React.useEffect(() => {
+        if (!boss) { return }
+        if (boss.loaded) { return } // skip if we already have them
+        dispatch(load_boss_spells(boss.full_name_slug))
+    }, [boss])
 
     // update title once boss & spec are loaded
     React.useEffect(() => { update_title(boss, spec)  }, [boss, spec])

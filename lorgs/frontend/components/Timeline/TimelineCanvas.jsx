@@ -1,6 +1,6 @@
 
 import React from "react";
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 import * as constants from "./constants.js";
 import Stage from "./Stage.js"
@@ -15,17 +15,13 @@ export default function TimelineCanvas() {
     //////////////////////////////////////
     // HOOKS
     //
-    const dispatch = useDispatch()
     const ref = React.useRef() // container div for the canvas
     const stage_ref = React.useRef() // canvas itself
 
     // state vars
     const mode = useSelector(state => state.ui.mode)
     const is_loading = useSelector(state => get_is_loading(state))
-    const fights_loading = useSelector(state => get_is_loading(state, "fights"))
-    const spells_loading = useSelector(state => get_is_loading(state, "spells"))
     const fights = useSelector(state => get_fights(state))
-
     const ui_settings = useSelector(state => state.ui.settings)
     const spell_display = useSelector(state => state.spells.spell_display)
     const selected_spells = useSelector(state => state.spells.selected_spells)
@@ -37,7 +33,7 @@ export default function TimelineCanvas() {
 
     // initial creation
     React.useEffect(() => {
-        dispatch({type: "ui/set_loading", key: "stage", value: true})
+        // dispatch({type: "ui/set_loading", key: "stage", value: true})
         stage_ref.current = new Stage({container: ref.current})
     }, [])
 
@@ -47,16 +43,11 @@ export default function TimelineCanvas() {
     }, [mode])
 
     React.useEffect(() => {
-        // not ready yet
-        if (fights_loading || spells_loading) { return }
+        if (is_loading) { return } // not ready yet
+
+        console.log("creating canvas", is_loading)
         stage_ref.current.set_fights(fights)
         stage_ref.current.handle_event(constants.EVENT_APPLY_FILTERS, filters)
-        dispatch({type: "ui/set_loading", key: "stage", value: false})
-
-    }, [fights_loading, spells_loading])
-
-    React.useEffect(() => {
-
     }, [is_loading])
 
     // Pass trough UI Settings like "show_cooldown", "show_duration"

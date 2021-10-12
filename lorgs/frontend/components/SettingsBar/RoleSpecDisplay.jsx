@@ -43,7 +43,7 @@ function SpecDisplayButton({spec_slug}) {
         <FilterButton
             onClick={onClick}
             name={spec.class.name_slug}
-            full_name={spec.full_name_slug}
+            full_name={spec.full_name}
             icon_name={`specs/${spec.full_name_slug}`}
         />
     )

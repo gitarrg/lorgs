@@ -1,7 +1,7 @@
 
 import React from 'react'
 import { useParams, useLocation } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector, useDispatch, batch } from 'react-redux'
 
 import * as ui_store from "../store/ui.js"
 import CompRankingsHeader from './CompRankings/CompRankingsHeader.jsx';
@@ -10,8 +10,9 @@ import LoadingOverlay from "./../components/shared/LoadingOverlay.jsx"
 import Navbar from "./../components/Navbar/Navbar.jsx"
 import PlayerNamesList from "./../components/PlayerNames/PlayerNamesList.jsx"
 import TimelineCanvas from "./../components/Timeline/TimelineCanvas.jsx"
-import { get_boss } from '../store/bosses.js';
+import { get_boss, load_boss_spells } from '../store/bosses.js';
 import { load_fights } from '../store/fights.js';
+import { load_spec_spells } from '../store/specs.js';
 
 
 const INITIAL_FILTERS = {
@@ -52,14 +53,39 @@ export default function CompRankings() {
     /* set current mode */
     // initial page values
     React.useEffect(() => {
-        dispatch(ui_store.set_mode(mode))
-        dispatch(ui_store.set_filters(INITIAL_FILTERS))
+
+        batch(() => { // does this even do anything?
+            // mode
+            dispatch(ui_store.set_mode(mode))
+            dispatch(ui_store.set_filters(INITIAL_FILTERS))
+
+            // Healers
+            dispatch(load_spec_spells("paladin-holy"))
+            dispatch(load_spec_spells("priest-holy"))
+            dispatch(load_spec_spells("priest-discipline"))
+            dispatch(load_spec_spells("shaman-restoration"))
+            dispatch(load_spec_spells("monk-mistweaver"))
+            dispatch(load_spec_spells("druid-restoration"))
+
+            // Classes wth Raid CDs
+            dispatch(load_spec_spells("deathknight-unholy"))
+            dispatch(load_spec_spells("warrior-fury"))
+            dispatch(load_spec_spells("demonhunter-havoc"))
+        }) // batch
     }, [])
+
 
     React.useEffect(() => { dispatch(ui_store.set_values({boss_slug: boss_slug})) }, [boss_slug])
 
     // update title once boss & spec are loaded
     React.useEffect(() => { update_title(boss)  }, [boss])
+
+    // load boss spells, once boss is loaded
+    React.useEffect(() => {
+        if (!boss) { return }
+        if (boss.loaded) { return } // skip if we already have them
+        dispatch(load_boss_spells(boss.full_name_slug))
+    }, [boss])
 
     // load
     React.useEffect(() => { dispatch(load_fights(mode, {boss_slug, search})) }, [boss_slug, search])
