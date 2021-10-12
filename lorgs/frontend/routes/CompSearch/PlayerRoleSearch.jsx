@@ -5,25 +5,9 @@ import FormGroup from './FormGroup.jsx'
 import CountFilterGroup from './SearchCountInput.jsx'
 
 
-function RoleSearchInput({role}) {
-
-    const icon_path = `/static/images/roles/${role.code}.jpg`
-
-    return (
-        <>
-        <div className="search_spec_row">
-            <CountFilterGroup
-                name={`role.${role.code}`}
-                icon_path={icon_path}
-                class_name={role.code}
-            />
-        </div>
-        </>
-    )
-}
-
-
-/* Group to search by role */
+/**
+ * Group to search by role
+ */
 export default function PlayerRoleSearch() {
 
     let roles = useSelector(state => state.roles)
@@ -31,7 +15,15 @@ export default function PlayerRoleSearch() {
 
     return (
         <FormGroup name="Roles:" className="player-role-search">
-            {roles.map(role => <RoleSearchInput key={role.code} role={role} /> )}
+            {roles.map(role =>
+                <CountFilterGroup
+                    key={role.code}
+                    name={`role.${role.code}`}
+                    icon_path={role.icon_path}
+                    class_name={role.code}
+                    tooltip={role.name || "hello?"}
+                />
+            )}
         </FormGroup>
     )
 }

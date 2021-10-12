@@ -10,6 +10,7 @@ import PlayerRoleSearch from './CompSearch/PlayerRoleSearch.jsx'
 import PlayerSelection from './CompSearch/PlayerSelection.jsx'
 import PlayerSpecSearch from './CompSearch/PlayerSpecSearch.jsx'
 import SearchSubmitButton from './CompSearch/SearchSubmitButton.jsx'
+import KilltimeGroup from './CompSearch/KilltimeGroup.jsx';
 
 
 /* Takes the form data dict and generates the search string.*/
@@ -17,6 +18,8 @@ function build_search_string(from_data) {
 
     let search = new URLSearchParams()
 
+    ////////////////////////////////////////
+    // Get Filters for roles and specs
     const types = ["role", "spec"]
     types.forEach(type => {
 
@@ -27,6 +30,18 @@ function build_search_string(from_data) {
             }
         }
     })
+
+    ////////////////////////////////////////
+    // get single values
+    const params = ["killtime_min", "killtime_max"]
+    params.forEach(param => {
+        const value = from_data[param]
+        if (value !== undefined) {
+            search.append(param, value)
+        }
+    })
+
+
     return search.toString()
 }
 
@@ -83,6 +98,7 @@ export default function CompSearch() {
             <div className="mt-5 d-flex flex-column justify-content-center">
                 <div className="comp-search-container">
 
+                    {/* row 1: Header */}
                     <div className="m-0 ml-auto d-flex align-items-center">
                         <BossSelection />
                     </div>
@@ -91,22 +107,35 @@ export default function CompSearch() {
                         <PlayerSelection />
                     </div>
 
-                    <hr className="my-2" />
+                    {/* row 2: spacer */}
+                    <hr className="full_row my-2" />
 
-                    <BossSelect />
+                    {/* row 3 left: boss/fight fields */}
+                    <div className="ml-auto">
+                        <BossSelect />
+                        <div className="d-flex">
+                            <div className="ml-auto"></div>
+                            <KilltimeGroup />
+                        </div>
+                    </div>
+
+                    {/* row 3 middle */}
                     <div></div>
+
+                    {/* row 3 right: player filters */}
                     <div className="mr-auto">
                         <div className="d-flex">
                             <PlayerRoleSearch />
-                            <PlayerSpecSearch />
+                            <PlayerSpecSearch className="ml-3"/>
                         </div>
 
-                        <div className="d-flex">
-                            <div className="ml-auto mt-5">
-                                <SearchSubmitButton />
-                            </div>
+                        {/* needs to be inside here, to align with the right border */}
+                        <div className="d-flex mt-3">
+                            <SearchSubmitButton />
                         </div>
                     </div>
+
+
                 </div>
             </div>
 
