@@ -1,6 +1,8 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
+import "./SpellButton.scss"
+
 import { get_spell, set_spell_visible, get_spell_visible } from '../../../store/spells.js'
 import { ButtonGroupContext } from '../shared/ButtonGroup.jsx'
 
@@ -11,19 +13,35 @@ function no_link(e) {
 }
 
 
+const DYNAMIC_CD_WARNING = (
+    <div
+        className="spell_button__dynamic_cd_warning"
+        data-tooltip="The displayed Cooldown for this spell is not exact and only shows an estimate."
+        data-tooltip-size="small"
+    >⚠️</div>
+)
+
 export default function SpellButton({spec, spell_id, onClick}) {
 
+    ////////////////////////////////////////////////////////////////////////////
     // Hooks
+    //
     const dispatch = useDispatch()
     const spell = useSelector(state => get_spell(state, spell_id))
     const visible = useSelector(state => get_spell_visible(state, spell.spell_id))
     const [{group_active, group_source}, set_group_active] = React.useContext(ButtonGroupContext)
 
+    if (!spell) { return null}
     if (!spec) { return null}
 
+    ////////////////////////////////////////////////////////////////////////////
     // Vars
+    //
     let wow_class = spec.class.name_slug || spec.class // if its an object or string
     const disabled = visible ? "" : "disabled"
+    const dynamic_cd = spell.tags.includes("dynamic_cd")// ? "dynamic_cd" : "";
+
+    ////////////////////////////////////////////////////////////////////////////
 
     // onClick Callback
     function toggle_spell() {
@@ -70,13 +88,18 @@ export default function SpellButton({spec, spell_id, onClick}) {
     ////////////////////////////////
     // Render
     return (
+        <div className={`spell_button ${disabled}`}>
         <a onClick={no_link} href="" data-wowhead={spell.tooltip_info}>
             <img
-                className={`button icon-s rounded wow-border-${wow_class} ${disabled}`}
+                className={`icon-s button rounded wow-border-${wow_class} ${disabled}`}
                 src={spell.icon_path}
                 data-spell_id={spell.spell_id}
                 onClick={toggle_spell}
             />
         </a>
+
+        {dynamic_cd && DYNAMIC_CD_WARNING}
+
+        </div>
     )
 }

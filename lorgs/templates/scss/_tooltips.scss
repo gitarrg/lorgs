@@ -72,3 +72,12 @@
         ;
     }
 }
+
+
+[data-tooltip-size="small"] {
+    &:hover::before,
+    &:hover::after {
+        font-size: small;
+    }
+}
+

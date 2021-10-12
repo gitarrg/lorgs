@@ -183,6 +183,10 @@ class WowSpell(base.Model):
     TYPE_TRINKET = "other-trinkets"
     TYPE_POTION = "other-potions"
 
+    # tags to indicate special properties
+    TAG_DYNAMIC_CD = "dynamic_cd"
+
+
     def __init__(self, spell_id: int, cooldown: int = 0, duration: int = 0, show: bool = True, **kwargs):
         self.spell_id = spell_id
         self.cooldown = cooldown
@@ -198,6 +202,9 @@ class WowSpell(base.Model):
 
         # list(<WowSpec>): specs this spell is useable by
         self.specs = []
+
+        # list(str): tags to indicate special properties
+        self.tags = kwargs.get("tags") or []
 
         """str: info used for the wowhead tooltips."""
         self.wowhead_data = kwargs.get("wowhead_data") or  f"spell={self.spell_id}"
@@ -241,6 +248,8 @@ class WowSpell(base.Model):
             "color": self.color,
             "show": self.show,
             "tooltip_info": self.wowhead_data,
+
+            "tags": self.tags,
         }
 
     @property
