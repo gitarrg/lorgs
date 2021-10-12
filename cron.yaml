@@ -1,3 +1,6 @@
+
+# gcloud app deploy cron.yaml
+
 cron:
 
 - description: "reload all specs"
