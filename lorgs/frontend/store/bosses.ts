@@ -1,19 +1,26 @@
 
 import { createSlice } from '@reduxjs/toolkit'
-import API from '../api'
 import { group_spells_by_type } from './spells'
+import { fetch_data } from '../api'
+
+import Boss from "../types/boss"
+
+
+interface BossesSliceState {
+    [key: string]: Boss
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Selectors
 //
 
-export function get_bosses(state) {
+export function get_bosses(state) : BossesSliceState {
     return state.bosses
 }
 
 
-export function get_boss(state, boss_slug) {
+export function get_boss(state, boss_slug: string) : Boss {
     boss_slug = boss_slug || state.ui.boss_slug
     return state.bosses[boss_slug] || null
 }
@@ -23,7 +30,7 @@ export function get_boss(state, boss_slug) {
 // Slice
 //
 
-function _post_process_boss(boss) {
+function _post_process_boss(boss: Boss) {
     boss.loaded = false
     boss.icon_path = `/static/images/bosses/sanctum-of-domination/${boss.full_name_slug}.jpg`
     return boss
@@ -33,7 +40,7 @@ function _post_process_boss(boss) {
 const SLICE = createSlice({
     name: "bosses",
 
-    initialState: {},
+    initialState: {} as BossesSliceState,
 
     reducers: {
 
@@ -78,7 +85,10 @@ export function load_bosses() {
 
         dispatch({type: "ui/set_loading", key: "bosses", value: true})
 
-        const bosses = await API.load_bosses()
+        // Request
+        const zone_info = await fetch_data(`/api/bosses`);
+        const bosses = zone_info.bosses || []
+
         dispatch(SLICE.actions.set_bosses(bosses))
         dispatch({type: "ui/set_loading", key: "bosses", value: false})
     }
@@ -89,12 +99,15 @@ export function load_bosses() {
  * Load Spells for a given boss
  * @param {string} boss_slug name of the boss whom's spells to load
  */
-export function load_boss_spells(boss_slug) {
+export function load_boss_spells(boss_slug: string) {
 
     return async dispatch => {
 
         dispatch({type: "ui/set_loading", key: "boss_spells", value: true})
-        const spells = await API.load_boss_spells(boss_slug)
+
+        // Request
+        const spells = await fetch_data(`/api/boss/${boss_slug}/spells`);
+
         dispatch(SLICE.actions.set_boss_spells({boss_slug, spells}))
         dispatch({type: "ui/set_loading", key: "boss_spells", value: false})
     }

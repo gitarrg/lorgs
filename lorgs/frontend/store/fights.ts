@@ -1,7 +1,7 @@
 
 import { createSlice } from '@reduxjs/toolkit'
 
-import API from '../api'
+import { fetch_data } from '../api'
 import { MODES } from './ui'
 
 
@@ -79,6 +79,32 @@ function _pin_first_fight(fights) {
 }
 
 
+async function _load_spec_rankings(spec_slug : string, boss_slug: string) {
+
+    let url = `/api/spec_ranking/${spec_slug}/${boss_slug}?limit=100`;
+    const fight_data = await fetch_data(url);
+
+    // post process
+    return fight_data.fights.map((fight, i) => {
+        fight.players.forEach(player => {
+            player.rank = i+1  // insert ranking data
+        })
+        return fight
+    })
+}
+
+
+async function _load_comp_rankings(boss_slug : string, search="") {
+
+    let url = `/api/comp_ranking/${boss_slug}${search}`;
+    let response = await fetch(url);
+    if (response.status != 200) {
+        return [];
+    }
+    const fight_data = await response.json();
+    return fight_data.fights || []
+}
+
 
 export function load_fights(mode: string, {boss_slug, spec_slug, search} : {boss_slug: string, spec_slug: string, search?: string} ) {
 
@@ -90,11 +116,11 @@ export function load_fights(mode: string, {boss_slug, spec_slug, search} : {boss
         let fights = []
         switch (mode) {
             case MODES.SPEC_RANKING:
-                fights = await API.load_spec_rankings(spec_slug, boss_slug)
+                fights = await _load_spec_rankings(spec_slug, boss_slug)
                 fights = _pin_first_fight(fights)
                 break;
                 case MODES.COMP_RANKING:
-                fights = await API.load_comp_rankings(boss_slug, search)
+                fights = await _load_comp_rankings(boss_slug, search)
                 break;
             default:
                 break;

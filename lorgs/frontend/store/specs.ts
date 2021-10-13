@@ -1,6 +1,7 @@
 
 import { createSlice } from '@reduxjs/toolkit'
-import API from '../api'
+import { fetch_data } from '../api'
+import Spec from '../types/spec'
 import { group_spells_by_type } from './spells'
 
 
@@ -12,7 +13,7 @@ export function get_specs(state) {
     return Object.values(state.specs)
 }
 
-export function get_spec(state, spec_slug="") {
+export function get_spec(state, spec_slug="") : Spec {
     spec_slug = spec_slug || state.ui.spec_slug // input or current spec
     return state.specs[spec_slug]
 }
@@ -22,7 +23,7 @@ export function get_spec(state, spec_slug="") {
  * @param {integer} spell_id id of the spell to find
  * @returns {object} the matched spell
 */
-export function get_spec_for_spell_id(state, spell_id) {
+export function get_spec_for_spell_id(state, spell_id : number) {
     return Object.values(state.specs || {}).find(spec => {
         return Object.values(spec.spells_by_type || {}).some(spell_group => {
             return spell_group.includes(spell_id)
@@ -81,7 +82,11 @@ export function load_specs() {
 
     return async dispatch => {
         dispatch({type: "ui/set_loading", key: "specs", value: true})
-        const specs = await API.load_specs()
+
+        // Request
+        const specs_dict = await fetch_data("/api/specs");
+        const specs = specs_dict.specs || []
+
         dispatch(SLICE.actions.set_specs(specs))
         dispatch({type: "ui/set_loading", key: "specs", value: false})
     }
@@ -93,10 +98,11 @@ export function load_spec_spells(spec_slug) {
     return async dispatch => {
         const load_key = `specs/${spec_slug}`
         dispatch({type: "ui/set_loading", key: load_key, value: true})
-        const spells = await API.load_spec_spells(spec_slug)
+
+        // Request
+        const spells = await fetch_data(`/api/specs/${spec_slug}/spells`);
 
         dispatch(SLICE.actions.set_spec_spells({spec_slug, spells}))
-
         dispatch({type: "ui/set_loading", key: load_key, value: false})
     }
 }

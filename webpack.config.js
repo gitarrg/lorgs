@@ -27,7 +27,7 @@ module.exports = {
     // modules that will be loaded externally
     externals: {
         'react': 'React',
-        'react-dom': 'ReactDom',
+        'react-dom': "ReactDOM",
         'konva': 'Konva',
         "redux": "Redux",
         'react-redux': "ReactRedux",
