@@ -176,6 +176,7 @@ SYLVANAS.add_event(event_type="cast", spell_id=356021, duration=2, cooldown=20, 
 SYLVANAS.add_event(event_type="cast", spell_id=354142, duration=1, color="#228c89", name="Veil of Darkness", icon="ability_argus_deathfog.jpg")
 SYLVANAS.add_event(event_type="cast", spell_id=351353, duration=1, color="##ff425b", name="Banshee's Fury", icon="spell_shadow_shadowfury.jpg")
 SYLVANAS.add_event(event_type="cast", spell_id=354011, duration=0.5, color="#9442ff", name="Bane Arrows", icon="spell_shadow_painspike.jpg")
+SYLVANAS.add_event(event_type="cast", spell_id=347609, duration=3, color="#ff4f42", name="Wailing Arrow", icon="ability_theblackarrow.jpg")
 SYLVANAS.add_event(event_type="cast", spell_id=354068, duration=1, color="#921de0", name="Banshee's Fury", icon="spell_shadow_shadowfury.jpg")
 
 
