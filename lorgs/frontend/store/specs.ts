@@ -1,7 +1,7 @@
 
 import { createSlice } from '@reduxjs/toolkit'
-import API from '../api.js'
-import { group_spells_by_type } from './spells.js'
+import API from '../api'
+import { group_spells_by_type } from './spells'
 
 
 ////////////////////////////////////////////////////////////////////////////////

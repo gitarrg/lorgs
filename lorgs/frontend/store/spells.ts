@@ -2,8 +2,8 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { createSelector } from 'reselect'
 
-import API from '../api.js'
-import { set_fights } from './fights.js'
+import API from '../api'
+import { set_fights } from './fights'
 
 const ICON_ROOT = "https://wow.zamimg.com/images/wow/icons/small"
 

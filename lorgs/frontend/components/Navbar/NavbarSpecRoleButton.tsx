@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { get_spec } from "../../store/specs.js";
+import { get_spec } from "../../store/specs";
 import NavbarSpecsDropdown from './NavbarSpecsDropdown';
 
 /*

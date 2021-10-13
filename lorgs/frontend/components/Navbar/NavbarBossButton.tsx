@@ -2,8 +2,8 @@
 import { useSelector } from 'react-redux'
 import { NavLink, useLocation } from 'react-router-dom';
 
-import { MODES } from '../../store/ui.js';
-import { get_spec } from "../../store/specs.js"
+import { MODES } from '../../store/ui';
+import { get_spec } from "../../store/specs"
 
 
 function get_link(mode, boss = {}, spec = {}) {

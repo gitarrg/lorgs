@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux'
 
 import * as ui_store from "../store/ui"
 import LoadingOverlay from "./../components/shared/LoadingOverlay"
-import Navbar from "./../components/Navbar/Navbar.tsx"
+import Navbar from "./../components/Navbar/Navbar"
 import PlayerNamesList from "./../components/PlayerNames/PlayerNamesList"
 import SpecRankingsHeader from './SpecRankings/SpecRankingsHeader'
 import SpecSettingsBar from './SpecRankings/SpecSettingsBar'
@@ -14,6 +14,12 @@ import TimelineCanvas from "./../components/Timeline/TimelineCanvas"
 import { get_boss, load_boss_spells } from '../store/bosses'
 import { get_spec, load_spec_spells } from '../store/specs'
 import { load_fights } from "../store/fights"
+
+
+type SpecRankingsParams = {
+    spec_slug: string
+    boss_slug: string
+}
 
 
 function update_title(boss, spec) {
@@ -31,7 +37,7 @@ export default function SpecRankings() {
 
     ////////////////////////////////////////////////////////////////////////////
     // Hooks
-    const { spec_slug, boss_slug } = useParams();
+    const { spec_slug, boss_slug } = useParams<SpecRankingsParams>();
     const dispatch = useDispatch()
     const is_loading = useSelector(state => ui_store.get_is_loading(state))
     const boss = useSelector(state => get_boss(state, boss_slug))
@@ -77,7 +83,7 @@ export default function SpecRankings() {
         <div>
 
             <div className="mt-3 flex-row d-flex flex-wrap-reverse">
-                <SpecRankingsHeader spec_slug={spec_slug} />
+                <SpecRankingsHeader spec_slug={spec_slug} boss_slug={boss_slug} />
                 <Navbar />
             </div>
 
