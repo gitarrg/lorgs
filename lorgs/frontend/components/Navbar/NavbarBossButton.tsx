@@ -2,19 +2,21 @@
 import { useSelector } from 'react-redux'
 import { NavLink, useLocation } from 'react-router-dom';
 
+import Boss from "../../types/boss"
+import Spec from "../../types/spec"
 import { MODES } from '../../store/ui';
 import { get_spec } from "../../store/specs"
 
 
-function get_link(mode, boss = {}, spec = {}) {
+function get_link(mode : string, boss: Boss, spec?: Spec) {
     // is this the time to rename "mode" ?
     if (mode == MODES.COMP_RANKING) { return `/${mode}/${boss.full_name_slug}` }
-    if (mode == MODES.SPEC_RANKING) { return `/${mode}/${spec.full_name_slug}/${boss.full_name_slug}` }
+    if (mode == MODES.SPEC_RANKING) { return `/${mode}/${spec?.full_name_slug}/${boss.full_name_slug}` }
     return "/"
 }
 
 
-export default function NavbarBossButton({boss}) {
+export default function NavbarBossButton({boss} : {boss: Boss}) {
 
     // todo: include zone in api?
     const mode = useSelector(state => state.ui.mode)

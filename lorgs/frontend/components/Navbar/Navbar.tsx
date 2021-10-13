@@ -1,16 +1,16 @@
 
 import { useSelector } from 'react-redux'
 
+import NavbarBossGroup from './NavbarBossGroup'
 import NavbarSpecGroup from "./NavbarSpecGroup"
 import { MODES } from '../../store/ui'
-import NavbarBossGroup from './NavbarBossGroup'
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 export default function Navbar() {
 
-    const mode = useSelector(state => state.ui.mode)
+    const mode: string = useSelector(state => state.ui.mode)
 
     return (
         <div className="ml-auto">

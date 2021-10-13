@@ -4,12 +4,7 @@
 const PRINT_REQUEST_TIMES = true
 
 
-const API = {}
-export default API
-
-
-async function fetch_data(url, params={}) {
-
+export async function fetch_data(url : string, params={}) {
 
     if (Object.keys(params).length) {
         let search = new URLSearchParams(params)
@@ -34,51 +29,16 @@ async function fetch_data(url, params={}) {
 ////////////////////////////////////////////////////////////////////////////////
 
 
-API.load_roles = async function() {
-    let roles = await fetch_data("/api/roles")
-    roles = roles.roles // take array from dict
-    roles.sort((a, b) => (a.id > b.id) ? 1 : -1  )
-    return roles;
-}
-
-
-API.load_specs = async function() {
-    const specs = await fetch_data("/api/specs");
-    return specs.specs || []
-}
-
-
-API.load_spec = async function(spec_slug) {
+export async function load_spec(spec_slug) {
     return fetch_data(`/api/specs/${spec_slug}`);
 }
 
 
-API.load_spec_spells = async function(spec_slug) {
-    return fetch_data(`/api/specs/${spec_slug}/spells`);
-}
-
-
-API.load_multiple_specs = async function(specs=[]) {
-    let calls = specs.map(spec => API.load_spec(spec))
+export async function load_multiple_specs(specs=[]) {
+    let calls = specs.map(spec => load_spec(spec))
     let data = await Promise.all(calls)
     return data
 }
-
-
-API.load_bosses = async function() {
-    const zone_info = await fetch_data(`/api/bosses`);
-    return zone_info.bosses || []
-}
-
-
-API.load_boss = async function(boss_slug) {
-    return fetch_data(`/api/boss/${boss_slug}`);
-}
-
-API.load_boss_spells = async function(boss_slug) {
-    return fetch_data(`/api/boss/${boss_slug}/spells`);
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -86,51 +46,13 @@ API.load_boss_spells = async function(boss_slug) {
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-API.load_spells = async function(groups = []) {
+export async function load_spells(groups? : string[]) {
 
     let params = new URLSearchParams(groups.map(g => ["group", g]))
     let url ="/api/spells?" + params
 
     return fetch_data(url);
 }
-
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-//
-//                  PAGE RELATED
-//
-////////////////////////////////////////////////////////////////////////////////
-
-/* Returns a list of fights */
-API.load_spec_rankings = async function(spec_slug, boss_slug) {
-
-    let url = `/api/spec_ranking/${spec_slug}/${boss_slug}?limit=100`;
-    const fight_data = await fetch_data(url);
-
-    // post process
-    return fight_data.fights.map((fight, i) => {
-        fight.players.forEach(player => {
-            player.rank = i+1  // insert ranking data
-        })
-        return fight
-    })
-}
-
-
-/* Returns a list of fights */
-API.load_comp_rankings = async function(boss_slug, search="") {
-
-    let url = `/api/comp_ranking/${boss_slug}${search}`;
-    let response = await fetch(url);
-    if (response.status != 200) {
-        return [];
-    }
-    const fight_data = await response.json();
-    return fight_data.fights || []
-}
-
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -165,7 +87,7 @@ function filter_unused_spells(spells = [], fights = []) {
 }
 
 
-API.process_fetched_data = function(state) {
+export function process_fetched_data(state) {
 
     // backref the spec on each spell
     Object.values(state.specs).forEach(spec => {
@@ -193,3 +115,6 @@ API.process_fetched_data = function(state) {
 
     return state
 }
+
+
+

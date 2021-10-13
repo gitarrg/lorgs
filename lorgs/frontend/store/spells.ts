@@ -2,7 +2,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { createSelector } from 'reselect'
 
-import API from '../api'
 import { set_fights } from './fights'
 
 const ICON_ROOT = "https://wow.zamimg.com/images/wow/icons/small"
@@ -243,17 +242,3 @@ export const {
 } = SLICE.actions
 
 export default SLICE.reducer
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Extra Actions
-
-export function load_spells(groups = []) {
-
-    return async dispatch => {
-        dispatch({type: "ui/set_loading", key: "spells", value: true})
-        const spells = await API.load_spells(groups)
-        dispatch(set_spells(spells))
-        dispatch({type: "ui/set_loading", key: "spells", value: false})
-    }
-}

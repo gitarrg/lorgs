@@ -16,7 +16,7 @@ const KEY_DOWN = "40"
  *
  * @returns {ReactComponent} <input>
  */
-export default function DurationInput({start, placeholder="0:00", onChange}) {
+export default function DurationInput({start, placeholder="0:00", onChange} : {start: number, placeholder: string, onChange: Function}) {
 
     ////////////////////////////////////////////////////////////////////////////
     // Hooks

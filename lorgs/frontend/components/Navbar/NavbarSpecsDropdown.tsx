@@ -1,7 +1,7 @@
 import NavBarSpecButton from './NavBarSpecButton';
 
 
-export default function NavbarSpecsDropdown({ specs }) {
+export default function NavbarSpecsDropdown({ specs } : { specs: string[] }) {
 
     const specs_sorted = [...specs].sort();
 

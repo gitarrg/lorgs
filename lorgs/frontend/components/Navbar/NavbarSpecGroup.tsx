@@ -3,15 +3,16 @@ import { useSelector } from 'react-redux'
 
 import NavbarGroup from './NavbarGroup';
 import NavbarSpecRoleButton from './NavbarSpecRoleButton';
-
+import { get_roles } from "../../store/roles"
 
 /*
     The entire group for all roles
 */
 export default function NavbarSpecGroup() {
 
-    let roles = useSelector(state => state.roles)
-    roles = Object.values(roles).filter(role => role.id < 1000)
+    let roles_map = useSelector(state => get_roles(state))
+    let roles = Object.values(roles_map)
+    roles = roles.filter(role => role.id < 1000)
 
     return (
         <NavbarGroup className="navbar_specs" >
