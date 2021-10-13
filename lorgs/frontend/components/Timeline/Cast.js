@@ -101,7 +101,6 @@ export default class Cast extends Konva.Group {
         this.spell_id = cast_data.id;
         this.timestamp = cast_data.ts / 1000;
         this.spell = state.spells.all_spells[this.spell_id];
-        // this.count = cast_data.count;
 
         // guess we are done here
         if (!this.spell) { return }
@@ -147,6 +146,7 @@ export default class Cast extends Konva.Group {
 
         // prepare the tooltip content, as it doesn't change
         this.tooltip_content = `${this.spell.name}`
+        this.tooltip_content += cast_data.counter ? ` #${cast_data.counter}` : ""
         this.tooltip_content += "<br>"
         this.tooltip_content += `${toMMSS(this.timestamp)}`
     }
