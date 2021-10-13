@@ -2,7 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 import API from '../api.js'
-import { MODES, set_values } from './ui.js'
+import { MODES } from './ui.js'
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -19,6 +19,26 @@ export const get_fights = get_all_fights;
 ////////////////////////////////////////////////////////////////////////////////
 // Slice
 //
+function _process_actor(actor) {
+
+    const spell_counter = {}
+    actor.casts = actor.casts || []
+    actor.casts.forEach(cast => {
+        cast.counter = spell_counter[cast.id] = (spell_counter[cast.id] || 0) + 1
+    })
+    return actor
+}
+
+
+function _process_fight(fight) {
+    fight.boss = _process_actor(fight.boss)
+    fight.players = fight.players.map(actor => _process_actor(actor))
+    return fight
+}
+
+function _process_fights(fights) {
+    return fights.map(fight => _process_fight(fight))
+}
 
 
 const SLICE = createSlice({
@@ -28,7 +48,7 @@ const SLICE = createSlice({
 
     reducers: {
         set_fights: (state, action) => {
-            return action.payload
+            return _process_fights(action.payload)
         },
     }, // reducers
 
