@@ -16,7 +16,7 @@ function get_spec_ranking_url(spec, boss) {
     url.pathname = "/zone/rankings/28"
     url.hash = new URLSearchParams({
         boss: boss.id,
-        class: spec.class.name,
+        class: spec.class.name.replace(" ", ""),  // WCL uses no spaces in classnames
         spec: spec.name,
         metric: metric,
     })
