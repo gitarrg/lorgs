@@ -16,8 +16,12 @@ module.exports = {
 
     entry: {
         // main: path.resolve(__dirname, "lorgs/static/main.js"),
-        app: path.resolve(__dirname, "lorgs/frontend/App.jsx"),
+        app: path.resolve(__dirname, "lorgs/frontend/App.tsx"),
         style: path.resolve(__dirname, "lorgs/templates/scss/main.scss"),
+    },
+
+    resolve: {
+        extensions: [".tsx", ".ts", "jsx", ".js"]
     },
 
     // modules that will be loaded externally
@@ -34,7 +38,7 @@ module.exports = {
         rules: [
 
             {
-                test: /\.jsx$/,
+                test: /\.[tj]sx$/,
                 exclude: /node_modules/,
                 use: {
                     loader: 'babel-loader',
