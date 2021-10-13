@@ -15,7 +15,7 @@
     {% endif %}
 
     <button type="button" class="update_spec_ranking_button btn {{button_class}} btn-sm" data-spec="{{spec_ranking_data.spec_slug}}" data-boss="{{spec_ranking_data.boss_slug}}">
-        {{spec_ranking_data.update_age_fmt}}
+        {{spec_ranking_data.update_age_fmt or "idk"}}
     </button>
 {%- endmacro %}
 
@@ -50,7 +50,7 @@ Lorgs: Admin Page
             </thead>
 
             {% for role in roles %}
-                {% for spec in role.specs if spec.supported %}
+                {% for spec in role.specs %}
                     {% set wow_class = spec.wow_class %}
 
                     <tr>
@@ -61,12 +61,12 @@ Lorgs: Admin Page
                             <td></td>
                         {% endif %}
 
-                        <td><img class="icon-s rounded wow-border-{{wow_class.name_slug}}" src="{{spec.icon_path}}" data-toggle="tooltip" title="{{spec.full_name}}"></td>
+                        <td><img class="icon-s rounded wow-border-{{wow_class.full_name_slug}}" src="{{spec.icon_path}}" data-toggle="tooltip" title="{{spec.full_name}}"></td>
 
 
                     {% for boss in bosses %}
                         <td>
-                            {% set data = spec_ranking_data[spec.full_name_slug][boss.name_slug] %}
+                            {% set data = spec_ranking_data[spec.full_name_slug][boss.full_name_slug] %}
                             {% if data %}
                                 {{ update_button(data) }}
                             {% endif %}
@@ -122,7 +122,7 @@ function update_spec_ranking() {
     this.innerHTML = "loading...";
     // element.innerHTML = '<i class="fas fa-paper-plane"></i>'
     // this.className = "spec_ranking_status text-info"
-    fetch(`/api/task/load_spec_rankings/${spec}/${boss}`)
+    fetch(`/api/task/load_spec_ranking/${spec}/${boss}`)
     return
 }
 

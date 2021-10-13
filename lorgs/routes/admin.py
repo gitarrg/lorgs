@@ -59,7 +59,6 @@ def spec_rankings():
     bosses = data.SANCTUM_OF_DOMINATION_BOSSES
     roles = data.ROLES
     specs = utils.flatten(role.specs for role in roles)
-    specs = [spec for spec in specs if spec.supported]
 
     spec_rankings_data = {}
     for spec_ranking in warcraftlogs_ranking.SpecRanking.objects().exclude("reports").all():
@@ -69,7 +68,7 @@ def spec_rankings():
     for spec in specs:
         spec_rankings_data.setdefault(spec.full_name_slug, {})
         for boss in bosses:
-            spec_rankings_data[spec.full_name_slug].setdefault(boss.name_slug, None)
+            spec_rankings_data[spec.full_name_slug].setdefault(boss.full_name_slug, None)
 
     kwargs = {}
     kwargs["bosses"] = bosses
