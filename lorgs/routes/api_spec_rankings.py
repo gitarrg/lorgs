@@ -60,7 +60,7 @@ def task_load_spec_rankings(spec_slug, boss_slug):
 @blueprint.route("/task/load_spec_ranking/<string:spec_slug>")
 def task_load_spec_rankings_all_bosses(spec_slug):
     for boss in data.SANCTUM_OF_DOMINATION_BOSSES:
-        url = f"/api/task/load_spec_ranking/{spec_slug}/{boss.name_slug}"
+        url = f"/api/task/load_spec_ranking/{spec_slug}/{boss.full_name_slug}"
         api_tasks.create_task(url)
 
     return "task queued"
