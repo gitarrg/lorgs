@@ -1,8 +1,8 @@
 
 import { createSlice } from '@reduxjs/toolkit'
 
-import API from '../api.js'
-import { MODES } from './ui.js'
+import API from '../api'
+import { MODES } from './ui'
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -79,7 +79,8 @@ function _pin_first_fight(fights) {
 }
 
 
-export function load_fights(mode, {boss_slug, spec_slug, search}) {
+
+export function load_fights(mode: string, {boss_slug, spec_slug, search} : {boss_slug: string, spec_slug: string, search?: string} ) {
 
     return async dispatch => {
 

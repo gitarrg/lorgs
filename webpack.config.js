@@ -27,6 +27,7 @@ module.exports = {
     // modules that will be loaded externally
     externals: {
         'react': 'React',
+        'react-dom': 'ReactDom',
         'konva': 'Konva',
         "redux": "Redux",
         'react-redux': "ReactRedux",
@@ -38,12 +39,12 @@ module.exports = {
         rules: [
 
             {
-                test: /\.[tj]sx$/,
+                test: /\.[tj]sx?$/,  // jsx, tsx, js and ts
                 exclude: /node_modules/,
                 use: {
                     loader: 'babel-loader',
                     options: {
-                        presets: ['@babel/react']
+                        presets: ["@babel/react", "@babel/preset-typescript"]
                     }
                 }
             },

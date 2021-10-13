@@ -2,7 +2,7 @@
 
 import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
-import { get_spec } from "../../store/specs.js";
+import { get_spec } from "../../store/specs";
 
 
 export default function NavBarSpecButton({ spec_slug }) {

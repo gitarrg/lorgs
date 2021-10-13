@@ -12,7 +12,6 @@ import PlayerSpecSearch from './CompSearch/PlayerSpecSearch'
 import SearchSubmitButton from './CompSearch/SearchSubmitButton'
 import KilltimeGroup from './CompSearch/KilltimeGroup';
 
-
 /* Takes the form data dict and generates the search string.*/
 function build_search_string(from_data) {
 
@@ -21,15 +20,16 @@ function build_search_string(from_data) {
     ////////////////////////////////////////
     // Get Filters for roles and specs
     const types = ["role", "spec"]
-    types.forEach(type => {
 
+    for (let type of types) {
         const items = from_data[type]
-        for (const [key, {count, op}] of Object.entries(items)) {
+        for (const [key, {count, op}] of Object.entries(items)) {   // fix types
             if (count) {
                 search.append(type, `${key}.${op}.${count}`)
             }
         }
-    })
+
+    }
 
     ////////////////////////////////////////
     // get single values
@@ -49,7 +49,7 @@ function build_search_string(from_data) {
 /* Generate the new url from the form data.*/
 function build_new_url(data) {
 
-    let url = new URL(window.location)
+    let url = new URL(window.location.toString())
     url.pathname = `/comp_ranking/${data.boss_name_slug}`
     url.search = build_search_string(data)
     return url

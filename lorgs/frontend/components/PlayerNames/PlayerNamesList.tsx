@@ -1,8 +1,8 @@
 
 import React from "react";
 import { useSelector } from 'react-redux'
-import { get_fights } from "../../store/fights.js";
-import FILTERS from "../../filter_logic.js";
+import { get_fights } from "../../store/fights";
+import FILTERS from "../../filter_logic";
 
 import {PlayerName, BossName} from "./PlayerName"
 

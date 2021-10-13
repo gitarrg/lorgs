@@ -2,7 +2,7 @@
 import { useSelector } from 'react-redux'
 
 import NavbarSpecGroup from "./NavbarSpecGroup"
-import { MODES } from '../../store/ui.js'
+import { MODES } from '../../store/ui'
 import NavbarBossGroup from './NavbarBossGroup'
 
 

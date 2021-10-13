@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 
 import NavbarBossButton from "./NavbarBossButton";
 import NavbarGroup from './NavbarGroup';
-import { get_bosses } from '../../store/bosses.js';
+import { get_bosses } from '../../store/bosses';
 
 
 ////////////////////////////////////////////////////////////////////////////////
