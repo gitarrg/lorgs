@@ -72,7 +72,6 @@ export default class Stage extends Konva.Stage{
         window.addEventListener("resize", () => {this.update_width()})
         this.update_width() // initial update
     }
-
     ////////////////////////////////////////////////////////////////////////////
     // CREATION AND DRAW
     //

@@ -33,3 +33,9 @@ export default interface Spell {
 
     icon_path: string
 }
+
+
+export type SpellDict = {
+    [key: number]: Spell
+}
+

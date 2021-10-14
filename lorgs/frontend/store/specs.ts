@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type Spec from "../types/spec"
 import type { RootState, AppDispatch } from './store'
 import { fetch_data } from '../api'
-import { group_spells_by_type } from './spells'
+import { group_spells_by_type } from './store_utils'
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -71,6 +71,10 @@ const SLICE = createSlice({
 
     }, // reducers
 })
+
+export const {
+    set_spec_spells
+} = SLICE.actions
 
 export default SLICE.reducer
 

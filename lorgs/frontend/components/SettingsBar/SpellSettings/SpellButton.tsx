@@ -1,5 +1,5 @@
 import { MouseEvent, useContext, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 import "./SpellButton.scss"
 
@@ -7,6 +7,7 @@ import { get_spell, set_spell_visible, get_spell_visible } from '../../../store/
 import { ButtonGroupContext } from '../shared/ButtonGroup'
 import type Spec from '../../../types/spec'
 import type Boss from '../../../types/boss'
+import { useAppSelector } from '../../../store/store_hooks'
 
 
 /* to avoid react rerenders when clicking the <a> tags */
@@ -14,13 +15,13 @@ function no_link(e: MouseEvent<HTMLAnchorElement> ) {
     e.preventDefault()
 }
 
-
+const WARNING_SIGN = "⚠️"
 const DYNAMIC_CD_WARNING = (
     <div
         className="spell_button__dynamic_cd_warning"
         data-tooltip="The displayed Cooldown for this spell is not exact and only shows an estimate."
         data-tooltip-size="small"
-    >⚠️</div>
+    >{WARNING_SIGN}</div>
 )
 
 export default function SpellButton({spec, spell_id, onClick} : { spec: Spec|Boss, spell_id: number, onClick?: Function } ) {
@@ -29,8 +30,8 @@ export default function SpellButton({spec, spell_id, onClick} : { spec: Spec|Bos
     // Hooks
     //
     const dispatch = useDispatch()
-    const spell = useSelector(state => get_spell(state, spell_id))
-    const visible = useSelector(state => get_spell_visible(state, spell?.spell_id))
+    const spell = useAppSelector(state => get_spell(state, spell_id))
+    const visible = useAppSelector(state => get_spell_visible(state, spell?.spell_id))
     const group_context = useContext(ButtonGroupContext)
 
     if (!spell) { return null}

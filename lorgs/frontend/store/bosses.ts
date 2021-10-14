@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type Boss from "../types/boss"
 import type { AppDispatch, RootState } from './store'
 import { fetch_data } from '../api'
-import { group_spells_by_type } from './spells'
+import { group_spells_by_type } from './store_utils'
 import { ZONE_ID } from '../constants'
 import type RaidZone from '../types/raid_zone'
 
@@ -37,6 +37,7 @@ function _post_process_boss(zone: RaidZone, boss: Boss) {
     boss.class = { name: "boss", name_slug: "boss"}
 }
 
+
 const INITIAL_STATE: RaidZone = {
     id: -1,
     name: "",
@@ -44,6 +45,13 @@ const INITIAL_STATE: RaidZone = {
     bosses: {},
 }
 
+
+interface RaidZoneAPIResponse {
+    id: -1,
+    name: "",
+    name_slug: "",
+    bosses: Boss[],
+}
 
 
 const SLICE = createSlice({
@@ -53,16 +61,18 @@ const SLICE = createSlice({
 
     reducers: {
 
-        set_zone: (_, action: PayloadAction<RaidZone> ) => {
+        set_zone: (state, action: PayloadAction<RaidZoneAPIResponse> ) => {
 
-            const zone = action.payload
+            state.id        = action.payload.id
+            state.name      = action.payload.name
+            state.name_slug = action.payload.name_slug
 
             // array to object (by full_name_slug)
-            Object.values(zone.bosses).forEach(boss => {
-                _post_process_boss(zone, boss)
-
+            action.payload.bosses.forEach(boss => {
+                _post_process_boss(state, boss)
+                state.bosses[boss.full_name_slug] = boss
             });
-            return zone
+            return state
         },
 
         set_boss_spells: (state, action) => {
@@ -76,6 +86,10 @@ const SLICE = createSlice({
         }
     },
 })
+
+export const {
+    set_boss_spells
+} = SLICE.actions
 
 export default SLICE.reducer
 
@@ -110,7 +124,7 @@ export function load_boss_spells(boss_slug: string) {
         dispatch({type: "ui/set_loading", payload: {key: "boss_spells", value: true}})
 
         // Request
-        const spells = await fetch_data(`/api/bosses/${boss_slug}/spells`);
+        const spells: RaidZoneAPIResponse = await fetch_data(`/api/bosses/${boss_slug}/spells`);
 
         dispatch(SLICE.actions.set_boss_spells({boss_slug, spells}))
         dispatch({type: "ui/set_loading", payload: {key: "boss_spells", value: false}})
