@@ -4,7 +4,9 @@ import type { StageConfig } from "konva/lib/Stage";
 import Ruler from "./Ruler"
 import * as constants from "./constants";
 import FightRow from "./FightRow";
-import Fight from "../../types/fight";
+import type Fight from "../../types/fight";
+import { IMAGES } from "./Cast";
+
 
 // for performance
 Konva.autoDrawEnabled = false;
@@ -20,7 +22,7 @@ export default class Stage extends Konva.Stage{
     FIGHT_SPACE = 10 // distance between fights in pixels
 
     scale_x: number
-    rows: FightRow[]
+    rows: FightRow[] = []
 
     // bool: true if any spell is selected
     has_selection: boolean
@@ -31,7 +33,7 @@ export default class Stage extends Konva.Stage{
     ruler: Ruler
 
     /** Duration of the longest fight. Used to set things such as the the Length of the Ruler and overall width. */
-    longest_fight: number
+    longest_fight = 0
 
 
     constructor(options: StageConfig) {
@@ -46,11 +48,6 @@ export default class Stage extends Konva.Stage{
 
         // bool: true if any spell is selected
         this.has_selection = false;
-
-        this.longest_fight = 0
-
-        // bool: used to indicate if objects need to be rescaled
-        // this.zoom_changed = true; // true for initial load
 
         ////////////////////////////////
         // create layers
@@ -152,15 +149,13 @@ export default class Stage extends Konva.Stage{
     _handle_check_images_loaded() {
         // Emit a EVENT_IMAGES_LOADED event once all images have been loaded.
         // until then, periodically emit new "check"-events
-        const cast_icons = this.find(".cast_icon") // finds them by name
-        const is_loading = cast_icons.some(icon => icon.loading)
+        const is_loading = Object.values(IMAGES).some(img => !img.complete)
 
         // try again later
         if (is_loading) {
             setTimeout(() => { this.handle_event(constants.EVENT_CHECK_IMAGES_LOADED) }, 200)
             return
         }
-
         // update now
         this.handle_event(constants.EVENT_IMAGES_LOADED)
     }

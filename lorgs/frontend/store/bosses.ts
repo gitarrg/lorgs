@@ -4,25 +4,23 @@ import type Boss from "../types/boss"
 import type { AppDispatch, RootState } from './store'
 import { fetch_data } from '../api'
 import { group_spells_by_type } from './spells'
-
-
-interface BossesSliceState {
-    [key: string]: Boss
-}
+import { ZONE_ID } from '../constants'
+import type RaidZone from '../types/raid_zone'
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Selectors
 //
 
-export function get_bosses(state: RootState) : BossesSliceState {
-    return state.bosses
+/** all bosses in the zone, keyed by their full_name_slug */
+export function get_bosses(state: RootState) {
+    return state.raid_zone.bosses
 }
 
-
-export function get_boss(state: RootState, boss_slug?: string) : Boss {
+/** a single boss from the zone (defaults to the currently selected boss) */
+export function get_boss(state: RootState, boss_slug?: string) {
     boss_slug = boss_slug ?? state.ui.boss_slug
-    return state.bosses[boss_slug] || null
+    return state.raid_zone.bosses[boss_slug] || null
 }
 
 
@@ -30,39 +28,46 @@ export function get_boss(state: RootState, boss_slug?: string) : Boss {
 // Slice
 //
 
-function _post_process_boss(boss: Boss) {
+function _post_process_boss(zone: RaidZone, boss: Boss) {
     boss.loaded = false
-    boss.icon_path = `/static/images/bosses/sanctum-of-domination/${boss.full_name_slug}.jpg`
-    return boss
+    boss.icon_path = `/static/images/bosses/${zone.name_slug}/${boss.full_name_slug}.jpg`
+
+    // insert some static data
+    boss.role = "boss"
+    boss.class = { name: "boss", name_slug: "boss"}
+}
+
+const INITIAL_STATE: RaidZone = {
+    id: -1,
+    name: "",
+    name_slug: "",
+    bosses: {},
 }
 
 
-const SLICE = createSlice({
-    name: "bosses",
 
-    initialState: {} as BossesSliceState,
+const SLICE = createSlice({
+    name: "raid_zone",
+
+    initialState: INITIAL_STATE,
 
     reducers: {
 
-        set_bosses: (state, action: PayloadAction<Boss[]> ) => {
+        set_zone: (_, action: PayloadAction<RaidZone> ) => {
+
+            const zone = action.payload
 
             // array to object (by full_name_slug)
-            action.payload.forEach(boss => {
-                state[boss.full_name_slug] = _post_process_boss(boss)
+            Object.values(zone.bosses).forEach(boss => {
+                _post_process_boss(zone, boss)
 
             });
-            return state
-        },
-
-        set_boss: (state, action) => {
-            const boss = _post_process_boss(action.payload)
-            state[boss.full_name_slug] = boss
-            return state
+            return zone
         },
 
         set_boss_spells: (state, action) => {
             const {boss_slug, spells} = action.payload
-            const boss = state[boss_slug]
+            const boss = state.bosses[boss_slug]
             if (!boss) { return }
 
             boss.spells_by_type =  group_spells_by_type(spells)
@@ -83,14 +88,13 @@ export function load_bosses() {
 
     return async (dispatch: AppDispatch) => {
 
-        dispatch({type: "ui/set_loading", payload: {key: "bosses", value: true}})
+        dispatch({type: "ui/set_loading", payload: {key: "zone", value: true}})
 
         // Request
-        const zone_info = await fetch_data(`/api/bosses`);
-        const bosses = zone_info.bosses || []
+        const zone_info = await fetch_data(`/api/zones/${ZONE_ID}`);
 
-        dispatch(SLICE.actions.set_bosses(bosses))
-        dispatch({type: "ui/set_loading", payload: {key: "bosses", value: false}})
+        dispatch(SLICE.actions.set_zone(zone_info))
+        dispatch({type: "ui/set_loading", payload: {key: "zone", value: false}})
     }
 }
 
@@ -106,7 +110,7 @@ export function load_boss_spells(boss_slug: string) {
         dispatch({type: "ui/set_loading", payload: {key: "boss_spells", value: true}})
 
         // Request
-        const spells = await fetch_data(`/api/boss/${boss_slug}/spells`);
+        const spells = await fetch_data(`/api/bosses/${boss_slug}/spells`);
 
         dispatch(SLICE.actions.set_boss_spells({boss_slug, spells}))
         dispatch({type: "ui/set_loading", payload: {key: "boss_spells", value: false}})

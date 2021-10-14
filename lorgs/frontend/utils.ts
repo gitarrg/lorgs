@@ -38,3 +38,12 @@ export function kFormatter(n: number, digits=2) {
     }
     return n.toFixed(0);
 }
+
+export function slug(str: string) {
+    return str
+        .replace(/^\s+|\s+$/g, '')   // trim
+        .toLowerCase()
+        .replace(/[^a-z0-9 -]/g, '') // Remove invalid chars
+        .replace(/\s+/g, '-')        // Collapse whitespace and replace by -
+        .replace(/-+/g, '-');        // Collapse dashes
+}

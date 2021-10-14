@@ -30,7 +30,7 @@ export default function SpellButton({spec, spell_id, onClick} : { spec: Spec|Bos
     //
     const dispatch = useDispatch()
     const spell = useSelector(state => get_spell(state, spell_id))
-    const visible = useSelector(state => get_spell_visible(state, spell.spell_id))
+    const visible = useSelector(state => get_spell_visible(state, spell?.spell_id))
     const group_context = useContext(ButtonGroupContext)
 
     if (!spell) { return null}

@@ -8,6 +8,9 @@ import type Spell from "../../types/spell"
 import type CastType from "../../types/cast"
 import type Stage from "./Stage"
 
+/** simple cache to reuse existing images */
+export const IMAGES: {[key: number]: HTMLImageElement} = {}
+
 
 function create_cast_cooldown(spell: Spell) {
     if (!spell.cooldown) { return }
@@ -41,14 +44,16 @@ function create_cast_duration(spell: Spell) {
 
 function create_cast_icon(spell: Spell) {
 
-    // is the browser smart enough to not load the same image 100x?
-    const image_obj = new Image();
-    image_obj.src = spell.icon_path
+    // simple cache to reuse existing images
+    if (IMAGES[spell.spell_id] === undefined) {
+        IMAGES[spell.spell_id] = new Image()
+        IMAGES[spell.spell_id].src = spell.icon_path
+    }
 
     // create the konva image
-    const icon = new Konva.Image({
+    return new Konva.Image({
         name: "cast_icon",
-        image: image_obj,
+        image: IMAGES[spell.spell_id],
         listening: false,
         x: 3.5, // padding
         y: 3.5, // padding
@@ -59,14 +64,6 @@ function create_cast_icon(spell: Spell) {
         transformsEnabled: "position",
         perfectDrawEnabled: false,
     })
-
-
-    icon.loading = image_obj.loading // custom flag to check is the img was loaded
-    image_obj.onload = () => {
-        icon.loading = false
-    }
-
-    return icon
 }
 
 

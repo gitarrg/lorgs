@@ -1,6 +1,6 @@
 
-import React from "react"
-import ReactDOM from 'react-dom';
+import { StrictMode } from "react"
+import { render } from 'react-dom';
 import { BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import { Provider } from 'react-redux'
 
@@ -20,7 +20,7 @@ export default function App() {
     // Output
     return (
         <Provider store={data_store}>
-        <React.StrictMode>
+        <StrictMode>
 
             <GlobalDataLoader />
 
@@ -38,9 +38,9 @@ export default function App() {
                     </Route>
                 </Switch>
             </Router>
-        </React.StrictMode>
+        </StrictMode>
         </Provider>
     )
 }
 
-ReactDOM.render(<App />, document.getElementById("app_root"));
+render(<App />, document.getElementById("app_root"));

@@ -1,5 +1,5 @@
 
-import React from 'react'
+import { useEffect } from 'react'
 import { useParams, useLocation } from 'react-router-dom';
 import { useDispatch, batch } from 'react-redux'
 
@@ -54,7 +54,7 @@ export default function CompRankings() {
 
     /* set current mode */
     // initial page values
-    React.useEffect(() => {
+    useEffect(() => {
 
         batch(() => { // does this even do anything?
             // mode
@@ -77,20 +77,20 @@ export default function CompRankings() {
     }, [])
 
 
-    React.useEffect(() => { dispatch(ui_store.set_boss_slug(boss_slug)) }, [boss_slug])
+    useEffect(() => { dispatch(ui_store.set_boss_slug(boss_slug)) }, [boss_slug])
 
     // update title once boss & spec are loaded
-    React.useEffect(() => { update_title(boss)  }, [boss])
+    useEffect(() => { update_title(boss)  }, [boss])
 
     // load boss spells, once boss is loaded
-    React.useEffect(() => {
+    useEffect(() => {
         if (!boss) { return }
         if (boss.loaded) { return } // skip if we already have them
         dispatch(load_boss_spells(boss.full_name_slug))
     }, [boss])
 
     // load
-    React.useEffect(() => { dispatch(load_fights(mode, {boss_slug, search})) }, [boss_slug, search])
+    useEffect(() => { dispatch(load_fights(mode, {boss_slug, search})) }, [boss_slug, search])
 
 
     ////////////////////////////////////////////////////////////////////////////

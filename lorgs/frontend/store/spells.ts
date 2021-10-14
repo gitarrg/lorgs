@@ -1,8 +1,8 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { createSelector } from 'reselect'
-import Fight from '../types/fight'
-import Spell from '../types/spell'
+import type Fight from '../types/fight'
+import type Spell from '../types/spell'
 
 import { set_fights } from './fights'
 
@@ -233,7 +233,7 @@ const SLICE = createSlice({
         /**
          * Add spells to slice when a boss was loaded
          */
-        .addCase("bosses/set_boss_spells", (state, action: any) => {
+        .addCase("raid_zone/set_boss_spells", (state, action: any) => {
             return _add_spells_to_state(state, action.payload.spells)
         })
 

@@ -5,11 +5,12 @@ This basically just wraps a number of Boss/Player Rows.
 */
 
 import * as constants from "./constants";
-import Actor from "../../types/actor";
-import Fight from "../../types/fight";
 import Konva from "konva";
 import PlayerRow from "./PlayerRow";
 import filter_logic from "../../filter_logic";
+import type Actor from "../../types/actor";
+import type Fight from "../../types/fight";
+import type { FilterValues } from "../../store/ui";
 import { toMMSS } from "../../utils";
 
 
@@ -129,7 +130,7 @@ export default class FightRow {
         this.killtime_text.x(this.KILLTIME_MARGIN + (this.duration * scale_x))
     }
 
-    _handle_apply_filters_pre(filters: {}) {
+    _handle_apply_filters_pre(filters: FilterValues) {
         const visible = filter_logic.is_fight_visible(this.#fight_data, filters)
         this.visible(visible)
     }

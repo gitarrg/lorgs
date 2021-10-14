@@ -1,6 +1,6 @@
 /* Page/Form to search for specific Comps*/
 
-import React from 'react'
+import { useEffect } from 'react'
 import { useHistory } from 'react-router-dom';
 import { useForm, FormProvider } from "react-hook-form";
 
@@ -11,24 +11,39 @@ import PlayerSelection from './CompSearch/PlayerSelection'
 import PlayerSpecSearch from './CompSearch/PlayerSpecSearch'
 import SearchSubmitButton from './CompSearch/SearchSubmitButton'
 import KilltimeGroup from './CompSearch/KilltimeGroup';
+import type { CompCountMap } from '../components/CompPreview';
+
+
+type FormValues = {
+
+    /** Currently selected Boss */
+    boss_name_slug: string
+
+    /**Filter Values for the Killtime */
+    killtime_min?: number
+    killtime_max?: number
+
+    /** Filters for Comp */
+    comp: { [key: string]: CompCountMap }
+
+    [key: string]: any // add any string to keep TS happy
+};
+
+
 
 /* Takes the form data dict and generates the search string.*/
-function build_search_string(from_data) {
+function build_search_string(from_data: FormValues) {
 
     let search = new URLSearchParams()
 
     ////////////////////////////////////////
     // Get Filters for roles and specs
-    const types = ["role", "spec"]
-
-    for (let type of types) {
-        const items = from_data[type]
+    for (const [type, items] of Object.entries(from_data.comp)) {
         for (const [key, {count, op}] of Object.entries(items)) {   // fix types
             if (count) {
                 search.append(type, `${key}.${op}.${count}`)
             }
         }
-
     }
 
     ////////////////////////////////////////
@@ -47,11 +62,11 @@ function build_search_string(from_data) {
 
 
 /* Generate the new url from the form data.*/
-function build_new_url(data) {
+function build_new_url(form_data: FormValues) {
 
     let url = new URL(window.location.toString())
-    url.pathname = `/comp_ranking/${data.boss_name_slug}`
-    url.search = build_search_string(data)
+    url.pathname = `/comp_ranking/${form_data.boss_name_slug}`
+    url.search = build_search_string(form_data)
     return url
 }
 
@@ -60,13 +75,13 @@ export default function CompSearch() {
 
     ////////////////////////////////////////////////////////////////////////////
     // Hooks
-    const form_methods = useForm();
+    const form_methods = useForm<FormValues>();
     const history = useHistory();
 
     ////////////////////////////////////////////////////////////////////////////
     // Hooks Part2
     //
-    React.useEffect(() => {
+    useEffect(() => {
         document.title = "Lorrgs: Comp Search"
     }, [])
 
@@ -74,10 +89,10 @@ export default function CompSearch() {
     ////////////////////////////////////////////////////////////////////////////
     // Callbacks
     //
-    function onSubmit(data) {
+    function onSubmit(form_data: FormValues) {
 
         // build the new url
-        const new_url = build_new_url(data)
+        const new_url = build_new_url(form_data)
         const rel_url = `${new_url.pathname}${new_url.search}` // exclude the hostname
 
         // redirect to the new url
