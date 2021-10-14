@@ -12,15 +12,21 @@ import Player from "./Player"
 import PlayerRowBackground from "./PlayerRowBackground"
 import filter_logic from "../../filter_logic";
 import { EVENT_APPLY_FILTERS, LINE_HEIGHT } from "./constants";
+import type Fight from "../../types/fight";
+import type Actor from "../../types/actor";
 
 
 export default class PlayerRow {
 
-    constructor(fight_data, player_data) {
-        this.duration = Math.ceil(fight_data.duration / 1000); // ms to s
+    duration: number
+    foreground: Player
+    background: PlayerRowBackground
+
+    constructor(fight: Fight, player: Actor) {
+        this.duration = Math.ceil(fight.duration / 1000); // ms to s
 
         // Groups
-        this.foreground = new Player(this, player_data)
+        this.foreground = new Player(this, player)
         this.background = new PlayerRowBackground(this)
     }
 
@@ -28,20 +34,20 @@ export default class PlayerRow {
     // Attributes
     //
 
-    visible(val) {
+    visible(value? :boolean) {
 
-        if (val !== undefined) {
-            this.background.visible(val)
-            this.foreground.visible(val)
+        if (value !== undefined) {
+            this.background.visible(value)
+            this.foreground.visible(value)
         }
         return this.foreground.visible()
     }
 
-    height() {
+    height() : number {
         return this.visible() ? LINE_HEIGHT : 0;
     }
 
-    y(y) {
+    y(y: number) {
         // forward changes y-coord changes to both children
         this.background.y(y)
         this.foreground.y(y)
@@ -56,21 +62,17 @@ export default class PlayerRow {
     // Methods
     //
 
-    _handle_apply_filters(filters) {
+    _handle_apply_filters(filters: any) {
         const visible = filter_logic.is_player_visible(this.foreground.player_data, filters)
         this.visible(visible)
     }
 
-    handle_event(event_name, payload) {
+    handle_event(event_name: string, payload: any) {
         if (event_name === EVENT_APPLY_FILTERS ) {
             this._handle_apply_filters(payload)
             if (!this.visible()) { return }
         }
         this.background.handle_event(event_name, payload)
         this.foreground.handle_event(event_name, payload)
-    }
-
-    update_display_settings(settings) {
-        this.foreground.update_display_settings(settings)
     }
 }

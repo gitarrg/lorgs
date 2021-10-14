@@ -1,12 +1,4 @@
-
-interface Cast {
-
-    /** spell id */
-    id: number
-
-    /** timestamp */
-    ts: number
-}
+import type Cast from "./cast";
 
 
 export default interface Actor {

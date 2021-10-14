@@ -1,11 +1,18 @@
 
+import Konva from "konva"
+import Actor from "../../types/actor"
 import Cast from "./Cast"
 import * as constants from "./constants"
+import type PlayerRow from "./PlayerRow"
 
 
 export default class Player extends Konva.Group {
 
-    constructor(row, player_data) {
+    row : PlayerRow
+    casts: Cast[]
+    player_data: Actor
+
+    constructor(row: PlayerRow, player_data: Actor) {
         super()
         this.row = row
         this.transformsEnabled("position")
@@ -25,7 +32,6 @@ export default class Player extends Konva.Group {
 
         this.layout_children()
     }
-
 
     layout_children() {
 
@@ -69,16 +75,16 @@ export default class Player extends Konva.Group {
         this.layout_children()
     }
 
-    _handle_zoom_change(scale_x) {
+    _handle_zoom_change(scale_x: number) {
         this.clipWidth(this.row.duration * scale_x)
     }
 
-    handle_event(event_name, payload) {
+    handle_event(event_name: string, payload: any) {
         if (event_name === constants.EVENT_ZOOM_CHANGE) { this._handle_zoom_change(payload)}
         this.casts.forEach(cast => cast.handle_event(event_name, payload))
 
         // after cast update, so we can handle the cast visibility in there
-        if (event_name === constants.EVENT_SPELL_DISPLAY) {this._handle_spell_display(payload)}
+        if (event_name === constants.EVENT_SPELL_DISPLAY) {this._handle_spell_display()}
 
         this.schedule_cache()
     }
