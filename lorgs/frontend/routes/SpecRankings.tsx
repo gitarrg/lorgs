@@ -11,9 +11,12 @@ import PlayerNamesList from "./../components/PlayerNames/PlayerNamesList"
 import SpecRankingsHeader from './SpecRankings/SpecRankingsHeader'
 import SpecSettingsBar from './SpecRankings/SpecSettingsBar'
 import TimelineCanvas from "./../components/Timeline/TimelineCanvas"
+import type Boss from '../types/boss'
+import type Spec from '../types/spec'
 import { get_boss, load_boss_spells } from '../store/bosses'
 import { get_spec, load_spec_spells } from '../store/specs'
 import { load_fights } from "../store/fights"
+import { useAppSelector } from '../store/store_hooks'
 
 
 type SpecRankingsParams = {
@@ -22,7 +25,7 @@ type SpecRankingsParams = {
 }
 
 
-function update_title(boss, spec) {
+function update_title(boss?: Boss, spec?: Spec) {
     if (!boss || !spec) { return }
     document.title = `Lorrgs: ${spec.full_name} vs. ${boss.full_name}`
 }
@@ -40,8 +43,8 @@ export default function SpecRankings() {
     const { spec_slug, boss_slug } = useParams<SpecRankingsParams>();
     const dispatch = useDispatch()
     const is_loading = useSelector(state => ui_store.get_is_loading(state))
-    const boss = useSelector(state => get_boss(state, boss_slug))
-    const spec = useSelector(state => get_spec(state, spec_slug))
+    const boss = useAppSelector(state => get_boss(state, boss_slug))
+    const spec = useAppSelector(state => get_spec(state, spec_slug))
 
     // const
     const mode = ui_store.MODES.SPEC_RANKING
@@ -52,8 +55,8 @@ export default function SpecRankings() {
 
     // set UI values
     React.useEffect(() => { dispatch(ui_store.set_mode(mode)) }, [])
-    React.useEffect(() => { dispatch(ui_store.set_values({boss_slug: boss_slug})) }, [boss_slug])
-    React.useEffect(() => { dispatch(ui_store.set_values({spec_slug: spec_slug})) }, [spec_slug])
+    React.useEffect(() => { dispatch(ui_store.set_boss_slug(boss_slug)) }, [boss_slug])
+    React.useEffect(() => { dispatch(ui_store.set_spec_slug(spec_slug)) }, [spec_slug])
 
     React.useEffect(() => {
         if (!spec) { return }

@@ -1,7 +1,7 @@
 
 
 
-export default function FormGroup({name, className="", children}) {
+export default function FormGroup({name, className="", children} : {name: string, className?: string, children?: JSX.Element[] | JSX.Element}) {
     //
     return (
         <div className="search-group mt-2">

@@ -1,9 +1,9 @@
 
-import { createSlice } from '@reduxjs/toolkit'
-import { group_spells_by_type } from './spells'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import type Boss from "../types/boss"
+import type { AppDispatch, RootState } from './store'
 import { fetch_data } from '../api'
-
-import Boss from "../types/boss"
+import { group_spells_by_type } from './spells'
 
 
 interface BossesSliceState {
@@ -15,13 +15,13 @@ interface BossesSliceState {
 // Selectors
 //
 
-export function get_bosses(state) : BossesSliceState {
+export function get_bosses(state: RootState) : BossesSliceState {
     return state.bosses
 }
 
 
-export function get_boss(state, boss_slug: string) : Boss {
-    boss_slug = boss_slug || state.ui.boss_slug
+export function get_boss(state: RootState, boss_slug?: string) : Boss {
+    boss_slug = boss_slug ?? state.ui.boss_slug
     return state.bosses[boss_slug] || null
 }
 
@@ -44,7 +44,7 @@ const SLICE = createSlice({
 
     reducers: {
 
-        set_bosses: (state, action) => {
+        set_bosses: (state, action: PayloadAction<Boss[]> ) => {
 
             // array to object (by full_name_slug)
             action.payload.forEach(boss => {
@@ -81,16 +81,16 @@ export default SLICE.reducer
 /* load all bosses */
 export function load_bosses() {
 
-    return async dispatch => {
+    return async (dispatch: AppDispatch) => {
 
-        dispatch({type: "ui/set_loading", key: "bosses", value: true})
+        dispatch({type: "ui/set_loading", payload: {key: "bosses", value: true}})
 
         // Request
         const zone_info = await fetch_data(`/api/bosses`);
         const bosses = zone_info.bosses || []
 
         dispatch(SLICE.actions.set_bosses(bosses))
-        dispatch({type: "ui/set_loading", key: "bosses", value: false})
+        dispatch({type: "ui/set_loading", payload: {key: "bosses", value: false}})
     }
 }
 
@@ -101,14 +101,14 @@ export function load_bosses() {
  */
 export function load_boss_spells(boss_slug: string) {
 
-    return async dispatch => {
+    return async (dispatch: AppDispatch) => {
 
-        dispatch({type: "ui/set_loading", key: "boss_spells", value: true})
+        dispatch({type: "ui/set_loading", payload: {key: "boss_spells", value: true}})
 
         // Request
         const spells = await fetch_data(`/api/boss/${boss_slug}/spells`);
 
         dispatch(SLICE.actions.set_boss_spells({boss_slug, spells}))
-        dispatch({type: "ui/set_loading", key: "boss_spells", value: false})
+        dispatch({type: "ui/set_loading", payload: {key: "boss_spells", value: false}})
     }
 }

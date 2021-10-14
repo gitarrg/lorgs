@@ -1,27 +1,35 @@
 
 
-type Spell = {
+export default interface Spell {
 
-    spell_id: number
+    /** In game ID of the spell. */
+    readonly spell_id: number
 
-    spell_type: string
+    /** Type of spell */
+    readonly spell_type: string
 
-    name: string
+    /** full name of the spell */
+    readonly name: string
 
-    color: string
+    /** HTML color code for the spell */
+    readonly color: string
 
-    cooldown: number
+    /** spell cooldown (in seconds) */
+    readonly cooldown: number
 
-    duration: number
+    /** spell duration (in seconds) */
+    readonly duration: number
 
     /** name of just the icon filename */
-    icon: string
+    readonly icon: string
 
     show: boolean
 
-    tooltip_info?: string
+    readonly tooltip_info?: string
 
-    tags?: string[]
+    readonly tags?: string[]
+
+    specs?: string[]
+
+    icon_path: string
 }
-
-export default Spell

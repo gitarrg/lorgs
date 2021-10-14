@@ -1,23 +1,22 @@
-
-
 import React from 'react'
-import { useSelector } from 'react-redux'
 
 import ButtonGroup from '../shared/ButtonGroup'
 import SpellButton from './SpellButton'
+import type Spec from '../../../types/spec'
 import { get_spec } from '../../../store/specs'
-import { sort_spell_types } from '../../../store/ui'
 import { get_used_spells } from '../../../store/spells'
+import { sort_spell_types } from '../../../store/ui'
+import { useAppSelector } from '../../../store/store_hooks'
 
 
 // spell types that will be combined with the main spec
 const COMBINED_TYPES = ["raid", "external", "defensive"]
 
 
-function SpellTypeGroup({spec, spell_type}) {
+function SpellTypeGroup({spec, spell_type}: {spec: Spec, spell_type: string}  ) {
 
     // fetch spells for combined types
-    let spells = []
+    let spells: number[] = []
 
     let all_types = [spell_type]
     if (!spell_type.startsWith("other-")) {
@@ -30,12 +29,12 @@ function SpellTypeGroup({spec, spell_type}) {
     })
 
     // check if there is a dedicated "spec" for the type (eg.: trinkets and potions)
-    const type_spec = useSelector(state => get_spec(state, spell_type))
+    const type_spec = useAppSelector(state => get_spec(state, spell_type))
     spec = type_spec || spec
     const extra_class = "wow-text wow-" + spec.class.name_slug
 
-    const was_used_spells = useSelector(state => get_used_spells(state))
-    spells = spells.filter(spell_id =>  was_used_spells.includes(spell_id))
+    const used_spells = useAppSelector(state => get_used_spells(state))
+    spells = spells.filter(spell_id =>  used_spells.includes(spell_id))
     if (spells.length == 0) { return null}
 
     return (
@@ -46,9 +45,9 @@ function SpellTypeGroup({spec, spell_type}) {
 }
 
 
-export default function SpecGroup({spec}) {
+export default function SpecGroup({spec} : {spec: Spec }) {
 
-    if (!spec) { return }
+    if (!spec) { return null }
 
     let spell_types = Object.keys(spec.spells_by_type || {})
     spell_types = sort_spell_types(spell_types)
@@ -57,7 +56,11 @@ export default function SpecGroup({spec}) {
     spell_types = spell_types.filter(spell_type => !COMBINED_TYPES.includes(spell_type))
 
     // Render
-    return spell_types.map(spell_type =>
-        <SpellTypeGroup key={spell_type} spec={spec} spell_type={spell_type} />
+    return (
+        <>
+            {spell_types.map(spell_type =>
+                <SpellTypeGroup key={spell_type} spec={spec} spell_type={spell_type} />
+            )}
+        </>
     )
 }

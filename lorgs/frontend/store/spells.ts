@@ -1,10 +1,30 @@
 
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { createSelector } from 'reselect'
+import Fight from '../types/fight'
+import Spell from '../types/spell'
 
 import { set_fights } from './fights'
 
 const ICON_ROOT = "https://wow.zamimg.com/images/wow/icons/small"
+
+
+interface SpellSliceState {
+    /** all spells */
+    all_spells: { [key: number] : Spell }
+
+    /** id's of all spells that have been used */
+    used_spell_ids: Number[]
+
+    /** toggle for visible spells */
+    spell_display: { [key: number] : boolean }
+
+    /** all spells that are currently selected/focused */
+    selected_spells: Number[]
+}
+
+// interface SpellMap { [key: number]: Spell }
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -13,13 +33,11 @@ const ICON_ROOT = "https://wow.zamimg.com/images/wow/icons/small"
 
 /**
  * Group spells by spell_type
- *
- * @param {object} spells values should be spells
- * @returns {object} [spell_type:list[spell_ids]]
  */
-export function group_spells_by_type(spells) {
+export function group_spells_by_type(spells: { [key: number] : Spell } ) {
 
-    const spells_by_type = {}
+    const spells_by_type: { [key: string] : number[] } = {}
+
     Object.values(spells).forEach(spell => {
         const spell_type = spell.spell_type
         spells_by_type[spell_type] = spells_by_type[spell_type] || []
@@ -33,12 +51,12 @@ export function group_spells_by_type(spells) {
 // Actions
 //
 
-export function get_spell(state, spell_id) {
-    return state.spells.all_spells[spell_id] || {}
+export function get_spell(state: any, spell_id: number) : Spell {
+    return state.spells.all_spells[spell_id]
 }
 
 
-export function get_spells(state, spell_ids=[]) {
+export function get_spells(state: any) : Spell[] {
     return state.spells.all_spells
 }
 
@@ -49,7 +67,7 @@ export function get_spells(state, spell_ids=[]) {
 export const get_spells_by_type = createSelector(
     get_spells,
     (spells) => {
-        const v = {}
+        const v: { [key: string] : Spell[] } = {}
         Object.values(spells).forEach(spell => {
             v[spell.spell_type] = v[spell.spell_type] || []
             v[spell.spell_type].push(spell)
@@ -60,7 +78,7 @@ export const get_spells_by_type = createSelector(
 )
 
 
-export function get_spell_visible(state, spell_id) {
+export function get_spell_visible(state: any, spell_id: number) : boolean {
     // undefined is considered true in this case
     return state.spells.spell_display[spell_id] !== false;
 }
@@ -69,17 +87,16 @@ export function get_spell_visible(state, spell_id) {
    Used to eg.: avoid creating spell buttons for ever possible trinket,
    even if nobody is using it.
 */
-export function get_used_spells(state) {
+export function get_used_spells(state: any) : number[] {
     return state.spells.used_spell_ids
 }
 
 
-export function filter_used_spells(spells, fights) {
+export function filter_used_spells(fights: Fight[]) : number[] {
 
-    if (!spells) { return {} }
-    if (!fights) { return {} }
+    if (!fights) { return [] }
 
-    let used_spells = new Set()
+    let used_spells = new Set<number>()
     fights.forEach(fight => {
 
 
@@ -100,10 +117,11 @@ export function filter_used_spells(spells, fights) {
 
 
 // add the image and img path
-export function process_spells(spells = {}) {
+export function process_spells(spells?: { [key: number] : Spell } ) {
+    if (!spells) { return {} }
+
     Object.values(spells).forEach(spell => {
         spell.specs = spell.specs || []
-        spell.icon = spell.icon || "" // check mostly due to the loading data
         spell.icon_path = spell.icon.startsWith("/") ? spell.icon : `${ICON_ROOT}/${spell.icon}`
     })
     return spells;
@@ -117,11 +135,8 @@ export function process_spells(spells = {}) {
 
 /**
  * Shared logic to append new spells to the slice
- * @param {object} state current slice state
- * @param {object} spells spells by spell_id
- * @returns {object} updated state
  */
-function _add_spells_to_state(state, new_spells) {
+function _add_spells_to_state(state: SpellSliceState , new_spells: { [key: number] : Spell } ) {
 
     new_spells = process_spells(new_spells)
     state.all_spells = {...state.all_spells, ...new_spells}
@@ -134,29 +149,23 @@ function _add_spells_to_state(state, new_spells) {
 }
 
 
+const INITIAL_STATE : SpellSliceState  = {
+    all_spells: {},
+    used_spell_ids: [],
+    spell_display: {},
+    selected_spells: [],
+}
+
+
 const SLICE = createSlice({
     name: "spells",
 
-    initialState: {
-
-        // dict[int: dict]: all spells
-        all_spells: {},
-
-        // list[int]: id's of all spells that have been used
-        used_spell_ids: [],
-
-        // dict[spell_id: bool]: toggle for visible spells
-        spell_display: {},
-
-        // list[int]: all spells that are currently selected/focused
-        selected_spells: [],
-
-    },
+    initialState: INITIAL_STATE,
 
     reducers: {
 
         set_spells: (state, action) => {
-            state = initialState
+            state = INITIAL_STATE
             return _add_spells_to_state(state, action.payload)
         },
 
@@ -171,20 +180,19 @@ const SLICE = createSlice({
             return _add_spells_to_state(state, action.payload)
         },
 
-        update_used_spells: (state, action) => {
-            const {spells, fights} = action.payload
-            state.used_spell_ids = filter_used_spells(spells, fights)
-            state.used_spell_ids = Array.from(state.used_spell_ids) // Set to Array
+        update_used_spells: (state, action: PayloadAction<{fights: Fight[] }>) => {
+            const {fights} = action.payload
+            state.used_spell_ids = filter_used_spells(fights)
             return state
         },
 
-        set_spell_visible: (state, action) => {
+        set_spell_visible: (state, action: PayloadAction<{spell_id: number, visible: boolean}> ) => {
             const { spell_id, visible } = action.payload
             state.spell_display[spell_id] = visible
             return state;
         },
 
-        spell_selected: (state, action) => {
+        spell_selected: (state, action: PayloadAction<{spell_id: number, selected: boolean, deselect_others?: boolean }>) => {
             const { spell_id, selected, deselect_others } = action.payload
 
             let selected_spells = new Set(state.selected_spells)
@@ -211,21 +219,21 @@ const SLICE = createSlice({
         .addCase(set_fights, (state, action) => {
             const fights = action.payload
 
-            state.used_spell_ids = filter_used_spells(state.all_spells, fights)
+            state.used_spell_ids = filter_used_spells(fights)
             return state
         })
 
         /**
          * Add spells to slice when a spec was loaded
          */
-        .addCase("specs/set_spec_spells", (state, action) => {
+        .addCase("specs/set_spec_spells", (state, action: any ) => {
             return _add_spells_to_state(state, action.payload.spells)
         })
 
         /**
          * Add spells to slice when a boss was loaded
          */
-        .addCase("bosses/set_boss_spells", (state, action) => {
+        .addCase("bosses/set_boss_spells", (state, action: any) => {
             return _add_spells_to_state(state, action.payload.spells)
         })
 

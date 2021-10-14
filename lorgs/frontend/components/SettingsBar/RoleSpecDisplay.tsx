@@ -1,19 +1,20 @@
 
 
-import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { get_spec } from '../../store/specs'
+import { useAppDispatch, useAppSelector } from '../../store/store_hooks'
 import { set_filter } from '../../store/ui'
+import type Role from '../../types/role'
 
 import ButtonGroup from './shared/ButtonGroup'
 import FilterButton from './shared/FilterButton'
 
 
-function create_role_button(role) {
+function create_role_button(role: Role) {
 
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
 
-    function onClick({value}) {
+    function onClick({value} : {value: boolean}) {
         dispatch({ type: "update_filter", field: role.code, value: value})
     }
     return <FilterButton
@@ -29,13 +30,13 @@ function create_role_button(role) {
 /*
     Button to show/display a single spec
 */
-function SpecDisplayButton({spec_slug}) {
+function SpecDisplayButton({spec_slug} : {spec_slug: string}) {
 
-    const dispatch = useDispatch()
-    const spec = useSelector(state => get_spec(state, spec_slug))
+    const dispatch = useAppDispatch()
+    const spec = useAppSelector(state => get_spec(state, spec_slug))
     if (!spec) { return null } // not loaded yet
 
-    function onClick({value}) {
+    function onClick({value} : {value: boolean}) {
         dispatch(set_filter({ group: "spec", name: spec_slug, value: value }))
     }
 
@@ -50,30 +51,10 @@ function SpecDisplayButton({spec_slug}) {
 }
 
 
-export function RoleSpecsGroup({role}) {
+export function RoleSpecsGroup({role} : {role: Role}) {
     return (
         <ButtonGroup name={role.name} side="left" extra_class={`wow-${role.code}`}>
             { role.specs.map(spec_slug => <SpecDisplayButton key={spec_slug} spec_slug={spec_slug} /> )}
         </ButtonGroup>
-    )
-}
-
-
-
-export default function RoleSpecDisplay({roles}) {
-
-    if (!roles) {
-        roles = roles || useSelector(state => state.roles)
-        roles = roles.filter(role => role.id <= 1000) // filter out data roles
-    }
-
-    return (
-        <>
-            <ButtonGroup name="Role" side="left">
-                {roles.map(role => create_role_button(role))}
-            </ButtonGroup>
-
-            {roles.map(role => <RoleSpecsGroup key={role.code} role={role} /> )}
-        </>
     )
 }

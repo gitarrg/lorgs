@@ -1,12 +1,12 @@
 
 import React from "react";
-import { useSelector } from 'react-redux'
 
 import * as constants from "./constants";
 import Stage from "./Stage"
 import { get_is_loading, MODES } from "../../store/ui";
 import { get_fights } from "../../store/fights";
 import TimelineTooltip from "./TimelineTooltip";
+import { useAppSelector } from "../../store/store_hooks";
 
 
 export default function TimelineCanvas() {
@@ -19,13 +19,13 @@ export default function TimelineCanvas() {
     const stage_ref = React.useRef() // canvas itself
 
     // state vars
-    const mode = useSelector(state => state.ui.mode)
-    const is_loading = useSelector(state => get_is_loading(state))
-    const fights = useSelector(state => get_fights(state))
-    const ui_settings = useSelector(state => state.ui.settings)
-    const spell_display = useSelector(state => state.spells.spell_display)
-    const selected_spells = useSelector(state => state.spells.selected_spells)
-    const filters = useSelector(state => state.ui.filters)
+    const mode = useAppSelector(state => state.ui.mode)
+    const is_loading = useAppSelector(state => get_is_loading(state))
+    const fights = useAppSelector(state => get_fights(state))
+    const ui_settings = useAppSelector(state => state.ui.settings)
+    const spell_display = useAppSelector(state => state.spells.spell_display)
+    const selected_spells = useAppSelector(state => state.spells.selected_spells)
+    const filters = useAppSelector(state => state.ui.filters)
 
     //////////////////////////////////////
     // Listeners

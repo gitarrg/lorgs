@@ -5,6 +5,7 @@ import "./SpellButton.scss"
 
 import { get_spell, set_spell_visible, get_spell_visible } from '../../../store/spells'
 import { ButtonGroupContext } from '../shared/ButtonGroup'
+import Spec from '../../../types/spec'
 
 
 /* to avoid react rerenders when clicking the <a> tags */
@@ -21,7 +22,7 @@ const DYNAMIC_CD_WARNING = (
     >⚠️</div>
 )
 
-export default function SpellButton({spec, spell_id, onClick}) {
+export default function SpellButton({spec, spell_id, onClick} : { spec: Spec|Boss, spell_id: number, onClick?: Function } ) {
 
     ////////////////////////////////////////////////////////////////////////////
     // Hooks
@@ -29,7 +30,7 @@ export default function SpellButton({spec, spell_id, onClick}) {
     const dispatch = useDispatch()
     const spell = useSelector(state => get_spell(state, spell_id))
     const visible = useSelector(state => get_spell_visible(state, spell.spell_id))
-    const [{group_active, group_source}, set_group_active] = React.useContext(ButtonGroupContext)
+    const group_context = React.useContext(ButtonGroupContext)
 
     if (!spell) { return null}
     if (!spec) { return null}
@@ -39,7 +40,7 @@ export default function SpellButton({spec, spell_id, onClick}) {
     //
     let wow_class = spec.class.name_slug || spec.class // if its an object or string
     const disabled = visible ? "" : "disabled"
-    const dynamic_cd = spell.tags.includes("dynamic_cd")// ? "dynamic_cd" : "";
+    const dynamic_cd = spell.tags?.includes("dynamic_cd")// ? "dynamic_cd" : "";
 
     ////////////////////////////////////////////////////////////////////////////
 
@@ -57,8 +58,8 @@ export default function SpellButton({spec, spell_id, onClick}) {
         // passing "child" as group_source to differenciate between clicks on the
         // group itself and triggers like these, which should only affect the
         // group itself, but not its children
-        if (new_value) {
-            set_group_active({group_active: new_value, group_source: "child"})
+        if (new_value && group_context.setter) {
+            group_context.setter({active: new_value, source: "child"})
         }
 
         // Invoke any additional onClick Callbacks
@@ -71,19 +72,19 @@ export default function SpellButton({spec, spell_id, onClick}) {
         // if the state was not changed from the group level,
         // we ignore the event.
         // (eg.: the state was change from another child in the group)
-        if (group_source !== "group") { return}
+        if (group_context.source !== "group") { return}
 
         // otherwise (eg.: the entire group was toggled)
         // we match the spells state to the parent state
         dispatch(set_spell_visible({
             spell_id: spell.spell_id,
-            visible: group_active
+            visible: group_context.active
         }))
 
         // Invoke any additional onClick Callbacks
-        onClick && onClick(group_active)
+        onClick && onClick(group_context.active)
 
-    }, [group_active])
+    }, [group_context.active])
 
     ////////////////////////////////
     // Render

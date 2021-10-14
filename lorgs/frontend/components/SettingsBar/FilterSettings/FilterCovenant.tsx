@@ -1,18 +1,16 @@
-import React from 'react'
-import { useDispatch } from 'react-redux'
-
 import FilterButton from '../shared/FilterButton'
 import ButtonGroup from '../shared/ButtonGroup'
 import { set_filter } from '../../../store/ui'
+import { useAppDispatch } from '../../../store/store_hooks'
 
 
-function FilterCovenantButton({covenant}) {
+function FilterCovenantButton({covenant} : {covenant: string}) {
 
     // Hooks
     const covenant_slug = covenant.toLowerCase()
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
 
-    function onClick({value}) {
+    function onClick({value}: {value: boolean}) {
         dispatch(set_filter({ group: "covenant", name: covenant_slug, value: value }))
     }
 

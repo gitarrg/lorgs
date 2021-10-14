@@ -75,7 +75,7 @@ export default function CompRankings() {
     }, [])
 
 
-    React.useEffect(() => { dispatch(ui_store.set_values({boss_slug: boss_slug})) }, [boss_slug])
+    React.useEffect(() => { dispatch(ui_store.set_boss_slug(boss_slug)) }, [boss_slug])
 
     // update title once boss & spec are loaded
     React.useEffect(() => { update_title(boss)  }, [boss])

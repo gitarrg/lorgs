@@ -275,10 +275,10 @@ class Boss(BaseActor):
         return "common"
 
     def as_dict(self):
-        d = self.raid_boss.as_dict()
-        d["zone"] = self.raid_boss.zone.as_dict()
-        d["casts"] = [cast.as_dict() for cast in self.casts]
-        return d
+        return {
+            "name": self.raid_boss.full_name_slug,
+            "casts": [cast.as_dict() for cast in self.casts]
+        }
 
     ##########################
     # Methods

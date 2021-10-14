@@ -1,5 +1,3 @@
-
-import React from 'react'
 import { useFormContext, useWatch  } from "react-hook-form";
 
 
@@ -24,7 +22,7 @@ const OP_OPTIONS = (
  *
  * @returns {ReactComponent}
  */
-export default function CountFilterGroup({name, icon_path, class_name}) {
+export default function CountFilterGroup({name, icon_path, class_name} : {name: string, icon_path: string, class_name?: string}) {
 
     // form attribute names
     const attr_name_count = name + ".count"
@@ -37,7 +35,7 @@ export default function CountFilterGroup({name, icon_path, class_name}) {
     const active = value ? "" : "empty"
 
     return (
-        <div className={`count-input-group wow-border-${class_name||name} ${active}`}>
+        <div className={`count-input-group wow-border-${class_name ?? name} ${active}`}>
 
             <img className="icon-s" src={icon_path}/>
 
@@ -49,7 +47,6 @@ export default function CountFilterGroup({name, icon_path, class_name}) {
             </select>
 
             <input
-                name={name}
                 type="number"
                 className="count-number text-center"
                 placeholder="-" min="0"

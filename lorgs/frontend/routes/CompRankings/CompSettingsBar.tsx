@@ -8,7 +8,6 @@
     - Filters
 */
 import React from 'react'
-import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom';
 
 import ButtonGroup from '../../components/SettingsBar/shared/ButtonGroup'
@@ -19,14 +18,15 @@ import { BossSpellsGroup } from '../../components/SettingsBar/SpellSettings/Spel
 import { RoleSpecsGroup } from '../../components/SettingsBar/RoleSpecDisplay'
 import { get_role } from '../../store/roles'
 import { get_spells_by_type } from '../../store/spells'
+import { useAppSelector } from '../../store/store_hooks';
 
 
 export default function CompSettingsBar() {
 
     // Get State Values
-    const spells_by_type = useSelector(state => get_spells_by_type(state))
-    const raid_cds = spells_by_type["raid"] || []
-    const role_healer = useSelector(state => get_role(state, "heal"))
+    const spells_by_type = useAppSelector(state => get_spells_by_type(state))
+    const raid_cds = spells_by_type["raid"] ?? []
+    const role_healer = useAppSelector(state => get_role(state, "heal"))
 
     // Render
     return (

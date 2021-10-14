@@ -1,4 +1,4 @@
-import React from 'react'
+import {useState, useEffect } from 'react'
 import DurationInput from "./DurationInput";
 
 /**
@@ -20,16 +20,17 @@ export default function DurationInputGroup({
     placeholder_min="0:00",
     placeholder_max="0:00",
     className="",
-}) {
+} : {onChange?: Function, placeholder_min?: string, placeholder_max?: string, className?: string}
+) {
 
     /////////////////////////
     // State
-    const [value_min, set_value_min] = React.useState(0)
-    const [value_max, set_value_max] = React.useState(0)
+    const [value_min, set_value_min] = useState(0)
+    const [value_max, set_value_max] = useState(0)
 
     /////////////////////////
     // pass values to callback
-    React.useEffect(() => {
+    useEffect(() => {
         onChange && onChange({min: value_min, max: value_max})
     }, [value_min, value_max])
 
@@ -40,9 +41,9 @@ export default function DurationInputGroup({
 
     return (
         <div className={`duration_input__group input-group ${className} ${is_empty ? "empty" : ""}`}>
-            <DurationInput name="min" onChange={set_value_min} placeholder={placeholder_min}/>
+            <DurationInput onChange={set_value_min} placeholder={placeholder_min}/>
             <span className="duration_input__dash input-group-text">-</span>
-            <DurationInput name="max" onChange={set_value_max} placeholder={placeholder_max} />
+            <DurationInput onChange={set_value_max} placeholder={placeholder_max} />
         </div>
     )
 }
