@@ -38,7 +38,7 @@ function build_search_string(from_data: FormValues) {
 
     ////////////////////////////////////////
     // Get Filters for roles and specs
-    for (const [type, items] of Object.entries(from_data.comp)) {
+    for (const [type, items] of Object.entries(from_data.comp ?? {})) {
         for (const [key, {count, op}] of Object.entries(items)) {   // fix types
             if (count) {
                 search.append(type, `${key}.${op}.${count}`)
@@ -96,7 +96,7 @@ export default function CompSearch() {
         const rel_url = `${new_url.pathname}${new_url.search}` // exclude the hostname
 
         // redirect to the new url
-        console.log("new_url", new_url)
+        console.log("new_url", rel_url)
         history.push(rel_url);
     }
 
