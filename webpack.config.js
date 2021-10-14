@@ -15,7 +15,6 @@ module.exports = {
     mode: process.env.NODE_ENV || 'development',
 
     entry: {
-        // main: path.resolve(__dirname, "lorgs/static/main.js"),
         app: path.resolve(__dirname, "lorgs/frontend/App.tsx"),
         style: path.resolve(__dirname, "lorgs/templates/scss/main.scss"),
     },
@@ -61,6 +60,8 @@ module.exports = {
 
     output: {
         path: path.resolve(__dirname, "lorgs/static/_generated"),
+        filename: '[name].js',
+        chunkFilename: '[name].[contenthash].bundle.js',
     },
 
     // for testing
