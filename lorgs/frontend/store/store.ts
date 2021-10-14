@@ -12,10 +12,11 @@ import spells_reducer from "./spells"
 import ui_reducer from "./ui"
 
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // REDCUER
 //
+const LORRGS_DEBUG = "__LORRGS_DEBUG__" in window
+
 
 const store =  configureStore({
 
