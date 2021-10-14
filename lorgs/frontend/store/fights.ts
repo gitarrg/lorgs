@@ -34,7 +34,10 @@ function _process_actor(actor: Actor) {
 
 
 function _process_fight(fight: Fight) {
-    fight.boss = fight.boss && _process_actor(fight.boss)
+    if (fight.boss) {
+        fight.boss = _process_actor(fight.boss)
+        fight.boss.class = "boss"
+    }
     fight.players = fight.players.map(actor => _process_actor(actor))
     return fight
 }
