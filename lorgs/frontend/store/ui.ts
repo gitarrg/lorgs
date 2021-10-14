@@ -26,11 +26,6 @@ export function get_filters(state: RootState) {
     return state.ui.filters
 }
 
-export function get_filter_value(state: RootState, attr_name: string) {
-    return state.ui.filters[attr_name]
-}
-
-
 export const get_is_loading = createSelector(
     (state: RootState) => state.ui._loading, // dependency
     (loading_state) => {
@@ -71,6 +66,23 @@ export function sort_spell_types(spell_types: string[]) {
 ////////////////////////////////////////////////////////////////////////////////
 // Slice
 //
+type FilterGroup ="role" | "spec" | "class" | "covenant"
+
+export interface FilterValues {
+
+    killtime: {min: number | null, max: number | null}
+
+    /** Filter Groups like:
+     * role: { tank: false, heal: true}
+     * spec: { holy-paladin: true}
+     */
+    role: {[key: string]: boolean}
+    spec: {[key: string]: boolean}
+    class: {[key: string]: boolean}
+    covenant: {[key: string]: boolean}
+}
+
+
 interface UiSliceState {
 
     mode: "none" | "spec_ranking" | "comp_ranking"
@@ -88,7 +100,7 @@ interface UiSliceState {
     settings: { [key: string]: boolean}
 
     // fight/player filter settings
-    filters: { [key: string]: { [key: string]: boolean | null } }
+    filters: FilterValues // { [key: string]: { [key: string]: boolean | null } }
 
     tooltip: {
         content: string
@@ -157,11 +169,10 @@ const SLICE = createSlice({
         },
 
         // Filters
-        set_filter: (state, action) => {
+        set_filter: (state, action: PayloadAction<{group: FilterGroup, name: string, value: boolean}>) => {
             const { group, name, value } = action.payload
             state.filters[group] = state.filters[group] || {}
             state.filters[group][name] = value
-            // state.filters = {...state.filters, ...action.payload}
             return state
         },
 

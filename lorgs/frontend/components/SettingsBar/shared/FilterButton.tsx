@@ -1,6 +1,6 @@
 
 
-import React from 'react'
+import { useState, useEffect, useContext } from 'react'
 
 import { ButtonGroupContext } from '../shared/ButtonGroup'
 
@@ -9,8 +9,8 @@ export default function FilterButton(
     {name, icon_name, full_name="", show_init=true, onClick} : {name: string, icon_name: string, full_name?: string, show_init?: boolean, onClick?: Function }) {
 
     // Hooks
-    const [show, setShow] = React.useState(show_init)
-    const group_context = React.useContext(ButtonGroupContext)
+    const [show, setShow] = useState(show_init)
+    const group_context = useContext(ButtonGroupContext)
 
     full_name = full_name || name
     const icon_path = `/static/images/${icon_name}.jpg`
@@ -34,7 +34,7 @@ export default function FilterButton(
     }
 
     // see SpellButton,jsx
-    React.useEffect(() => {
+    useEffect(() => {
         if (group_context.source !== "group") { return}
 
         if (onClick) { onClick({value: group_context.active})}

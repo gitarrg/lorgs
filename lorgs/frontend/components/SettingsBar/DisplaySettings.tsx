@@ -1,13 +1,12 @@
 
 
-import React from 'react'
+import { useContext, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import ButtonGroup, { ButtonGroupContext } from './shared/ButtonGroup'
 import { update_settings } from '../../store/ui'
 import { useAppSelector } from '../../store/store_hooks'
 
 
-// 
 function Button({attr_name, icon_name, tooltip=""} : {attr_name: string, icon_name: string, tooltip?: string}) {
 
     ////////////////////////
@@ -16,7 +15,7 @@ function Button({attr_name, icon_name, tooltip=""} : {attr_name: string, icon_na
     const attr_value = useAppSelector(state => state.ui.settings[attr_name])
     const dispatch = useDispatch()
     const disabled = attr_value ? "" : "disabled"
-    const group_context = React.useContext(ButtonGroupContext)
+    const group_context = useContext(ButtonGroupContext)
 
 
     function onClick() {
@@ -32,7 +31,7 @@ function Button({attr_name, icon_name, tooltip=""} : {attr_name: string, icon_na
     }
 
     // see SpellButton,jsx
-    React.useEffect(() => {
+    useEffect(() => {
         if (group_context.source !== "group") { return}
         dispatch(update_settings({
             [attr_name]: group_context.active

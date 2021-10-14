@@ -3,7 +3,6 @@ import { MODES } from "../../store/ui";
 import { WCL_URL } from "../../constants"
 import { kFormatter } from "../../utils"
 
-import type BossActor from "../../types/boss_actor"
 import type Fight from "../../types/fight"
 import type Actor from "../../types/actor"
 import { get_boss } from "../../store/bosses";
@@ -19,7 +18,7 @@ function spec_ranking_color(i = 0) {
 }
 
 
-export function BossName({fight, boss} : {fight: Fight, boss: BossActor}) {
+export function BossName({fight, boss} : {fight: Fight, boss: Actor}) {
 
     ///////////////////
     // hooks

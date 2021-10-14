@@ -2,8 +2,8 @@ import { get_fights } from "../../store/fights";
 import FILTERS from "../../filter_logic";
 
 import {PlayerName, BossName} from "./PlayerName"
-import Fight from "../../types/fight";
-import Actor from "../../types/actor";
+import type Fight from "../../types/fight";
+import type Actor from "../../types/actor";
 import { useAppSelector } from "../../store/store_hooks";
 
 

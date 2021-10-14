@@ -1,10 +1,10 @@
-import Actor from "./types/actor"
-import Fight from "./types/fight"
+import type { FilterValues } from "./store/ui"
+import type Actor from "./types/actor"
+import type Fight from "./types/fight"
 
 
 
-
-function is_fight_visible(fight: Fight, filters = {}) {
+function is_fight_visible(fight: Fight, filters: FilterValues) {
 
     if (fight.pinned) { return true }
 
@@ -16,14 +16,14 @@ function is_fight_visible(fight: Fight, filters = {}) {
 }
 
 
-function is_player_visible(player: Actor , filters = {}) {
+function is_player_visible(player: Actor , filters: FilterValues) {
 
     if (player.pinned) { return true }
 
     if (filters["role"][player.role] === false ) { return false}
     if (filters["class"][player.class] === false ) { return false}
     if (filters["spec"][player.spec] === false ) { return false}
-    if (filters["covenant"][player.covenant] === false ) { return false}
+    if (filters["covenant"][player.covenant ?? ""] === false ) { return false}
     return true
 }
 

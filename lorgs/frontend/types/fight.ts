@@ -1,8 +1,7 @@
-import Actor from "./actor";
-import BossActor from "./boss_actor";
+import type Actor from "./actor";
 
 
-interface Fight {
+export default interface Fight {
 
 
     fight_id: number
@@ -11,14 +10,10 @@ interface Fight {
 
     duration: number
 
-    boss?: BossActor
+    boss?: Actor
     players: Actor[]
 
     pinned?: boolean
 
 }
-
-
-export default Fight
-
 

@@ -13,7 +13,7 @@ export default interface Boss extends Spec {
         name_slug: "boss"
     }
 
-    // role: string
+    role: "boss"
 
     /** encounter ID */
     id: number

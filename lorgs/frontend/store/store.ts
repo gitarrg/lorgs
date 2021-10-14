@@ -21,7 +21,7 @@ const store =  configureStore({
 
     // preloadedState: DEFAULT_STATE,
     reducer: {
-        bosses: bosses_reducer,
+        raid_zone: bosses_reducer,
         fights: fights_reducer,
         roles: roles_reducer,
         specs: specs_reducer,

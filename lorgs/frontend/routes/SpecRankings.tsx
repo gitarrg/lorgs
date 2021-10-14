@@ -1,6 +1,6 @@
 
 
-import React from 'react'
+import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 
@@ -54,27 +54,27 @@ export default function SpecRankings() {
     //
 
     // set UI values
-    React.useEffect(() => { dispatch(ui_store.set_mode(mode)) }, [])
-    React.useEffect(() => { dispatch(ui_store.set_boss_slug(boss_slug)) }, [boss_slug])
-    React.useEffect(() => { dispatch(ui_store.set_spec_slug(spec_slug)) }, [spec_slug])
+    useEffect(() => { dispatch(ui_store.set_mode(mode)) }, [])
+    useEffect(() => { dispatch(ui_store.set_boss_slug(boss_slug)) }, [boss_slug])
+    useEffect(() => { dispatch(ui_store.set_spec_slug(spec_slug)) }, [spec_slug])
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!spec) { return }
         if (spec.loaded) { return } // skip if we already have them
         dispatch(load_spec_spells(spec.full_name_slug))
     }, [spec])
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (!boss) { return }
         if (boss.loaded) { return } // skip if we already have them
         dispatch(load_boss_spells(boss.full_name_slug))
     }, [boss])
 
     // update title once boss & spec are loaded
-    React.useEffect(() => { update_title(boss, spec)  }, [boss, spec])
+    useEffect(() => { update_title(boss, spec)  }, [boss, spec])
 
     // load fights
-    React.useEffect(() => {
+    useEffect(() => {
         dispatch(load_fights(mode, {spec_slug, boss_slug}))
     }, [spec_slug, boss_slug])
 
