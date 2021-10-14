@@ -1,10 +1,16 @@
 
 import React  from "react";
-import { useSelector } from 'react-redux'
 
 import FILTERS from "../../filter_logic";
 import { MODES } from "../../store/ui";
 import { WCL_URL } from "../../constants"
+import { kFormatter } from "../../utils"
+
+import type BossActor from "../../types/boss_actor"
+import type Fight from "../../types/fight"
+import type Actor from "../../types/actor"
+import { get_boss } from "../../store/bosses";
+import { useAppSelector } from "../../store/store_hooks";
 
 
 function spec_ranking_color(i = 0) {
@@ -24,39 +30,39 @@ const SKELETON_PLAYER_NAME = (
 )
 
 
-export function BossName({fight, boss}) {
+export function BossName({fight, boss} : {fight: Fight, boss: BossActor}) {
 
     ///////////////////
     // hooks
-    const filters = useSelector(state => state.ui.filters)
+    const filters = useAppSelector(state => state.ui.filters)
     // if (props.fight.loading) { return SKELETON_PLAYER_NAME }
+    const boss_type = useAppSelector(state => get_boss(state, boss.name))
 
     ///////////////////
     // apply filters
     if (!boss) { return null}
+    if (!boss_type) { return null}
     if (!FILTERS.is_player_visible(boss, filters)) { return null}
-
-    const icon_path = `/static/images/bosses/sanctum-of-domination/${boss.full_name_slug}.jpg`
 
     ///////////////////
     // Render
     return (
         <div className="boss_name">
             <a target="_blank" href={fight.report_url}>
-                <img className="boss_name__spec_icon" src={icon_path}></img>
-                <span className="boss_name__name">{boss.name}</span>
+                <img className="boss_name__spec_icon" src={boss_type.icon_path}></img>
+                <span className="boss_name__name">{boss_type.name}</span>
             </a>
         </div>
     )
 }
 
 
-export function PlayerName({fight, player}) {
+export function PlayerName({fight, player} : {fight: Fight, player: Actor}) {
 
     ///////////////////
     // hooks
-    const mode = useSelector(state => state.ui.mode)
-    const filters = useSelector(state => state.ui.filters)
+    const mode = useAppSelector(state => state.ui.mode)
+    const filters = useAppSelector(state => state.ui.filters)
     const mode_spec = mode == MODES.SPEC_RANKING
     const mode_comp = mode == MODES.COMP_RANKING
 
@@ -69,7 +75,7 @@ export function PlayerName({fight, player}) {
     // vars
     // TODO: fetch from slice
     const spec_img_path = player.spec && `/static/images/specs/${player.spec}.jpg`
-    const role_img_path = player.spec && `/static/images/roles/${player.role}.jpg`
+    const role_img_path = player.role && `/static/images/roles/${player.role}.jpg`
     const report_url = `${WCL_URL}/reports/${fight.report_id}#fight=${fight.fight_id}`
 
     ///////////////////

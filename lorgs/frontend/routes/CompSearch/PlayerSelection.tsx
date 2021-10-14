@@ -2,10 +2,8 @@
     Component to show the currently selected Roles/Specs
 */
 
-import React from 'react'
 import { useWatch } from "react-hook-form";
 import CompPreview from '../../components/CompPreview';
-
 
 
 export default function PlayerSelection() {

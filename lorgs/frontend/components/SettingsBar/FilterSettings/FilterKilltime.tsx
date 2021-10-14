@@ -15,7 +15,7 @@ export default function FilterKilltimeGroup() {
     const dispatch = useDispatch()
 
     // Callback when values get changed
-    function onChange({min, max}) {
+    function onChange({min, max}: {min: number, max: number}) {
         dispatch(set_filters({killtime: {min, max}}))
     }
 

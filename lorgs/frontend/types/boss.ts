@@ -1,31 +1,36 @@
 
+import type Spec from "./spec"
 
-type Boss = {
+/**
+ * Type for a Boss in the Game.
+ *
+ * There can only be one of each type. eg.: there is only one "Painsmith Raznal"
+ */
+export default interface Boss extends Spec {
 
     class: string // usually "boss"
-    role: string
+
+    // role: string
 
     /** encounter ID */
     // id: number NOT USED
 
     /** Nice short Name */
-    name: string
+    // name: string
 
     /** Complete Name */
-    full_name: string
+    // full_name: string
 
     // name_slug: "painsmith" NOT USED
 
     /** Complete name slugified. Primary identifier */
-    full_name_slug: string
+    // full_name_slug: string
 
     /** URL to the icon */
-    icon_path: string
+    // icon_path: string
 
-    loaded: boolean
+    // loaded: boolean
 
-    spells_by_type: {[key: number]: any} // todo: spell type
+    // spells_by_type: {[key: string]: number[] } // todo: spell type
 }
-
-export default Boss
 

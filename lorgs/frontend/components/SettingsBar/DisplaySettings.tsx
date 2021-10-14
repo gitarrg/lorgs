@@ -1,20 +1,22 @@
 
 
 import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import ButtonGroup, { ButtonGroupContext } from './shared/ButtonGroup'
 import { update_settings } from '../../store/ui'
+import { useAppSelector } from '../../store/store_hooks'
 
 
-function Button({attr_name, icon_name, tooltip=""}) {
+// 
+function Button({attr_name, icon_name, tooltip=""} : {attr_name: string, icon_name: string, tooltip?: string}) {
 
     ////////////////////////
     // Hooks
     //
-    const attr_value = useSelector(state => state.ui.settings[attr_name])
+    const attr_value = useAppSelector(state => state.ui.settings[attr_name])
     const dispatch = useDispatch()
     const disabled = attr_value ? "" : "disabled"
-    const [{group_active, group_source}, set_group_active] = React.useContext(ButtonGroupContext)
+    const group_context = React.useContext(ButtonGroupContext)
 
 
     function onClick() {
@@ -24,18 +26,18 @@ function Button({attr_name, icon_name, tooltip=""}) {
             [attr_name]: new_value
         }))
 
-        if (new_value) {
-            set_group_active({group_active: new_value, group_source: "child"})
+        if (new_value && group_context.setter) {
+            group_context.setter({active: new_value, source: "child"})
         }
     }
 
     // see SpellButton,jsx
     React.useEffect(() => {
-        if (group_source !== "group") { return}
+        if (group_context.source !== "group") { return}
         dispatch(update_settings({
-            [attr_name]: group_active
+            [attr_name]: group_context.active
         }))
-    }, [group_active])
+    }, [group_context.active])
 
     ////////////////////////
     // Render

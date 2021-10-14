@@ -1,6 +1,7 @@
 
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { createSelector } from 'reselect'
+import type { RootState } from './store'
 
 
 // modes to switch some page related features
@@ -10,42 +11,41 @@ export const MODES = {
     COMP_RANKING: "comp_ranking",
 }
 
+export type Mode = "none" | "spec_ranking" | "comp_ranking"
+
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Actions
 //
-export function get_mode(state) {
+export function get_mode(state: RootState) {
     return state.ui.mode
 }
 
-export function get_value(state, attr_name) {
-    return state.ui[attr_name]
-}
-
-export function get_filters(state) {
+export function get_filters(state: RootState) {
     return state.ui.filters
 }
 
-export function get_filter_value(state, attr_name) {
+export function get_filter_value(state: RootState, attr_name: string) {
     return state.ui.filters[attr_name]
 }
 
 
 export const get_is_loading = createSelector(
-    (state) => state.ui._loading, // dependency
+    (state: RootState) => state.ui._loading, // dependency
     (loading_state) => {
         return Object.values(loading_state).some(v => v == true)
     }
 )
 
 
-export function get_tooltip(state) {
+export function get_tooltip(state: RootState) {
     return state.ui.tooltip
 }
 
 
 /* add a prefix to the input, to aid with sorting */
-function _sort_spell_type_sort_key(spell_type) {
+function _sort_spell_type_sort_key(spell_type: string) {
 
     let prefix = "50" // start middle
     if (spell_type == "raid")           { prefix = "60"} // raid cd's after class
@@ -59,7 +59,7 @@ function _sort_spell_type_sort_key(spell_type) {
    - specs
    - other
 */
-export function sort_spell_types(spell_types) {
+export function sort_spell_types(spell_types: string[]) {
     return spell_types.sort((a, b) => {
         const key_a = _sort_spell_type_sort_key(a)
         const key_b = _sort_spell_type_sort_key(b)
@@ -71,55 +71,111 @@ export function sort_spell_types(spell_types) {
 ////////////////////////////////////////////////////////////////////////////////
 // Slice
 //
+interface UiSliceStateFilterKilltime {
+    min: number | undefined
+    max: number | undefined
+}
+
+
+interface UiSliceStateFilters {
+
+    // player filters
+    role: { [key: string]: boolean },
+    class: { [key: string]: boolean },
+    spec: { [key: string]: boolean },
+    covenant: { [key: string]: boolean },
+
+    // fight filters
+    killtime: UiSliceStateFilterKilltime
+}
+
+interface UiSliceStateTooltipPosition {
+    x: number
+    y: number
+}
+
+interface UiSliceStateTooltip {
+    content: string
+    position: UiSliceStateTooltipPosition
+
+}
+
+
+interface UiSliceState {
+
+    mode: "none" | "spec_ranking" | "comp_ranking"
+
+    /** elements that are loading */
+    _loading: { [key: string]: boolean }
+
+    /** currently selected spec */
+    spec_slug: string
+
+    /** currently selected boss */
+    boss_slug: string
+
+    // Timeline Options
+    settings: { [key: string]: boolean}
+
+    // fight/player filter settings
+    filters: { [key: string]: { [key: string]: boolean | null } }
+
+    tooltip: UiSliceStateTooltip
+}
+
+
+const INITIAL_STATE: UiSliceState = {
+
+    mode: "none",
+
+    _loading: {}, // elements that are loading
+
+    spec_slug: "", // currently selected spec
+    boss_slug: "", // currently selected boss
+
+    // Timeline Options
+    settings: {
+        show_casticon: true,
+        show_casttime: true,
+        show_duration: true,
+        show_cooldown: true,
+    },
+
+    // fight/player filter settings
+    filters: {
+
+        // player filters
+        role: {},
+        class: { boss: false },  // for now, bosses are hidden by default (except the pinned ones)
+        spec: {},
+        covenant: {},
+
+        // fight filters
+        killtime: {min: null, max: null},
+    },
+
+    tooltip: {
+        content: "",
+        position: {x: 0, y: 0}
+    }
+}
+
 
 const SLICE = createSlice({
     name: "ui",
 
-    initialState: {
-        mode: MODES.NONE,
-
-        _loading: {}, // elements that are loading
-
-        spec_slug: undefined, // currently selected spec
-        boss_slug: undefined, // currently selected boss
-
-        // Timeline Options
-        settings: {
-            show_casticon: true,
-            show_casttime: true,
-            show_duration: true,
-            show_cooldown: true,
-        },
-
-        // fight/player filter settings
-        filters: {
-
-            // player filters
-            role: {},
-            class: { boss: false },  // for now, bosses are hidden by default (except the pinned ones)
-            spec: {},
-            covenant: {},
-
-            // fight filters
-            killtime: {min: undefined, max: undefined},
-        },
-
-        tooltip: {
-            content: "",
-            position: {x: 0, y: 0}
-        }
-    },
+    initialState: INITIAL_STATE,
 
     reducers: {
 
-        // dont hate on me
-        set_value: (state, action) => {
-            state[action.payload.field] = action.payload.value
-            return state;
+        set_boss_slug: (state, action: PayloadAction<string>) => {
+            state.boss_slug = action.payload
+            return state
         },
 
-        set_values: (state, action) => {
-            return { ...state, ...action.payload}
+        set_spec_slug: (state, action: PayloadAction<string>) => {
+            state.spec_slug = action.payload
+            return state
         },
 
         update_settings: (state, action) => {
@@ -142,8 +198,8 @@ const SLICE = createSlice({
         },
 
         // loading
-        set_loading: (state, {key, value}) => {
-            state._loading[key] = value
+        set_loading: (state, action: PayloadAction<{key: string, value: boolean}>) => {
+            state._loading[action.payload.key] = action.payload.value
             return state
         },
 
@@ -163,14 +219,12 @@ const SLICE = createSlice({
 
 
 export const {
-    set_boss,
+    set_boss_slug,
     set_filter,
     set_filters,
     set_mode,
-    set_spec,
+    set_spec_slug,
     set_tooltip,
-    set_value,
-    set_values,
     update_settings,
 } = SLICE.actions
 

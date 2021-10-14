@@ -5,11 +5,12 @@ import React from 'react'
 import { ButtonGroupContext } from '../shared/ButtonGroup'
 
 
-export default function FilterButton({name, icon_name, full_name="", show_init=true, onClick=null}) {
+export default function FilterButton(
+    {name, icon_name, full_name="", show_init=true, onClick} : {name: string, icon_name: string, full_name?: string, show_init?: boolean, onClick?: Function }) {
 
     // Hooks
     const [show, setShow] = React.useState(show_init)
-    const [{group_active, group_source}, set_group_active] = React.useContext(ButtonGroupContext)
+    const group_context = React.useContext(ButtonGroupContext)
 
     full_name = full_name || name
     const icon_path = `/static/images/${icon_name}.jpg`
@@ -22,9 +23,10 @@ export default function FilterButton({name, icon_name, full_name="", show_init=t
         if (onClick) {
             onClick({value: new_value})
         }
+
         // update parent group
-        if (new_value) {
-            set_group_active({group_active: new_value, group_source: "child"})
+        if (new_value && group_context.setter) {
+            group_context.setter({active: new_value, source: "child"})
         }
 
         // update the button itself
@@ -33,11 +35,11 @@ export default function FilterButton({name, icon_name, full_name="", show_init=t
 
     // see SpellButton,jsx
     React.useEffect(() => {
-        if (group_source !== "group") { return}
+        if (group_context.source !== "group") { return}
 
-        onClick({value: group_active})
-        setShow(group_active)
-    }, [group_active])
+        if (onClick) { onClick({value: group_context.active})}
+        setShow(group_context.active)
+    }, [group_context.active])
 
 
     /////////////////

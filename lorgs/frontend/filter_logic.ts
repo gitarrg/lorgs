@@ -1,9 +1,10 @@
+import Actor from "./types/actor"
+import Fight from "./types/fight"
 
 
-const FILTERS = {}
 
 
-FILTERS.is_fight_visible = function(fight, filters) {
+function is_fight_visible(fight: Fight, filters = {}) {
 
     if (fight.pinned) { return true }
 
@@ -15,7 +16,7 @@ FILTERS.is_fight_visible = function(fight, filters) {
 }
 
 
-FILTERS.is_player_visible = function(player = {}, filters = {}) {
+function is_player_visible(player: Actor , filters = {}) {
 
     if (player.pinned) { return true }
 
@@ -26,5 +27,11 @@ FILTERS.is_player_visible = function(player = {}, filters = {}) {
     return true
 }
 
+
+
+const FILTERS = {
+    is_fight_visible,
+    is_player_visible,
+}
 
 export default FILTERS

@@ -1,5 +1,6 @@
 
 import Konva from "konva"
+import { toMMSS } from "../../utils";
 
 import * as constants from "./constants"
 import MouseCrosshair from "./Overlays/MouseCrosshair";

@@ -6,11 +6,22 @@
 
 */
 
-import React from 'react'
+interface CompCountType {
+
+    /**  number as string */
+    count: ""
+
+    op: "eq" | "lt" | "gt" | "lte" | "gte"
+}
+
+interface CompCountMap {
+    [key: string]: CompCountType
+}
+
 
 
 // convert "eq", "lt", "gt" etc to "<", ">""
-function op_to_symbol(op) {
+function op_to_symbol(op: string) {
 
     if (op == "eq") {return ""}
     if (op == "lt") {return "<"}
@@ -22,7 +33,7 @@ function op_to_symbol(op) {
 }
 
 
-function create_icon(prefix, name, count, op) {
+function create_icon(prefix: string, name: string, count: string, op: string) {
 
     if (count === "") {return}
 
@@ -43,7 +54,7 @@ function create_icon(prefix, name, count, op) {
 }
 
 
-function create_icons(prefix, items) {
+function create_icons(prefix: string, items: { [key: string]: CompCountType }) {
 
     let icons = []
     for (const [key, value] of Object.entries(items)) {
@@ -57,7 +68,7 @@ function create_icons(prefix, items) {
 }
 
 
-export default function CompPreview({roles={}, specs={}, placeholder=""}) {
+export default function CompPreview({roles={}, specs={}, placeholder=""} : { roles?: CompCountMap, specs?: CompCountMap, placeholder?: string}) {
 
     let icons = []
     icons.push(...create_icons("roles", roles))
@@ -65,7 +76,7 @@ export default function CompPreview({roles={}, specs={}, placeholder=""}) {
 
     return (
         <div className="comp-preview">
-            {icons.length > 0 ? icons : placeholder}
+            {icons.length > 0 ? icons : <h1>{placeholder}</h1>}
         </div>
     )
 }

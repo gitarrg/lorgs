@@ -1,6 +1,6 @@
 /* Loads Constant Data from the API that is used on all pages. */
 
-import React from 'react'
+import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
 import { load_bosses } from "../store/bosses"
@@ -12,7 +12,7 @@ export default function GlobalDataLoader() {
 
     const dispatch = useDispatch()
 
-    React.useEffect(() => {
+    useEffect(() => {
         console.log("loading global data")
         dispatch(load_bosses())
         dispatch(load_roles())

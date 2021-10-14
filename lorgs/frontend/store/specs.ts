@@ -1,7 +1,8 @@
 
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import type Spec from "../types/spec"
+import type { RootState, AppDispatch } from './store'
 import { fetch_data } from '../api'
-import Spec from '../types/spec'
 import { group_spells_by_type } from './spells'
 
 
@@ -9,21 +10,21 @@ import { group_spells_by_type } from './spells'
 // Actions
 //
 
-export function get_specs(state) {
+export function get_specs(state : RootState ) {
     return Object.values(state.specs)
 }
 
-export function get_spec(state, spec_slug="") : Spec {
+export function get_spec(state: RootState, spec_slug?: string) {
     spec_slug = spec_slug || state.ui.spec_slug // input or current spec
-    return state.specs[spec_slug]
+    return state.specs[spec_slug] || null
 }
 
 /** Find the first spec that can use a given spell
  * @param {object} state current state
- * @param {integer} spell_id id of the spell to find
+ * @param {number} spell_id id of the spell to find
  * @returns {object} the matched spell
 */
-export function get_spec_for_spell_id(state, spell_id : number) {
+export function get_spec_for_spell_id(state: RootState, spell_id : number) {
     return Object.values(state.specs || {}).find(spec => {
         return Object.values(spec.spells_by_type || {}).some(spell_group => {
             return spell_group.includes(spell_id)
@@ -36,7 +37,7 @@ export function get_spec_for_spell_id(state, spell_id : number) {
 // Slice
 //
 
-function _process_spec(spec) {
+function _process_spec(spec: Spec) {
     spec.loaded = false
     spec.icon_path = `/static/images/specs/${spec.full_name_slug}.jpg`
     return spec
@@ -46,11 +47,11 @@ function _process_spec(spec) {
 const SLICE = createSlice({
     name: "specs",
 
-    initialState: {},
+    initialState: {} as { [ key: string ] : Spec },
 
     reducers: {
 
-        set_specs: (state, action) => {
+        set_specs: (state, action: PayloadAction<Spec[]>) => {
 
             action.payload.forEach(spec => {
                 state[spec.full_name_slug] = _process_spec(spec)
@@ -80,29 +81,29 @@ export default SLICE.reducer
 
 export function load_specs() {
 
-    return async dispatch => {
-        dispatch({type: "ui/set_loading", key: "specs", value: true})
+    return async (dispatch: AppDispatch) => {
+        dispatch({type: "ui/set_loading", payload: {key: "specs", value: true}})
 
         // Request
         const specs_dict = await fetch_data("/api/specs");
         const specs = specs_dict.specs || []
 
         dispatch(SLICE.actions.set_specs(specs))
-        dispatch({type: "ui/set_loading", key: "specs", value: false})
+        dispatch({type: "ui/set_loading", payload: {key: "specs", value: false}})
     }
 }
 
 
-export function load_spec_spells(spec_slug) {
+export function load_spec_spells(spec_slug: string) {
 
-    return async dispatch => {
+    return async (dispatch: AppDispatch) => {
         const load_key = `specs/${spec_slug}`
-        dispatch({type: "ui/set_loading", key: load_key, value: true})
+        dispatch({type: "ui/set_loading", payload: {key: load_key, value: true}})
 
         // Request
         const spells = await fetch_data(`/api/specs/${spec_slug}/spells`);
 
         dispatch(SLICE.actions.set_spec_spells({spec_slug, spells}))
-        dispatch({type: "ui/set_loading", key: load_key, value: false})
+        dispatch({type: "ui/set_loading", payload: {key: load_key, value: false}})
     }
 }

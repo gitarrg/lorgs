@@ -1,6 +1,5 @@
 
-import React from 'react'
-import { useSelector } from 'react-redux'
+import { useAppSelector } from '../../store/store_hooks'
 import FormGroup from './FormGroup'
 import CountFilterGroup from './SearchCountInput'
 
@@ -10,8 +9,8 @@ import CountFilterGroup from './SearchCountInput'
  */
 export default function PlayerRoleSearch() {
 
-    let roles = useSelector(state => state.roles)
-    roles = Object.values(roles).filter(role => role.id < 1000)
+    let roles_map = useAppSelector(state => state.roles)
+    let roles = Object.values(roles_map).filter(role => role.id < 1000)
 
     return (
         <FormGroup name="Roles:" className="player-role-search">

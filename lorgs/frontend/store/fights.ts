@@ -2,6 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 import { fetch_data } from '../api'
+import Fight from '../types/fight';
 import { MODES } from './ui'
 
 
@@ -9,7 +10,7 @@ import { MODES } from './ui'
 // Actions
 //
 
-export function get_all_fights(state) {
+export function get_all_fights(state) : Fight[] {
     return state.fights
 }
 
@@ -44,7 +45,7 @@ function _process_fights(fights) {
 const SLICE = createSlice({
     name: "fights",
 
-    initialState: [],
+    initialState: [] as Fight[],
 
     reducers: {
         set_fights: (state, action) => {
@@ -110,7 +111,7 @@ export function load_fights(mode: string, {boss_slug, spec_slug, search} : {boss
 
     return async dispatch => {
 
-        dispatch({type: "ui/set_loading", key: "fights", value: true})
+        dispatch({type: "ui/set_loading", payload: {key: "fights", value: true}})
 
         // load
         let fights = []
@@ -128,6 +129,6 @@ export function load_fights(mode: string, {boss_slug, spec_slug, search} : {boss
 
         // set
         dispatch(set_fights(fights))
-        dispatch({type: "ui/set_loading", key: "fights", value: false})
+        dispatch({type: "ui/set_loading", payload: {key: "fights", value: false}})
     } // async dispatch
 }

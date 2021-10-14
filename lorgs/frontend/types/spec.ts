@@ -7,7 +7,7 @@ interface Class {
 }
 
 
-type Spec = {
+export default interface Spec {
 
     class: Class
     role: string
@@ -22,7 +22,10 @@ type Spec = {
     full_name_slug: string
 
     /** URL to the icon */
-    icon_path?: string
-}
+    icon_path: string
 
-export default Spec
+    spells_by_type: { [key: string]: number[] }
+
+    loaded: boolean
+
+}

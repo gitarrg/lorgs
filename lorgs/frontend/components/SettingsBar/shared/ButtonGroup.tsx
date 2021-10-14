@@ -1,12 +1,31 @@
+import { createContext, useState } from 'react'
 
 
-import React from 'react'
+type ButtonGroupContextType = {
+    /** If the group itself is active or not. */
+    active: boolean
+
+    /** Type of element that triggered a change. */
+    source: string //"group" | "child" | ""
+
+    /** Callable to change the Group Context. Expects active and source keys*/
+    setter?: Function
+}
 
 
-export const ButtonGroupContext = React.createContext()
+const DEFAULT_CONTEXT: ButtonGroupContextType = {
+    active: true,
+    source: "",
+}
 
 
-export default function ButtonGroup({name, extra_class, className, side="left", children}) {
+export const ButtonGroupContext = createContext<ButtonGroupContextType>(DEFAULT_CONTEXT)
+
+
+export default function ButtonGroup(
+    {name, extra_class, className, side="left", children} :
+    {name: string, extra_class?: string, className?: string, side?: "left"|"right", children?: JSX.Element[] }
+    ) {
 
     ///////////////////////
     // Hooks
@@ -14,7 +33,8 @@ export default function ButtonGroup({name, extra_class, className, side="left", 
     // The Groups Active state:
     // in addition to the "group_active"-value, we pass a "group_source",
     // which can be used to determine who changed the groups state.
-    const [{group_active, group_source}, setActive] = React.useState({group_active: true})
+    const [{active, source}, setActive] = useState({active: true, source: ""})
+    const group_context : ButtonGroupContextType = {active, source, setter: setActive}
 
     // Vars
     extra_class = extra_class || className || ""
@@ -23,7 +43,7 @@ export default function ButtonGroup({name, extra_class, className, side="left", 
     function onClick() {
         // toggle the group state and pass "group" as the source,
         // so child elements can react accordingly
-        setActive({group_active: !group_active, group_source: "group"})
+        setActive({active: !active, source: "group"})
     }
 
     ////////////////////////
@@ -32,10 +52,10 @@ export default function ButtonGroup({name, extra_class, className, side="left", 
 
         <div className={m}>
 
-            {name && <small className={`button_group_header ${extra_class} ${group_active ? "" : "disabled"}`} onClick={onClick}>{name}</small>}
+            {name && <small className={`button_group_header ${extra_class} ${active ? "" : "disabled"}`} onClick={onClick}>{name}</small>}
 
             <div className="bg-dark p-1 rounded border align-items-start button_group">
-                <ButtonGroupContext.Provider value={[{group_active, group_source}, setActive]}>
+                <ButtonGroupContext.Provider value={group_context}>
                 {children}
                 </ButtonGroupContext.Provider>
             </div>

@@ -1,15 +1,16 @@
 /* Component to select which boss to display */
 
 
-import { useSelector } from 'react-redux'
 import { useFormContext, useWatch } from "react-hook-form";
 import { get_bosses } from '../../store/bosses';
 import FormGroup from './FormGroup';
+import type Boss from '../../types/boss';
+import { useAppSelector } from '../../store/store_hooks';
 
 
 
 /* Button to select a single boss */
-function BossButton({boss}) {
+function BossButton({boss} : {boss: Boss}) {
 
     // State Vars
     const form_methods = useFormContext();
@@ -38,7 +39,7 @@ function BossButton({boss}) {
 /* Group of Buttons to allow the user to choose a Boss */
 export default function BossSelect() {
 
-    const bosses = useSelector(state => get_bosses(state))
+    const bosses = useAppSelector(state => get_bosses(state))
 
 
     return (
