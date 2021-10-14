@@ -11,11 +11,11 @@
     and should cancel the timer.
 
 */
-import React from 'react'
-import { useSelector } from 'react-redux'
+import { useRef, useEffect } from 'react'
 import parse from 'html-react-parser';
 
 import { get_tooltip } from '../../store/ui'
+import { useAppSelector } from '../../store/store_hooks';
 
 
 const TOOLTIP_DELAY = 500
@@ -23,17 +23,19 @@ const TOOLTIP_DELAY = 500
 
 export default function TimelineTooltip() {
 
-    const tooltip = useSelector(state => get_tooltip(state))
-    const ref = React.useRef()
+    const tooltip = useAppSelector(state => get_tooltip(state))
+    const ref = useRef<HTMLDivElement>(null)
 
-    React.useEffect(() => {
+    useEffect(() => {
 
         // no tooltip? no timer!
         if (!ref.current) { return }
 
         // create timer to show the tooltip after some delay
         const interval = setTimeout(() => {
-            ref.current.style.display = "block";
+            if (ref.current) {
+                ref.current.style.display = "block";
+            }
         }, TOOLTIP_DELAY);
         return () => clearInterval(interval);
     }, [tooltip]);

@@ -5,6 +5,9 @@ This basically just wraps a number of Boss/Player Rows.
 */
 
 import * as constants from "./constants";
+import Actor from "../../types/actor";
+import Fight from "../../types/fight";
+import Konva from "konva";
 import PlayerRow from "./PlayerRow";
 import filter_logic from "../../filter_logic";
 import { toMMSS } from "../../utils";
@@ -12,15 +15,26 @@ import { toMMSS } from "../../utils";
 
 export default class FightRow {
 
-    // offset for the killtime text
+    /* offset for the killtime text */
     KILLTIME_MARGIN = 5
 
-    constructor(fight_data) {
+    duration: number
+    #_visible: boolean
+    #fight_data: Fight
 
-        this._visible = true
+    foreground: Konva.Group
+    background: Konva.Group
+    rows: PlayerRow[]
+    killtime_text: Konva.Text
+
+
+
+    constructor(fight_data: Fight) {
+
+        this.#_visible = true
 
         // input data
-        this.fight_data = fight_data
+        this.#fight_data = fight_data
         this.duration = Math.ceil(fight_data.duration / 1000); // ms to s
 
         // Groups
@@ -40,11 +54,11 @@ export default class FightRow {
 
     }
 
-    add_row(fight_data, player_data) {
+    add_row(fight: Fight, player: Actor) {
 
-        if (!(player_data && player_data.name)) { return}
+        if (!(player?.name)) { return}
 
-        const row = new PlayerRow(fight_data, player_data)
+        const row = new PlayerRow(fight, player)
         this.rows.push(row)
 
         this.foreground.add(row.foreground)
@@ -81,22 +95,22 @@ export default class FightRow {
     //////////////////////////////
     // Attributes
     //
-    visible(value) {
+    visible(value?: boolean) {
 
         if (value !== undefined) {
-            this._visible = value
+            this.#_visible = value
             this.rows.forEach(row => row.visible(value))
             this.killtime_text.visible(value)
         }
-        return this._visible
+        return this.#_visible
     }
 
-    height() {
+    height() : number {
         const heights = this.rows.map(row => row.height())
         return heights.reduce((a, b) => a + b, 0)
     }
 
-    y(y) {
+    y(y: number) {
         // forward changes y-coord changes to both children
         this.background.y(y)
         this.foreground.y(y)
@@ -111,12 +125,12 @@ export default class FightRow {
     // Methods
     //
 
-    _handle_zoom_change(scale_x) {
+    _handle_zoom_change(scale_x: number) {
         this.killtime_text.x(this.KILLTIME_MARGIN + (this.duration * scale_x))
     }
 
-    _handle_apply_filters_pre(filters) {
-        const visible = filter_logic.is_fight_visible(this.fight_data, filters)
+    _handle_apply_filters_pre(filters: {}) {
+        const visible = filter_logic.is_fight_visible(this.#fight_data, filters)
         this.visible(visible)
     }
 
@@ -125,7 +139,7 @@ export default class FightRow {
         this.layout_children()
     }
 
-    handle_event(event_name, payload) {
+    handle_event(event_name: string, payload: any) {
 
         // apply filters to the fight itself (before processing children)
         if (event_name === constants.EVENT_APPLY_FILTERS ) { this._handle_apply_filters_pre(payload)}
@@ -136,10 +150,5 @@ export default class FightRow {
 
         // postprocess after filters applied (in case height change due to child rows updating)
         if (event_name === constants.EVENT_APPLY_FILTERS ) { this._handle_apply_filters_post()}
-    }
-
-    update_display_settings(settings) {
-        this.rows.forEach(row => row.update_display_settings(settings))
-        this.foreground.update_display_settings(settings)
     }
 }

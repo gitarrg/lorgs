@@ -4,12 +4,15 @@ import Konva from "konva"
 import * as constants from "./constants"
 import store from "./../../store/store"
 import { toMMSS } from "../../utils"
+import type Spell from "../../types/spell"
+import type CastType from "../../types/cast"
+import type Stage from "./Stage"
 
 
-function create_cast_cooldown(spell) {
+function create_cast_cooldown(spell: Spell) {
     if (!spell.cooldown) { return }
     return new Konva.Rect({
-        name: "cast_cooldown",
+    name: "cast_cooldown",
         width: spell.cooldown * constants.DEFAULT_ZOOM,
         height: constants.LINE_HEIGHT-1,
         fill: spell.color,
@@ -21,7 +24,7 @@ function create_cast_cooldown(spell) {
 }
 
 
-function create_cast_duration(spell) {
+function create_cast_duration(spell: Spell) {
     if (!spell.duration) { return }
 
     return new Konva.Rect({
@@ -36,7 +39,7 @@ function create_cast_duration(spell) {
     })
 }
 
-function create_cast_icon(spell) {
+function create_cast_icon(spell: Spell) {
 
     // is the browser smart enough to not load the same image 100x?
     const image_obj = new Image();
@@ -57,6 +60,7 @@ function create_cast_icon(spell) {
         perfectDrawEnabled: false,
     })
 
+
     icon.loading = image_obj.loading // custom flag to check is the img was loaded
     image_obj.onload = () => {
         icon.loading = false
@@ -66,7 +70,7 @@ function create_cast_icon(spell) {
 }
 
 
-function create_cast_text(cast) {
+function create_cast_text(cast: Cast) {
     return new Konva.Text({
         name: "cast_text",
         text: toMMSS(cast.timestamp),
@@ -87,7 +91,23 @@ function create_cast_text(cast) {
 
 export default class Cast extends Konva.Group {
 
-    constructor(cast_data) {
+    spell_id: number
+    timestamp: number
+    spell: Spell
+
+    hovering: boolean
+    selected: boolean
+
+    cast_cooldown?: Konva.Rect
+    cast_duration?: Konva.Rect
+    cast_icon?: Konva.Image
+    cast_text?: Konva.Text
+    mouse_event_bbox?: Konva.Rect
+
+    tooltip_content?: string
+
+
+    constructor(cast_data: CastType) {
         super()
 
         // Kova Attrs
@@ -103,13 +123,12 @@ export default class Cast extends Konva.Group {
         this.timestamp = cast_data.ts / 1000;
         this.spell = state.spells.all_spells[this.spell_id];
 
-        // guess we are done here
-        if (!this.spell) { return }
-
         // Internal Attrs
         this.hovering = false
         this.selected = false // cached value to avoid reading from redux all the time
 
+        // guess we are done here
+        if (!this.spell) { return }
 
         ////////////////////////////
         // create elements
@@ -156,7 +175,7 @@ export default class Cast extends Konva.Group {
 
         if (!this.visible()) { return;}
 
-        const stage = this.getStage()
+        const stage  = this.getStage() as Stage | null
         if (!stage) { return}
 
         // default state
@@ -190,30 +209,30 @@ export default class Cast extends Konva.Group {
     // Events
     //
 
-    _handle_display_settings(settings) {
-        this.cast_icon.visible(settings.show_casticon)
-        this.cast_text.visible(settings.show_casttime)
+    _handle_display_settings(settings: any) {
+        this.cast_icon && this.cast_icon.visible(settings.show_casticon)
+        this.cast_text && this.cast_text.visible(settings.show_casttime)
         this.cast_cooldown && this.cast_cooldown.visible(settings.show_cooldown)
         this.cast_duration && this.cast_duration.visible(settings.show_duration)
     }
 
-    _handle_zoom_change(scale_x) {
+    _handle_zoom_change(scale_x: number) {
         this.x(scale_x * this.timestamp)
         this.cast_cooldown && this.cast_cooldown.width(this.spell.cooldown * scale_x)
         this.cast_duration && this.cast_duration.width(this.spell.duration * scale_x)
     }
 
-    _handle_spell_display(payload) {
+    _handle_spell_display(payload: { [key: number]: boolean }) {
         const visible = payload[this.spell_id] !== false
         this.visible(visible)
     }
 
-    _handle_spell_selected(payload) {
+    _handle_spell_selected(payload: number[]) {
         this.selected = payload.includes(this.spell_id)
         this.update_style()
     }
 
-    handle_event(event_name, payload) {
+    handle_event(event_name: string, payload: any) {
 
         if (event_name === constants.EVENT_SPELL_DISPLAY) {this._handle_spell_display(payload)}
 
@@ -227,14 +246,15 @@ export default class Cast extends Konva.Group {
     ////////////////////////////////////////////////////////////////////////////
     // Mouse Events
     //
-    hover(hovering) {
+    hover(hovering: boolean) {
 
         this.hovering = hovering;
 
         this.update_style()
 
         // update cursor
-        const stage = this.getStage()
+        const stage = this.getStage() as Stage | null
+        if (!stage) { return }
         stage.container().style.cursor = this.hovering ? "pointer" : "grab";
         stage.batchDraw()
 
@@ -248,7 +268,7 @@ export default class Cast extends Konva.Group {
         position.x += container_position.x
         position.y += container_position.y
 
-        position.x += this.cast_icon.x() + (this.cast_icon.width() / 2) // center above the icon
+        position.x += this.cast_icon ? (this.cast_icon.x() + (this.cast_icon.width() / 2)) : 0 // center above the icon
         store.dispatch({
             type: constants.EVENT_SHOW_TOOLTIP,
             payload: {
@@ -258,7 +278,7 @@ export default class Cast extends Konva.Group {
         })
     }
 
-    select(event) {
+    select(event: Konva.KonvaEventObject<MouseEvent>) {
         store.dispatch({
             type: constants.EVENT_SPELL_SELECTED,
             payload: {
@@ -269,7 +289,7 @@ export default class Cast extends Konva.Group {
         })
     }
 
-    handle_mousedown(event) {
+    handle_mousedown(event: Konva.KonvaEventObject<MouseEvent>) {
         event.evt.preventDefault()
 
         if (event.evt.button == 0) {

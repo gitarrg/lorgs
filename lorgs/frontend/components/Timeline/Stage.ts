@@ -1,9 +1,10 @@
 import Konva from "konva"
-
+import type { StageConfig } from "konva/lib/Stage";
 
 import Ruler from "./Ruler"
 import * as constants from "./constants";
 import FightRow from "./FightRow";
+import Fight from "../../types/fight";
 
 // for performance
 Konva.autoDrawEnabled = false;
@@ -11,29 +12,45 @@ Konva.autoDrawEnabled = false;
 
 export default class Stage extends Konva.Stage{
 
-    ZOOM_RATE = 1.1
-    ZOOM_MIN = 0.5
+    static ZOOM_RATE = 1.1
+    static ZOOM_MIN = 0.5
 
-    THROTTLE = 200 // max update rate in ms
+    static THROTTLE = 200 // max update rate in ms
 
     FIGHT_SPACE = 10 // distance between fights in pixels
 
+    scale_x: number
+    rows: FightRow[]
 
-    constructor(options) {
+    // bool: true if any spell is selected
+    has_selection: boolean
+
+    back_layer: Konva.Layer
+    main_layer: Konva.Layer
+    overlay_layer: Konva.Layer
+    ruler: Ruler
+
+    /** Duration of the longest fight. Used to set things such as the the Length of the Ruler and overall width. */
+    longest_fight: number
+
+
+    constructor(options: StageConfig) {
         super(options);
         this.draggable(true)
 
         /////////////////////////////////
         // custom attributes
         this.scale_x = constants.DEFAULT_ZOOM
-        this.spells = {}
+
         this.rows = []
 
         // bool: true if any spell is selected
         this.has_selection = false;
 
+        this.longest_fight = 0
+
         // bool: used to indicate if objects need to be rescaled
-        this.zoom_changed = true; // true for initial load
+        // this.zoom_changed = true; // true for initial load
 
         ////////////////////////////////
         // create layers
@@ -60,17 +77,6 @@ export default class Stage extends Konva.Stage{
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    // Attributes
-    //
-
-    has_values() {
-        if (this.fights.length == 0) { return false}
-        if (Object.keys(this.spells).length == 0) { return false}
-
-        return true;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
     // CREATION AND DRAW
     //
     update_width() {
@@ -78,13 +84,9 @@ export default class Stage extends Konva.Stage{
         this.width(container.offsetWidth)
     }
 
-    update_display_settings(settings) {
-        this.rows.forEach(row => row.update_display_settings(settings))
-    }
-
     layout_children() {
 
-        let y = this.ruler.height-1;
+        let y = this.ruler.height() - 1;
 
         this.rows.forEach(row => {
             row.y(y)
@@ -98,7 +100,7 @@ export default class Stage extends Konva.Stage{
     // STANDARD EVENTS
     //
 
-    contextmenu(event) {
+    contextmenu(event: Konva.KonvaEventObject<MouseEvent>) {
         event.evt.preventDefault();
     }
 
@@ -112,7 +114,7 @@ export default class Stage extends Konva.Stage{
         this.batchDraw();
     }
 
-    on_wheel(event) {
+    on_wheel(event: Konva.KonvaEventObject<WheelEvent> ) {
 
         // only zoom on shift/ctrl + scroll
         if (! (event.evt.shiftKey || event.evt.ctrlKey)) { return;}
@@ -122,11 +124,12 @@ export default class Stage extends Konva.Stage{
         // update scale
 
         let pointer = this.getPointerPosition();
+        if (!pointer) { return }
 
         let old_offset = ( pointer.x - this.x()) / this.scale_x; // normalized distance between 0:00 and cursor
 
-        this.scale_x = event.evt.deltaY < 0 ? this.scale_x * this.ZOOM_RATE : this.scale_x / this.ZOOM_RATE;
-        this.scale_x = Math.max(this.scale_x, this.ZOOM_MIN)
+        this.scale_x = event.evt.deltaY < 0 ? this.scale_x * Stage.ZOOM_RATE : this.scale_x / Stage.ZOOM_RATE;
+        this.scale_x = Math.max(this.scale_x, Stage.ZOOM_MIN)
 
         let new_offset = (old_offset * this.scale_x); // distance between 0:00 and cursor (new scale)
         let new_x = pointer.x - new_offset;
@@ -142,7 +145,7 @@ export default class Stage extends Konva.Stage{
     ////////////////////////////////////////////////////////////////////////////
     // CUSTOM EVENTS
 
-    _handle_spell_selected(selected_spells) {
+    _handle_spell_selected(selected_spells: number[]) {
         this.has_selection = selected_spells.length > 0;
     }
 
@@ -166,7 +169,7 @@ export default class Stage extends Konva.Stage{
         this.layout_children()
     }
 
-    handle_event(event_name, payload) {
+    handle_event(event_name: string, payload?: any) {
 
         if (event_name === constants.EVENT_SPELL_SELECTED ) { this._handle_spell_selected(payload)}
         if (event_name === constants.EVENT_CHECK_IMAGES_LOADED ) { return this._handle_check_images_loaded() } // return here, as this event should not be passed on
@@ -175,7 +178,7 @@ export default class Stage extends Konva.Stage{
         this.ruler.handle_event(event_name, payload)
         this.rows.forEach(row => row.handle_event(event_name, payload))
 
-        if (event_name === constants.EVENT_APPLY_FILTERS ) { this._handle_apply_filters(payload)}
+        if (event_name === constants.EVENT_APPLY_FILTERS ) { this._handle_apply_filters()}
 
         this.batchDraw() // for now, just assume we need to redraw after every event
     }
@@ -184,7 +187,7 @@ export default class Stage extends Konva.Stage{
     // LOAD
     //
 
-    set_fights(new_fights) {
+    set_fights(new_fights: Fight[]) {
 
         // clear any old rows
         this.rows.forEach(row => {

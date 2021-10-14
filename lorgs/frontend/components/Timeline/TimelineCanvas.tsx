@@ -1,5 +1,5 @@
 
-import React from "react";
+import { useRef, useEffect} from "react";
 
 import * as constants from "./constants";
 import Stage from "./Stage"
@@ -15,8 +15,8 @@ export default function TimelineCanvas() {
     //////////////////////////////////////
     // HOOKS
     //
-    const ref = React.useRef() // container div for the canvas
-    const stage_ref = React.useRef() // canvas itself
+    const ref = useRef<HTMLDivElement>(null) // container div for the canvas
+    const stage_ref = useRef<Stage>() // canvas itself
 
     // state vars
     const mode = useAppSelector(state => state.ui.mode)
@@ -32,40 +32,41 @@ export default function TimelineCanvas() {
     //
 
     // initial creation
-    React.useEffect(() => {
+    useEffect(() => {
         // dispatch({type: "ui/set_loading", key: "stage", value: true})
+        if (!ref.current) { return }
         stage_ref.current = new Stage({container: ref.current})
     }, [])
 
     // Update: ui.mode
-    React.useEffect(() => {
-        stage_ref.current.FIGHT_SPACE = mode == MODES.SPEC_RANKING ? 0 : 10
+    useEffect(() => {
+        stage_ref.current!.FIGHT_SPACE = mode == MODES.SPEC_RANKING ? 0 : 10
     }, [mode])
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (is_loading) { return } // not ready yet
 
         console.log("creating canvas", is_loading)
-        stage_ref.current.set_fights(fights)
-        stage_ref.current.handle_event(constants.EVENT_APPLY_FILTERS, filters)
+        stage_ref.current!.set_fights(fights)
+        stage_ref.current!.handle_event(constants.EVENT_APPLY_FILTERS, filters)
     }, [is_loading])
 
     // Pass trough UI Settings like "show_cooldown", "show_duration"
-    React.useEffect(() => {
-        stage_ref.current.handle_event(constants.EVENT_DISPLAY_SETTINGS, ui_settings)
+    useEffect(() => {
+        stage_ref.current!.handle_event(constants.EVENT_DISPLAY_SETTINGS, ui_settings)
     }, [ui_settings])
 
     // update spell visibility
-    React.useEffect(() => {
-        stage_ref.current.handle_event(constants.EVENT_SPELL_DISPLAY, spell_display)
+    useEffect(() => {
+        stage_ref.current!.handle_event(constants.EVENT_SPELL_DISPLAY, spell_display)
     }, [spell_display])
 
-    React.useEffect(() => {
-        stage_ref.current.handle_event(constants.EVENT_SPELL_SELECTED, selected_spells)
+    useEffect(() => {
+        stage_ref.current!.handle_event(constants.EVENT_SPELL_SELECTED, selected_spells)
     }, [selected_spells])
 
-    React.useEffect(() => {
-        stage_ref.current.handle_event(constants.EVENT_APPLY_FILTERS, filters)
+    useEffect(() => {
+        stage_ref.current!.handle_event(constants.EVENT_APPLY_FILTERS, filters)
     }, [filters])
 
     //////////////////////////////////////

@@ -1,10 +1,15 @@
 
+import Konva from "konva"
 import * as constants from "./constants"
+import type PlayerRow from "./PlayerRow"
 
 
 export default class PlayerRowBackground extends Konva.Group {
 
-    constructor(row) {
+    row: PlayerRow
+    fill: Konva.Rect
+
+    constructor(row: PlayerRow) {
         super()
 
         this.row = row // parent row element
@@ -27,17 +32,12 @@ export default class PlayerRowBackground extends Konva.Group {
     /////////////////////////
     // Events
 
-    _handle_zoom_change(scale_x) {
+    _handle_zoom_change(scale_x: number) {
         this.fill.width(this.row.duration * scale_x)
     }
 
-    handle_event(event_name, payload) {
+    handle_event(event_name: string, payload: any) {
         if (event_name === constants.EVENT_ZOOM_CHANGE) { this._handle_zoom_change(payload)}
-
-
         this.width() && this.cache()
-
     }
 }
-
-
