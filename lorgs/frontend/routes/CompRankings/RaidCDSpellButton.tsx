@@ -12,9 +12,10 @@ export default function RaidCDSpellButton({spell_id} : { spell_id: number}) {
     if (!spec) { return null}
 
     function onClick(value: boolean) {
+        if (!spec) { return }
         dispatch(set_filter({
             group: "class",
-            name: spec?.class.name_slug,
+            name: spec.class.name_slug,
             value: value
         }))
     }
