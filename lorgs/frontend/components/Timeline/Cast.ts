@@ -206,7 +206,7 @@ export default class Cast extends Konva.Group {
     // Events
     //
 
-    _handle_display_settings(settings: any) {
+    _handle_display_settings(settings: { [key: string]: boolean}) {
         this.cast_icon && this.cast_icon.visible(settings.show_casticon)
         this.cast_text && this.cast_text.visible(settings.show_casttime)
         this.cast_cooldown && this.cast_cooldown.visible(settings.show_cooldown)
