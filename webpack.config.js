@@ -16,13 +16,18 @@ module.exports = {
 
     entry: {
         // main: path.resolve(__dirname, "lorgs/static/main.js"),
-        app: path.resolve(__dirname, "lorgs/frontend/App.jsx"),
+        app: path.resolve(__dirname, "lorgs/frontend/App.tsx"),
         style: path.resolve(__dirname, "lorgs/templates/scss/main.scss"),
+    },
+
+    resolve: {
+        extensions: [".tsx", ".ts", "jsx", ".js"]
     },
 
     // modules that will be loaded externally
     externals: {
         'react': 'React',
+        'react-dom': "ReactDOM",
         'konva': 'Konva',
         "redux": "Redux",
         'react-redux': "ReactRedux",
@@ -34,12 +39,12 @@ module.exports = {
         rules: [
 
             {
-                test: /\.jsx$/,
+                test: /\.[tj]sx?$/,  // jsx, tsx, js and ts
                 exclude: /node_modules/,
                 use: {
                     loader: 'babel-loader',
                     options: {
-                        presets: ['@babel/react']
+                        presets: ["@babel/react", "@babel/preset-typescript"]
                     }
                 }
             },

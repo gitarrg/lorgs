@@ -91,30 +91,65 @@ def spells_all():
     return {spell.spell_id: spell.as_dict() for spell in spells}
 
 
+
 ###############################################################################
 #
-#       Bosses
+#       Zones
 #
 ###############################################################################
 
-@blueprint.get("/bosses")
-@blueprint.get("/zone/bosses")
-@blueprint.get("/zone/<int:zone_id>/bosses")
+@blueprint.get("/zones")
 @cache.cached()
-def get_bosses(zone_id=28):
-    """Get all Bosses for a given Zone.
+def get_zones():
+    """Get all raid-zones."""
+    zones = encounters.RaidZone.all
+    return {zone.id: zone.as_dict() for zone in zones}
 
-    Args:
-        zone_id (int, optional)
 
-    """
+@blueprint.get("/zones/<int:zone_id>")
+@cache.cached()
+def get_zone(zone_id):
+    """Get a specific (raid-)Zone."""
     zone = encounters.RaidZone.get(id=zone_id)
     if not zone:
         return "Invalid Zone.", 404
     return zone.as_dict()
 
 
-@blueprint.get("/boss/<string:boss_slug>")
+@blueprint.get("/zones/<int:zone_id>/bosses")
+@cache.cached()
+def get_zone_bosses(zone_id):
+    """Get all Bosses in a given Raid Zone."""
+    zone = encounters.RaidZone.get(id=zone_id)
+    if not zone:
+        return "Invalid Zone.", 404
+    return {boss.full_name_slug: boss.as_dict() for boss in zone.bosses}
+
+
+###############################################################################
+#
+#       Bosses
+#
+###############################################################################
+
+
+
+@blueprint.get("/bosses")
+@cache.cached()
+def get_bosses():
+    """Gets all Bosses
+
+    Warning:
+        this does not filter by raid.
+        use "/zone/<zone_id>/bosses" to only get the bosses for a given raid.
+
+    """
+    return {
+        "bosses": [boss.as_dict() for boss in encounters.RaidBoss.all]
+    }
+
+
+@blueprint.get("/bosses/<string:boss_slug>")
 @cache.cached(query_string=True)
 def get_boss(boss_slug):
     """Get a single Boss.
@@ -129,7 +164,7 @@ def get_boss(boss_slug):
     return boss.as_dict()
 
 
-@blueprint.get("/boss/<string:boss_slug>/spells")
+@blueprint.get("/bosses/<string:boss_slug>/spells")
 def get_boss_spells(boss_slug):
     """Get Spells for a given Boss.
 

@@ -44,7 +44,7 @@ Lorgs: Admin Page
                         <select id=select_boss class="form-select form-select-sm" size="{{bosses|length}}" multiple aria-label="multiple select example" onchange="update_preview()">
 
                         {% for boss in bosses %}
-                            <option value="{{boss.name_slug}}">{{boss.name}}</option>
+                            <option value="{{boss.full_name_slug}}">{{boss.name}}</option>
                         {% endfor %}
                         </select>
                     </div>
@@ -121,7 +121,7 @@ function submit() {
         bosses.forEach(boss => {
             PREVIEW.innerHTML += `${spec} vs ${boss}</br>`
 
-            var url = `/api/task/load_spec_rankings/${spec}/${boss}?${url_params}`;
+            var url = `/api/task/load_spec_ranking/${spec}/${boss}?${url_params}`;
             fetch(url);
         });
     });
