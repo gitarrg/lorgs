@@ -11,7 +11,7 @@ interface Fight {
 
     duration: number
 
-    boss: BossActor
+    boss?: BossActor
     players: Actor[]
 
     pinned?: boolean

@@ -1,4 +1,3 @@
-import React from 'react'
 import { useDispatch } from 'react-redux'
 import { set_filters } from '../../../store/ui'
 import ButtonGroup from '../shared/ButtonGroup'

@@ -1,15 +1,14 @@
 
 
-interface Class {
-    id: number
-    name: string
-    name_slug: string
-}
-
-
 export default interface Spec {
 
-    class: Class
+    class: {
+        /** Nice Full Name: eg.: Death Knight */
+        name: string
+        /** Slugified Name of the Parent WoW-Class. eg: "death-knight" */
+        name_slug: string
+    }
+
     role: string
 
     /** Just the Name of the Spec itself. eg: "Holy" */

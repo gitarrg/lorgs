@@ -44,7 +44,7 @@ export default class FightRow {
         this.rows = [] // child rows
 
         // create child rows
-        this.add_row(fight_data, fight_data.boss)
+        fight_data.boss && this.add_row(fight_data, fight_data.boss)
         fight_data.players.forEach(player => this.add_row(fight_data, player))
 
         this.killtime_text = this.create_killtime_text()

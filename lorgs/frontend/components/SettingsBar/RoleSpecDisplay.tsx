@@ -1,6 +1,3 @@
-
-
-import { useSelector, useDispatch } from 'react-redux'
 import { get_spec } from '../../store/specs'
 import { useAppDispatch, useAppSelector } from '../../store/store_hooks'
 import { set_filter } from '../../store/ui'
@@ -8,23 +5,6 @@ import type Role from '../../types/role'
 
 import ButtonGroup from './shared/ButtonGroup'
 import FilterButton from './shared/FilterButton'
-
-
-function create_role_button(role: Role) {
-
-    const dispatch = useAppDispatch()
-
-    function onClick({value} : {value: boolean}) {
-        dispatch({ type: "update_filter", field: role.code, value: value})
-    }
-    return <FilterButton
-        onClick={onClick}
-        key={role.code}
-        name={role.code}
-        full_name={role.name}
-        icon_name={`roles/${role.code}`}
-    />
-}
 
 
 /*

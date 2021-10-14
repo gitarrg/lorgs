@@ -1,11 +1,10 @@
-
-import { useSelector } from 'react-redux'
 import { NavLink, useLocation } from 'react-router-dom';
 
-import Boss from "../../types/boss"
-import Spec from "../../types/spec"
+import type Boss from "../../types/boss"
+import type Spec from "../../types/spec"
 import { MODES } from '../../store/ui';
 import { get_spec } from "../../store/specs"
+import { useAppSelector } from '../../store/store_hooks';
 
 
 function get_link(mode : string, boss: Boss, spec?: Spec) {
@@ -19,8 +18,8 @@ function get_link(mode : string, boss: Boss, spec?: Spec) {
 export default function NavbarBossButton({boss} : {boss: Boss}) {
 
     // todo: include zone in api?
-    const mode = useSelector(state => state.ui.mode)
-    const spec = useSelector(state => get_spec(state))
+    const mode = useAppSelector(state => state.ui.mode)
+    const spec = useAppSelector(state => get_spec(state))
     const link = get_link(mode, boss, spec)
 
     // preserve query string

@@ -1,15 +1,16 @@
-import React from 'react'
+import { MouseEvent, useContext, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import "./SpellButton.scss"
 
 import { get_spell, set_spell_visible, get_spell_visible } from '../../../store/spells'
 import { ButtonGroupContext } from '../shared/ButtonGroup'
-import Spec from '../../../types/spec'
+import type Spec from '../../../types/spec'
+import type Boss from '../../../types/boss'
 
 
 /* to avoid react rerenders when clicking the <a> tags */
-function no_link(e) {
+function no_link(e: MouseEvent<HTMLAnchorElement> ) {
     e.preventDefault()
 }
 
@@ -30,7 +31,7 @@ export default function SpellButton({spec, spell_id, onClick} : { spec: Spec|Bos
     const dispatch = useDispatch()
     const spell = useSelector(state => get_spell(state, spell_id))
     const visible = useSelector(state => get_spell_visible(state, spell.spell_id))
-    const group_context = React.useContext(ButtonGroupContext)
+    const group_context = useContext(ButtonGroupContext)
 
     if (!spell) { return null}
     if (!spec) { return null}
@@ -38,7 +39,7 @@ export default function SpellButton({spec, spell_id, onClick} : { spec: Spec|Bos
     ////////////////////////////////////////////////////////////////////////////
     // Vars
     //
-    let wow_class = spec.class.name_slug || spec.class // if its an object or string
+    let wow_class = spec.class.name_slug
     const disabled = visible ? "" : "disabled"
     const dynamic_cd = spell.tags?.includes("dynamic_cd")// ? "dynamic_cd" : "";
 
@@ -67,7 +68,7 @@ export default function SpellButton({spec, spell_id, onClick} : { spec: Spec|Bos
     }
 
     // Listen to State Changes of the parent Group
-    React.useEffect(() => {
+    useEffect(() => {
 
         // if the state was not changed from the group level,
         // we ignore the event.

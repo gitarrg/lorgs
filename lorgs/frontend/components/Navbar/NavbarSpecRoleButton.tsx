@@ -1,6 +1,6 @@
-import { useSelector } from 'react-redux';
 import { get_spec } from "../../store/specs";
-import Role from '../../types/role';
+import { useAppSelector } from '../../store/store_hooks';
+import type Role from '../../types/role';
 import NavbarSpecsDropdown from './NavbarSpecsDropdown';
 
 /*
@@ -11,7 +11,7 @@ export default function NavbarSpecRoleButton({ role } : { role: Role} ) {
 
 
     // check if the current spec is inside this role
-    const current_spec = useSelector(state => get_spec(state));
+    const current_spec = useAppSelector(state => get_spec(state));
     const has_active_child = current_spec && role.specs.find(spec => spec === current_spec.full_name_slug);
 
     const class_name = `wow-border-${role.code} ${has_active_child ? "active" : ""}`;

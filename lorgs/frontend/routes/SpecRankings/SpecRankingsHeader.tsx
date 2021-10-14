@@ -1,36 +1,36 @@
-
-import React from 'react'
-import { useSelector } from 'react-redux'
-
 import HeaderLogo from './../../components/HeaderLogo'
+import type Boss from '../../types/boss'
+import type Spec from '../../types/spec'
 import { WCL_URL } from '../../constants'
 import { get_boss } from '../../store/bosses'
 import { get_spec } from '../../store/specs'
+import { useAppSelector } from '../../store/store_hooks'
 
 
-function get_spec_ranking_url(spec, boss) {
+function get_spec_ranking_url(spec: Spec, boss: Boss) {
 
     const metric = spec.role == "heal" ? "hps" : "dps"
 
-    let url = new URL(WCL_URL)
-    url.pathname = "/zone/rankings/28"
-    url.hash = new URLSearchParams({
-        boss: boss.id,
+    const search_params = new URLSearchParams({
+        boss: boss.id.toString(),
         class: spec.class.name.replace(" ", ""),  // WCL uses no spaces in classnames
         spec: spec.name,
         metric: metric,
     })
-    return url
+
+    let url = new URL(WCL_URL)
+    url.pathname = "/zone/rankings/28"
+    url.hash = search_params.toString()
+    return url.toString()
 }
 
 
-export default function SpecRankingsHeader({spec_slug, boss_slug}) {
+export default function SpecRankingsHeader({spec_slug, boss_slug} : {spec_slug: string, boss_slug: string}) {
 
     // hoosk
-    const spec = useSelector(state => get_spec(state, spec_slug))
-    const boss = useSelector(state => get_boss(state, boss_slug))
+    const spec = useAppSelector(state => get_spec(state, spec_slug))
+    const boss = useAppSelector(state => get_boss(state, boss_slug))
     if (!spec || !boss) { return null }
-
 
     // prep vars
     const spec_name = spec.full_name + "s"

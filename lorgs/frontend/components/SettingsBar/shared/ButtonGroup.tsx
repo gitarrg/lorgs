@@ -24,7 +24,7 @@ export const ButtonGroupContext = createContext<ButtonGroupContextType>(DEFAULT_
 
 export default function ButtonGroup(
     {name, extra_class, className, side="left", children} :
-    {name: string, extra_class?: string, className?: string, side?: "left"|"right", children?: JSX.Element[] }
+    {name: string, extra_class?: string, className?: string, side?: "left"|"right", children?: JSX.Element[] | JSX.Element }
     ) {
 
     ///////////////////////

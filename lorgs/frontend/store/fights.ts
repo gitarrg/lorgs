@@ -2,7 +2,9 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 import { fetch_data } from '../api'
-import Fight from '../types/fight';
+import type Actor from '../types/actor';
+import type Fight from '../types/fight';
+import type { AppDispatch, RootState } from './store'
 import { MODES } from './ui'
 
 
@@ -10,7 +12,7 @@ import { MODES } from './ui'
 // Actions
 //
 
-export function get_all_fights(state) : Fight[] {
+export function get_all_fights(state: RootState) : Fight[] {
     return state.fights
 }
 
@@ -20,9 +22,9 @@ export const get_fights = get_all_fights;
 ////////////////////////////////////////////////////////////////////////////////
 // Slice
 //
-function _process_actor(actor) {
+function _process_actor(actor: Actor) {
 
-    const spell_counter = {}
+    const spell_counter: {[key: number]: number} = {}
     actor.casts = actor.casts || []
     actor.casts.forEach(cast => {
         cast.counter = spell_counter[cast.id] = (spell_counter[cast.id] || 0) + 1
@@ -31,13 +33,13 @@ function _process_actor(actor) {
 }
 
 
-function _process_fight(fight) {
-    fight.boss = _process_actor(fight.boss)
+function _process_fight(fight: Fight) {
+    fight.boss = fight.boss && _process_actor(fight.boss)
     fight.players = fight.players.map(actor => _process_actor(actor))
     return fight
 }
 
-function _process_fights(fights) {
+function _process_fights(fights: Fight[]) {
     return fights.map(fight => _process_fight(fight))
 }
 
@@ -48,7 +50,7 @@ const SLICE = createSlice({
     initialState: [] as Fight[],
 
     reducers: {
-        set_fights: (state, action) => {
+        set_fights: (_, action) => {
             return _process_fights(action.payload)
         },
     }, // reducers
@@ -63,7 +65,7 @@ export default SLICE.reducer
 ////////////////////////////////////////////////////////////////////////////////
 // Extra Actions
 
-function _pin_first_fight(fights) {
+function _pin_first_fight(fights: Fight[]) {
     // little hack to make sure the first fight always remains visible
     if (fights.length == 0) { return fights }
 
@@ -72,10 +74,12 @@ function _pin_first_fight(fights) {
     let pinned_fight = {...first_fight}
     pinned_fight.pinned = true
     pinned_fight.players = []
-    pinned_fight.boss.pinned = true
+    if (pinned_fight.boss) {
+        pinned_fight.boss.pinned = true
+    }
 
     // remove the boss from the original
-    first_fight.boss = {}
+    first_fight.boss = undefined
     return [pinned_fight, first_fight, ...others]
 }
 
@@ -83,7 +87,7 @@ function _pin_first_fight(fights) {
 async function _load_spec_rankings(spec_slug : string, boss_slug: string) {
 
     let url = `/api/spec_ranking/${spec_slug}/${boss_slug}?limit=100`;
-    const fight_data = await fetch_data(url);
+    const fight_data: {fights: Fight[]} = await fetch_data(url);
 
     // post process
     return fight_data.fights.map((fight, i) => {
@@ -107,9 +111,9 @@ async function _load_comp_rankings(boss_slug : string, search="") {
 }
 
 
-export function load_fights(mode: string, {boss_slug, spec_slug, search} : {boss_slug: string, spec_slug: string, search?: string} ) {
+export function load_fights(mode: string, {boss_slug, spec_slug="", search=""} : {boss_slug: string, spec_slug?: string, search?: string} ) {
 
-    return async dispatch => {
+    return async (dispatch: AppDispatch) => {
 
         dispatch({type: "ui/set_loading", payload: {key: "fights", value: true}})
 

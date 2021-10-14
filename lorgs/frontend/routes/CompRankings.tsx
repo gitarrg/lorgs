@@ -1,7 +1,7 @@
 
 import React from 'react'
 import { useParams, useLocation } from 'react-router-dom';
-import { useSelector, useDispatch, batch } from 'react-redux'
+import { useDispatch, batch } from 'react-redux'
 
 import * as ui_store from "../store/ui"
 import CompRankingsHeader from './CompRankings/CompRankingsHeader';
@@ -10,9 +10,11 @@ import LoadingOverlay from "./../components/shared/LoadingOverlay"
 import Navbar from "./../components/Navbar/Navbar"
 import PlayerNamesList from "./../components/PlayerNames/PlayerNamesList"
 import TimelineCanvas from "./../components/Timeline/TimelineCanvas"
+import type Boss from '../types/boss';
 import { get_boss, load_boss_spells } from '../store/bosses';
 import { load_fights } from '../store/fights';
 import { load_spec_spells } from '../store/specs';
+import { useAppSelector } from '../store/store_hooks';
 
 
 const INITIAL_FILTERS = {
@@ -27,7 +29,7 @@ const INITIAL_FILTERS = {
 }
 
 
-function update_title(boss) {
+function update_title(boss: Boss) {
     if (!boss) { return }
     document.title = `Lorrgs: Comp Ranking: ${boss.full_name}`
 }
@@ -37,11 +39,11 @@ export default function CompRankings() {
 
     ////////////////////////////////////////////////////////////////////////////
     // Hooks
-    const { boss_slug } = useParams();
+    const { boss_slug } = useParams<{boss_slug: string}>();
     const dispatch = useDispatch()
     const { search } = useLocation();
-    const is_loading = useSelector(state => ui_store.get_is_loading(state))
-    const boss = useSelector(state => get_boss(state, boss_slug))
+    const is_loading = useAppSelector(state => ui_store.get_is_loading(state))
+    const boss = useAppSelector(state => get_boss(state, boss_slug))
 
     // const
     const mode = ui_store.MODES.COMP_RANKING

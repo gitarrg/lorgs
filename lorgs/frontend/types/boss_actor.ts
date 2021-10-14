@@ -1,7 +1,5 @@
 
-import Boss from "./boss";
-import Actor from "./actor";
-
+import type Actor from "./actor";
 
 /**
  * a "instance" of a  Boss in a Fight.

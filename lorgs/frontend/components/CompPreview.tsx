@@ -6,15 +6,16 @@
 
 */
 
-interface CompCountType {
+export interface CompCountType {
 
     /**  number as string */
-    count: ""
+    count: string
 
-    op: "eq" | "lt" | "gt" | "lte" | "gte"
+    /** allow any string to make it easier to set */
+    op: "eq" | "lt" | "gt" | "lte" | "gte" | string
 }
 
-interface CompCountMap {
+export interface CompCountMap {
     [key: string]: CompCountType
 }
 

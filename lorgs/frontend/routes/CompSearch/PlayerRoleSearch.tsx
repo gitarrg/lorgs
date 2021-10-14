@@ -20,7 +20,6 @@ export default function PlayerRoleSearch() {
                     name={`role.${role.code}`}
                     icon_path={role.icon_path}
                     class_name={role.code}
-                    tooltip={role.name || "hello?"}
                 />
             )}
         </FormGroup>

@@ -1,16 +1,14 @@
-
-
-import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { get_spec } from "../../store/specs";
+import { useAppSelector } from '../../store/store_hooks';
 
 
 export default function NavBarSpecButton({ spec_slug } : {spec_slug: string}) {
 
 
-    const mode = useSelector(state => state.ui.mode);
-    const boss_slug : string = useSelector(state => state.ui.boss_slug);
-    const spec = useSelector(state => get_spec(state, spec_slug));
+    const mode = useAppSelector(state => state.ui.mode);
+    const boss_slug : string = useAppSelector(state => state.ui.boss_slug);
+    const spec = useAppSelector(state => get_spec(state, spec_slug));
 
     if (!spec) { return <p>nope: {spec_slug}</p>; }
 

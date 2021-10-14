@@ -71,36 +71,6 @@ export function sort_spell_types(spell_types: string[]) {
 ////////////////////////////////////////////////////////////////////////////////
 // Slice
 //
-interface UiSliceStateFilterKilltime {
-    min: number | undefined
-    max: number | undefined
-}
-
-
-interface UiSliceStateFilters {
-
-    // player filters
-    role: { [key: string]: boolean },
-    class: { [key: string]: boolean },
-    spec: { [key: string]: boolean },
-    covenant: { [key: string]: boolean },
-
-    // fight filters
-    killtime: UiSliceStateFilterKilltime
-}
-
-interface UiSliceStateTooltipPosition {
-    x: number
-    y: number
-}
-
-interface UiSliceStateTooltip {
-    content: string
-    position: UiSliceStateTooltipPosition
-
-}
-
-
 interface UiSliceState {
 
     mode: "none" | "spec_ranking" | "comp_ranking"
@@ -120,7 +90,10 @@ interface UiSliceState {
     // fight/player filter settings
     filters: { [key: string]: { [key: string]: boolean | null } }
 
-    tooltip: UiSliceStateTooltip
+    tooltip: {
+        content: string
+        position: {x: number, y: number}
+    }
 }
 
 

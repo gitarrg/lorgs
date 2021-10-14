@@ -1,6 +1,4 @@
 
-import React from 'react'
-
 import ButtonGroup from './../shared/ButtonGroup'
 import SpellButton from './SpellButton'
 import { get_boss } from '../../../store/bosses'
