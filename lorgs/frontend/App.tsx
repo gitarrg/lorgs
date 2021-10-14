@@ -1,14 +1,16 @@
-
-import { StrictMode } from "react"
+import { StrictMode, lazy, Suspense } from "react"
 import { render } from 'react-dom';
 import { BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import { Provider } from 'react-redux'
-
-import CompRankings from "./routes/CompRankings"
-import CompSearch from "./routes/CompSearch"
-import SpecRankings from "./routes/SpecRankings"
 import data_store from "./store/store"
 import GlobalDataLoader from "./components/GlobalDataLoader";
+
+// Delayed Imports
+const Admin = lazy(() => import("./routes/Admin/Admin"));
+const CompRankings = lazy(() => import("./routes/CompRankings"));
+const CompSearch = lazy(() => import("./routes/CompSearch"));
+const SpecRankings = lazy(() => import("./routes/SpecRankings"));
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // APP
@@ -25,19 +27,16 @@ export default function App() {
             <GlobalDataLoader />
 
             <Router>
+                <Suspense fallback={<div>Loading...</div>}>
                 <Switch>
-                    <Route path="/spec_ranking/:spec_slug/:boss_slug">
-                        <SpecRankings />
-                    </Route>
-
-                    <Route path="/comp_ranking/search">
-                        <CompSearch />
-                    </Route>
-                    <Route path="/comp_ranking/:boss_slug">
-                        <CompRankings />
-                    </Route>
+                    <Route path="/spec_ranking/:spec_slug/:boss_slug" component={SpecRankings} />
+                    <Route path="/comp_ranking/search" component={CompSearch} />
+                    <Route path="/comp_ranking/:boss_slug" component={CompRankings} />
+                    <Route path="/admin" component={Admin} />
                 </Switch>
+                </Suspense>
             </Router>
+
         </StrictMode>
         </Provider>
     )
