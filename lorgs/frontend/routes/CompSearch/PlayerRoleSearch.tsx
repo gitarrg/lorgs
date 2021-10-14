@@ -17,7 +17,7 @@ export default function PlayerRoleSearch() {
             {roles.map(role =>
                 <CountFilterGroup
                     key={role.code}
-                    name={`role.${role.code}`}
+                    name={`comp.role.${role.code}`}
                     icon_path={role.icon_path}
                     class_name={role.code}
                 />

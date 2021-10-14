@@ -14,7 +14,7 @@ function SpecSearchInput({spec_name} : {spec_name: string}) {
     }
 
     return <CountFilterGroup
-        name={`spec.${spec.full_name_slug}`}
+        name={`comp.spec.${spec.full_name_slug}`}
         icon_path={spec.icon_path}
         class_name={spec.class.name_slug}
     />
