@@ -7,7 +7,6 @@
     - <-- spacer ->
     - Filters
 */
-import React from 'react'
 import { Link } from 'react-router-dom';
 
 import ButtonGroup from '../../components/SettingsBar/shared/ButtonGroup'

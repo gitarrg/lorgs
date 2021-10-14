@@ -8,12 +8,15 @@ import type Spec from "./spec"
  */
 export default interface Boss extends Spec {
 
-    class: string // usually "boss"
+    class: {
+        name: "boss"
+        name_slug: "boss"
+    }
 
     // role: string
 
     /** encounter ID */
-    // id: number NOT USED
+    id: number
 
     /** Nice short Name */
     // name: string

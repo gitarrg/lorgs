@@ -145,7 +145,10 @@ class WowSpec(base.Model):
             "full_name": self.full_name,
             "full_name_slug": self.full_name_slug,
             "role": str(self.role),
-            "class": self.wow_class.as_dict(),
+            "class": {
+                "name": self.wow_class.name,
+                "name_slug": self.wow_class.name_slug,
+            }
         }
 
         if kwargs.get("spells"):

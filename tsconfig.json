@@ -29,6 +29,6 @@
         "lorgs/frontend/**/*" // *** The files TypeScript should type check ***
     ],
     "exclude": [ // *** The files to not type check ***
-        "lorgs/node_modules",
+        "node_modules",
     ]
 }

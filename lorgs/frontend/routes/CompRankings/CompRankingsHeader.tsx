@@ -1,17 +1,15 @@
-
-
-import React from 'react'
 import { useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 
-import CompPreview from "../../components/CompPreview"
-import { get_boss } from '../../store/bosses';
+import CompPreview, { CompCountMap } from "../../components/CompPreview"
 import HeaderLogo from '../../components/HeaderLogo';
+import { get_boss } from '../../store/bosses';
+import { useAppSelector } from '../../store/store_hooks';
 
 
-function parse_comp_search_string(search) {
 
-    const result = {}
+function parse_comp_search_string(search: string) {
+
+    const result: { [key: string]: CompCountMap} = {}
     const params = new URLSearchParams(search)
     for(let [group, value] of params.entries()) {
         group = `${group}s` // pluralize "role" --> "roles"
@@ -28,10 +26,9 @@ function parse_comp_search_string(search) {
 export default function CompRankingsHeader() {
 
     // Hooks
-    const boss = useSelector(state => get_boss(state))
+    const boss = useAppSelector(state => get_boss(state))
     const { search } = useLocation();
-
-    if (!boss) { return "something went wrong here..."}
+    if (!boss) { return null }
 
     const comp_info = parse_comp_search_string(search)
     const comp_preview = <CompPreview {...comp_info} placeholder="any comp"/>

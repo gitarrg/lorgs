@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 import * as ui_store from "../store/ui"
 import LoadingOverlay from "./../components/shared/LoadingOverlay"
@@ -42,7 +42,7 @@ export default function SpecRankings() {
     // Hooks
     const { spec_slug, boss_slug } = useParams<SpecRankingsParams>();
     const dispatch = useDispatch()
-    const is_loading = useSelector(state => ui_store.get_is_loading(state))
+    const is_loading = useAppSelector(state => ui_store.get_is_loading(state))
     const boss = useAppSelector(state => get_boss(state, boss_slug))
     const spec = useAppSelector(state => get_spec(state, spec_slug))
 

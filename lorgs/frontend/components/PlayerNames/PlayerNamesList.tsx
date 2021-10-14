@@ -1,5 +1,3 @@
-
-import React from "react";
 import { get_fights } from "../../store/fights";
 import FILTERS from "../../filter_logic";
 

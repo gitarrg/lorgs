@@ -1,6 +1,3 @@
-
-import React  from "react";
-
 import FILTERS from "../../filter_logic";
 import { MODES } from "../../store/ui";
 import { WCL_URL } from "../../constants"
@@ -20,14 +17,6 @@ function spec_ranking_color(i = 0) {
     if (i <= 100) { return "wow-legendary wow-text" } else
     { return "wow-epic wow-text" }
 }
-
-
-const SKELETON_PLAYER_NAME = (
-    <div className="loading player_name">
-        <img className="player_name__spec_icon"></img>
-        <span className="player_name__rank">loading...</span>
-    </div>
-)
 
 
 export function BossName({fight, boss} : {fight: Fight, boss: BossActor}) {
