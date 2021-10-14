@@ -64,7 +64,7 @@ class WowRole(base.Model):
 class WowClass(base.Model):
     """A playable class in wow."""
 
-    def __init__(self, id: int, name: str, color: str=""):
+    def __init__(self, id: int, name: str, color: str = ""):
 
         # int: class id, mostly used for sorting
         self.id = id
@@ -141,12 +141,11 @@ class WowSpec(base.Model):
 
         data = {
             "name": self.name,
-            "name_slug": self.name_slug,
             "full_name": self.full_name,
             "full_name_slug": self.full_name_slug,
             "role": str(self.role),
             "class": {
-                "name": self.wow_class.name,
+                "name": self.wow_class.name,  # required for the WCL-Header Link
                 "name_slug": self.wow_class.name_slug,
             }
         }
@@ -223,7 +222,7 @@ class WowSpell(base.Model):
         """bool: true if a spell is what we call a healer cooldown."""
         if self.is_item_spell():
             return False
-        if self.spell_type in (self.TYPE_PERSONAL):
+        if self.spell_type in (self.TYPE_PERSONAL, ):
             return False
         return True
 

@@ -25,7 +25,8 @@ class RaidZone(base.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "bosses": [boss.as_dict() for boss in self.bosses]
+            "name_slug": self.name_slug,
+            "bosses": {boss.full_name_slug: boss.as_dict() for boss in self.bosses}
         }
 
     def add_boss(self, **kwargs):
@@ -68,12 +69,9 @@ class RaidBoss(base.Model):
     def as_dict(self):
         return {
             "id": self.id,
-            "role": self.role,
             "name": self.name,
-            "name_slug": self.name_slug,
             "full_name": self.full_name,
             "full_name_slug": self.full_name_slug,
-            "class": "boss",
         }
 
     ##########################
