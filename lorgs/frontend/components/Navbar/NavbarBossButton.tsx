@@ -5,6 +5,7 @@ import type Spec from "../../types/spec"
 import { MODES } from '../../store/ui';
 import { get_spec } from "../../store/specs"
 import { useAppSelector } from '../../store/store_hooks';
+import styles from "./Navbar.scss"
 
 
 function get_link(mode : string, boss: Boss, spec?: Spec) {
@@ -27,7 +28,7 @@ export default function NavbarBossButton({boss} : {boss: Boss}) {
     const full_link = `${link}${search}`
 
     return (
-        <NavLink to={full_link} activeClassName="active" data-tooltip={boss.full_name} data-tooltip-dir="down">
+        <NavLink to={full_link} className={styles.button} activeClassName="active" data-tooltip={boss.full_name} data-tooltip-dir="down">
             <img
                 className="icon-spec icon-m wow-boss wow-border rounded"
                 src={boss.icon_path}
