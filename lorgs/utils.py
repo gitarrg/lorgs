@@ -1,9 +1,10 @@
 
 from functools import wraps
 from operator import attrgetter
-import arrow
-import datetime
 import itertools
+import datetime
+
+import arrow
 
 
 def chunks(lst, n):

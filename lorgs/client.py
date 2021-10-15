@@ -55,7 +55,7 @@ class WarcraftlogsClient:
         return cls._instance
 
     def __init__(self, client_id="", client_secret=""):
-        super(WarcraftlogsClient, self).__init__()
+        super().__init__()
 
         # credentials
         self.client_id = client_id or os.getenv("WCL_CLIENT_ID")
@@ -147,7 +147,7 @@ class WarcraftlogsClient:
                     result = await resp.json()
                 except Exception as e:
                     logger.error(resp)
-                    raise(e)
+                    raise e
 
                 # some reports are private.. but still show up in rankings..
                 # lets just see what happens

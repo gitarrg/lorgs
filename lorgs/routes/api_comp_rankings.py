@@ -1,3 +1,4 @@
+"""API Routes to get and update Comp Rankings."""
 
 # IMPORT STANDARD LIBRARIES
 import json
@@ -101,8 +102,10 @@ async def load_comp_ranking(boss_slug):
 @blueprint.route("/task/load_comp_ranking/all")
 @blueprint.route("/task/load_comp_ranking/<string:boss_slug>")
 def task_load_comp_rankings(boss_slug=""):
+    """Submit a scheduled task to update a single or all Comp Rankings."""
 
-    bosses = [boss_slug] if boss_slug else [boss.full_name_slug for boss in data.SANCTUM_OF_DOMINATION_BOSSES]
+    zone = data.SANCTUM_OF_DOMINATION # just hardcoded for now
+    bosses = [boss_slug] if boss_slug else [boss.full_name_slug for boss in zone.bosses]
 
     for boss_slug in bosses:
         url = f"/api/load_comp_ranking/{boss_slug}"

@@ -7,3 +7,10 @@ max-line-length=160
 
 [MESSAGES CONTROL]
 disable=locally-disabled,redefined-builtin,logging-fstring-interpolation
+
+[BASIC]
+
+good-names=
+    id,
+    blueprint,  # for flask blueprints
+

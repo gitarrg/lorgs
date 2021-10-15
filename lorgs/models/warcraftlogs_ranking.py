@@ -10,10 +10,10 @@ import mongoengine as me
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
 from lorgs.logger import logger
-from lorgs.models import encounters
 from lorgs.models import warcraftlogs_base
 from lorgs.models import warcraftlogs_report
-from lorgs.models.specs import WowSpec
+from lorgs.models.raid_boss import RaidBoss
+from lorgs.models.wow_spec import WowSpec
 
 
 class SpecRanking(warcraftlogs_base.Document):
@@ -42,7 +42,7 @@ class SpecRanking(warcraftlogs_base.Document):
 
     @property
     def boss(self):
-        return encounters.RaidBoss.get(full_name_slug=self.boss_slug)
+        return RaidBoss.get(full_name_slug=self.boss_slug)
 
     @property
     def fights(self):

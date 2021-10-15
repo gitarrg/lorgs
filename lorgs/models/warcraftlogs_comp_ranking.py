@@ -10,11 +10,12 @@ import mongoengine as me
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
-from lorgs.models import encounters
-from lorgs.models import specs
 from lorgs.models import warcraftlogs_base
 from lorgs.models import warcraftlogs_fight
 from lorgs.models import warcraftlogs_report
+from lorgs.models.raid_boss import RaidBoss
+from lorgs.models.wow_spec import WowSpec
+from lorgs.models.wow_spell import WowSpell
 
 
 class CompRankingReport(warcraftlogs_base.Document):
@@ -72,8 +73,8 @@ class CompRanking(warcraftlogs_base.Document):
         return True
 
     @property
-    def boss(self) -> encounters.RaidBoss:
-        return encounters.RaidBoss.get(full_name_slug=self.boss_slug)
+    def boss(self) -> RaidBoss:
+        return RaidBoss.get(full_name_slug=self.boss_slug)
 
     ##########################
     # Methods
@@ -111,24 +112,24 @@ class CompRanking(warcraftlogs_base.Document):
     # Query
     #
     @staticmethod
-    def _get_healing_cooldowns() -> typing.List[specs.WowSpell]:
+    def _get_healing_cooldowns() -> typing.List[WowSpell]:
         """All Spells that are considered Healing-Cooldowns.
 
         Right now, this simply returns every spell healers have
 
         """
-        healers = [spec for spec in specs.WowSpec.all if spec.role.code == "heal"]
+        healers = [spec for spec in WowSpec.all if spec.role.code == "heal"]
         spells = utils.flatten(spec.spells for spec in healers)
         spells = [spell for spell in spells if spell.is_healing_cooldown()]
         return spells
 
     @staticmethod
-    def _get_raid_cds() -> typing.List[specs.WowSpell]:
+    def _get_raid_cds() -> typing.List[WowSpell]:
         """All spells of type RAID_CD.
 
             eg.: Darkness, RallyCry, AMZ
         """
-        spells = [spell for spell in specs.WowSpell.all if spell.spell_type== spell.TYPE_RAID]
+        spells = [spell for spell in WowSpell.all if spell.spell_type== spell.TYPE_RAID]
         return utils.uniqify(spells, key=lambda spell: spell.spell_id)
 
     @staticmethod

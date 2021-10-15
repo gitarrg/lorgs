@@ -9,10 +9,10 @@ import mongoengine as me
 from lorgs import utils
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
-from lorgs.models.encounters import RaidBoss
-from lorgs.models.specs import WowSpec
-from lorgs.models.specs import WowSpell
-from lorgs.models.specs import WowCovenant
+from lorgs.models.raid_boss import RaidBoss
+from lorgs.models.wow_spec import WowSpec
+from lorgs.models.wow_spell import WowSpell
+from lorgs.models.wow_covenant import WowCovenant
 
 
 class Cast(me.EmbeddedDocument):
@@ -74,11 +74,11 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
     # Attributes
     #
 
-    @property
-    def spells_used(self):
-        """Only the spells this player has used in this fight."""
-        used_spell_ids = set(cast.spell_id for cast in self.casts)
-        return [spell for spell in self.spec.spells if spell.spell_id in used_spell_ids]
+    # @property
+    # def spells_used(self):
+    #     """Only the spells this player has used in this fight."""
+    #     used_spell_ids = set(cast.spell_id for cast in self.casts)
+    #     return [spell for spell in self.spec.spells if spell.spell_id in used_spell_ids]
 
     @property
     def lifetime(self):

@@ -8,14 +8,14 @@ import arrow
 import mongoengine as me
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import data
+from lorgs.lib import mongoengine_arrow
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
-from lorgs.models.encounters import RaidBoss
-from lorgs.models.specs import WowSpec
+from lorgs.models.raid_boss import RaidBoss
 from lorgs.models.warcraftlogs_actor import Boss
 from lorgs.models.warcraftlogs_actor import Player
-from lorgs.lib import mongoengine_arrow
+from lorgs.models.wow_spec import WowSpec
+from lorgs.models.wow_spell import WowSpell
 
 
 def get_composition(players: typing.List[Player]) -> dict:
@@ -156,7 +156,7 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
         """
         if not filters:
             # we gonna query for all spells
-            spell_ids = [spell.spell_id for spell in data.ALL_SPELLS]
+            spell_ids = [spell.spell_id for spell in WowSpell.all]  # TODO: do we ever do this?
             spell_ids = sorted(list(set(spell_ids)))
             spell_ids = ",".join(str(spell_id) for spell_id in spell_ids)
             filters = ["type='cast'", f"ability.id in ({spell_ids})"]

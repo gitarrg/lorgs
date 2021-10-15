@@ -1,10 +1,10 @@
 """RaidZone and Bosses for the T26: Caslte Nathria, the first Tier of Shadowlands."""
-
 # pylint: disable=line-too-long
 # pylint: disable=C0326  # spaces
 
 # IMPORT LOCAL LIBRARIES
-from lorgs.models.encounters import RaidZone
+from lorgs.models.raid_zone import RaidZone
+
 
 ################################################################################################################################################################
 #
