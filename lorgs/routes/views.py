@@ -53,6 +53,7 @@ def help():
 ################################################################################
 
 
+@blueprint.route("/lorgmin/<path:subpath>")
 @blueprint.route("/comp_ranking/<path:subpath>")
 @blueprint.route("/spec_ranking/<path:subpath>")
 @cache.cached()
