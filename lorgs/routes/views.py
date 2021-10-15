@@ -34,8 +34,8 @@ async def page_not_found(error):
 def index():
     """Render the main index page."""
     kwargs = {}
-    kwargs["boss"] = data.DEFAULT_BOSS
-    kwargs["roles"] = data.ROLES
+    kwargs["boss"] = data.TARRAGRUE
+    kwargs["roles"] = data.ALL_ROLES
     return flask.render_template("index.html", **kwargs)
 
 

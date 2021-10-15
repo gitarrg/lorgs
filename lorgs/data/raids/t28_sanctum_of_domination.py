@@ -1,11 +1,10 @@
 """RaidZone and Bosses for Patch 9.1 T28: Sanctum of Domination, the second tier of Shadowlands."""
-
 # pylint: disable=line-too-long
 # pylint: disable=C0326  # spaces
 
-
 # IMPORT LOCAL LIBRARIES
-from lorgs.models.encounters import RaidZone
+from lorgs.models.raid_zone import RaidZone
+
 
 ################################################################################################################################################################
 #

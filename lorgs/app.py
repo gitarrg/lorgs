@@ -8,13 +8,12 @@ import os
 import flask
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import db
-from lorgs import data
+from lorgs import db  # pylint: disable=unused-import
+from lorgs import data   # pylint: disable=unused-import
 from lorgs import utils
 from lorgs import cache
 from lorgs.routes import api
 from lorgs.routes import views
-from lorgs.routes import admin
 
 
 def create_app():
@@ -40,9 +39,6 @@ def create_app():
     # Blueprints
     app.register_blueprint(views.blueprint, url_prefix="/")
     app.register_blueprint(api.blueprint, url_prefix="/api")
-    app.register_blueprint(admin.blueprint, url_prefix="/admin")
-
 
     cache.init_app(app)
-
     return app

@@ -8,7 +8,11 @@ import flask
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.cache import cache
-from lorgs.models import encounters, specs
+from lorgs.models.raid_boss import RaidBoss
+from lorgs.models.raid_zone import RaidZone
+from lorgs.models.wow_role import WowRole
+from lorgs.models.wow_spec import WowSpec
+from lorgs.models.wow_spell import WowSpell
 
 
 blueprint = flask.Blueprint("api.world_data", __name__)
@@ -20,12 +24,13 @@ blueprint = flask.Blueprint("api.world_data", __name__)
 #
 ###############################################################################
 
+
 @blueprint.get("/roles")
 @cache.cached()
 def get_roles():
     """Get all roles (tank, heal, mpds, rdps)."""
     return {
-        "roles": [role.as_dict() for role in specs.WowRole.all]
+        "roles": [role.as_dict() for role in WowRole.all]
     }
 
 
@@ -38,7 +43,7 @@ def get_roles():
 @blueprint.get("/specs")
 @cache.cached(query_string=True)
 def get_specs_all():
-    all_specs = sorted(specs.WowSpec.all)
+    all_specs = sorted(WowSpec.all)
     all_specs = [specs.as_dict(spells=False) for specs in all_specs]
     return {"specs": all_specs}
 
@@ -46,7 +51,7 @@ def get_specs_all():
 @blueprint.get("/specs/<string:spec_slug>")
 @cache.cached()
 def get_spec(spec_slug):
-    spec = specs.WowSpec.get(full_name_slug=spec_slug)
+    spec = WowSpec.get(full_name_slug=spec_slug)
     if not spec:
         return "Invalid Spec.", 404
     return spec.as_dict()
@@ -61,7 +66,7 @@ def get_spec_spells(spec_slug):
         spec_slug (str): name of the spec
 
     """
-    spec = specs.WowSpec.get(full_name_slug=spec_slug)
+    spec = WowSpec.get(full_name_slug=spec_slug)
     if not spec:
         return "Invalid Spec.", 404
     return {spell.spell_id: spell.as_dict() for spell in spec.spells}
@@ -77,7 +82,7 @@ def get_spec_spells(spec_slug):
 @cache.cached()
 def spells_one(spell_id):
     """Get a single Spell by spell_id."""
-    spell = specs.WowSpell.get(spell_id=spell_id)
+    spell = WowSpell.get(spell_id=spell_id)
     if not spell:
         flask.abort(404, description="Spell not found")
     return spell.as_dict()
@@ -87,7 +92,7 @@ def spells_one(spell_id):
 @cache.cached()
 def spells_all():
     """Get all Spells."""
-    spells = specs.WowSpell.all
+    spells = WowSpell.all
     return {spell.spell_id: spell.as_dict() for spell in spells}
 
 
@@ -102,7 +107,7 @@ def spells_all():
 @cache.cached()
 def get_zones():
     """Get all raid-zones."""
-    zones = encounters.RaidZone.all
+    zones = RaidZone.all
     return {zone.id: zone.as_dict() for zone in zones}
 
 
@@ -110,7 +115,7 @@ def get_zones():
 @cache.cached()
 def get_zone(zone_id):
     """Get a specific (raid-)Zone."""
-    zone = encounters.RaidZone.get(id=zone_id)
+    zone = RaidZone.get(id=zone_id)
     if not zone:
         return "Invalid Zone.", 404
     return zone.as_dict()
@@ -120,7 +125,7 @@ def get_zone(zone_id):
 @cache.cached()
 def get_zone_bosses(zone_id):
     """Get all Bosses in a given Raid Zone."""
-    zone = encounters.RaidZone.get(id=zone_id)
+    zone = RaidZone.get(id=zone_id)
     if not zone:
         return "Invalid Zone.", 404
     return {boss.full_name_slug: boss.as_dict() for boss in zone.bosses}
@@ -145,7 +150,7 @@ def get_bosses():
 
     """
     return {
-        "bosses": [boss.as_dict() for boss in encounters.RaidBoss.all]
+        "bosses": [boss.as_dict() for boss in RaidBoss.all]
     }
 
 
@@ -158,7 +163,7 @@ def get_boss(boss_slug):
         boss_slug (string): name of the boss
 
     """
-    boss = encounters.RaidBoss.get(full_name_slug=boss_slug)
+    boss = RaidBoss.get(full_name_slug=boss_slug)
     if not boss:
         return "Invalid Boss.", 404
     return boss.as_dict()
@@ -172,7 +177,7 @@ def get_boss_spells(boss_slug):
         boss_slug (string): name of the boss
 
     """
-    boss = encounters.RaidBoss.get(full_name_slug=boss_slug)
+    boss = RaidBoss.get(full_name_slug=boss_slug)
     if not boss:
         return "Invalid Boss.", 404
     return {spell.spell_id: spell.as_dict() for spell in boss.spells}
