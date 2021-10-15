@@ -4,12 +4,15 @@
 
 // general styles
 @import "base";
+@import "general";
 @import "bootstrap_edits";
+
 @import "tooltips";
+@import "layout";
+@import "reboot";
 
 // components
 @import "loading";
-@import "nav";
 @import "settings";
 @import "components/components_dir";
 
@@ -17,3 +20,4 @@
 @import "styles/styles_dir";
 
 @import "wow";
+

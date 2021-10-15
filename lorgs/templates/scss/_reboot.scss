@@ -1,0 +1,165 @@
+
+// Reboot
+//
+// Normalization of HTML elements, manually forked from Normalize.css to remove
+// styles targeting irrelevant browsers while applying new styles.
+//
+// Normalize is licensed MIT. https://github.com/necolas/normalize.css
+
+
+// Document
+//
+// Change from `box-sizing: content-box` so that `width` is not affected by `padding` or `border`.
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+// Body
+//
+// 1. Remove the margin in all browsers.
+// 3. Prevent adjustments of font size after orientation changes in iOS.
+
+body {
+  margin: 0; // 1
+  -webkit-text-size-adjust: 100%; // 3
+}
+
+
+// Images and content
+img,
+svg {
+  vertical-align: middle;
+}
+
+
+// Tables
+//
+// Prevent double borders
+table {
+  caption-side: bottom;
+  border-collapse: collapse;
+}
+
+// 2. Matches default `<td>` alignment by inheriting `text-align`.
+// 3. Fix alignment for Safari
+th {
+  text-align: inherit; // 2
+  text-align: -webkit-match-parent; // 3
+}
+
+thead,
+tbody,
+tfoot,
+tr,
+td,
+th {
+  border-color: inherit;
+  border-style: solid;
+  border-width: 0;
+}
+
+
+// Explicitly remove focus outline in Chromium when it shouldn't be
+// visible (e.g. as result of mouse click or touch tap). It already
+// should be doing this automatically, but seems to currently be
+// confused and applies its very visible two-tone outline anyway.
+
+button:focus:not(:focus-visible) {
+  outline: 0;
+}
+
+// 1. Remove the margin in Firefox and Safari
+
+input,
+button,
+select,
+optgroup,
+textarea {
+    margin: 0; // 1
+    font-family: inherit;
+    line-height: inherit;
+    text-align: center;
+}
+
+// Remove the inheritance of text transform in Firefox
+button,
+select {
+  text-transform: none;
+}
+
+
+
+select {
+  // Remove the inheritance of word-wrap in Safari.
+  // See https://github.com/twbs/bootstrap/issues/24990
+  word-wrap: normal;
+
+  // Undo the opacity change from Chrome
+  &:disabled {
+    opacity: 1;
+  }
+}
+
+// Remove the dropdown arrow in Chrome from inputs built with datalists.
+// See https://stackoverflow.com/a/54997118
+
+[list]::-webkit-calendar-picker-indicator {
+  display: none;
+}
+
+// 1. Prevent a WebKit bug where (2) destroys native `audio` and `video`
+//    controls in Android 4.
+// 2. Correct the inability to style clickable types in iOS and Safari.
+// 3. Opinionated: add "hand" cursor to non-disabled button elements.
+
+button,
+[type="button"], // 1
+[type="reset"],
+[type="submit"] {
+  -webkit-appearance: button; // 2
+}
+
+// Remove inner border and padding from Firefox, but don't restore the outline like Normalize.
+
+::-moz-focus-inner {
+  padding: 0;
+  border-style: none;
+}
+
+
+// 1. By using `float: left`, the legend will behave like a block element.
+//    This way the border of a fieldset wraps around the legend if present.
+// 2. Fix wrapping bug.
+//    See https://github.com/twbs/bootstrap/issues/29712
+
+
+// Fix height of inputs with a type of datetime-local, date, month, week, or time
+// See https://github.com/twbs/bootstrap/issues/18842
+
+::-webkit-datetime-edit-fields-wrapper,
+::-webkit-datetime-edit-text,
+::-webkit-datetime-edit-minute,
+::-webkit-datetime-edit-hour-field,
+::-webkit-datetime-edit-day-field,
+::-webkit-datetime-edit-month-field,
+::-webkit-datetime-edit-year-field {
+  padding: 0;
+}
+
+::-webkit-inner-spin-button {
+  height: auto;
+}
+
+// 1. Correct the outline style in Safari.
+// 2. This overrides the extra rounded corners on search inputs in iOS so that our
+//    `.form-control` class can properly style them. Note that this cannot simply
+//    be added to `.form-control` as it's not specific enough. For details, see
+//    https://github.com/twbs/bootstrap/issues/11586.
+
+[type="search"] {
+  outline-offset: -2px; // 1
+  -webkit-appearance: textfield; // 2
+}

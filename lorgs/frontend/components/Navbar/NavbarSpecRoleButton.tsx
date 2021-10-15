@@ -2,6 +2,7 @@ import { get_spec } from "../../store/specs";
 import { useAppSelector } from '../../store/store_hooks';
 import type Role from '../../types/role';
 import NavbarSpecsDropdown from './NavbarSpecsDropdown';
+import styles from "./Navbar.scss"
 
 /*
     Button for a single role.
@@ -14,16 +15,20 @@ export default function NavbarSpecRoleButton({ role } : { role: Role} ) {
     const current_spec = useAppSelector(state => get_spec(state));
     const has_active_child = current_spec && role.specs.find(spec => spec === current_spec.full_name_slug);
 
-    const class_name = `wow-border-${role.code} ${has_active_child ? "active" : ""}`;
-
     // Render
     return (
-        <div className="nav_dropdown">
-            <img
-                className={`role_button icon-spec icon-m border-black rounded ${class_name}`}
-                src={role.icon_path}
-                alt={role.name}
-            />
+        <div className={`${styles.dropdown_container}`}>
+
+            {/* The Button itself */}
+            <div className={`${styles.button} ${has_active_child ? "active" : ""}`} >
+                <img
+                    className={`icon-spec icon-m border-black rounded wow-border-${role.code}`}
+                    src={role.icon_path}
+                    alt={role.name}
+                />
+            </div>
+
+            {/* The Dropdown */}
             <NavbarSpecsDropdown key={role.code} specs={role.specs} />
         </div>
     );

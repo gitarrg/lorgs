@@ -18,7 +18,7 @@ export default function NavBarSpecButton({ spec_slug } : {spec_slug: string}) {
     // Render
     return (
 
-        <NavLink to={link} className={`wow-${class_name}`} activeClassName={`active`}>
+        <NavLink to={link} className={`wow-${class_name}`} activeClassName="active">
             <img
                 className={`mr-1 icon-spec icon-m rounded wow-border-${class_name}`}
                 src={spec.icon_path}

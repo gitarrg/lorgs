@@ -45,7 +45,7 @@
             <table>
                 {% for role in roles %}
                 <tr>
-                    <td><img class="icon-m rounded wow-border-{{role.code}}" src="{{role.icon_path}}"></td>
+                    <td><img class="icon-m rounded wow-border-{{role.code}} mr-1" src="{{role.icon_path}}"></td>
                     <td style="width: 5rem;margin-right: 2rem"><span>{{role.name}}:</span></td>
 
                     <td>
@@ -67,12 +67,12 @@
         <h3 class="mt-4">Top Reports by Comp:</h3>
         <div class="bg-dark rounded border p-2">
 
-            <div>
-                <a href="/comp_ranking/search">
+            <a href="/comp_ranking/search" class="">
+                <div class="d-flex align-items-center">
                     <img class="icon-spec icon-m rounded mr-1 wow-border-heal" src="/static/images/roles/heal.jpg">
-                    Comp Reports
-                </a>
-            </div>
+                    <span>Comp Reports</span>
+                </div>
+            </a>
 
             <small class="text-muted">(🚧 Work in progress. 🚧)</small>
         </div>
