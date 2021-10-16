@@ -30,7 +30,7 @@ export default function NavbarBossButton({boss} : {boss: Boss}) {
     return (
         <NavLink to={full_link} className={styles.button} activeClassName="active" data-tooltip={boss.full_name} data-tooltip-dir="down">
             <img
-                className="icon-spec icon-m wow-boss wow-border rounded"
+                className="icon-m wow-boss wow-border rounded grow-when-touched"
                 src={boss.icon_path}
                 alt={boss.full_name}
             />

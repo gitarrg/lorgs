@@ -1,4 +1,4 @@
-
+import { Link } from "react-router-dom"
 import styles from "./HeaderLogo.scss"
 
 
@@ -14,11 +14,11 @@ export default function HeaderLogo({wow_class = "wow-boss"}) {
 
     return (
         <div className={styles.container}>
-            <a href="/">
-                <svg className={`${styles.logo} ${wow_class} wow-border icon-l bg-dark rounded`}>
+            <Link to="/">
+                <svg className={`${styles.logo} ${wow_class} wow-border icon-l bg-dark rounded grow-when-touched`}>
                     {LOGO_SVG}
                 </svg>
-            </a>
+            </Link>
         </div>
     )
 }

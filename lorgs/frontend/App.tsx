@@ -6,7 +6,7 @@ import data_store from "./store/store"
 import GlobalDataLoader from "./components/GlobalDataLoader";
 
 // Delayed Imports
-const Admin = lazy(() => import("./routes/Admin/Admin"));
+const Index = lazy(() => import("./routes/Index/Index"));
 const CompRankings = lazy(() => import("./routes/CompRankings"));
 const CompSearch = lazy(() => import("./routes/CompSearch"));
 const SpecRankings = lazy(() => import("./routes/SpecRankings"));
@@ -29,6 +29,7 @@ export default function App() {
             <Router>
                 <Suspense fallback={<div>Loading...</div>}>
                 <Switch>
+                    <Route path="/" exact={true} component={Index} />
                     <Route path="/spec_ranking/:spec_slug/:boss_slug" component={SpecRankings} />
                     <Route path="/comp_ranking/search" component={CompSearch} />
                     <Route path="/comp_ranking/:boss_slug" component={CompRankings} />

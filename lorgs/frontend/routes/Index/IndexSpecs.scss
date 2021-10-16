@@ -1,0 +1,30 @@
+
+
+
+
+
+.container {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.4rem;
+}
+
+.role_name {
+    margin-left: 0.4rem;
+}
+
+
+.spec_button_container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+
+
+    img:hover {
+        transform: scale(1.2);
+    }
+
+    img:not(:hover) {
+        transition: transform 0.5s 0.1s;
+    }
+}

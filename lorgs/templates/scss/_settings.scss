@@ -1,0 +1,30 @@
+/*
+    Settings that will affect various elements on the pages.
+    think of this like "theme-globals"
+*/
+
+
+// General
+:root {
+
+    // some global colors
+    --success: #00b31e;
+    --danger: #e74c3c;
+    --info: #3498db;
+    --warning: #f39c12;
+
+    // timeline
+    --timeline-height: 28px;
+    --timeline-ruler-height: var(--timeline-height);
+}
+
+
+/* Page Specific */
+.spec_ranking {
+    --timeline-fight-gap: 0px;
+}
+
+
+.comp_ranking {
+    --timeline-fight-gap: 10px;
+}
