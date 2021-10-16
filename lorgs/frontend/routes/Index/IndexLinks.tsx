@@ -19,11 +19,15 @@ function Link(
         tooltip?: string
     }) {
 
+    const tt = tooltip ? {"data-tooltip": tooltip} : {}
+
+
     return (
         <a href={url}>
             <div
                 className={`${style.link} btn btn-lg ${disabled ? "disabled": ""} ${disabled ? "" : "grow-when-touched"} border bg-dark`}
-                data-tooltip={tooltip}>
+                {...tt}
+            >
                 <span>
                     {children}
                 </span>
@@ -40,7 +44,7 @@ export default function IndexLinks() {
             <h4>Links:</h4>
             <div className={style.container}>
 
-                <Link url="/help" disabled={true} tooltip="under construction">
+                <Link url="/help" disabled={true} tooltip="🚧 under construction 🚧">
                     <i className="fas fa-info-circle mr-1"></i>
                     Help
                 </Link>
