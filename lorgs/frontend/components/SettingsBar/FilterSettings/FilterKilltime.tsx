@@ -3,6 +3,8 @@ import { set_filters } from '../../../store/ui'
 import ButtonGroup from '../shared/ButtonGroup'
 import DurationInputGroup from "../../shared/DurationInputGroup"
 
+import styles from "./FilterKilltime.scss"
+
 
 /**
  * Group to set the min/max killtime-filter
@@ -21,7 +23,7 @@ export default function FilterKilltimeGroup() {
     // Render
     return (
         <ButtonGroup name="Killtime" side="right">
-            <DurationInputGroup onChange={onChange} className="input-group-sm killtime_input" />
+            <DurationInputGroup onChange={onChange} className={styles.killtime_group} />
         </ButtonGroup>
     )
 }

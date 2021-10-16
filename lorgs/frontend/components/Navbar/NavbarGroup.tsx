@@ -1,3 +1,4 @@
+import styles from "./Navbar.scss"
 
 
 export default function NavbarGroup({children, className=""} : { children: JSX.Element | JSX.Element[], className?: string } ) {
@@ -5,7 +6,7 @@ export default function NavbarGroup({children, className=""} : { children: JSX.E
     if (!children) return null
 
     return (
-        <div className={`navbar_group p-1 bg-dark border rounded ${className || ""}`}>
+        <div className={`${styles.navbar_group} p-1 bg-dark border rounded ${className || ""}`}>
             {children}
         </div>
     )

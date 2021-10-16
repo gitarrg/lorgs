@@ -1,0 +1,117 @@
+
+
+/********************************
+        Player Names
+*********************************/
+
+.player_name,
+.boss_name {
+
+    width: 175px;
+    height: var(--timeline-height);
+    padding-right: 5px;
+
+    border: 1px solid black;
+    overflow: hidden;
+    position: relative;
+
+
+    &__spec_icon,
+    &__role_icon {
+        width: var(--timeline-height);
+        height: var(--timeline-height);
+        border-right: 1px solid black;
+    }
+
+    &__name,
+    &__rank,
+    &__total {
+        font-size: 1.2rem;
+        // font-weight: bold;
+
+        position: absolute;
+
+        // Y Position
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    &__name,
+    &__rank {
+        margin-left: 4px;
+    }
+
+    &__total {
+        right: 5px;
+    }
+}
+
+
+.player_name {
+    background: hsl(0, 0%, 30%);
+
+    border-top: none;
+
+    &:hover {
+        background: hsl(0, 0%, 40%);
+    }
+}
+
+
+.boss_name {
+    background: hsl(175, 20%, 55%);
+    color:  hsl(175, 20%, 20%);
+    font-weight: bold;
+
+    // border-top-left-radius: 0.25rem;
+
+    &:hover {
+        background:  hsl(175, 50%, 60%);
+    }
+}
+
+
+// Edits for the Spec Rankings
+:global .spec_ranking { :local {
+
+    .player_name:hover .player_name__rank,
+    .player_name:hover .player_name__total,
+    .player_name:not(:hover) .player_name__name {
+        opacity: 0;
+        filter: blur(2px);
+        color: #808080;
+    }
+
+    // slowly fade back
+    .player_name:not(:hover) {
+        .player_name__rank,
+        .player_name__total,
+        .player_name__name {
+            transition-property: filter, opacity, color;
+            transition-timing-function: ease-in;
+            transition-duration: 4s;
+            transition-delay: 1s;
+        }
+    }
+
+    // hide top border only for the very first row
+    // and for all player lanes
+    // .fight:not(:first-child) .boss_name,
+    // .player_name {
+    //     border-top: none;
+    // }
+}}
+
+
+:global .comp_ranking { :local {
+
+    // round of the corners per fight
+    // .player_name:last-of-type {
+    //     border-bottom-left-radius: 0.25rem;
+    // }
+
+    // hide top border for all, except topmost row
+    // .boss_name:not(:first-child), .player_name:not(:first-child) {
+    //     border-top: none;
+    // }
+}}

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import ButtonGroup from '../shared/ButtonGroup'
+import FaButton from '../shared/FaButton'
 import FilterCovenantGroup from './FilterCovenant'
 import FilterKilltimeGroup from './FilterKilltime'
 
@@ -19,7 +20,7 @@ export default function FilterSettings({collapsed: collapsed_init=false}) {
             {!collapsed && <FilterKilltimeGroup />}
 
             <ButtonGroup name="Filters" side="right">
-                <div onClick={handle_click} className="button icon-s rounded border-white fas fa-filter" data-tip="show/hide filters" />
+                <FaButton icon_name="fas fa-filter" onClick={handle_click} disabled={collapsed} />
             </ButtonGroup>
 
         </>

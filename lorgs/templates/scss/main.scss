@@ -2,18 +2,19 @@
 // utils
 @import "mixins";
 
+@import "settings";
+
 // general styles
 @import "base";
-@import "bootstrap_edits";
-@import "tooltips";
+@import "general";
+@import "layout";
+@import "reboot";
 
-// components
-@import "loading";
-@import "nav";
-@import "settings";
-@import "components/components_dir";
+// General Elements
+@import "buttons";
+@import "icons";
+@import "tooltips";
 
 // pages
 @import "styles/styles_dir";
-
 @import "wow";

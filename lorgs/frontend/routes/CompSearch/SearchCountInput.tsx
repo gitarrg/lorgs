@@ -48,7 +48,7 @@ export default function CountFilterGroup({name, icon_path, class_name} : {name: 
 
             <input
                 type="number"
-                className="count-number text-center"
+                className="count-number"
                 placeholder="-" min="0"
                 {...register(attr_name_count)}
             />

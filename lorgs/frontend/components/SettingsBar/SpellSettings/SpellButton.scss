@@ -2,21 +2,13 @@
 
 .spell_button {
 
-
     position: relative;
 
-
-    &__dynamic_cd_warning {
+    :global .dynamic_cd_warning {
         position: absolute;
         font-size: 8px;
         right: 0;
         top: 0;
         cursor: help;
     }
-
-    &.disabled &__dynamic_cd_warning {
-            visibility: hidden;
-    }
-
-
 }

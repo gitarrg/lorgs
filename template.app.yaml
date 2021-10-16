@@ -26,7 +26,6 @@ env_variables:
 
   # Lorgs Config
   LORGS_CONFIG_NAME: lorgs.config.ProductionConfig
-  BUILD_TAG: {{BUILD_TAG}}
   SECRET_KEY: {{SECRET_KEY}}
 
   # Third Party Credentials
@@ -35,13 +34,30 @@ env_variables:
 
   # Database Credentials
   MONGO_URI: {{MONGO_URI}}
-  REDIS_URL: {{REDIS_URL}}
 
 
 handlers:
 
+  # all API-Requests go to the flask backend
+  - url: /api/.*
+    script: auto
+
+  # server all files in /static as they are
   - url: /static
     static_dir: lorgs/static
+    http_headers:
+      lorrgs_route: static_files
 
-  - url: /.*
-    script: auto
+  # fix to avoid breaking the robots.txt
+  - url: /(robots\.txt)
+    static_files: static/\1
+    mime_type: text/plain
+    upload: static/(robots\.txt)
+
+  # all other requests redirect to the index.html
+  - url: /(.*)
+    static_files: lorgs/static/_generated/index.html
+    upload: lorgs/static/_generated/index.html
+    expiration: 1h # shorter caching to allow updates
+    http_headers:
+      lorrgs_route: app

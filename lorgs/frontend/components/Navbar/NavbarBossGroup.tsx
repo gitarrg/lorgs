@@ -9,7 +9,7 @@ export default function NavbarBossGroup() {
     const bosses = useAppSelector(state => get_bosses(state));
 
     return (
-        <NavbarGroup className="navbar_boss">
+        <NavbarGroup>
             {Object.values(bosses).map(boss =>
                 <NavbarBossButton key={boss.full_name_slug} boss={boss} />
             )}

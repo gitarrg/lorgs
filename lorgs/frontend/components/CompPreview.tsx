@@ -5,6 +5,8 @@
     Used for the CompSearch and CompRankings.
 
 */
+import styles from "./CompPreview.scss"
+
 
 export interface CompCountType {
 
@@ -46,10 +48,10 @@ function create_icon(prefix: string, name: string, count: string, op: string) {
     const class_name = name.split("-")[0]
 
     return (
-        <div key={name} className={`comp-preview__icon rounded border-mid wow-${class_name} wow-border ${excluded ? "excluded" : ""}`}>
+        <div key={name} className={`${styles.icon} rounded border-mid wow-${class_name} wow-border ${excluded ? "excluded" : ""}`}>
             <img className="icon-l" src={icon_path}/>
-            {!excluded && <div className={`comp-preview__label wow-${class_name}`}>{label}</div>}
-            {excluded && <div className="comp-preview__label">X</div>}
+            {!excluded && <div className={`${styles.label} wow-${class_name}`}>{label}</div>}
+            {excluded && <div className={styles.label}>X</div>}
         </div>
     )
 }
@@ -76,7 +78,7 @@ export default function CompPreview({roles={}, specs={}, placeholder=""} : { rol
     icons.push(...create_icons("specs", specs))
 
     return (
-        <div className="comp-preview">
+        <div className={styles.comp_preview}>
             {icons.length > 0 ? icons : <h1>{placeholder}</h1>}
         </div>
     )

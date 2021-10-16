@@ -1,116 +1,75 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en" xml:lang="en">
+<head>
+    <title>Lorrgs</title>
 
-{% block title %}Lorgs: Index{% endblock %}
+    <!-- meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A Website to compare top parses in World of Warcaft.">
 
-{% block content %}
+    <!-- font-awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" />
 
+    <!-- insert CDN Scripts from Config -->
+    <% CDN_TAGS.map(function(tag) { %>
+        <script defer src=<%= tag.src %> crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <% }) %>
 
-<div class="d-flex flex-row p-2 mt-5 ml-5">
+    <!-- local -->
+    <link rel="shortcut icon" href="/static/images/favicon.png">
 
-    <div class="col-4" style="max-width: 525px">
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<%= GOOGLE_ANALYTICS_ID %>"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
 
-        <!-- Info -->
-        <h3>What is this?</h3>
-        <div class="bg-dark rounded border p-2 text-wrap">
-            <p>This website looks at the current <strong class="text-astounding">top 50 logs for every spec</strong> and visualizes <em class="wow-mage wow-text">"relevant"</em> spells on an encounter timeline.</p>
-            <p>This lets you easily compare multiple high performing logs against each other, concerning when they use various important cooldowns.</p>
-            <strong class="wow-legendary wow-text">No more sifting through individual logs manually!</strong>
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag("js", new Date());
+        gtag("config", "<%= GOOGLE_ANALYTICS_ID %>");
+    </script>
+</head>
+
+<body>
+<!-- Container -->
+<div class="container">
+
+    <!-- CONTENT -->
+    <main class="flex-grow-1">
+        <div id=app_root></div>
+    </main>
+
+    <footer>
+        <div class="p-1">
+            <small class="text-muted">
+            All data is retrieved from <a href="https://warcraftlogs.com" target="_blank" rel="noopener"><strong>Warcraft Logs</strong></a>.&nbsp;
+            Item and ability tooltips by <a href="https://wowhead.com" target="_blank" rel="noopener"><strong>Wowhead</strong></a>.<br>
+            All images copyright Blizzard Entertainment. World of Warcraft
+            Warcraft and Blizzard Entertainment are trademarks or registered trademarks of Blizzard Entertainment, Inc. in the U.S. and/or other countries.
+            </small>
         </div>
-
-        <!-- Disclaimer -->
-        <h4 class="mt-3 mb-1">⚠️Disclaimer</h4>
-        <div class="bg-dark rounded p-2 pt-0 text-wrap wow-border-deathknight">
-            <p><strong class="fs-5 text-white">Do not simply copy paste the timings you see here!</strong></p>
-            <p>This page is meant to <strong class="wow-rogue wow-text">give you a reference</strong>, but you will have to <strong class="wow-deathknight wow-text">adapt your cooldowns</strong> based on your guild’s strats, setup, push timings and other variables.</p>
-
-            <hr class="border-0">
-
-            <p>Just seeing what people are doing successfully will not make it work for you, <span class="wow-monk wow-text">unless you understand why</span>.</p>
-            <p class="mb-0">By looking at the timelines represented here you should conclude something like:</p>
-
-            <div class="ml-2">
-            <em class="text-light">"If we 4 heal this fight and push to phase 2 before 2:54, then it’s possible to achieve what I'm seeing here".</em>
-            </div>
-        </div>
-
-    </div>
-
-
-    <div class="col">
-
-        <!-- Parses: Specs -->
-        <h3>Top Parses by Spec:</h3>
-
-        <div class="bg-dark rounded border p-2">
-            <table>
-                {% for role in roles %}
-                <tr>
-                    <td><img class="icon-m rounded wow-border-{{role.code}}" src="{{role.icon_path}}"></td>
-                    <td style="width: 5rem;margin-right: 2rem"><span>{{role.name}}:</span></td>
-
-                    <td>
-                        {% for spec in role.specs|sort(attribute="full_name_slug") %}
-                            <a href="/spec_ranking/{{spec.full_name_slug}}/{{boss.full_name_slug}}" data-tooltip="{{spec.full_name}}">
-                            <img class="icon-spec icon-m rounded wow-border-{{spec.wow_class.name_slug}}" src="{{spec.icon_path}}" alt="{{spec.full_name}}" >
-                        </a>
-                        {% endfor %}
-                    </td>
-                </tr>
-                {% if not loop.last %}
-                    <tr style="height: 0.5rem"></tr>
-                {% endif %}
-                {% endfor %}
-            </table>
-        </div>
-
-        <!-- Parses: Reports -->
-        <h3 class="mt-4">Top Reports by Comp:</h3>
-        <div class="bg-dark rounded border p-2">
-
-            <div>
-                <a href="/comp_ranking/search">
-                    <img class="icon-spec icon-m rounded mr-1 wow-border-heal" src="/static/images/roles/heal.jpg">
-                    Comp Reports
-                </a>
-            </div>
-
-            <small class="text-muted">(🚧 Work in progress. 🚧)</small>
-        </div>
-
-
-        <h4 class="mt-3 mb-1">Links</h4>
-        <div class="bg-dark rounded border p-2">
-
-            <div class="d-flex flex-row p-3 gx-3">
-                <!-- Help -->
-                <div>
-                    <a href="{{url_for('ui.help')}}" class="h5"><i class="fas fa-info-circle"></i>&nbsp;&nbsp;Help</a>
-                </div>
-
-
-                <!-- Discord -->
-                <div class="ml-3">
-                    <span>
-                        <a href="{{config.DISCORD_LINK}}" target="_blank" class="h5">
-                            <img class="icon-s" src="{{url_for('static',filename='images/icons/logo_discord.svg')}}"> Discord</a><br>
-                        <small class="text-muted">Ask questions, give feedback or just hang out.</small>
-                    </span>
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class="col">
-    </div>
-
+    </footer>
 </div>
 
+<!-- wowhead -->
+<script>const whTooltips = {colorLinks: false, iconizeLinks: false, renameLinks: false, iconSize: 'small'};</script>
+<script defer src="https://wow.zamimg.com/widgets/power.js"></script>
 
-{% endblock %}
+
+<script>
+
+<% if (DEBUG) { %>
+    window.__LORRGS_DEBUG__ = true
+<% } %>
 
 
+<% if (typeof(BACKEND_URL) !== "undefined") { %>
+    window.__BACKEND_URL__ = BACKEND_URL
+<% } %>
 
+</script>
 
+</body>
+</html>

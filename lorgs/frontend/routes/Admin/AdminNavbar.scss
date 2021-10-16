@@ -3,13 +3,13 @@
 
 .nav {
 
-    .nav-link.active {
+    .nav_link.active {
         color: var(--wow-boss);
         text-decoration: underline;
         font-weight: bold;
     }
 
-    .nav-link:not(.active):not(:hover) {
+    .nav_link:not(.active):not(:hover) {
         opacity: 0.7;
     }
 
