@@ -59,10 +59,14 @@
 
 
 <script>
-window.__LORRGS_DEBUG__ = <%= DEBUG %>
+
+<% if (DEBUG) { %>
+    window.__LORRGS_DEBUG__ = true
+<% } %>
+
 
 <% if (typeof(BACKEND_URL) !== "undefined") { %>
-    window.__BACKEND_URL__ = BACKEND_URL;
+    window.__BACKEND_URL__ = BACKEND_URL
 <% } %>
 
 </script>
