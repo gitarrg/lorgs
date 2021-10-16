@@ -4,11 +4,14 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
-
 const path = require("path")
+
+const variables = require("./variables.js")
 
 // Constants
 const DEBUG = process.env.NODE_ENV !== "production";
+
+
 
 // Config
 module.exports = {
@@ -114,6 +117,11 @@ module.exports = {
             template: "lorgs/templates/index.html",
             minimize: !DEBUG,
             hash: true, // append cache busting hash
+
+            templateParameters: {
+                ...variables.get_vars(process.env.NODE_ENV),
+                DEBUG: DEBUG,
+            },
         }),
         // new BundleAnalyzerPlugin(),
     ],

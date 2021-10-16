@@ -34,7 +34,7 @@ export default function IndexLinks() {
                 </Link>
 
                 <Link url={LINK_DISCORD}>
-                    <img className="icon-s discord_logo mr-1" src="/static/images/icons/logo_discord.svg"/>
+                    <img className="icon-s discord_logo mr-1" src="/static/images/icons/logo_discord.svg" alt="discord logo" />
                     Discord
                 </Link>
             </div>

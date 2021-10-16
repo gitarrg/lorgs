@@ -1,28 +1,26 @@
 <!DOCTYPE html>
 <html lang="en" xml:lang="en">
 <head>
+    <title>Lorrgs</title>
+
+    <!-- meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A Website to compare top parses in World of Warcaft.">
+
     <!-- font-awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" />
 
-    <!-- React -->
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.development.js"crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.development.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script defer src=https://cdn.jsdelivr.net/npm/react-hook-form@7.17.0/dist/index.umd.min.js></script>
-
-    <!--  Redux -->
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/redux/4.1.1/redux.js" integrity="sha512-VSziEhiRlxaN8AZfc5UQiEnrcwM3KOp0GRITlYcQ7BCsEPq/VQMApwoZoh8zL69oo/Of+uVt/nygZbJAMst6jA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/react-redux/7.2.5/react-redux.js" integrity="sha512-/Z5dRgJCwIquRCBYKNv6yFHqkgs887HHCSYKTeHNteepvTQRtAUP1xBrCP/bVmVw9eznv/rEBrrgTA0FTe/9Mw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/reselect/4.0.0/reselect.min.js" integrity="sha512-tsMvk3BMjJ0KwWsH8OofK2tR1AJc670PtUcMrjW6hpSHNmWmR5MDOgD5lDPJDCOFonZfbBCMw4e/wy5pAseusg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-    <!--  Konva -->
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/konva/8.2.1/konva.min.js" integrity="sha512-Kae4IrvcqQ8H13MSTCuxrsUt9pHxzYOyNjTh3QqDtKhYYeLzexguA1aY4+lUAWZnrCRQ6CFx8zHVO8lKLkC/5A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- insert CDN Scripts from Config -->
+    <% CDN_TAGS.map(function(tag) { %>
+        <script defer src=<%= tag.src %> crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <% }) %>
 
     <!-- local -->
     <link rel="shortcut icon" href="/static/images/favicon.png">
 
-    <!-- Google -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id={{config.GOOGLE_ANALYTICS_ID}}"></script>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<%= GOOGLE_ANALYTICS_ID %>"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
 
@@ -30,7 +28,7 @@
             dataLayer.push(arguments);
         }
         gtag("js", new Date());
-        gtag("config", "{{config.GOOGLE_ANALYTICS_ID}}");
+        gtag("config", "<%= GOOGLE_ANALYTICS_ID %>");
     </script>
 </head>
 
@@ -57,11 +55,17 @@
 
 <!-- wowhead -->
 <script>const whTooltips = {colorLinks: false, iconizeLinks: false, renameLinks: false, iconSize: 'small'};</script>
-<script src="https://wow.zamimg.com/widgets/power.js"></script>
+<script defer src="https://wow.zamimg.com/widgets/power.js"></script>
+
 
 <script>
-//  window.__BACKEND_URL__ = "http://127.0.0.1:5012";
-window.__LORRGS_DEBUG__ = 1
+window.__LORRGS_DEBUG__ = <%= DEBUG %>
+
+<% if (typeof(BACKEND_URL) !== "undefined") { %>
+    window.__BACKEND_URL__ = BACKEND_URL;
+<% } %>
+
 </script>
+
 </body>
 </html>
