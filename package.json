@@ -24,6 +24,7 @@
     "babel-loader": "^8.2.2",
     "css-loader": "^6.3.0",
     "envsub": "^4.0.7",
+    "html-webpack-plugin": "^5.4.0",
     "konva": "^8.2.2",
     "mini-css-extract-plugin": "^2.3.0",
     "react-hook-form": "^7.17.3",

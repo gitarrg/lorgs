@@ -30,13 +30,14 @@ async def page_not_found(error):
 
 
 @blueprint.get("/")
-@cache.cached()
 def index():
     """Render the main index page."""
-    kwargs = {}
-    kwargs["boss"] = data.TARRAGRUE
-    kwargs["roles"] = data.ALL_ROLES
-    return flask.render_template("index.html", **kwargs)
+    # return flask.send_from_directory("static/_generated", "index.html")
+    return "hello from flask"
+    # kwargs = {}
+    # kwargs["boss"] = data.TARRAGRUE
+    # kwargs["roles"] = data.ALL_ROLES
+    # return flask.render_template("index.html", **kwargs)
 
 
 @blueprint.get("/help")
@@ -53,10 +54,13 @@ def help():
 ################################################################################
 
 
-@blueprint.route("/lorgmin/<path:subpath>")
-@blueprint.route("/comp_ranking/<path:subpath>")
-@blueprint.route("/spec_ranking/<path:subpath>")
-@cache.cached()
-def react_app(**kwargs):
-    """Route for all pages that are fully managed by react."""
-    return flask.render_template("app.html")
+# @blueprint.route("/lorgmin/<path:subpath>")
+# @blueprint.route("/comp_ranking/<path:subpath>")
+# @blueprint.route("/spec_ranking/<path:subpath>")
+# @blueprint.route("/app")
+# # @cache.cached()
+# def react_app(**kwargs):
+#     """Route for all pages that are fully managed by react."""
+#     return flask.send_from_directory("static/_generated", "index.html")
+#     # return flask.render_template("index.html")
+
