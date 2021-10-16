@@ -8,12 +8,6 @@ class BaseConfig:
 
     SECRET_KEY = os.getenv("SECRET_KEY") or "giga-secret_key-nobody-will-ever-find-out"
 
-    # str: id for google analytics
-    GOOGLE_ANALYTICS_ID = ""
-
-    # str: discord invite link
-    DISCORD_LINK = os.getenv("DISCORD_LINK") or "https://discord.gg/jZWj6djJk2"
-
     # cache settings
     CACHE_DEFAULT_TIMEOUT = 5 * 60 # seconds
     CACHE_TYPE = "SimpleCache"
@@ -22,9 +16,6 @@ class BaseConfig:
 
     # bool: use dev files
     LORRGS_DEBUG = False
-
-    # custom tag to force refreshes on js and css files
-    BUILD_TAG = os.getenv("BUILD_TAG", "BUILD_TAG")
 
 
 ################################################################################
@@ -48,7 +39,4 @@ class DevelopmentConfig(BaseConfig):
 
 class ProductionConfig(BaseConfig):
     """Config used in Production."""
-
-    GOOGLE_ANALYTICS_ID = "G-Y92VPCY6QW"
-
     CACHE_DEFAULT_TIMEOUT = 60 * 60  # 1h
