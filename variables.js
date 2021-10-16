@@ -4,6 +4,8 @@
 const CONFIG_DEV = {
     GOOGLE_ANALYTICS_ID: "dev_mode",
 
+    BACKEND_URL: "http://127.0.0.1:5012",
+
     CDN_TAGS: [
         // React
         { src: "https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.development.js" },

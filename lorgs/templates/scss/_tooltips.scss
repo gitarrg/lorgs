@@ -1,11 +1,12 @@
 
 
-[data-tooltip] {
-
+// ~= data-tooltip != ""
+[data-tooltip]:not([data-tooltip=""]) {
     --arrow-size: 8px;
     --tooltip-color: black;  // background
 
     position: relative;
+    opacity: 1.0;
 
     // define tooltip layer
     &::before,

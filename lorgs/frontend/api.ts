@@ -13,6 +13,10 @@ export async function fetch_data(url : string, params={}) {
         }
     }
 
+    if ("LORRGS_BACKEND_URL" in window) {
+        // @ts-ignore
+        url = window.LORRGS_BACKEND_URL + url
+    }
     const console_key = `request: ${url}`
 
     if (PRINT_REQUEST_TIMES) {console.time(console_key)}

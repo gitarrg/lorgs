@@ -11,6 +11,7 @@
   "scripts": {
     "build": "NODE_ENV=production webpack",
     "build_dev": "webpack --watch",
+    "server": "webpack serve",
     "format_app_yaml": "envsub --syntax handlebars template.app.yaml app.yaml"
   },
   "devDependencies": {

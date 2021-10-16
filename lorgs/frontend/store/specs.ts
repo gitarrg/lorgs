@@ -4,6 +4,7 @@ import type Spec from "../types/spec"
 import type { RootState, AppDispatch } from './store'
 import { fetch_data } from '../api'
 import { group_spells_by_type } from './store_utils'
+import { LOGO_URL } from '../constants'
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -15,6 +16,7 @@ export function get_specs(state : RootState ) {
 }
 
 export function get_spec(state: RootState, spec_slug?: string) {
+    spec_slug = spec_slug?.split(":")[0] // allow a suffix (eg.: for placeholder purposes)
     spec_slug = spec_slug || state.ui.spec_slug // input or current spec
     return state.specs[spec_slug] || null
 }
@@ -37,6 +39,20 @@ export function get_spec_for_spell_id(state: RootState, spell_id : number) {
 // Slice
 //
 
+const PLACEHOLDER_SPEC = {
+    role: "",
+    name: "placeholder",
+    full_name: "loading...",
+    full_name_slug: "placeholder",
+    spells_by_type: {},
+    loaded: false,
+    class: {name: "", name_slug: "other"},
+    icon_path: LOGO_URL,
+}
+
+
+
+
 function _process_spec(spec: Spec) {
     spec.loaded = false
     spec.icon_path = `/static/images/specs/${spec.full_name_slug}.jpg`
@@ -47,7 +63,9 @@ function _process_spec(spec: Spec) {
 const SLICE = createSlice({
     name: "specs",
 
-    initialState: {} as { [ key: string ] : Spec },
+    initialState: {
+        placeholder: PLACEHOLDER_SPEC,
+    } as { [ key: string ] : Spec },
 
     reducers: {
 

@@ -15,10 +15,10 @@ import ui_reducer from "./ui"
 ////////////////////////////////////////////////////////////////////////////////
 // REDCUER
 //
-const LORRGS_DEBUG = "__LORRGS_DEBUG__" in window
+const LORRGS_DEBUG = "LORRGS_DEBUG" in window
 
 
-const store =  configureStore({
+const store = configureStore({
 
     // preloadedState: DEFAULT_STATE,
     reducer: {

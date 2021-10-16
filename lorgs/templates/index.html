@@ -11,11 +11,6 @@
     <!-- font-awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" />
 
-    <!-- insert CDN Scripts from Config -->
-    <% CDN_TAGS.map(function(tag) { %>
-        <script defer src=<%= tag.src %> crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <% }) %>
-
     <!-- local -->
     <link rel="shortcut icon" href="/static/images/favicon.png">
 
@@ -31,6 +26,7 @@
         gtag("config", "<%= GOOGLE_ANALYTICS_ID %>");
     </script>
 </head>
+
 
 <body>
 <!-- Container -->
@@ -57,19 +53,21 @@
 <script>const whTooltips = {colorLinks: false, iconizeLinks: false, renameLinks: false, iconSize: 'small'};</script>
 <script defer src="https://wow.zamimg.com/widgets/power.js"></script>
 
-
 <script>
-
 <% if (DEBUG) { %>
-    window.__LORRGS_DEBUG__ = true
+window.LORRGS_DEBUG = true
 <% } %>
-
 
 <% if (typeof(BACKEND_URL) !== "undefined") { %>
-    window.__BACKEND_URL__ = BACKEND_URL
+window.LORRGS_BACKEND_URL = "<%= BACKEND_URL %>"
 <% } %>
-
 </script>
+
+<!-- insert CDN Scripts from Config -->
+<% CDN_TAGS.map(function(tag) { %>
+    <script defer src=<%= tag.src %> crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<% }) %>
+
 
 </body>
 </html>
