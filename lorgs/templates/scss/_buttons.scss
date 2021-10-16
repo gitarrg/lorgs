@@ -1,0 +1,67 @@
+/**
+    Common Style for all button-like elements.
+*/
+
+
+.button {
+    cursor: pointer;
+    user-select: none;
+
+    &.disabled
+    {
+        opacity: 30%;
+        filter: saturate(75%) blur(0.5px);
+        border: none;
+    }
+
+    &:hover{
+        opacity: initial;
+        border: 1px solid white;
+    }
+}
+
+
+
+
+/*******************************************************************************
+    Bootstrap Button Style
+*******************************************************************************/
+
+.btn {
+
+    display: inline-block;
+
+    font-size: 0.9375rem;
+    font-weight: 400;
+    text-decoration: none;
+
+    height: 2rem;
+
+    text-align: center;
+    vertical-align: middle;
+
+    user-select: none;
+
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+
+    &:not(:disabled):not(.disabled) {
+        cursor: pointer;
+    }
+}
+
+
+.btn-lg {
+    padding: 0.5rem 1rem;
+    font-size: 1.171875rem;
+    border-radius: 0.3rem;
+
+    height: 2.5rem;
+
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #375a7f;
+    border-color: #375a7f;
+}

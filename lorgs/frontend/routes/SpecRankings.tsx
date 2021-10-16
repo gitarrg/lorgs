@@ -83,7 +83,7 @@ export default function SpecRankings() {
     // Render
     //
     return (
-        <div>
+        <div className={mode}>
 
             <div className="mt-3 flex-row d-flex flex-wrap-reverse">
                 <SpecRankingsHeader spec_slug={spec_slug} boss_slug={boss_slug} />

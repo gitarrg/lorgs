@@ -1,19 +1,34 @@
 
-
-
-.comp-preview {
-
-    display: flex;
-    gap: 0.5rem;
+/* adds a storke AROUND some text
+    https://stackoverflow.com/questions/26634201/add-stroke-around-text-on-the-outside-with-css
+*/
+@mixin stroke($color: #000, $size: 1px) {
+  text-shadow:
+    -#{$size} -#{$size} 0 $color,
+     0        -#{$size} 0 $color,
+     #{$size} -#{$size} 0 $color,
+     #{$size}  0        0 $color,
+     #{$size}  #{$size} 0 $color,
+     0         #{$size} 0 $color,
+    -#{$size}  #{$size} 0 $color,
+    -#{$size}  0        0 $color;
 }
 
 
-.comp-preview__icon {
+.comp_preview {
+    display: flex;
+    gap: 0.5rem;
+
+    --color-excluded: hsl(0, 70%, 50%);
+}
+
+
+.icon {
     position: relative;
 
     // display: flex;
     // align-items: center;
-    border: 1px solid yellow;
+    // border: 1px solid yellow;
     height: 3.23rem; // icon-l height
 
 
@@ -24,21 +39,24 @@
         filter: blur(1px);
     }
 
-    &.excluded {
+    &:global.excluded {
+        border-color: var(--color-excluded);
+
         img {
             filter: blur(1px) saturate(0);
         }
-        color: red;
+        color: var(--color-excluded);
     }
 }
 
 
 // text label above the icon
-.comp-preview__label {
+.label {
 
     position: absolute;
     top: 50%;
     left: 50%;
+    user-select: none;
     // bottom: 7px;
     // right: 3px;
     transform: translate(-50%, -50%); // tiny offset because font not centered
@@ -52,5 +70,4 @@
     font-weight: bolder;
 
     @include stroke(black, 1px);
-
 }
