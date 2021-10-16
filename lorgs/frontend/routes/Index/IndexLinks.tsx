@@ -1,17 +1,15 @@
-import React from 'react'
-import { DISCORD_LINK } from '../../constants'
+import { DISCORD_LINK, PATREON_LINK } from '../../constants'
 
 import style from "./IndexLink.scss"
 
-function Link({url, children} : {url: string, children: (JSX.Element|string)[]}) {
+
+function LinkButton({url, children} : {url: string, children: (JSX.Element|string)[]}) {
     return (
-        <a href={url}>
-            <div className={`${style.link} btn btn-lg grow-when-touched border bg-dark`}>
-                <span>
-                    {children}
-                </span>
-            </div>
-        </a>
+        <div className={`${style.link} grow-when-touched border bg-dark`}>
+            <a href={url} target="_blank" rel="noopener">
+                {children}
+            </a>
+        </div>
     )
 }
 
@@ -23,15 +21,22 @@ export default function IndexLinks() {
             <h4>Links:</h4>
             <div className={style.container}>
 
-                <Link url="/help">
-                    <i className="fas fa-info-circle mr-1"></i>
+                <LinkButton url="/help">
+                    <i className="fas fa-info-circle"></i>
                     Help
-                </Link>
+                </LinkButton>
 
-                <Link url={DISCORD_LINK}>
-                    <img className="icon-s discord_logo mr-1" src="/static/images/icons/logo_discord.svg" alt="discord logo" />
-                    Discord
-                </Link>
+                <LinkButton url={DISCORD_LINK}>
+                    <img src="/static/images/icons/discord_logo.svg" alt="discord logo" />
+                    <span>Discord</span>
+                </LinkButton>
+
+                <LinkButton url={PATREON_LINK}>
+                    <img src="/static/images/icons/patreon_logo.svg" alt="patreon logo" />
+                    <span>Patreon</span>
+                </LinkButton>
+
+
             </div>
         </div>
     )
