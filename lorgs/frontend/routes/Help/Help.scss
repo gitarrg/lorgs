@@ -1,0 +1,54 @@
+
+
+
+.outer_container {
+    display: flex;
+    justify-content: center;
+}
+
+
+.container {
+
+    display: grid;
+    grid-template-columns: 170px auto;
+    grid-gap: 1rem;
+}
+
+
+.header {
+    grid-column: 1 / -1;
+}
+
+
+.sidebar {
+
+    position: -webkit-sticky;  // required for Safari
+    position: sticky;
+    top: 1rem; // required as well.
+
+
+    nav {
+        margin-bottom: 0.5rem;
+
+        display: flex;
+        flex-direction: column;
+
+        font-size: large;
+        padding-left: 20px;
+
+    }
+}
+
+
+.content {
+    grid-row: span 2;
+
+    // re-enable word wrap
+    white-space: normal !important;
+
+    display: flex;
+    gap: 2rem;
+    flex-direction: column;
+
+    max-width: 1280px;
+}

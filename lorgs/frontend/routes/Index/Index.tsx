@@ -9,7 +9,7 @@ const INFO_TEXT = <div>
     <h3>What is this?</h3>
 
     <div className="bg-dark rounded border p-2 text-wrap">
-        <p>This website looks at the current <strong className="text-astounding">top 50 logs for every spec</strong>&nbsp;
+        <p>This website looks at the current <strong className="wow-astounding">top 50 logs for every spec</strong>&nbsp;
         and visualizes <em className="wow-mage">"relevant"</em> spells on an encounter timeline.</p>
 
         <p>This lets you easily compare multiple high performing logs against each other, concerning when they use various important cooldowns.</p>
