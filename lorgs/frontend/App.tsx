@@ -32,7 +32,6 @@ export default function App() {
                     <Route path="/spec_ranking/:spec_slug/:boss_slug" component={SpecRankings} />
                     <Route path="/comp_ranking/search" component={CompSearch} />
                     <Route path="/comp_ranking/:boss_slug" component={CompRankings} />
-                    <Route path="/lorgmin" component={Admin} />
                     <Route path="/" component={Index} />
                 </Switch>
                 </Suspense>
