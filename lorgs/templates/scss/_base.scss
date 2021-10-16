@@ -61,6 +61,10 @@ a, a:hover, a:visited, a:active {
     white-space: normal !important;
 }
 
+.text-dark {
+    color: #303030; // only used on the help page
+}
+
 
 /*******************************************************************************
  *
@@ -76,6 +80,11 @@ a, a:hover, a:visited, a:active {
 
 .overflow-hidden {
     overflow: hidden;
+}
+
+.img-fluid {
+    max-width: 100%;
+    height: auto;
 }
 
 
