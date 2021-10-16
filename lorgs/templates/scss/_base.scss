@@ -1,12 +1,24 @@
-/* General Element Styles */
+/* General Element Styles
+
+
+    1) standard HTML Tags
+        1.1) html, body
+        1.2) text elements
+
+    2) Generic Styles used for any type of element
+        2.1) disabled
+
+    3) Borders
+
+
+*/
 
 @import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
 
 html,
 body {
-  height: 100%;
-  margin: 0;
-
+    height: 100%;
+    margin: 0;
 }
 
 
@@ -17,10 +29,13 @@ body {
     font-family: 'Lato', sans-serif;
     font-size: 16px;
     line-height: 1.25;
+    font-weight: 400;
     /*background: #36393f;*/
+    text-size-adjust: 100%;
+
 
     // always show scrollbar, to avoid weird layout changes
-    overflow-y: scroll;
+    // overflow-y: scroll;
 }
 
 * {
@@ -28,26 +43,64 @@ body {
 }
 
 
-// disable link text color and decoration
+
+// disable link text color
 a, a:hover, a:visited, a:active {
-  color: inherit;
-  // text-decoration: none;
+    color: inherit;
+    // text-decoration: none;
  }
 
 
-.tooltip {
-    padding: .4rem 0 !important;
+.text-black {
+    color: #000;
+}
+.text-muted {
+    color: #888 !important;
+}
+.text-wrap {
+    white-space: normal !important;
+}
 
-    // from bootstrap tooltip-inner
-    padding: 0.25rem 0.5rem !important;
-    margin: 0 !important;
 
-    color: #fff !important;
-    background-color: #000 !important;
-    opacity: .9;
+/*******************************************************************************
+ *
+ * 2) Generic Styles
+ *
+*******************************************************************************/
+
+/** 2.1) disabled style */
+.disabled {
+    color: grey !important;
+    text-decoration: none;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+
+/*******************************************************************************
+ *
+ * 3) Borders
+ *
+*******************************************************************************/
+.border {
+    border: 1px solid #424242;
+}
+
+.border-black {
+    border: 1px solid black;
+}
+
+.border-white {
+    border: 1px solid white;
+}
+
+.border-mid {
+    border-width: 1.25px;
+}
+
+.rounded {
     border-radius: 0.25rem !important;
-
-    font-size: 16px !important;
-    font-family: "Lato", sans-serif !important;
 }
 

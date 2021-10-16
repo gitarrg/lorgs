@@ -1,48 +1,25 @@
-import { get_fights } from "../../store/fights";
 import FILTERS from "../../filter_logic";
-
-import {PlayerName, BossName} from "./PlayerName"
-import type Fight from "../../types/fight";
-import type Actor from "../../types/actor";
+import PlayerNamesFight from "./PlayerNamesFight";
+import { get_fights } from "../../store/fights";
 import { useAppSelector } from "../../store/store_hooks";
-
-
-function create_boss(fight: Fight) {
-    if (!(fight.boss?.name)) {return}
-    return <BossName key="boss" fight={fight} boss={fight.boss} />
-}
-
-
-function create_player(fight: Fight, player: Actor) {
-    return <PlayerName key={`${fight.report_id}_${player.name}`} fight={fight} player={player} />
-}
-
-
-function create_players(fight: Fight) {
-    return fight.players.map(player => ( create_player(fight, player)))
-}
 
 
 export default function PlayerNamesList() {
 
     // get data
-    const mode = useAppSelector(state => state.ui.mode)
     const fights = useAppSelector(state => get_fights(state))
     const filters = useAppSelector(state => state.ui.filters)
 
     ///////////////////
     // apply filters
-    const visible_fights = fights.filter(fight => FILTERS.is_fight_visible(fight, filters))
+    const visible_fights = fights.filter(fight => FILTERS.is_fight_visible(fight, filters))  // TODO: add to fight-slice
 
     ///////////////////
     // render
     return (
-        <div className={`player_names_container ${mode}`}>
+        <div>
             {visible_fights.map((fight, i) => (
-                <div key={`fight_${i}`} className="player_names_fight">
-                    {create_boss(fight)}
-                    {create_players(fight)}
-                </div>
+                <PlayerNamesFight key={i} fight={fight} i={i}/>
             ))}
         </div>
     )

@@ -17,10 +17,10 @@
         grid-column: 1 / end;  // stretch first until last column
     }
 
-    hr {
-        margin: 0;
-        height: 0px;
-    }
+    // hr {
+    //     margin: 0;
+    //     height: 0px;
+    // }
 }
 
 
@@ -185,7 +185,7 @@
 // Styles for the input
 .count-input-group {
 
-    width: calc(24px + 2ch + 3ch);
+    // width: calc(24px + 2ch + 3ch);
     border-radius: 0.25rem;
     overflow: hidden;
     display: flex;
@@ -199,11 +199,13 @@
 
     ////////////////////////
     // Operator Dropdown
-   
     .op-dropdown {
         @include select_no_dropdown_arrow;
 
-        width: 2ch;
+        // width: 2ch;
+        padding-left: 0.3rem;
+        padding-right: 0.3rem;
+
         background: hsl(0, 0%, 50%);
         text-align: center;
         cursor: pointer;
@@ -226,7 +228,7 @@
 
         @include input_no_spinner;
 
-        width: 3ch;
+        width: 24px;  // match the icon size
         border: none;
         // border-top-right-radius: var(--border-radius);
         // border-bottom-right-radius: var(--border-radius);

@@ -1,12 +1,16 @@
 
 // Imports
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const path = require("path")
+
+const variables = require("./variables.js")
 
 // Constants
 const DEBUG = process.env.NODE_ENV !== "production";
+
 
 
 // Config
@@ -14,6 +18,9 @@ module.exports = {
 
     mode: process.env.NODE_ENV || 'development',
 
+    /***************************************************************************
+     * Input
+     */
     entry: {
         app: path.resolve(__dirname, "lorgs/frontend/App.tsx"),
         style: path.resolve(__dirname, "lorgs/templates/scss/main.scss"),
@@ -34,9 +41,26 @@ module.exports = {
         "reselect": "Reselect",
     },
 
+
+    /***************************************************************************
+     * Output
+     */
+    output: {
+        path: path.resolve(__dirname, "lorgs/static/_generated"),  // TODO: update this?
+        filename: '[name].js',
+        chunkFilename: '[name].[contenthash].bundle.js',
+        publicPath: "/static/_generated/",
+    },
+
+
+    /***************************************************************************
+     * Rules
+     */
+
     module: {
         rules: [
 
+            /************ Javascript ************/
             {
                 test: /\.[tj]sx?$/,  // jsx, tsx, js and ts
                 exclude: /node_modules/,
@@ -47,24 +71,65 @@ module.exports = {
                     }
                 }
             },
+
+            /********** global CSS/SCSS *********/
             {
                 test: /\.scss$/,
+                include: path.resolve(__dirname, "lorgs/templates/scss"),
                 use: [
                     MiniCssExtractPlugin.loader,
-                    "css-loader",   // Translates CSS into CommonJS
+                    "css-loader",  // Translates CSS into CommonJS
                     "sass-loader"   // Compiles Sass to CSS
                 ]
-            }
+            },
+
+            /********* CSS/SCSS Modules *********/
+            {
+                test: /\.scss$/,
+                exclude: path.resolve(__dirname, "lorgs/templates/scss"),
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    // "style-loader",
+                    {
+                        loader: "css-loader",  // Translates CSS into CommonJS
+                        options: {
+                            importLoaders: 1,
+                            modules: {
+                                localIdentName: DEBUG ? "[name]__[local]__[hash:base64:4]" : "[hash:base64:8]",
+                            }
+                        }
+                    },
+                    "sass-loader"   // Compiles Sass to CSS
+                ]
+            },
         ]
     },
 
-    output: {
-        path: path.resolve(__dirname, "lorgs/static/_generated"),
-        filename: '[name].js',
-        chunkFilename: '[name].[contenthash].bundle.js',
-    },
 
-    // for testing
+    /***************************************************************************
+     * Plugins
+     */
+    plugins: [
+        new MiniCssExtractPlugin(),
+
+
+        new HtmlWebpackPlugin({
+            template: "lorgs/templates/index.html",
+            minimize: !DEBUG,
+            hash: true, // append cache busting hash
+
+            templateParameters: {
+                ...variables.get_vars(process.env.NODE_ENV),
+                DEBUG: DEBUG,
+            },
+        }),
+        // new BundleAnalyzerPlugin(),
+    ],
+
+
+    /***************************************************************************
+     * Optimization
+     */
     optimization: {
 
         usedExports: true,  // tree shacking
@@ -80,7 +145,7 @@ module.exports = {
             }
         },
 
-        minimize: process.env.NODE_ENV == "production",
+        minimize: !DEBUG,
         minimizer: [new TerserPlugin({
             terserOptions: {
                 compress: {
@@ -90,8 +155,21 @@ module.exports = {
         })],
     },
 
-    plugins: [
-        new MiniCssExtractPlugin(),
-        // new BundleAnalyzerPlugin(),
-    ],
+
+    /***************************************************************************
+     * Dev Server Config
+     */
+    devServer: {
+
+        port: 9001,
+
+        static: {
+            directory: path.join(__dirname, "lorgs/static"),
+            publicPath: "/static",       // as "/"
+        },
+
+        historyApiFallback: {
+            index: '/static/index.html'
+        }
+    }
 }

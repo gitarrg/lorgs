@@ -1,0 +1,21 @@
+
+
+.header {
+    cursor: pointer;
+    user-select: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+
+    &:hover img {
+        border: 1px solid white;
+        transform: scale(1.2) translateY(-0.1rem);
+    }
+}
+
+.group {
+    display: flex;
+    align-items: start;
+    gap: 2px;
+}

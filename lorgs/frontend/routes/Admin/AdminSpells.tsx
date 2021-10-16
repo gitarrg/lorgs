@@ -7,7 +7,7 @@ import Spec from "../../types/spec";
 import { useDispatch } from 'react-redux'
 import { get_is_loading, sort_spell_types } from "../../store/ui";
 
-import "./AdminSpells.scss"
+import styles from "./AdminSpells.scss"
 
 ////////////////////////////////////////////////////////////////////////////////
 // SubNav
@@ -20,7 +20,7 @@ function SpecButton({spec_slug=""}) {
     if (!spec) { return null }
 
     return (
-        <NavLink to={`${url}/${spec_slug}`} className="admin_spells__spec_button" activeClassName="active">
+        <NavLink to={`${url}/${spec_slug}`} className={styles.spec_button} activeClassName="active">
             <img className={`icon-m wow-border-${spec.class.name_slug}`} src={spec.icon_path} />
         </NavLink>
     )

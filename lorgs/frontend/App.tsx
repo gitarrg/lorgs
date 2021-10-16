@@ -6,7 +6,7 @@ import data_store from "./store/store"
 import GlobalDataLoader from "./components/GlobalDataLoader";
 
 // Delayed Imports
-const Admin = lazy(() => import("./routes/Admin/Admin"));
+const Index = lazy(() => import("./routes/Index/Index"));
 const CompRankings = lazy(() => import("./routes/CompRankings"));
 const CompSearch = lazy(() => import("./routes/CompSearch"));
 const SpecRankings = lazy(() => import("./routes/SpecRankings"));
@@ -32,7 +32,7 @@ export default function App() {
                     <Route path="/spec_ranking/:spec_slug/:boss_slug" component={SpecRankings} />
                     <Route path="/comp_ranking/search" component={CompSearch} />
                     <Route path="/comp_ranking/:boss_slug" component={CompRankings} />
-                    <Route path="/lorgmin" component={Admin} />
+                    <Route path="/" component={Index} />
                 </Switch>
                 </Suspense>
             </Router>
