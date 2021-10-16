@@ -48,6 +48,12 @@ handlers:
     http_headers:
       lorrgs_route: static_files
 
+  # fix to avoid breaking the robots.txt
+  - url: /(robots\.txt)
+    static_files: static/\1
+    mime_type: text/plain
+    upload: static/(robots\.txt)
+
   # all other requests redirect to the index.html
   - url: /(.*)
     static_files: lorgs/static/_generated/index.html
