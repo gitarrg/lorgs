@@ -1,7 +1,7 @@
 
 
 // ~= data-tooltip != ""
-[data-tooltip]:not([data-tooltip=""]) {
+[data-tooltip] {
     --arrow-size: 8px;
     --tooltip-color: black;  // background
 
@@ -70,7 +70,7 @@
 
         transform:
             translateX(-50%) // center in X
-            translateY(calc(100% + 12px)) // no idea why its 12
+            translateY(calc(100% + 10px)) // no idea why its ~~12~~ 10 xD
         ;
     }
 }
