@@ -17,6 +17,8 @@ import parse from 'html-react-parser';
 import { get_tooltip } from '../../store/ui'
 import { useAppSelector } from '../../store/store_hooks';
 
+import styles from "./TimelineTooltip.scss"
+
 
 const TOOLTIP_DELAY = 500
 
@@ -52,11 +54,11 @@ export default function TimelineTooltip() {
     return (
         <div
             ref={ref}
-            className="timeline_tooltip"
+            className={styles.tooltip}
             style={{left: tooltip.position.x, top: tooltip.position.y, display: "None"}}
         >
-            <div className="timeline_tooltip_content">{tooltip_content}</div>
-            <div className="timeline_tooltip_arrow"></div>
+            <div className={styles.tooltip_content}>{tooltip_content}</div>
+            <div className={styles.tooltip_arrow}></div>
         </div>
     )
 }

@@ -18,6 +18,7 @@ import { RoleSpecsGroup } from '../../components/SettingsBar/RoleSpecDisplay'
 import { get_role } from '../../store/roles'
 import { get_spells_by_type } from '../../store/spells'
 import { useAppSelector } from '../../store/store_hooks';
+import styles from "./CompSettingsBar.scss"
 
 
 export default function CompSettingsBar() {
@@ -45,7 +46,7 @@ export default function CompSettingsBar() {
 
             <div className="flex-grow-1"/>
 
-            <Link to="/comp_ranking/search" className="comp-search-button btn btn-primary shadow">
+            <Link to="/comp_ranking/search" className={`${styles.search_button} btn btn-primary shadow`}>
                 Search
             </Link>
 

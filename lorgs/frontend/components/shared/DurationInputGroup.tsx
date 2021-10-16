@@ -1,5 +1,7 @@
 import {useState, useEffect } from 'react'
 import DurationInput from "./DurationInput";
+import styles from "./DurationInput.scss"
+
 
 /**
     A Group of two duration inputs separated by a dash.
@@ -42,7 +44,7 @@ export default function DurationInputGroup({
     return (
         <div className={`duration_input__group input-group ${className} ${is_empty ? "empty" : ""}`}>
             <DurationInput onChange={set_value_min} placeholder={placeholder_min}/>
-            <span className="duration_input__dash input-group-text">-</span>
+            <span className={`${styles.duration_input__dash} input-group-text`}>-</span>
             <DurationInput onChange={set_value_max} placeholder={placeholder_max} />
         </div>
     )

@@ -1,4 +1,5 @@
 import { createContext, useState } from 'react'
+import styles from "./ButtonGroup.scss"
 
 
 type ButtonGroupContextType = {
@@ -52,9 +53,9 @@ export default function ButtonGroup(
 
         <div className={m}>
 
-            {name && <small className={`button_group_header ${extra_class} ${active ? "" : "disabled"}`} onClick={onClick}>{name}</small>}
+            {name && <small className={`${styles.header} ${extra_class} ${active ? "" : "disabled"}`} onClick={onClick}>{name}</small>}
 
-            <div className="bg-dark p-1 rounded border align-items-start button_group">
+            <div className={`${styles.group} bg-dark p-1 rounded border`}>
                 <ButtonGroupContext.Provider value={group_context}>
                 {children}
                 </ButtonGroupContext.Provider>

@@ -16,7 +16,6 @@ import { load_fights } from '../store/fights';
 import { load_spec_spells } from '../store/specs';
 import { useAppSelector } from '../store/store_hooks';
 
-
 const INITIAL_FILTERS = {
 
     // hide raid cd's by default
@@ -96,7 +95,7 @@ export default function CompRankings() {
     ////////////////////////////////////////////////////////////////////////////
     // Render
     return (
-        <>
+        <div className={mode}>
             <div className="mt-3 flex-row d-flex flex-wrap-reverse">
                 <CompRankingsHeader />
                 <Navbar />
@@ -112,6 +111,6 @@ export default function CompRankings() {
                 <PlayerNamesList />
                 <TimelineCanvas />
             </div>
-        </>
+        </div>
     )
 }

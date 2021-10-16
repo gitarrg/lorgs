@@ -89,7 +89,7 @@ function _pin_first_fight(fights: Fight[]) {
 
 async function _load_spec_rankings(spec_slug : string, boss_slug: string) {
 
-    let url = `/api/spec_ranking/${spec_slug}/${boss_slug}?limit=100`;
+    const url = `/api/spec_ranking/${spec_slug}/${boss_slug}?limit=100`;
     const fight_data: {fights: Fight[]} = await fetch_data(url);
 
     // post process
@@ -104,12 +104,8 @@ async function _load_spec_rankings(spec_slug : string, boss_slug: string) {
 
 async function _load_comp_rankings(boss_slug : string, search="") {
 
-    let url = `/api/comp_ranking/${boss_slug}${search}`;
-    let response = await fetch(url);
-    if (response.status != 200) {
-        return [];
-    }
-    const fight_data = await response.json();
+    const url = `/api/comp_ranking/${boss_slug}${search}`;
+    const fight_data = await fetch_data(url);
     return fight_data.fights || []
 }
 
