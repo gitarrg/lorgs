@@ -40,7 +40,7 @@ function create_row(role: Role) {
             <div>
                 <img
                     className={`${styles.role_icon} wow-border-${role.code} icon-m rounded`}
-                    src={role.icon_path}
+                    src={role.icon_path ? role.icon_path : "/static/images/logo.svg"}
                     alt={role.name}
                 />
 

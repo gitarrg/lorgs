@@ -117,6 +117,7 @@ module.exports = {
             template: "lorgs/templates/index.html",
             minimize: !DEBUG,
             hash: true, // append cache busting hash
+            inject: 'body',
 
             templateParameters: {
                 ...variables.get_vars(process.env.NODE_ENV),
@@ -169,7 +170,7 @@ module.exports = {
         },
 
         historyApiFallback: {
-            index: '/static/index.html'
+            index: '/static/_generated/index.html'
         }
     }
 }

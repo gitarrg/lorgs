@@ -26,16 +26,16 @@
     text-align: center;
     // line-height: 65px;
 
-    &:hover {
+    &:hover:not(&:global.disabled ) {
         border-color: white;
         background: hsl(0, 0%, 30%);
     }
 
-    a {
-        // line-height: 2.5rem;
-        // vertical-align: middle;
-        border: 1px solid lime;
+    &:global.disabled {
+        a {
+            opacity: 0.7;
+            text-decoration: none !important;
+
+        }
     }
-
-
 }

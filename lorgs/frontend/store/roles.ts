@@ -1,6 +1,7 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { fetch_data } from '../api'
+import { LOGO_URL } from '../constants'
 import type Role from '../types/role'
 import { AppDispatch, RootState } from './store'
 
@@ -24,10 +25,32 @@ export function get_role(state: RootState, role_name: string) {
 // Slice
 //
 
+function create_placeholder_role(name: string, num_specs: number) {
+
+    const specs = Array.from({length: num_specs}, (x, i) => `placeholder:${i}`)
+
+    return {
+        id: 0,
+        code: name.toLowerCase(),
+        name: name,
+        specs: specs,
+        icon_path: LOGO_URL
+    }
+}
+
+
+const INITIAL_STATE = {
+    tank: create_placeholder_role("Tank", 6),
+    heal: create_placeholder_role("Heal", 6),
+    mdps: create_placeholder_role("MDPS", 13),
+    rdps: create_placeholder_role("RDPS", 11),
+}
+
+
 const SLICE = createSlice({
     name: "roles",
 
-    initialState: {} as { [key: string]: Role },
+    initialState: INITIAL_STATE as { [key: string]: Role },
 
     reducers: {
         set_roles: (state, action: PayloadAction<Role[]>) => {
