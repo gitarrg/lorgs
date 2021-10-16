@@ -1,8 +1,10 @@
 
 // Imports
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
 const path = require("path")
 
 // Constants
@@ -41,10 +43,10 @@ module.exports = {
      * Output
      */
     output: {
-        path: path.resolve(__dirname, "lorgs/dist"),
+        path: path.resolve(__dirname, "lorgs/static/_generated"),  // TODO: update this?
         filename: '[name].js',
         chunkFilename: '[name].[contenthash].bundle.js',
-        publicPath: "/dist/",
+        publicPath: "/static/_generated/",
     },
 
 
@@ -106,6 +108,13 @@ module.exports = {
      */
     plugins: [
         new MiniCssExtractPlugin(),
+
+
+        new HtmlWebpackPlugin({
+            template: "lorgs/templates/index.html",
+            minimize: !DEBUG,
+            hash: true, // append cache busting hash
+        }),
         // new BundleAnalyzerPlugin(),
     ],
 

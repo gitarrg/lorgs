@@ -26,7 +26,7 @@ env_variables:
 
   # Lorgs Config
   LORGS_CONFIG_NAME: lorgs.config.ProductionConfig
-  BUILD_TAG: {{BUILD_TAG}}
+  # BUILD_TAG: {{BUILD_TAG}}
   SECRET_KEY: {{SECRET_KEY}}
 
   # Third Party Credentials
@@ -40,8 +40,19 @@ env_variables:
 
 handlers:
 
+  # all API-Requests go to the flask backend
+  - url: /api/.*
+    script: auto
+
+  # server all files in /static as they are
   - url: /static
     static_dir: lorgs/static
+    http_headers:
+      lorrgs_route: static_files
 
-  - url: /.*
-    script: auto
+  # all other requests redirect to the index.html
+  - url: /(.*)
+    static_files: lorgs/static/_generated/index.html
+    upload: lorgs/static/_generated/index.html
+    http_headers:
+      lorrgs_route: app

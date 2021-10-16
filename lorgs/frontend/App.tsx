@@ -29,11 +29,11 @@ export default function App() {
             <Router>
                 <Suspense fallback={<div>Loading...</div>}>
                 <Switch>
-                    <Route path="/" exact={true} component={Index} />
                     <Route path="/spec_ranking/:spec_slug/:boss_slug" component={SpecRankings} />
                     <Route path="/comp_ranking/search" component={CompSearch} />
                     <Route path="/comp_ranking/:boss_slug" component={CompRankings} />
                     <Route path="/lorgmin" component={Admin} />
+                    <Route path="/" component={Index} />
                 </Switch>
                 </Suspense>
             </Router>

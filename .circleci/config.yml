@@ -163,3 +163,4 @@ workflows:
             branches:
               only:
                 - develop
+                - css_cleanup
