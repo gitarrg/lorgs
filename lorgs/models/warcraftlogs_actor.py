@@ -73,13 +73,6 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
     ##########################
     # Attributes
     #
-
-    # @property
-    # def spells_used(self):
-    #     """Only the spells this player has used in this fight."""
-    #     used_spell_ids = set(cast.spell_id for cast in self.casts)
-    #     return [spell for spell in self.spec.spells if spell.spell_id in used_spell_ids]
-
     @property
     def lifetime(self):
         return self.fight.duration
@@ -141,7 +134,7 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
 class Player(BaseActor):
     """A PlayerCharater in a Fight."""
 
-    source_id = me.IntField(primary_key=True) # TODO: rename?
+    source_id = me.IntField(primary_key=True)
     name = me.StringField(max_length=12) # names can be max 12 chars
     total = me.FloatField()
     spec_slug = me.StringField(required=True)
@@ -254,25 +247,6 @@ class Boss(BaseActor):
     @property
     def raid_boss(self):
         return RaidBoss.get(id=self.boss_id)
-
-    @property
-    def spec(self):
-        # dummy for now, to make the html templates work
-        return {}  # TODO
-
-    @property
-    def percent_color(self):
-        if self.percent < 3:
-            return "astounding"
-        if self.percent < 10:
-            return "legendary"
-        if self.percent < 25:
-            return "epic"
-        if self.percent < 50:
-            return "rare"
-        if self.percent < 75:
-            return "uncommon"
-        return "common"
 
     def as_dict(self):
         return {

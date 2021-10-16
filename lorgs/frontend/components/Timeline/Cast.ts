@@ -157,7 +157,7 @@ export default class Cast extends Konva.Group {
         ////////////////////////////
         // Setup Events
         //
-        this.mouse_event_bbox.on('mousedown', (e) => this.handle_mousedown(e));  // TODO: only on left click
+        this.mouse_event_bbox.on('mousedown', (e) => this.handle_mousedown(e));
         this.mouse_event_bbox.on('mouseover', () => {this.hover(true)});
         this.mouse_event_bbox.on('mouseout', () => {this.hover(false)});
 
@@ -176,29 +176,29 @@ export default class Cast extends Konva.Group {
         if (!stage) { return}
 
         // default state
-        this.cast_text && this.cast_text.fontStyle("normal");
-        this.cast_text && this.cast_text.fill("white");
-        this.cast_duration && this.cast_duration.opacity(0.5)
-        this.cast_cooldown && this.cast_cooldown.opacity(0.1)
-        this.cast_icon && this.cast_icon.opacity(1.0)
-        this.cast_icon && this.cast_icon.strokeWidth(1)
+        this.cast_text?.fontStyle("normal");
+        this.cast_text?.fill("white");
+        this.cast_duration?.opacity(0.5)
+        this.cast_cooldown?.opacity(0.1)
+        this.cast_icon?.opacity(1.0)
+        this.cast_icon?.strokeWidth(1)
         this.opacity(1.0)
 
         if (stage.has_selection) {
             if (this.selected) {
-                this.cast_text && this.cast_text.fontStyle("bold");
-                this.cast_duration && this.cast_duration.opacity(0.85)
-                this.cast_cooldown && this.cast_cooldown.opacity(0.4)
+                this.cast_text?.fontStyle("bold");
+                this.cast_duration?.opacity(0.85)
+                this.cast_cooldown?.opacity(0.4)
             } else {
                 this.opacity(.5)
-                this.cast_text && this.cast_text.fill("#ccc")
-                this.cast_icon && this.cast_icon.opacity(0.5)
-                this.cast_icon && this.cast_icon.strokeWidth(0)
+                this.cast_text?.fill("#ccc")
+                this.cast_icon?.opacity(0.5)
+                this.cast_icon?.strokeWidth(0)
             }
         }
         else if (this.hovering) {
-            this.cast_duration && this.cast_duration.opacity(0.75)
-            this.cast_cooldown && this.cast_cooldown.opacity(0.3)
+            this.cast_duration?.opacity(0.75)
+            this.cast_cooldown?.opacity(0.3)
         }
     }
 
@@ -207,16 +207,16 @@ export default class Cast extends Konva.Group {
     //
 
     _handle_display_settings(settings: { [key: string]: boolean}) {
-        this.cast_icon && this.cast_icon.visible(settings.show_casticon)
-        this.cast_text && this.cast_text.visible(settings.show_casttime)
-        this.cast_cooldown && this.cast_cooldown.visible(settings.show_cooldown)
-        this.cast_duration && this.cast_duration.visible(settings.show_duration)
+        this.cast_icon?.visible(settings.show_casticon)
+        this.cast_text?.visible(settings.show_casttime)
+        this.cast_cooldown?.visible(settings.show_cooldown)
+        this.cast_duration?.visible(settings.show_duration)
     }
 
     _handle_zoom_change(scale_x: number) {
         this.x(scale_x * this.timestamp)
-        this.cast_cooldown && this.cast_cooldown.width(this.spell.cooldown * scale_x)
-        this.cast_duration && this.cast_duration.width(this.spell.duration * scale_x)
+        this.cast_cooldown?.width(this.spell.cooldown * scale_x)
+        this.cast_duration?.width(this.spell.duration * scale_x)
     }
 
     _handle_spell_display(payload: { [key: number]: boolean }) {

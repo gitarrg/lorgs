@@ -15,7 +15,7 @@ export default function HeaderLogo({wow_class = "wow-boss"}) {
     return (
         <div className={styles.container}>
             <Link to="/">
-                <svg className={`${styles.logo} ${wow_class} wow-border icon-l bg-dark rounded grow-when-touched`}>
+                <svg className={`${styles.logo} ${wow_class} icon-l bg-dark rounded grow-when-touched`}>
                     {LOGO_SVG}
                 </svg>
             </Link>

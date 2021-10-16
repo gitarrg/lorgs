@@ -13,9 +13,6 @@ class WowRole(base.Model):
         self.code = code or name.lower()
         self.specs = []
 
-        # still used on the flask index page
-        self.icon = f"roles/{self.code}.jpg"
-
     def __repr__(self):
         return f"<Role({self.name})>"
 
@@ -24,11 +21,6 @@ class WowRole(base.Model):
 
     def __lt__(self, other):
         return self.id < other.id
-
-    # @property
-    # def specs(self):
-    #     from lorgs.models.wow_spec import WowSpec # circular import as WowSpec also needs WowRole
-    #     return [spec for spec in WowSpec.all if spec.role == self]
 
     def as_dict(self):
         return {

@@ -124,6 +124,8 @@ module.exports = {
                 DEBUG: DEBUG,
             },
         }),
+
+
         // new BundleAnalyzerPlugin(),
     ],
 

@@ -29,7 +29,7 @@ function SpellTypeGroup({spec, spell_type}: {spec: Spec, spell_type: string}  ) 
     // check if there is a dedicated "spec" for the type (eg.: trinkets and potions)
     const type_spec = useAppSelector(state => get_spec(state, spell_type))
     spec = type_spec || spec
-    const extra_class = "wow-text wow-" + spec.class.name_slug
+    const extra_class = "wow-" + spec.class.name_slug
 
     const used_spells = useAppSelector(state => get_used_spells(state))
     spells = spells.filter(spell_id =>  used_spells.includes(spell_id))

@@ -37,23 +37,6 @@
 }
 
 
-/* Colors yoinked from Warcraftlogs*/
-$qualities: (
-    "common": #ccc,
-    "uncommon": #0f8000,
-    "rare": #0070ff,
-    "epic": rgb(163,53,238),
-    "legendary": rgb(255,128,0),
-    "astounding": rgb(226,104,168),
-    "artifact": rgb(229,204,128)
-);
-
-
-@each $name, $color in $qualities {
-    .text-#{$name} {color: $color;}
-}
-
-
 $classes: (
     // qualities
     "common",
@@ -105,19 +88,8 @@ $classes: (
     .wow-border-#{$name} {
         border: 1px solid var(--wow-#{$name});
     }
-    // .wow-bg-#{$name} {background-color: $color;} // Never used so far
-}
 
-// to be used with eg.: ".wow-druid"
-.wow-text {
-    color: var(--wow-color);
-    text-decoration-color: var(--wow-color);
 }
-
-.wow-border {
-    border: 1px solid var(--wow-color);
-}
-
 
 // slightly tuned down the colors for Hunter and Monk
 // .wow-bg-hunter {background-color: #7e9c54}

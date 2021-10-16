@@ -18,7 +18,6 @@ function get_link(mode : string, boss: Boss, spec?: Spec) {
 
 export default function NavbarBossButton({boss} : {boss: Boss}) {
 
-    // todo: include zone in api?
     const mode = useAppSelector(state => state.ui.mode)
     const spec = useAppSelector(state => get_spec(state))
     const link = get_link(mode, boss, spec)
@@ -27,10 +26,11 @@ export default function NavbarBossButton({boss} : {boss: Boss}) {
     const { search } = useLocation();
     const full_link = `${link}${search}`
 
+    // Render
     return (
         <NavLink to={full_link} className={styles.button} activeClassName="active" data-tooltip={boss.full_name} data-tooltip-dir="down">
             <img
-                className="icon-m wow-boss wow-border rounded grow-when-touched"
+                className="icon-m wow-border-boss rounded grow-when-touched"
                 src={boss.icon_path}
                 alt={boss.full_name}
             />

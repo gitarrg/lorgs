@@ -160,25 +160,12 @@
     }
 }
 
-.player-spec-search {
-}
-
 
 .player-spec-search-row {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     grid-auto-flow: rows;
 
-}
-
-
-
-
-.role-specs-group {
-
-    // grid-auto-columns: 1fr;
-    // row-count: 3;
-    // gap: 0.25rem;
 }
 
 
