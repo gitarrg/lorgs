@@ -1,9 +1,9 @@
 
 
 
-import React, { Fragment } from 'react'
+import { Fragment } from 'react'
 import { Link } from 'react-router-dom'
-import { get_roles } from '../../store/roles'
+import { get_player_roles } from '../../store/roles'
 import { get_spec } from '../../store/specs'
 import { useAppSelector } from '../../store/store_hooks'
 import type Role from '../../types/role'
@@ -60,12 +60,9 @@ function create_row(role: Role) {
 }
 
 
-export default function IndexParses() {
+export default function IndexSpecs() {
 
-    const roles_map = useAppSelector(state => get_roles(state))
-    let roles = Object.values(roles_map)
-    roles = roles.filter(role => role.id < 1000)
-
+    const roles = useAppSelector(state => get_player_roles(state))
 
     return (
         <div>

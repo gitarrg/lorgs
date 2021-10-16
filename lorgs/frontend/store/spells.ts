@@ -12,7 +12,7 @@ import { SpellDict } from '../types/spell'
 const ICON_ROOT = "https://wow.zamimg.com/images/wow/icons/small"
 
 
-interface SpellSliceState {
+export interface SpellSliceState {
     /** all spells */
     all_spells: SpellDict
 
@@ -148,8 +148,8 @@ const SLICE = createSlice({
     reducers: {
 
         set_spells: (state, action: PayloadAction<SpellDict>) => {
-            state = INITIAL_STATE
-            return _add_spells_to_state(state, action.payload)
+            const new_state = {...INITIAL_STATE}
+            return _add_spells_to_state(new_state, action.payload)
         },
 
         /**

@@ -8,14 +8,16 @@ import { kFormatter } from "../../utils"
 import { useAppSelector } from "../../store/store_hooks";
 
 import styles from "./PlayerName.scss"
+import { get_spec } from "../../store/specs";
+import { get_role } from "../../store/roles";
 
 
 function spec_ranking_color(i = 0) {
     if (i == -1) { return "" } else
-    if (i == 1) { return "wow-artifact wow-text" } else
-    if (i <= 25) { return "wow-astounding wow-text" } else
-    if (i <= 100) { return "wow-legendary wow-text" } else
-    { return "wow-epic wow-text" }
+    if (i == 1) { return "wow-artifact" } else
+    if (i <= 25) { return "wow-astounding" } else
+    if (i <= 100) { return "wow-legendary" } else
+    { return "wow-epic" }
 }
 
 
@@ -24,7 +26,6 @@ export function BossName({fight, boss} : {fight: Fight, boss: Actor}) {
     ///////////////////
     // hooks
     const filters = useAppSelector(state => state.ui.filters)
-    // if (props.fight.loading) { return SKELETON_PLAYER_NAME }
     const boss_type = useAppSelector(state => get_boss(state, boss.name))
 
     ///////////////////
@@ -52,6 +53,8 @@ export function PlayerName({fight, player} : {fight: Fight, player: Actor}) {
     // hooks
     const mode = useAppSelector(state => state.ui.mode)
     const filters = useAppSelector(state => state.ui.filters)
+    const spec = useAppSelector(state => get_spec(state, player.spec))
+    const role = useAppSelector(state => get_role(state, player.role))
     const mode_spec = mode == MODES.SPEC_RANKING
     const mode_comp = mode == MODES.COMP_RANKING
 
@@ -62,9 +65,6 @@ export function PlayerName({fight, player} : {fight: Fight, player: Actor}) {
 
     ///////////////////
     // vars
-    // TODO: fetch from slice
-    const spec_img_path = player.spec && `/static/images/specs/${player.spec}.jpg`
-    const role_img_path = player.role && `/static/images/roles/${player.role}.jpg`
     const report_url = `${WCL_URL}/reports/${fight.report_id}#fight=${fight.fight_id}`
 
     ///////////////////
@@ -73,8 +73,8 @@ export function PlayerName({fight, player} : {fight: Fight, player: Actor}) {
         <div className={`${styles.player_name} ${spec_ranking_color(player.rank)}`}>
 
             <a target="_blank" href={report_url}>
-                {mode_comp && <img className={styles.player_name__role_icon} src={role_img_path}></img>}
-                <img className={styles.player_name__spec_icon} src={spec_img_path}></img>
+                {mode_comp && <img className={styles.player_name__role_icon} src={role.icon_path}></img>}
+                <img className={styles.player_name__spec_icon} src={spec.icon_path}></img>
 
                 <span className={`${styles.player_name__name} wow-${player.class}`}>{player.name}</span>
                 {mode_spec && player.rank && <span className={styles.player_name__rank}>#{player.rank}</span>}

@@ -1,19 +1,27 @@
-
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSelector } from 'reselect'
 import { fetch_data } from '../api'
 import { LOGO_URL } from '../constants'
 import type Role from '../types/role'
 import { AppDispatch, RootState } from './store'
 
 
-
 ////////////////////////////////////////////////////////////////////////////////
-// Actions
+// Selectors
 //
 
 export function get_roles(state: RootState) {
     return state.roles
 }
+
+
+export const get_player_roles = createSelector<RootState, { [key: string]: Role }, Role[]>(
+    get_roles,
+    (roles_map ) => {
+        const roles = Object.values(roles_map)
+        return roles.filter(role => role.id < 1000)
+    }
+)
 
 
 export function get_role(state: RootState, role_name: string) {

@@ -83,7 +83,7 @@ export interface FilterValues {
 }
 
 
-interface UiSliceState {
+export interface UiSliceState {
 
     mode: "none" | "spec_ranking" | "comp_ranking"
 

@@ -1,6 +1,6 @@
 import NavbarGroup from './NavbarGroup';
 import NavbarSpecRoleButton from './NavbarSpecRoleButton';
-import { get_roles } from "../../store/roles"
+import { get_player_roles } from "../../store/roles"
 import { useAppSelector } from '../../store/store_hooks';
 
 
@@ -9,9 +9,7 @@ import { useAppSelector } from '../../store/store_hooks';
 */
 export default function NavbarSpecGroup() {
 
-    let roles_map = useAppSelector(state => get_roles(state))
-    let roles = Object.values(roles_map)
-    roles = roles.filter(role => role.id < 1000)
+    const roles = useAppSelector(state => get_player_roles(state))
 
     return (
         <NavbarGroup>

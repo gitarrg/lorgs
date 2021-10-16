@@ -12,6 +12,7 @@
 
     // pick up the color set from "wow-<classname>"
     fill: var(--wow-color);
+    border: 1px solid var(--wow-color);
     cursor: pointer;
 
     &:hover {
