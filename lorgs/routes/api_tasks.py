@@ -25,4 +25,9 @@ def create_task(url):
             "relative_uri": url
         }
     }
+
+    if flask.current_app.config["LORRGS_DEBUG"]:
+        print("create_task", url)
+        return
+
     return google_task_client.create_task(request={"parent": parent, "task": task})

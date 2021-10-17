@@ -4,7 +4,7 @@
 cron:
 
 - description: "reload all specs"
-  url: /api/task/load_spec_ranking/all
+  url: /api/task/load_spec_ranking/all/all
   schedule: every day 04:00
   timezone: Europe/London
   retry_parameters:
