@@ -1,20 +1,21 @@
-
-import { useEffect } from 'react'
-import { useParams, useLocation } from 'react-router-dom';
 import { useDispatch, batch } from 'react-redux'
+import { useEffect } from 'react'
+import { useParams, useLocation } from 'react-router-dom'
+import { useTitle } from 'react-use'
 
 import * as ui_store from "../store/ui"
-import CompRankingsHeader from './CompRankings/CompRankingsHeader';
-import CompSettingsBar from './CompRankings/CompSettingsBar';
+import CompRankingsHeader from './CompRankings/CompRankingsHeader'
+import CompSettingsBar from './CompRankings/CompSettingsBar'
 import LoadingOverlay from "./../components/shared/LoadingOverlay"
 import Navbar from "./../components/Navbar/Navbar"
 import PlayerNamesList from "./../components/PlayerNames/PlayerNamesList"
 import TimelineCanvas from "./../components/Timeline/TimelineCanvas"
-import type Boss from '../types/boss';
-import { get_boss, load_boss_spells } from '../store/bosses';
-import { load_fights } from '../store/fights';
-import { load_spec_spells } from '../store/specs';
-import { useAppSelector } from '../store/store_hooks';
+import type Boss from '../types/boss'
+import { get_boss, load_boss_spells } from '../store/bosses'
+import { load_fights } from '../store/fights'
+import { load_spec_spells } from '../store/specs'
+import { useAppSelector } from '../store/store_hooks'
+
 
 const INITIAL_FILTERS = {
 
@@ -24,13 +25,6 @@ const INITIAL_FILTERS = {
         "deathknight": false,
         "demonhunter": false,
     }
-
-}
-
-
-function update_title(boss: Boss) {
-    if (!boss) { return }
-    document.title = `Lorrgs: Comp Ranking: ${boss.full_name}`
 }
 
 
@@ -79,7 +73,7 @@ export default function CompRankings() {
     useEffect(() => { dispatch(ui_store.set_boss_slug(boss_slug)) }, [boss_slug])
 
     // update title once boss & spec are loaded
-    useEffect(() => { update_title(boss)  }, [boss])
+    useTitle(`Lorrgs: Comp Ranking: ${boss?.full_name || "..."}`)
 
     // load boss spells, once boss is loaded
     useEffect(() => {
