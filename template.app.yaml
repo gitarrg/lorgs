@@ -58,6 +58,6 @@ handlers:
   - url: /(.*)
     static_files: lorgs/static/_generated/index.html
     upload: lorgs/static/_generated/index.html
-    expiration: 1h # shorter caching to allow updates
+    expiration: 10m # don't cache the html, as it would cache the old chunk-id's
     http_headers:
       lorrgs_route: app
