@@ -46,7 +46,7 @@ module.exports = {
      * Output
      */
     output: {
-        path: path.resolve(__dirname, "lorgs/static/_generated"),  // TODO: update this?
+        path: path.resolve(__dirname, "lorgs/static/_generated"),
         filename: '[name].js',
         chunkFilename: '[name].[contenthash].bundle.js',
         publicPath: "/static/_generated/",
@@ -127,7 +127,10 @@ module.exports = {
         }),
 
 
-        // new BundleAnalyzerPlugin(),
+        new BundleAnalyzerPlugin({
+            analyzerMode: 'disabled', // will be used via CLI
+            generateStatsFile: true,
+        }),
     ],
 
 
@@ -137,17 +140,6 @@ module.exports = {
     optimization: {
 
         usedExports: true,  // tree shacking
-
-        splitChunks: {
-            cacheGroups: {
-                // group for all the node modules
-                vendors: {
-                    test: /[\\/]node_modules[\\/]/,
-                    name: "vendor",
-                    chunks: "all",
-                }
-            }
-        },
 
         minimize: !DEBUG,
         minimizer: [new TerserPlugin({
