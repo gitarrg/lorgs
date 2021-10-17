@@ -1,0 +1,18 @@
+
+
+.container {
+
+    --hover-scale: 1.05;
+
+    cursor: pointer;
+
+    :global .icon-l {
+        border-width: 1.5px;
+    }
+
+
+    &:hover {
+        border-color: white;
+        background: hsl(0, 0%, 30%);
+    }
+}

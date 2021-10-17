@@ -1,9 +1,9 @@
 
-import React from 'react'
 import { Link } from 'react-router-dom'
 import IndexSpecs from './IndexSpecs'
 import styles from "./Index.scss"
 import IndexLinks from './IndexLinks'
+import IndexCompsGroup from './IndexCompsGroup'
 
 const INFO_TEXT = <div>
     <h3>What is this?</h3>
@@ -40,23 +40,6 @@ const DISCLAIMER = <div>
 </div> // disclaimer
 
 
-const TOP_REPORTS = <div>
-    <h3>Top Reports by Comp:</h3>
-    <div className="bg-dark rounded border p-2">
-
-        <Link to="/comp_ranking/search" className="hover_grow_source">
-            <div className="d-flex align-items-center">
-                <img className="icon-spec icon-m rounded mr-1 wow-border-heal hover_grow_target" src="/static/images/roles/heal.jpg" />
-                <span>Comp Reports</span>
-            </div>
-        </Link>
-
-        <small className="text-muted">(🚧 Work in progress. 🚧)</small>
-    </div>
-</div>
-
-
-
 export default function Index() {
 
     return (
@@ -67,7 +50,7 @@ export default function Index() {
             </div>
             <div className={styles.col_right}>
                 <IndexSpecs />
-                {TOP_REPORTS}
+                <IndexCompsGroup />
                 <IndexLinks />
             </div>
         </div>

@@ -1,8 +1,6 @@
-
-
-
 import { Fragment } from 'react'
 import { Link } from 'react-router-dom'
+import Icon from '../../components/shared/Icon'
 import { get_player_roles } from '../../store/roles'
 import { get_spec } from '../../store/specs'
 import { useAppSelector } from '../../store/store_hooks'
@@ -20,11 +18,7 @@ function SpecButton({spec_slug=""}) {
 
     return (
         <Link to={`/spec_ranking/${spec_slug}/${DEFAULT_BOSS}`} data-tooltip={spec.full_name}>
-            <img
-                className={`icon-m rounded wow-border-${spec.class.name_slug}`}
-                src={spec.icon_path}
-                alt={spec.full_name}
-                />
+            <Icon spec={spec} alt={spec.full_name} />
         </Link>
     )
 }
@@ -38,11 +32,7 @@ function create_row(role: Role) {
 
             {/* Wrapped Icon+Label in one div, to better align the label */}
             <div>
-                <img
-                    className={`${styles.role_icon} wow-border-${role.code} icon-m rounded`}
-                    src={role.icon_path ? role.icon_path : "/static/images/logo.svg"}
-                    alt={role.name}
-                />
+                <Icon spec={role} alt={role.name} />
 
                 <span className={styles.role_name}>
                     {role.name}
