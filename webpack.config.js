@@ -110,8 +110,9 @@ module.exports = {
      * Plugins
      */
     plugins: [
-        new MiniCssExtractPlugin(),
-
+        new MiniCssExtractPlugin({
+            filename: "[name].[contenthash].bundle.css",
+        }),
 
         new HtmlWebpackPlugin({
             template: "lorgs/templates/index.html",

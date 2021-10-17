@@ -1,9 +1,14 @@
 /* Styles used for general/shared Design. */
 
 
+:root {
+    --bg-dark: #303030;
+    --bg-dark-hover: hsl(0, 0%, 30%);
+}
+
 
 .bg-dark {
-    background-color: #303030;
+    background-color: var(--bg-dark);
 }
 
 .bg-warning {
