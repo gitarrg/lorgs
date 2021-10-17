@@ -9,15 +9,18 @@
 .logo {
     vertical-align: top; // align inside the div
     margin-top: -1.25px; // offset for border
-
-    // pick up the color set from "wow-<classname>"
-    fill: var(--wow-color);
-    border: 1px solid var(--wow-color);
     cursor: pointer;
 
+    // pick up the color set from "wow-<classname>"
+    color: var(--wow-color);
+    border: 1px solid currentColor;
+
+    path {
+        fill: currentColor;
+    }
+
     &:hover {
-        fill: white;
-        border-color: white;
+        color: white;
         transform: scale(1.1);
     }
 

@@ -1,3 +1,5 @@
+import DiscordLogo from '../../assets/DiscordLogo'
+import PatreonLogo from '../../assets/PatreonLogo'
 import { DISCORD_LINK, PATREON_LINK } from '../../constants'
 
 import style from "./IndexLink.scss"
@@ -27,15 +29,14 @@ export default function IndexLinks() {
                 </LinkButton>
 
                 <LinkButton url={DISCORD_LINK}>
-                    <img src="/static/images/icons/discord_logo.svg" alt="discord logo" />
+                    <DiscordLogo />
                     <span>Discord</span>
                 </LinkButton>
 
                 <LinkButton url={PATREON_LINK}>
-                    <img src="/static/images/icons/patreon_logo.svg" alt="patreon logo" />
+                    <PatreonLogo />
                     <span>Patreon</span>
                 </LinkButton>
-
 
             </div>
         </div>
