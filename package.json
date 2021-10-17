@@ -11,6 +11,7 @@
   "scripts": {
     "build": "NODE_ENV=production webpack",
     "build_dev": "webpack --watch",
+    "bundle-size": "NODE_ENV=production webpack && webpack-bundle-analyzer --port 4200 lorgs/static/_generated/stats.json",
     "server": "webpack serve",
     "format_app_yaml": "envsub --syntax handlebars template.app.yaml app.yaml"
   },
