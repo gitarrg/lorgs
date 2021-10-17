@@ -23,7 +23,7 @@ export default function IndexLinks() {
 
                 <LinkButton url="/help">
                     <i className="fas fa-info-circle"></i>
-                    Help
+                    <span>Help</span>
                 </LinkButton>
 
                 <LinkButton url={DISCORD_LINK}>
