@@ -1,8 +1,7 @@
 /* Page/Form to search for specific Comps*/
-
-import { useEffect } from 'react'
-import { useHistory } from 'react-router-dom';
-import { useForm, FormProvider } from "react-hook-form";
+import { useTitle } from 'react-use'
+import { useHistory } from 'react-router-dom'
+import { useForm, FormProvider } from "react-hook-form"
 
 import BossSelect from './CompSearch/BossSelect'
 import BossSelection from './CompSearch/BossSelection'
@@ -10,8 +9,8 @@ import PlayerRoleSearch from './CompSearch/PlayerRoleSearch'
 import PlayerSelection from './CompSearch/PlayerSelection'
 import PlayerSpecSearch from './CompSearch/PlayerSpecSearch'
 import SearchSubmitButton from './CompSearch/SearchSubmitButton'
-import KilltimeGroup from './CompSearch/KilltimeGroup';
-import type { CompCountMap } from '../components/CompPreview';
+import KilltimeGroup from './CompSearch/KilltimeGroup'
+import type { CompCountMap } from '../components/CompPreview'
 
 
 type FormValues = {
@@ -81,9 +80,7 @@ export default function CompSearch() {
     ////////////////////////////////////////////////////////////////////////////
     // Hooks Part2
     //
-    useEffect(() => {
-        document.title = "Lorrgs: Comp Search"
-    }, [])
+    useTitle("Lorrgs: Comp Search")
 
 
     ////////////////////////////////////////////////////////////////////////////

@@ -1,8 +1,8 @@
 
-
+import { useDispatch } from 'react-redux'
 import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useTitle } from 'react-use'
 
 import * as ui_store from "../store/ui"
 import LoadingOverlay from "./../components/shared/LoadingOverlay"
@@ -11,25 +11,10 @@ import PlayerNamesList from "./../components/PlayerNames/PlayerNamesList"
 import SpecRankingsHeader from './SpecRankings/SpecRankingsHeader'
 import SpecSettingsBar from './SpecRankings/SpecSettingsBar'
 import TimelineCanvas from "./../components/Timeline/TimelineCanvas"
-import type Boss from '../types/boss'
-import type Spec from '../types/spec'
 import { get_boss, load_boss_spells } from '../store/bosses'
 import { get_spec, load_spec_spells } from '../store/specs'
 import { load_fights } from "../store/fights"
 import { useAppSelector } from '../store/store_hooks'
-
-
-type SpecRankingsParams = {
-    spec_slug: string
-    boss_slug: string
-}
-
-
-function update_title(boss?: Boss, spec?: Spec) {
-    if (!boss || !spec) { return }
-    document.title = `Lorrgs: ${spec.full_name} vs. ${boss.full_name}`
-}
-
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -40,7 +25,7 @@ export default function SpecRankings() {
 
     ////////////////////////////////////////////////////////////////////////////
     // Hooks
-    const { spec_slug, boss_slug } = useParams<SpecRankingsParams>();
+    const { spec_slug, boss_slug } = useParams<{spec_slug: string, boss_slug: string}>();
     const dispatch = useDispatch()
     const is_loading = useAppSelector(state => ui_store.get_is_loading(state))
     const boss = useAppSelector(state => get_boss(state, boss_slug))
@@ -52,6 +37,7 @@ export default function SpecRankings() {
     ////////////////////////////////////////////////////////////////////////////
     // Update State
     //
+    useTitle(`Lorrgs: ${spec?.full_name || "..."} vs. ${boss?.full_name || "..."}`)
 
     // set UI values
     useEffect(() => { dispatch(ui_store.set_mode(mode)) }, [])
@@ -69,9 +55,6 @@ export default function SpecRankings() {
         if (boss.loaded) { return } // skip if we already have them
         dispatch(load_boss_spells(boss.full_name_slug))
     }, [boss])
-
-    // update title once boss & spec are loaded
-    useEffect(() => { update_title(boss, spec)  }, [boss, spec])
 
     // load fights
     useEffect(() => {

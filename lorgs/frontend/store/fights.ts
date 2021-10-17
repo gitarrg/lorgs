@@ -135,3 +135,4 @@ export function load_fights(mode: string, {boss_slug, spec_slug="", search=""} :
         dispatch({type: "ui/set_loading", payload: {key: "fights", value: false}})
     } // async dispatch
 }
+

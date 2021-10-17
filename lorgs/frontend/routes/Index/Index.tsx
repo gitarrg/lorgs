@@ -1,9 +1,10 @@
 
-import { Link } from 'react-router-dom'
+import { useTitle } from 'react-use'
 import IndexSpecs from './IndexSpecs'
 import styles from "./Index.scss"
 import IndexLinks from './IndexLinks'
 import IndexCompsGroup from './IndexCompsGroup'
+
 
 const INFO_TEXT = <div>
     <h3>What is this?</h3>
@@ -41,6 +42,8 @@ const DISCLAIMER = <div>
 
 
 export default function Index() {
+
+    useTitle("Lorrgs: Index")
 
     return (
         <div className={`${styles.container} mt-5`}>
