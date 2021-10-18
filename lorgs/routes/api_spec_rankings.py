@@ -67,7 +67,15 @@ def status():
 #
 
 @blueprint.route("/task/load_spec_ranking/<string:spec_slug>/<string:boss_slug>")
-def task_load_spec_rankings(spec_slug="", boss_slug=""):
+def task_load_spec_rankings_single(spec_slug="", boss_slug=""):
+    url = f"/api/load_spec_ranking/{spec_slug}/{boss_slug}"
+    api_tasks.create_task(url)
+    return f"submitted: {spec_slug} vs {boss_slug}"
+
+
+@blueprint.route("/task/load_spec_ranking/all/<string:boss_slug>")
+@blueprint.route("/task/load_spec_ranking/<string:spec_slug>/all")
+def task_load_spec_rankings_multi(spec_slug="all", boss_slug="all"):
 
     bosses = [boss_slug]
     specs = [spec_slug]
@@ -83,7 +91,7 @@ def task_load_spec_rankings(spec_slug="", boss_slug=""):
     # create the tasks
     for spec_slug in specs:
         for boss_slug in bosses:
-            url = f"/api/load_spec_ranking/{spec_slug}/{boss_slug}"
+            url = f"/api/task/load_spec_ranking/{spec_slug}/{boss_slug}"
             api_tasks.create_task(url)
 
     # return some status info
