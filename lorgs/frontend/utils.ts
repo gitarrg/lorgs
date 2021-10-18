@@ -2,7 +2,15 @@
 
 // FIXME: why does this take ms?
 export function toMMSS(seconds: number) {
-    return new Date(seconds * 1000).toISOString().substr(14, 5);
+
+    seconds = seconds.toFixed(0)
+    let sign = ""
+    if (seconds < 0) { // events that occur prepull
+        seconds *= -1.0;
+        sign = "-"
+    }
+    const str = new Date(seconds * 1000).toISOString().substr(14, 5);
+    return `${sign}${str}`
 }
 
 

@@ -1,8 +1,13 @@
 """The Reason why all these classes are prefixes with "wow"."""
 
+# IMPORT STANDARD LIBRARIES
+import typing
+
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
 from lorgs.models import base
+from lorgs.models.wow_spec import WowSpec
+from lorgs.models.wow_spell import WowSpell
 
 
 class WowClass(base.Model):
@@ -11,10 +16,12 @@ class WowClass(base.Model):
     def __init__(self, id: int, name: str, color: str = ""):
 
         # int: class id, mostly used for sorting
-        self.id = id  # pylint: disable=invalid-name
+        self.id = id
         self.name = name
         self.color = color
-        self.specs = []
+        self.specs: typing.List[WowSpec] = []
+        self.spells: typing.List[WowSpell] = []
+        self.buffs: typing.List[WowSpell] = []
 
         self.name_slug_cap = self.name.replace(" ", "")
         self.name_slug = utils.slug(self.name)
@@ -28,6 +35,10 @@ class WowClass(base.Model):
     def __lt__(self, other) -> bool:
         return self.id < other.id
 
+    @property
+    def abilities(self):
+        return self.spells + self.buffs
+
     def as_dict(self):
         return {
             "id": self.id,
@@ -37,5 +48,8 @@ class WowClass(base.Model):
 
     def add_spell(self, **kwargs):
         kwargs.setdefault("color", self.color)
-        for spec in self.specs:
-            spec.add_spell(**kwargs)
+        kwargs.setdefault("spell_type", self.name_slug)
+
+        spell = WowSpell(**kwargs)
+        self.spells.append(spell)
+        return spell

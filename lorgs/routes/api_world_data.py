@@ -44,7 +44,7 @@ def get_roles():
 @cache.cached(query_string=True)
 def get_specs_all():
     all_specs = sorted(WowSpec.all)
-    all_specs = [specs.as_dict(spells=False) for specs in all_specs]
+    all_specs = [specs.as_dict() for specs in all_specs]
     return {"specs": all_specs}
 
 
@@ -66,10 +66,10 @@ def get_spec_spells(spec_slug):
         spec_slug (str): name of the spec
 
     """
-    spec = WowSpec.get(full_name_slug=spec_slug)
+    spec: WowSpec = WowSpec.get(full_name_slug=spec_slug)
     if not spec:
         return "Invalid Spec.", 404
-    return {spell.spell_id: spell.as_dict() for spell in spec.spells}
+    return {spell.spell_id: spell.as_dict() for spell in spec.abilities}
 
 
 ###############################################################################
@@ -94,7 +94,6 @@ def spells_all():
     """Get all Spells."""
     spells = WowSpell.all
     return {spell.spell_id: spell.as_dict() for spell in spells}
-
 
 
 ###############################################################################

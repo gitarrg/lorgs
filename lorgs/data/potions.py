@@ -16,6 +16,13 @@ for s in ALL_SPECS:
     s.add_spell(spell_type=TYPE_POTION, spell_id=307192, cooldown=300,              color="#e35f5f", name="Spiritual Healing Potion",     icon="inv_alchemy_70_red.jpg",   wowhead_data="item=171267")
     s.add_spell(spell_type=TYPE_POTION, spell_id=307495, cooldown=300, duration=25, color="#57bd8b", name="Potion of Phantom Fire",       icon="inv_alchemy_90_combat1_green.jpg")
 
+    # not a potion.. but for now, this works
+    s.add_buff(PRIEST_POWER_INFUSION)  # 10060
+    s.add_buff(TIMEWARP)        # 80353
+    s.add_buff(BLOODLUST)       # 2825
+    s.add_buff(HEROISM)         # 32182
+
+
 # Intellect users
 for s in INT_SPECS:
     s.add_spell(spell_type=TYPE_POTION, spell_id=307162, cooldown=300, duration=25, color="#b576e8", name="Potion of Spectral Intellect", icon="trade_alchemy_potionc4.jpg")

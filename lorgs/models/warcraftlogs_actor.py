@@ -1,5 +1,6 @@
 
 # IMPORT STANRD LIBRARIES
+import abc
 import textwrap
 
 # IMPORT THIRD PARTY LIBRARIES
@@ -27,15 +28,17 @@ class Cast(me.EmbeddedDocument):
         return f"Cast({self.spell_id}, at={time_fmt})"
 
     def as_dict(self):
-        return {
+        dict = {
             "ts": self.timestamp,
             "id": self.spell_id,
         }
+        if self.duration:
+            dict["d"] = self.duration
+        return dict
 
     ##########################
     # Attributes
     #
-
     @property
     def spell(self):
         return WowSpell.get(spell_id=self.spell_id)
@@ -74,16 +77,13 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
     # Attributes
     #
     @property
-    def lifetime(self):
-        return self.fight.duration
-
-    @property
     def _has_source_id(self):
         return self.source_id >= 0
 
     #################################
     # Query
     #
+    @abc.abstractmethod
     def get_sub_query(self, filters=None):
         return ""
 
@@ -120,15 +120,21 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
             cast = Cast()
             cast.spell_id = cast_data["abilityGameID"]
             cast.timestamp = cast_data["timestamp"] - self.fight.start_time_rel
-            self.casts.append(cast)
 
-            # if this is the only player in the dataset --> fetch the source ID
-            # if self.source_id <= 0 and len(self.fight.players) == 1:
-            #     self.source_id = cast_data.get("sourceID")
+            # special case due to the way we handle buffs
+            if cast_data["type"] == "removebuff":
+                spell = WowSpell.get(spell_id=cast.spell_id)
+                cast.timestamp -= (spell.duration * 1000)
+
+            self.casts.append(cast)
 
         # Filter out same event at the same time (eg.: raid wide debuff apply)
         self.casts = utils.uniqify(self.casts, key=lambda cast: (cast.spell_id, cast.timestamp))
         self.casts = list(self.casts) # `utils.uniqify` returns dict values, which mongoengine doesn't like
+
+        # make sure casts are sorted correctly
+        # avoids weird UI overlaps, and just feels cleaner
+        self.casts = sorted(self.casts, key=lambda cast: cast.timestamp)
 
 
 class Player(BaseActor):
@@ -165,11 +171,11 @@ class Player(BaseActor):
     # Attributes
     #
     @property
-    def spec(self):
+    def spec(self) -> WowSpec:
         return WowSpec.get(full_name_slug=self.spec_slug)
 
     @property
-    def covenant(self):
+    def covenant(self) -> WowCovenant:
         return WowCovenant.get(id=self.covenant_id or 0)
 
     @property
@@ -178,37 +184,41 @@ class Player(BaseActor):
             return f"{self.fight.report_url}&source={self.source_id}"
         return f"{self.fight.report_url}"
 
-    @property
-    def lifetime(self):
-        if self.deaths:
-            return self.deaths[-1].get("deathTime", 0)
-
-        return self.fight.duration
-
     #################################
     # Query
     #
-
-    def get_sub_query(self, filters=None):
-        """Not needed/tested...
-
-        TODO:
-            - add filter by source_id if preset
-
-        """
+    def get_sub_query(self, filters=None) -> str:
+        """Get the Query for fetch all relevant data for this player."""
         filters = filters or []
 
-        if self.name:
-            filters += [f"source.name='{self.name}'"]
-
         # TODO: combine with "Fight._build_cast_query"
-        spell_ids = [spell.spell_id for spell in self.spec.spells]
-        spell_ids = sorted(list(set(spell_ids)))
-        spell_ids = ",".join(str(spell_id) for spell_id in spell_ids)
+        if self.spec.spells:
+            spell_ids = [spell.spell_id for spell in self.spec.all_spells]
+            spell_ids = sorted(list(set(spell_ids)))
+            spell_ids = ",".join(str(spell_id) for spell_id in spell_ids)
 
-        filters += [f"type='cast' and ability.id in ({spell_ids})"]
-        filters = " and ".join(filters)
+            cast_filter = f"type='cast' and ability.id in ({spell_ids})"
+            if self.name:
+                cast_filter = f"source.name='{self.name}' and {cast_filter}"
+            filters.append(cast_filter)
 
+        if self.spec.buffs:
+            spell_ids = [spell.spell_id for spell in self.spec.buffs]
+            spell_ids = sorted(list(set(spell_ids)))
+            spell_ids = ",".join(str(spell_id) for spell_id in spell_ids)
+
+            # we check for "removebuff" as this allows us to also catch buffs
+            # that get used prepull (eg.: lust)
+            buffs_filter = f"type='removebuff' and ability.id in ({spell_ids})"
+            if self.name:
+                buffs_filter = f"target.name='{self.name}' and {buffs_filter}"
+            filters.append(buffs_filter)
+
+        # combine all filters
+        filters = [f"({f})" for f in filters] # wrap each filter into bracers
+        filters = " or ".join(filters)
+
+        # wrap everything and return
         return f"events({self.fight.table_query_args}, filterExpression: \"{filters}\") {{data}}"
 
     def process_death_events(self, death_events):
@@ -245,7 +255,7 @@ class Boss(BaseActor):
     #
 
     @property
-    def raid_boss(self):
+    def raid_boss(self) -> RaidBoss:
         return RaidBoss.get(id=self.boss_id)
 
     def as_dict(self):
@@ -257,7 +267,7 @@ class Boss(BaseActor):
     ##########################
     # Methods
     #
-    def get_sub_query(self, filters=None):
+    def get_sub_query(self, filters=None) -> str:
         filters = filters or []
 
         for event in self.raid_boss.events:
