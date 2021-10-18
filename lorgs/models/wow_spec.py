@@ -14,24 +14,9 @@ if typing.TYPE_CHECKING:
     from lorgs.models.wow_class import WowClass
 
 
-def spells_by_type(spells: typing.List[WowSpell]) -> dict:
-    """Groups the given spells by their spell_type.
-
-    Note:
-        only returns the IDs (because thats the only thing I need now)
-    """
-    groups = defaultdict(list)
-
-    for spell in spells:
-        groups[spell.spell_type] += [spell]
-
-    return dict(groups)
-
-
 def spell_ids(spells) -> typing.List[int]:
     """Converts a list of Spells to their spell_ids."""
     return [spell.spell_id for spell in spells]
-
 
 
 class WowSpec(base.Model):
@@ -41,7 +26,8 @@ class WowSpec(base.Model):
         super().__init__()
         self.name = name
 
-        self.spells = []
+        self.spells: typing.List[WowSpell] = []
+        self.buffs: typing.List[WowSpell] = []
 
         self.role = role
         self.role.specs.append(self)
@@ -73,9 +59,8 @@ class WowSpec(base.Model):
 
         return sort_key(self) < sort_key(other)
 
-    def as_dict(self, **kwargs):
-
-        data = {
+    def as_dict(self):
+        return {
             "name": self.name,
             "full_name": self.full_name,
             "full_name_slug": self.full_name_slug,
@@ -86,11 +71,15 @@ class WowSpec(base.Model):
             }
         }
 
-        if kwargs.get("spells"):
-            spell_groups = spells_by_type(self.spells)
-            data["spells"] = {group: spell_ids(spells) for group, spells in spell_groups.items()}
+    @property
+    def all_spells(self):
+        """Get all spells spec can use."""
+        return self.wow_class.spells + self.spells
 
-        return data
+    @property
+    def all_buffs(self):
+        """Get all buffs that are relavent for this spec."""
+        return self.wow_class.buffs + self.buffs
 
     ##########################
     # Methods
@@ -101,7 +90,8 @@ class WowSpec(base.Model):
         kwargs.setdefault("spell_type", self.full_name_slug)
 
         spell = WowSpell(**kwargs)
-        spell.specs.append(self)
         self.spells.append(spell)  # Important to keep a ref in memory
-
         return spell
+
+    def add_buff(self, spell: WowSpell):
+        self.buffs.append(spell)

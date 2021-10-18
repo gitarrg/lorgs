@@ -80,7 +80,7 @@ const SLICE = createSlice({
             const boss = state.bosses[boss_slug]
             if (!boss) { return }
 
-            boss.spells_by_type =  group_spells_by_type(spells)
+            boss.spells_by_type =  group_spells_by_type(spells, boss)
             boss.loaded = true
             return state
         }

@@ -26,7 +26,7 @@ PRIEST_SHADOW     = WowSpec(role=RDPS, wow_class=PRIEST, name="Shadow")
 ################################################################################
 # Class
 #
-PRIEST.add_spell(              spell_id=10060,  cooldown=120, duration=20, color="#1fbcd1", name="Power Infusion",        icon="spell_holy_powerinfusion.jpg",    show=False)
+PRIEST_POWER_INFUSION = PRIEST.add_spell(              spell_id=10060,  cooldown=120, duration=20, color="#f7c625", name="Power Infusion",        icon="spell_holy_powerinfusion.jpg",    show=False)
 PRIEST.add_spell(              spell_id=325013, cooldown=180, duration=10, color=COL_KYR,   name="Boon of the Ascended",  icon="ability_bastion_priest.jpg")
 PRIEST.add_spell(              spell_id=324724, cooldown=60,               color=COL_NECRO, name="Unholy Nova",           icon="ability_maldraxxus_priest.jpg")
 PRIEST.add_spell(              spell_id=323673, cooldown=45,  duration=5,  color=COL_VENTR, name="Mindgames",             icon="ability_revendreth_priest.jpg",   show=False)

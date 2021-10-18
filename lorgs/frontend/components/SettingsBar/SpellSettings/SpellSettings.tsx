@@ -21,8 +21,9 @@ export function BossSpellsGroup() {
 
     // Get current Boss + Spells
     const boss = useAppSelector(state => get_boss(state))
+
     if (!boss) { return null }
-    const spells = boss.spells_by_type?.boss
+    const spells = boss.spells_by_type?.[boss.full_name_slug]
     if (!spells) { return null }
 
     // Render

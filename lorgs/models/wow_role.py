@@ -1,17 +1,23 @@
 """Models for a Role in the Game."""
 
+# IMPORT STANDARD LIBRARIES
+import typing
+
 # IMPORT LOCAL LIBRARIES
 from lorgs.models import base
+
+if typing.TYPE_CHECKING:
+    from lorgs.models.wow_spec import WowSpec
 
 
 class WowRole(base.Model):
     """A role like Tank, Healer, DPS."""
 
-    def __init__(self, id: int, name: str, code=""):
+    def __init__(self, id: int, name: str, code: str = ""):
         self.id = id  #used for sorting
         self.name = name
         self.code = code or name.lower()
-        self.specs = []
+        self.specs: typing.List["WowSpec"] = []
 
     def __repr__(self):
         return f"<Role({self.name})>"
@@ -19,7 +25,7 @@ class WowRole(base.Model):
     def __str__(self):
         return self.code
 
-    def __lt__(self, other):
+    def __lt__(self, other: "WowRole"):
         return self.id < other.id
 
     def as_dict(self):
