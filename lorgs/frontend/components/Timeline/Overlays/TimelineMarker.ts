@@ -33,7 +33,7 @@ export default class TimelineMarker extends Konva.Group {
         this.name("timeline_marker")
 
         // the time the marker is at. (in seconds)
-        // this.#time = 0;
+        // this.#time = time;
 
         this.#line = new Konva.Line({
             name: "line",
@@ -102,6 +102,20 @@ export default class TimelineMarker extends Konva.Group {
         this.#line.points([0, 10, 0, height]);
     }
 
+    get time() {
+        return this.#time
+    }
+
+    set time(value) {
+
+        console.log("set time", value)
+
+        this.#time = value
+
+        // update label
+        this.#label.text(toMMSS(value))
+    }
+
     //////////////////////////////
     // EVENTS
 
@@ -122,10 +136,7 @@ export default class TimelineMarker extends Konva.Group {
 
         // save the time the marker is at. (required for stage zoom)
         let stage = this.getStage() as Stage || null
-        this.#time = this.x() / (stage?.scale_x || constants.DEFAULT_ZOOM)
-
-        // update label
-        this.#label.text(toMMSS(this.#time))
+        this.time = this.x() / (stage?.scale_x || constants.DEFAULT_ZOOM)
     }
 
     #handle_zoom_change(scale_x: number) {
