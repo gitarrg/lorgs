@@ -11,6 +11,8 @@ class WowSpell(base.Model):
     TYPE_RAID = "raid"
     TYPE_PERSONAL = "personal"
     TYPE_EXTERNAL = "external"
+
+    TYPE_BUFFS = "other-buffs"
     TYPE_TRINKET = "other-trinkets"
     TYPE_POTION = "other-potions"
 
