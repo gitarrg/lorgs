@@ -168,10 +168,13 @@ export default class Ruler extends Konva.Group {
         let pointer = this.#stage.getPointerPosition();
         if (!pointer) { return }
         let x = pointer.x - this.#stage.x()
+        let time = x / this.#stage.scale_x
 
         let marker = new TimelineMarker()
-        marker.x(x);
+        marker.time = time
+        marker.x(x)
         marker.set_height(this.#stage.height())
+
 
         this.#markers.push(marker)
         this.#stage.overlay_layer.add(marker)
