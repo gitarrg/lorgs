@@ -31,6 +31,7 @@ MAGE.add_spell(        spell_id=314791, cooldown=60,  duration=3,  color=COL_NF,
 MAGE.add_spell(        spell_id=307443, cooldown=30,  duration=10, color=COL_KYR,   name="Radiant Spark",      icon="ability_bastion_mage.jpg",                  show=False)
 MAGE.add_spell(        spell_id=324220, cooldown=180, duration=25, color=COL_NECRO, name="Deathborne",         icon="ability_maldraxxus_mage.jpg")
 MAGE.add_spell(        spell_id=116011, cooldown=45,  duration=12,                  name="Rune of Power",      icon="spell_mage_runeofpower.jpg",                show=False)
+TIMEWARP = MAGE.add_spell(spell_id=80353, duration=40, name="Time Warp", icon="ability_mage_timewarp.jpg", show=False)
 
 MAGE_FIRE.add_spell(   spell_id=190319, cooldown=60,  duration=10, color="#e3b02d", name="Combustion",         icon="spell_fire_sealoffire.jpg",      tags=[TAG_DYNAMIC_CD])
 MAGE_FIRE.add_spell(   spell_id=153561, cooldown=45,                                name="Meteor",             icon="spell_mage_meteor.jpg",                     show=False)
@@ -41,3 +42,5 @@ MAGE_ARCANE.add_spell( spell_id=321507, cooldown=45,  duration=8,               
 MAGE_FROST.add_spell(  spell_id=12472,  cooldown=60,  duration=20,                  name="Icy Veins",          icon="spell_frost_coldhearted.jpg",    tags=[TAG_DYNAMIC_CD]) # 3min base cd / reduced by conduit
 MAGE_FROST.add_spell(  spell_id=257537, cooldown=45,                                name="Ebonbolt",           icon="artifactability_frostmage_ebonbolt.jpg")
 MAGE_FROST.add_spell(  spell_id=84714,  cooldown=60,                                name="Frozen Orb",         icon="spell_frost_frozenorb.jpg")
+
+

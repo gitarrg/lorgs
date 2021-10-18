@@ -31,9 +31,6 @@ class WowSpell(base.Model):
         # str: type/category of spell
         self.spell_type = kwargs.get("spell_type") or ""
 
-        # list(<WowSpec>): specs this spell is useable by
-        self.specs = []
-
         # list(str): tags to indicate special properties
         self.tags = kwargs.get("tags") or []
 
@@ -55,16 +52,9 @@ class WowSpell(base.Model):
             return False
         return True
 
-    @property
-    def group(self):
-        """backport so prev code works. new code should look at self.specs instead."""
-        if self.specs:
-            return self.specs[0]
-
     ##########################
     # Methods
     #
-
     def as_dict(self):
         return {
             "spell_id": self.spell_id,
