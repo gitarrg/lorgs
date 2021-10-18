@@ -3,15 +3,31 @@
 
 .nav {
 
-    .nav_link.active {
-        color: var(--wow-boss);
-        text-decoration: underline;
-        font-weight: bold;
+    background: var(--bg-dark);
+
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    list-style: none;
+
+    .nav_link {
+        background: var(--bg-dark-hover);
+        padding: 8px 16px;;
+
+        border: 1px solid black;
+
+        &:global.active {
+            color: var(--wow-boss);
+            text-decoration: underline;
+            font-weight: bold;
+            border-color: white;
+        }
     }
 
-    .nav_link:not(.active):not(:hover) {
-        opacity: 0.7;
-    }
+    // .nav_item:not(&:global.active):not(:hover) {
+    //     opacity: 0.7;
+    // }
 
 
 }

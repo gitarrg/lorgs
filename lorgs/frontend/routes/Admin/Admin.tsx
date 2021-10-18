@@ -3,6 +3,7 @@ import { useRouteMatch, Route } from 'react-router-dom';
 import { AdminHeader } from './AdminHeader';
 import AdminNavbar from './AdminNavbar';
 import AdminSpells from './AdminSpells';
+import AdminStatus from './AdminStatus';
 
 
 export default function Admin() {
@@ -22,7 +23,7 @@ export default function Admin() {
             <div>
 
                 <Route path={`${path}/status`}>
-                    <div>Status</div>
+                    <AdminStatus />
                 </Route>
 
                 <Route path={`${path}/spells`}>

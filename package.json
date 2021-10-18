@@ -44,6 +44,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^1.6.2",
     "html-react-parser": "^1.4.0",
+    "moment": "^2.29.1",
     "react-router": "^5.2.1",
     "react-router-dom": "^5.3.0",
     "react-use": "^17.3.1"
