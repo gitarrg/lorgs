@@ -2,6 +2,7 @@
 # IMPORT STANRD LIBRARIES
 import abc
 import textwrap
+import typing
 
 # IMPORT THIRD PARTY LIBRARIES
 import mongoengine as me
@@ -111,22 +112,38 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
             logger.warning("casts_data is empty")
             return
 
+        active_buffs: typing.Dict[int, Cast] = {}
+
         for cast_data in casts_data:
 
             # TODO: fetch source_id's?
             if self._has_source_id and cast_data.get("sourceID") != self.source_id:
                 continue
 
+            # Add the Cast Object
             cast = Cast()
             cast.spell_id = cast_data["abilityGameID"]
             cast.timestamp = cast_data["timestamp"] - self.fight.start_time_rel
 
-            # special case due to the way we handle buffs
+            # we check if the buff was applied before..
             if cast_data["type"] == "removebuff":
-                spell = WowSpell.get(spell_id=cast.spell_id)
-                cast.timestamp -= (spell.duration * 1000)
+                start_cast = active_buffs.get(cast.spell_id)
+
+                # special case for buffs that are applied pre pull
+                # meaning.. the buff was already present at the start of the fight,
+                if not start_cast:
+                    spell = WowSpell.get(spell_id=cast.spell_id) # get the duration from the spell defintion
+                    cast.timestamp -= (spell.duration * 1000) # and calculate back the start time
+
+                # if we have a start cast, we can calculate the correct duration
+                else:
+                    start_cast.duration = (cast.timestamp - start_cast.timestamp) / 1000
+                    continue # stop the loop here
 
             self.casts.append(cast)
+
+            # track applied buffs
+            active_buffs[cast.spell_id] = cast
 
         # Filter out same event at the same time (eg.: raid wide debuff apply)
         self.casts = utils.uniqify(self.casts, key=lambda cast: (cast.spell_id, cast.timestamp))
@@ -209,7 +226,7 @@ class Player(BaseActor):
 
             # we check for "removebuff" as this allows us to also catch buffs
             # that get used prepull (eg.: lust)
-            buffs_filter = f"type='removebuff' and ability.id in ({spell_ids})"
+            buffs_filter = f"type in ('applybuff', 'removebuff') and ability.id in ({spell_ids})"
             if self.name:
                 buffs_filter = f"target.name='{self.name}' and {buffs_filter}"
             filters.append(buffs_filter)
@@ -302,6 +319,7 @@ class Boss(BaseActor):
         super().process_query_result(query_result)
 
 
+        """
         for event in self.raid_boss.events:
 
             # skip events without explicit until-statement
@@ -326,6 +344,7 @@ class Boss(BaseActor):
                     start_cast.end_time = cast.timestamp
                     start_cast = None
                     end_casts.append(cast)
+        """
+        # # end casts should not show up on their own
+        # self.casts = [cast for cast in self.casts if cast not in end_casts]
 
-            # end casts should not show up on their own
-            self.casts = [cast for cast in self.casts if cast not in end_casts]

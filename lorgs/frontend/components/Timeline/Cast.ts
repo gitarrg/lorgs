@@ -27,12 +27,12 @@ function create_cast_cooldown(spell: Spell) {
 }
 
 
-function create_cast_duration(spell: Spell) {
-    if (!spell.duration) { return }
+function create_cast_duration(spell: Spell, duration=0) {
+    if (!duration) { return }
 
     return new Konva.Rect({
         name: "cast_duration",
-        width: spell.duration * constants.DEFAULT_ZOOM,
+        width: duration  * constants.DEFAULT_ZOOM,
         height: constants.LINE_HEIGHT-1,
         fill: spell.color,
         listening: true,  // the fake bbox might be smaller
@@ -90,6 +90,7 @@ export default class Cast extends Konva.Group {
 
     spell_id: number
     timestamp: number
+    #duration = 0
     spell: Spell
 
     hovering: boolean
@@ -119,6 +120,7 @@ export default class Cast extends Konva.Group {
         this.spell_id = cast_data.id;
         this.timestamp = cast_data.ts / 1000;
         this.spell = state.spells.all_spells[this.spell_id];
+        this.#duration = cast_data?.d ?? this.spell?.duration
 
         // Internal Attrs
         this.hovering = false
@@ -133,7 +135,7 @@ export default class Cast extends Konva.Group {
         this.cast_cooldown = create_cast_cooldown(this.spell)
         this.cast_cooldown && this.add(this.cast_cooldown)
 
-        this.cast_duration = create_cast_duration(this.spell)
+        this.cast_duration = create_cast_duration(this.spell, this.#duration)
         this.cast_duration && this.add(this.cast_duration)
 
         this.cast_icon = create_cast_icon(this.spell)
@@ -216,7 +218,7 @@ export default class Cast extends Konva.Group {
     _handle_zoom_change(scale_x: number) {
         this.x(scale_x * this.timestamp)
         this.cast_cooldown?.width(this.spell.cooldown * scale_x)
-        this.cast_duration?.width(this.spell.duration * scale_x)
+        this.cast_duration?.width(this.#duration * scale_x)
     }
 
     _handle_spell_display(payload: { [key: number]: boolean }) {
