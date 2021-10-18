@@ -27,6 +27,12 @@ def create_app():
     config_name = os.getenv("LORGS_CONFIG_NAME") or "lorgs.config.DevelopmentConfig"
     app.config.from_object(config_name)
 
+
+    if app.config["LORRGS_DEBUG"]:
+        from flask_cors import CORS
+        cors = CORS(app)
+
+
     # Blueprints
     app.register_blueprint(api.blueprint, url_prefix="/api")
 

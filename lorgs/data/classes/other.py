@@ -20,3 +20,4 @@ OTHER         = WowClass(id=1001, name="Other", color="#cccccc")
 #
 OTHER_POTION  = WowSpec(role=ITEM_ROLE, wow_class=OTHER, name="Potions")
 OTHER_TRINKET = WowSpec(role=ITEM_ROLE, wow_class=OTHER, name="Trinkets")
+OTHER_BUFFS = WowSpec(role=ITEM_ROLE, wow_class=OTHER, name="Buffs")

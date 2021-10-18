@@ -82,7 +82,7 @@ const SLICE = createSlice({
             const spec = state[spec_slug]
             if (!spec) { return state}
 
-            spec.spells_by_type =  group_spells_by_type(spells)
+            spec.spells_by_type =  group_spells_by_type(spells, spec)
             spec.loaded = true
             return state
         },
