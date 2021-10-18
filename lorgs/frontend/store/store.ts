@@ -10,6 +10,7 @@ import roles_reducer from "./roles"
 import specs_reducer from "./specs"
 import spells_reducer from "./spells"
 import ui_reducer from "./ui"
+import status_reducer from "./status"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -22,11 +23,12 @@ const store = configureStore({
 
     // preloadedState: DEFAULT_STATE,
     reducer: {
-        raid_zone: bosses_reducer,
         fights: fights_reducer,
+        raid_zone: bosses_reducer,
         roles: roles_reducer,
         specs: specs_reducer,
         spells: spells_reducer,
+        status: status_reducer,
         ui: ui_reducer,
     },
     devTools: LORRGS_DEBUG,

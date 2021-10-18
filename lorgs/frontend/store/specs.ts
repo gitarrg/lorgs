@@ -12,7 +12,7 @@ import { LOGO_URL } from '../constants'
 //
 
 export function get_specs(state : RootState ) {
-    return Object.values(state.specs)
+    return state.specs
 }
 
 export function get_spec(state: RootState, spec_slug?: string) {

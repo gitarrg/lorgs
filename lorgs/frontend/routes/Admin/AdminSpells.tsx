@@ -107,7 +107,7 @@ function SpellDisplay() {
     const spell_types = sort_spell_types(Object.keys(spec.spells_by_type ?? {}))
 
     return (
-        <table className="table table-dark table-sm table-hover">
+        <table className={styles.spell_table}>
             <thead>
                 <tr>
                     <th>&nbsp;</th>
