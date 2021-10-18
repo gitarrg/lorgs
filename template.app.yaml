@@ -10,14 +10,14 @@ runtime: python39
 default_expiration: "7d"  # static files cache
 
 automatic_scaling:
-  max_instances: 8
+  max_instances: 16
 
 
 entrypoint: >
   gunicorn
   -b :$PORT
   --timeout=600
-  --workers 1
+  --workers 2
   "lorgs.app:create_app()"
 # longer timeout for the api calls that load data
 
