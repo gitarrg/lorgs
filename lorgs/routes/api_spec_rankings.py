@@ -17,6 +17,7 @@ from lorgs.routes import api_tasks
 blueprint = flask.Blueprint("api.spec_rankings", __name__)
 
 
+
 @blueprint.route("/spec_ranking/<string:spec_slug>/<string:boss_slug>")
 @cache.cached(query_string=True)
 def spec_ranking(spec_slug, boss_slug):
@@ -30,6 +31,7 @@ def spec_ranking(spec_slug, boss_slug):
 
     return {
         "fights": [fight.as_dict() for fight in fights],
+        "updated": int(spec_ranking.updated.timestamp()),
     }
 
 
@@ -46,6 +48,20 @@ async def load_spec_ranking(spec_slug, boss_slug):
 
     logger.info("DONE | spec=%s | boss=%s | limit=%d", spec_slug, boss_slug, limit)
     return "done"
+
+
+@blueprint.route("/status/spec_ranking")
+def status():
+
+    x = {}
+    for sr in warcraftlogs_ranking.SpecRanking.objects().exclude("reports"):
+        x[sr.spec_slug] = x.get(sr.spec_slug) or {}
+        x[sr.spec_slug][sr.boss_slug] = {
+            "updated": int(sr.updated.timestamp()),
+        }
+
+    return x
+
 
 ################################################################################
 # Tasks
@@ -68,7 +84,7 @@ def task_load_spec_rankings(spec_slug="", boss_slug=""):
     # create the tasks
     for spec_slug in specs:
         for boss_slug in bosses:
-            url = f"/api/task/load_spec_ranking/{spec_slug}/{boss_slug}"
+            url = f"/api/load_spec_ranking/{spec_slug}/{boss_slug}"
             api_tasks.create_task(url)
 
     # return some status info
