@@ -35,10 +35,6 @@ class WowClass(base.Model):
     def __lt__(self, other) -> bool:
         return self.id < other.id
 
-    @property
-    def abilities(self):
-        return self.spells + self.buffs
-
     def as_dict(self):
         return {
             "id": self.id,
@@ -46,6 +42,9 @@ class WowClass(base.Model):
             "name_slug": self.name_slug,
         }
 
+    ##########################
+    # Methods
+    #
     def add_spell(self, **kwargs):
         kwargs.setdefault("color", self.color)
         kwargs.setdefault("spell_type", self.name_slug)

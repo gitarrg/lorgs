@@ -71,17 +71,19 @@ class WowSpec(base.Model):
             }
         }
 
+    @property
+    def all_spells(self):
+        """Get all spells spec can use."""
+        return self.wow_class.spells + self.spells
+
+    @property
+    def all_buffs(self):
+        """Get all buffs that are relavent for this spec."""
+        return self.wow_class.buffs + self.buffs
+
     ##########################
     # Methods
     #
-    @property
-    def abilities(self):
-        """Get every spell and buff this spec can use.
-
-        includes abilities any from the parent class.
-        """
-        return self.wow_class.abilities + self.spells + self.buffs
-
     def add_spell(self, **kwargs):
 
         kwargs.setdefault("color", self.wow_class.color)

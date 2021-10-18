@@ -203,7 +203,7 @@ class Player(BaseActor):
             filters.append(cast_filter)
 
         if self.spec.buffs:
-            spell_ids = [spell.spell_id for spell in self.spec.buffs]
+            spell_ids = [spell.spell_id for spell in self.spec.all_buffs]
             spell_ids = sorted(list(set(spell_ids)))
             spell_ids = ",".join(str(spell_id) for spell_id in spell_ids)
 

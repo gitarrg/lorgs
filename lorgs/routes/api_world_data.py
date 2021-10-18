@@ -69,7 +69,9 @@ def get_spec_spells(spec_slug):
     spec: WowSpec = WowSpec.get(full_name_slug=spec_slug)
     if not spec:
         return "Invalid Spec.", 404
-    return {spell.spell_id: spell.as_dict() for spell in spec.abilities}
+
+    abilities = spec.spells + spec.buffs
+    return {spell.spell_id: spell.as_dict() for spell in abilities}
 
 
 ###############################################################################

@@ -9,6 +9,26 @@ from lorgs.models.wow_spell import WowSpell
 
 # alias
 TYPE_POTION = WowSpell.TYPE_POTION
+TYPE_BUFFS = WowSpell.TYPE_BUFFS
+
+
+################################################################################
+# Buffs
+
+color_hero = "#5465ff"
+BLOODLUST = OTHER_BUFFS.add_spell(spell_type=TYPE_BUFFS, color=color_hero, spell_id=2825,  duration=40, name="Bloodlust", icon="spell_nature_bloodlust.jpg")
+HEROISM =   OTHER_BUFFS.add_spell(spell_type=TYPE_BUFFS, color=color_hero, spell_id=32182, duration=40, name="Heroism",   icon="ability_shaman_heroism.jpg")
+TIMEWARP =  OTHER_BUFFS.add_spell(spell_type=TYPE_BUFFS, color=color_hero, spell_id=80353, duration=40, name="Time Warp", icon="ability_mage_timewarp.jpg")
+
+KYRIAN_BOND =  OTHER_BUFFS.add_spell(spell_type=TYPE_BUFFS, color=COL_KYR, spell_id=327139, duration=0, name="Kindred Empowerment", icon="spell_animabastion_beam.jpg")
+BENEVOLENT_FAERIE =  OTHER_BUFFS.add_spell(spell_type=TYPE_BUFFS, color=COL_NF, spell_id=327710, duration=20, name="Benevolent Faerie", icon="spell_animaardenweald_orb.jpg")
+
+
+
+################################################################################
+# Potions
+#
+
 
 # generic pots for all specs
 for s in ALL_SPECS:
@@ -43,5 +63,5 @@ for s in HEAL.specs:
 
 # hide all potions by default
 for spell in WowSpell.all:
-    if spell.spell_type == TYPE_POTION:
+    if spell.spell_type in (TYPE_POTION, TYPE_BUFFS):
         spell.show = False
