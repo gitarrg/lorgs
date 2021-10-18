@@ -17,7 +17,6 @@ from lorgs.routes import api_tasks
 blueprint = flask.Blueprint("api.spec_rankings", __name__)
 
 
-
 @blueprint.route("/spec_ranking/<string:spec_slug>/<string:boss_slug>")
 @cache.cached(query_string=True)
 def spec_ranking(spec_slug, boss_slug):
@@ -70,16 +69,16 @@ def status():
 @blueprint.route("/task/load_spec_ranking/<string:spec_slug>/<string:boss_slug>")
 def task_load_spec_rankings(spec_slug="", boss_slug=""):
 
+    bosses = [boss_slug]
+    specs = [spec_slug]
+
     if spec_slug == "all":
         specs = [spec.full_name_slug for spec in WowSpec.all if spec.role.id < 1000] # filter out "other" and "boss"
-    else:
-        specs = [spec_slug]
 
     # Use the bossname given, or fall back to all bosses of the current zone
-    if boss_slug == "all":
+    # NOTE: we only do this if specs != "all", to stagger the task submission
+    elif boss_slug == "all":
         bosses = [boss.full_name_slug for boss in data.CURRENT_ZONE.bosses]
-    else:
-        bosses = [boss_slug]
 
     # create the tasks
     for spec_slug in specs:

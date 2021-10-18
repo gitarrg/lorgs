@@ -28,7 +28,9 @@ class RaidBoss(base.Model):
         self.events = []
 
         # we track them as "spells" for now
-        self.spells = []
+        self.spells: typing.List["WowSpell"] = []
+
+        # self.buffs: WowSpell[] = []
 
         # alias to match the Spec Interface
         # self.role = "boss"
