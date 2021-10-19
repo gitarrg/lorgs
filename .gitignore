@@ -8,7 +8,7 @@ __pycache__/
 .vscode
 
 _build
-_generated
+static
 node_modules
 
 # for ".env", we need this (since its already tracked)

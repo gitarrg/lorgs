@@ -4,7 +4,6 @@ import type Spec from "../types/spec"
 import type { RootState, AppDispatch } from './store'
 import { fetch_data } from '../api'
 import { group_spells_by_type } from './store_utils'
-import { LOGO_URL } from '../constants'
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +46,7 @@ const PLACEHOLDER_SPEC = {
     spells_by_type: {},
     loaded: false,
     class: {name: "", name_slug: "other"},
-    icon_path: LOGO_URL,
+    icon_path: "",
 }
 
 
@@ -55,7 +54,7 @@ const PLACEHOLDER_SPEC = {
 
 function _process_spec(spec: Spec) {
     spec.loaded = false
-    spec.icon_path = `/static/images/specs/${spec.full_name_slug}.jpg`
+    spec.icon_path = `/static/img/specs/${spec.full_name_slug}.jpg`
     return spec
 }
 
