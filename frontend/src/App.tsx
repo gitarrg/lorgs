@@ -5,6 +5,9 @@ import { Provider } from 'react-redux'
 import data_store from "./store/store"
 import GlobalDataLoader from "./components/GlobalDataLoader";
 
+require("./assets/images")
+
+
 // Delayed Imports
 const Admin = lazy(() => import("./routes/Admin/Admin"));
 const CompRankings = lazy(() => import("./routes/CompRankings"));
