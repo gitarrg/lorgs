@@ -43,7 +43,7 @@ function create_icon(prefix: string, name: string, count: string, op: string) {
     // special case for excludes
     const excluded = (op === "eq") && (count === "0")
 
-    const icon_path = `/static/images/${prefix}/${name}.jpg`
+    const icon_path = `/static/img/${prefix}/${name}.webp`
     const label = `${op_to_symbol(op)}${count}`
     const class_name = name.split("-")[0]
 
