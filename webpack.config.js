@@ -50,6 +50,8 @@ module.exports = {
         filename: '[name].js',
         chunkFilename: '[name].[contenthash].bundle.js',
         publicPath: "/static/_generated/",
+
+        clean: true, // Clean the output directory before emit.
     },
 
 
