@@ -70,7 +70,7 @@ def get_spec_spells(spec_slug):
     if not spec:
         return "Invalid Spec.", 404
 
-    abilities = spec.spells + spec.buffs
+    abilities = spec.all_spells + spec.all_buffs
     return {spell.spell_id: spell.as_dict() for spell in abilities}
 
 
