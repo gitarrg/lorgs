@@ -1,9 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { createSelector } from 'reselect'
-import { fetch_data } from '../api'
-import { LOGO_URL } from '../constants'
 import type Role from '../types/role'
 import { AppDispatch, RootState } from './store'
+import { fetch_data } from '../api'
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -42,7 +41,7 @@ function create_placeholder_role(name: string, num_specs: number) {
         code: name.toLowerCase(),
         name: name,
         specs: specs,
-        icon_path: LOGO_URL
+        icon_path: ""
     }
 }
 
@@ -64,7 +63,7 @@ const SLICE = createSlice({
         set_roles: (state, action: PayloadAction<Role[]>) => {
 
             action.payload.forEach(role => {
-                role.icon_path = `/static/images/roles/${role.code}.jpg`
+                role.icon_path = `/static/img/roles/${role.code}.jpg`
                 state[role.code] = role
             })
             return state
