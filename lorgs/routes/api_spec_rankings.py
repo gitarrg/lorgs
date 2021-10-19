@@ -67,37 +67,34 @@ def status():
 #
 
 @blueprint.route("/task/load_spec_ranking/<string:spec_slug>/<string:boss_slug>")
-def task_load_spec_rankings_single(spec_slug="", boss_slug=""):
-    url = f"/api/load_spec_ranking/{spec_slug}/{boss_slug}"
-    api_tasks.create_task(url)
-    return f"submitted: {spec_slug} vs {boss_slug}"
-
-
-@blueprint.route("/task/load_spec_ranking/all/<string:boss_slug>")
-@blueprint.route("/task/load_spec_ranking/<string:spec_slug>/all")
 def task_load_spec_rankings_multi(spec_slug="all", boss_slug="all"):
 
-    bosses = [boss_slug]
-    specs = [spec_slug]
+    def message(specs, bosses):
+        # return some status info
+        return {
+            "message": "tasks queued",
+            "num_tasks": len(specs)*len(bosses),
+            "specs": specs,
+            "bosses": bosses,
+        }
 
+    # expand specs
     if spec_slug == "all":
         specs = [spec.full_name_slug for spec in WowSpec.all if spec.role.id < 1000] # filter out "other" and "boss"
+        for spec_slug in specs:
+            url = f"/api/task/load_spec_ranking/{spec_slug}/{boss_slug}"
+            api_tasks.create_task(url)
+        return message(specs, [boss_slug])
 
-    # Use the bossname given, or fall back to all bosses of the current zone
-    # NOTE: we only do this if specs != "all", to stagger the task submission
-    elif boss_slug == "all":
+    # expand bosses
+    if boss_slug == "all":
         bosses = [boss.full_name_slug for boss in data.CURRENT_ZONE.bosses]
-
-    # create the tasks
-    for spec_slug in specs:
         for boss_slug in bosses:
             url = f"/api/task/load_spec_ranking/{spec_slug}/{boss_slug}"
             api_tasks.create_task(url)
+        return message([spec_slug], bosses)
 
-    # return some status info
-    return {
-        "message": "tasks queued",
-        "num_tasks": len(specs)*len(bosses),
-        "specs": specs,
-        "bosses": bosses,
-    }
+    # create the task
+    url = f"/api/load_spec_ranking/{spec_slug}/{boss_slug}"
+    api_tasks.create_task(url)
+    return message([spec_slug], [boss_slug])
