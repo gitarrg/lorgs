@@ -1,6 +1,7 @@
 
 // Imports
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const CopyPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const TerserPlugin = require("terser-webpack-plugin")
@@ -112,6 +113,16 @@ module.exports = {
     plugins: [
         new MiniCssExtractPlugin({
             filename: "[name].[contenthash].bundle.css",
+        }),
+
+        new CopyPlugin({
+            patterns: [{
+                from: "frontend/public",
+                // to: "", // into the root
+                globOptions: {
+                    ignore: ["**/index.html"]
+                }
+            }],
         }),
 
         new HtmlWebpackPlugin({
