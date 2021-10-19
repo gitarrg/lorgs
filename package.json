@@ -24,6 +24,7 @@
     "@types/react-dom": "^17.0.9",
     "@types/react-router-dom": "^5.3.1",
     "babel-loader": "^8.2.2",
+    "copy-webpack-plugin": "^9.0.1",
     "css-loader": "^6.3.0",
     "envsub": "^4.0.7",
     "html-webpack-plugin": "^5.4.0",
