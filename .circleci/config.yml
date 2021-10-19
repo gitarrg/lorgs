@@ -72,14 +72,12 @@ jobs:
       # git checkout the code
       - checkout
 
-      - run:
-          name: Setup Environment Variables
-          command: |
-            echo "export BUILD_TAG=$(echo $CIRCLE_SHA1 | cut -c -7)" >> $BASH_ENV
-
       - run: npm install
       - run: npm run build
       - run: npm run format_app_yaml
+
+      - run: sudo apt-get -y update && sudo apt-get install -y ffmpeg
+      - run: bash ./scripts/convert_images
 
       # save build dir
       - persist_to_workspace:
@@ -163,3 +161,4 @@ workflows:
             branches:
               only:
                 - develop
+                - update_folder_structure

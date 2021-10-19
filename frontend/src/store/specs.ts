@@ -54,7 +54,7 @@ const PLACEHOLDER_SPEC = {
 
 function _process_spec(spec: Spec) {
     spec.loaded = false
-    spec.icon_path = `/static/img/specs/${spec.full_name_slug}.jpg`
+    spec.icon_path = `/static/img/specs/${spec.full_name_slug}.webp`
     return spec
 }
 
