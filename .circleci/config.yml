@@ -116,8 +116,6 @@ jobs:
       - attach_workspace:
           at: ~/
 
-      - run: ls -alh
-
       - deploy:
           promote: << parameters.promote >>
 

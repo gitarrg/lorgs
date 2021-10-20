@@ -42,11 +42,16 @@ handlers:
   - url: /api/.*
     script: auto
 
-    # server all files in /static as they are
+  # serve all files in /static as they are
   - url: /static
     static_dir: static
     http_headers:
       lorrgs_route: static_files
+
+  # serve robots.txt
+  - url: /robots.txt
+    static_files: static/robots.txt
+    upload: static/robots.txt
 
   # all other requests redirect to the index.html
   - url: /.*
