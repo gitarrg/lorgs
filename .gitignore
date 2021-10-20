@@ -7,16 +7,15 @@ __pycache__/
 *.scannerwork
 .vscode
 
-_build
-_generated
+static
 node_modules
+venv
 
 # for ".env", we need this (since its already tracked)
 # >>> git update-index --assume-unchanged .env
 .env
 .env_bak
 
-venv/
 deploy_variables.yaml
 
 # google account credentials
