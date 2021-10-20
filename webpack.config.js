@@ -1,16 +1,16 @@
 
 // Imports
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const CopyPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const TerserPlugin = require("terser-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const TerserPlugin = require("terser-webpack-plugin")
 const path = require("path")
 
 const variables = require("./variables.js")
 
 // Constants
 const DEBUG = process.env.NODE_ENV !== "production";
-
 
 
 // Config
@@ -22,8 +22,8 @@ module.exports = {
      * Input
      */
     entry: {
-        app: path.resolve(__dirname, "lorgs/frontend/App.tsx"),
-        style: path.resolve(__dirname, "lorgs/templates/scss/main.scss"),
+        app: path.resolve(__dirname, "frontend/src/App.tsx"),
+        style: path.resolve(__dirname, "frontend/scss/main.scss"),
     },
 
     resolve: {
@@ -46,10 +46,12 @@ module.exports = {
      * Output
      */
     output: {
-        path: path.resolve(__dirname, "lorgs/static/_generated"),
+        path: path.resolve(__dirname, "static"),
         filename: '[name].js',
         chunkFilename: '[name].[contenthash].bundle.js',
-        publicPath: "/static/_generated/",
+        publicPath: "/static/",
+
+        clean: true, // Clean the output directory before emit.
     },
 
 
@@ -63,7 +65,7 @@ module.exports = {
             /************ Javascript ************/
             {
                 test: /\.[tj]sx?$/,  // jsx, tsx, js and ts
-                exclude: /node_modules/,
+                include: path.resolve(__dirname, "frontend/src"),
                 use: {
                     loader: 'babel-loader',
                     options: {
@@ -75,7 +77,7 @@ module.exports = {
             /********** global CSS/SCSS *********/
             {
                 test: /\.scss$/,
-                include: path.resolve(__dirname, "lorgs/templates/scss"),
+                include: path.resolve(__dirname, "frontend/scss"),
                 use: [
                     MiniCssExtractPlugin.loader,
                     "css-loader",  // Translates CSS into CommonJS
@@ -86,10 +88,9 @@ module.exports = {
             /********* CSS/SCSS Modules *********/
             {
                 test: /\.scss$/,
-                exclude: path.resolve(__dirname, "lorgs/templates/scss"),
+                include: path.resolve(__dirname, "frontend/src"),
                 use: [
                     MiniCssExtractPlugin.loader,
-                    // "style-loader",
                     {
                         loader: "css-loader",  // Translates CSS into CommonJS
                         options: {
@@ -114,8 +115,18 @@ module.exports = {
             filename: "[name].[contenthash].bundle.css",
         }),
 
+        new CopyPlugin({
+            patterns: [{
+                from: "frontend/public",
+                // to: "", // into the root
+                globOptions: {
+                    ignore: ["**/index.html"]
+                }
+            }],
+        }),
+
         new HtmlWebpackPlugin({
-            template: "lorgs/templates/index.html",
+            template: path.resolve(__dirname, "frontend/public/index.html"),
             minimize: !DEBUG,
             hash: true, // append cache busting hash
             inject: 'body',
@@ -126,10 +137,9 @@ module.exports = {
             },
         }),
 
-
         new BundleAnalyzerPlugin({
             analyzerMode: 'disabled', // will be used via CLI
-            generateStatsFile: true,
+            // generateStatsFile: true,
         }),
     ],
 
@@ -160,12 +170,12 @@ module.exports = {
         port: 9001,
 
         static: {
-            directory: path.join(__dirname, "lorgs/static"),
+            directory: path.join(__dirname, "/frontend/public"),
             publicPath: "/static",       // as "/"
         },
 
         historyApiFallback: {
-            index: '/static/_generated/index.html'
+            index: '/static/index.html'
         }
     }
 }

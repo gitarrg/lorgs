@@ -42,22 +42,21 @@ handlers:
   - url: /api/.*
     script: auto
 
-  # server all files in /static as they are
+  # serve all files in /static as they are
   - url: /static
-    static_dir: lorgs/static
+    static_dir: static
     http_headers:
       lorrgs_route: static_files
 
-  # fix to avoid breaking the robots.txt
-  - url: /(robots\.txt)
-    static_files: static/\1
-    mime_type: text/plain
-    upload: static/(robots\.txt)
+  # serve robots.txt
+  - url: /robots.txt
+    static_files: static/robots.txt
+    upload: static/robots.txt
 
   # all other requests redirect to the index.html
-  - url: /(.*)
-    static_files: lorgs/static/_generated/index.html
-    upload: lorgs/static/_generated/index.html
+  - url: /.*
+    static_files: index.html
+    upload: index.html
     expiration: 10m # don't cache the html, as it would cache the old chunk-id's
     http_headers:
       lorrgs_route: app
