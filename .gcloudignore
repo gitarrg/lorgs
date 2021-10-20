@@ -8,13 +8,11 @@
 #
 # .gcloudignore
 
-
 # Ignore everything
-/*
+*
 
 ###################################
-# include the files/folders we want
-
+# include  only the files/folders we want
 # backend code
 !requirements.txt
 !lorgs
@@ -24,3 +22,7 @@
 !index.html
 !static/
 !static/**
+
+# re-exclude those
+__pycache__/
+*.py[cod]
