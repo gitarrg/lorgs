@@ -3,6 +3,7 @@ import { createSelector } from 'reselect'
 import type Role from '../types/role'
 import { AppDispatch, RootState } from './store'
 import { fetch_data } from '../api'
+import { LOGO_URL } from '../constants'
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,7 +42,7 @@ function create_placeholder_role(name: string, num_specs: number) {
         code: name.toLowerCase(),
         name: name,
         specs: specs,
-        icon_path: ""
+        icon_path: LOGO_URL,
     }
 }
 

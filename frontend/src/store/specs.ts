@@ -4,6 +4,7 @@ import type Spec from "../types/spec"
 import type { RootState, AppDispatch } from './store'
 import { fetch_data } from '../api'
 import { group_spells_by_type } from './store_utils'
+import { LOGO_URL } from '../constants'
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -46,7 +47,7 @@ const PLACEHOLDER_SPEC = {
     spells_by_type: {},
     loaded: false,
     class: {name: "", name_slug: "other"},
-    icon_path: "",
+    icon_path: LOGO_URL,
 }
 
 
