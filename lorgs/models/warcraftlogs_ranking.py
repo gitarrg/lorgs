@@ -37,11 +37,11 @@ class SpecRanking(warcraftlogs_base.Document):
     # Attributes
     #
     @property
-    def spec(self):
+    def spec(self) -> WowSpec:
         return WowSpec.get(full_name_slug=self.spec_slug)
 
     @property
-    def boss(self):
+    def boss(self) -> RaidBoss:
         return RaidBoss.get(full_name_slug=self.boss_slug)
 
     @property

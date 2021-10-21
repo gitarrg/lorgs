@@ -10,6 +10,7 @@ __pycache__/
 static
 node_modules
 venv
+_src
 
 # for ".env", we need this (since its already tracked)
 # >>> git update-index --assume-unchanged .env
@@ -20,7 +21,5 @@ deploy_variables.yaml
 
 # google account credentials
 google_creds.json
-
 package-lock.json
-
 tsconfig.tsbuildinfo
