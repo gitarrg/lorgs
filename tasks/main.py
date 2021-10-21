@@ -33,7 +33,7 @@ def load_spec_rankings(request):
     spec_slug = request.args.get("spec_slug", type=str)
     limit = request.args.get("limit", type=int, default=50)
     clear = request.args.get("clear", default=False, type=json.loads)
-    print(f"loading: {boss_slug} vs {spec_slug} | (limit={limit})")
+    print(f"loading: {boss_slug} vs {spec_slug} | (limit={limit} / clear:={clear})")
     if boss_slug is None or spec_slug is None:
         return f"missing boss or spec ({boss_slug} / {spec_slug})"
 
