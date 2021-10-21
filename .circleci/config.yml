@@ -151,4 +151,3 @@ workflows:
             branches:
               only:
                 - develop
-                - feature/cloud_functions
