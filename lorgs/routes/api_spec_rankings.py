@@ -78,12 +78,14 @@ def task_load_spec_rankings_multi(spec_slug="all", boss_slug="all"):
             "bosses": bosses,
         }
 
+    kwargs = flask.request.args or {}
+
     # expand specs
     if spec_slug == "all":
         specs = [spec.full_name_slug for spec in WowSpec.all if spec.role.id < 1000] # filter out "other" and "boss"
         for spec_slug in specs:
             url = f"/api/task/load_spec_ranking/{spec_slug}/{boss_slug}"
-            api_tasks.create_task(url)
+            api_tasks.create_app_engine_task(url, **kwargs)
         return message(specs, [boss_slug])
 
     # expand bosses
@@ -91,10 +93,14 @@ def task_load_spec_rankings_multi(spec_slug="all", boss_slug="all"):
         bosses = [boss.full_name_slug for boss in data.CURRENT_ZONE.bosses]
         for boss_slug in bosses:
             url = f"/api/task/load_spec_ranking/{spec_slug}/{boss_slug}"
-            api_tasks.create_task(url)
+            api_tasks.create_app_engine_task(url, **kwargs)
         return message([spec_slug], bosses)
 
-    # create the task
-    url = f"/api/load_spec_ranking/{spec_slug}/{boss_slug}"
-    api_tasks.create_task(url)
+    # create the actual task
+    api_tasks.create_cloud_function_task(
+        function_name="load_spec_rankings",
+        spec_slug=spec_slug,
+        boss_slug=boss_slug,
+        **kwargs
+    )
     return message([spec_slug], [boss_slug])
