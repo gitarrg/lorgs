@@ -18,43 +18,6 @@ orbs:
 
 ################################################################################
 #
-# Commands
-#
-################################################################################
-
-commands:
-
-  ################################
-  # command to execute the final deployment to google app engine
-  #
-  deploy:
-
-    parameters:
-      promote:
-        description: Promote the deployed version to receive all traffic
-        type: boolean
-        default: false
-
-    steps:
-      # copy google service account login data
-      - run:
-          name: setup google service account
-          command: |
-            echo ${GOOGLE_CREDS} > /tmp/google_key.json
-            gcloud auth activate-service-account --key-file=/tmp/google_key.json
-            rm /tmp/google_key.json
-
-      # run the actual deploy command
-      - run:
-          name: Deploy to AppEngine
-          command: >
-            gcloud --quiet app deploy
-            --project lorrgs
-            <<^ parameters.promote >> --no-promote<</ parameters.promote >>
-
-
-################################################################################
-#
 # Jobs
 #
 ################################################################################
@@ -113,12 +76,39 @@ jobs:
 
     steps:
 
+      # load the files build from webpack
       - attach_workspace:
           at: ~/
 
-      - deploy:
-          promote: << parameters.promote >>
+      ####################################
+      # commands to execute the final deployment to google app engine
+      #
+      # 1) copy google service account login data
+      - run:
+          name: setup google service account
+          command: |
+            echo ${GOOGLE_CREDS} > /tmp/google_key.json
+            gcloud auth activate-service-account --key-file=/tmp/google_key.json
+            rm /tmp/google_key.json
 
+      # 2) deploy the app engine
+      - run:
+          name: Deploy to AppEngine
+          command: >
+            gcloud --quiet app deploy
+            --project lorrgs
+            <<^ parameters.promote >> --no-promote<</ parameters.promote >>
+
+      # 3) deploy the cloud functions
+      # Note: this does not have a promote yes/no flag
+      - run:
+          name: Deploy Cloud Funtions
+          command: scripts/deploy_function
+
+
+      ####################################
+      # Discrd Notification
+      #
       - discord/status:
           success_message: "new version deployed!!!"
           failure_message: "**${CIRCLE_USERNAME}**'s build: **${CIRCLE_JOB}** failed."
@@ -162,4 +152,4 @@ workflows:
             branches:
               only:
                 - develop
-                - update_folder_structure
+                - feature/cloud_functions
