@@ -91,12 +91,6 @@ jobs:
             gcloud auth activate-service-account --key-file=/tmp/google_key.json
             rm /tmp/google_key.json
 
-      # 3) deploy the cloud functions
-      # Note: this does not have a promote yes/no flag
-      - run:
-          name: Deploy Cloud Funtions
-          command: ./scripts/deploy_functions
-
       # 2) deploy the app engine
       - run:
           name: Deploy to AppEngine
@@ -104,6 +98,12 @@ jobs:
             gcloud --quiet app deploy
             --project lorrgs
             <<^ parameters.promote >> --no-promote<</ parameters.promote >>
+
+      # 3) deploy the cloud functions
+      # Note: this does not have a promote yes/no flag
+      - run:
+          name: Deploy Cloud Funtions
+          command: ./scripts/deploy_functions
 
       ####################################
       # Discrd Notification
