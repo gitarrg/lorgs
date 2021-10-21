@@ -21,12 +21,13 @@ WCL_CLIENT_SECRET=${WCL_CLIENT_SECRET},\
 
 ################################################################################
 # Collect the source files
-
+#
 rm -rf $src_dir
 mkdir $src_dir
 
-cp -r -t $src_dir requirements.txt lorgs
-cp -r -t $src_dir tasks/*
+cp requirements.txt $src_dir
+cp -r lorgs $src_dir
+cp -r tasks/* $src_dir
 
 ################################################################################
 # Deploy the Functions
@@ -39,6 +40,7 @@ for function_name in $FUNCTIONS; do
     gcloud functions deploy \
         $function_name \
         --source=$src_dir \
+        --project lorrgs \
         --runtime="python39" \
         --allow-unauthenticated \
         --max-instances=8 \
