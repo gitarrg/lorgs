@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+
+################################################################################
+# Settings
+#
+
+# str[]: name of the functions. (One per line)
+FUNCTIONS="
+load_spec_rankings
+"
+src_dir="_src"
+
+# these should be read from the CI or .env file
+ENV_VARS="\
+MONGO_URI=${MONGO_URI},\
+WCL_CLIENT_ID=${WCL_CLIENT_ID},\
+WCL_CLIENT_SECRET=${WCL_CLIENT_SECRET},\
+"
+
+
+################################################################################
+# Collect the source files
+
+rm -rf $src_dir
+mkdir $src_dir
+
+cp -r -t $src_dir requirements.txt lorgs
+cp -r -t $src_dir tasks/*
+
+################################################################################
+# Deploy the Functions
+
+for function_name in $FUNCTIONS; do
+    echo "deploying: $function_name"
+
+    # timeout=540 --> 9min, is the max
+
+    gcloud functions deploy \
+        $function_name \
+        --source=$src_dir \
+        --runtime="python39" \
+        --allow-unauthenticated \
+        --max-instances=8 \
+        --timeout=540 \
+        --trigger-http \
+        --region="europe-west1" \
+        --set-env-vars $ENV_VARS
+
+done # functions
