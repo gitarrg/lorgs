@@ -78,6 +78,10 @@ footer {
     justify-content: center;
 }
 
+.align-items-start {
+    align-items: flex-start;
+}
+
 .align-items-center {
     align-items: center;
 }
@@ -85,6 +89,12 @@ footer {
 .align-items-end {
     align-items: end;
 }
+
+
+.align-content-start {
+    align-content: flex-start;
+}
+
 
 
 /*******************************************************************************

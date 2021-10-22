@@ -4,13 +4,18 @@ import { useForm, FormProvider } from "react-hook-form";
 import FightSelectList from "./FightSelectList";
 import FormGroup from "./FormGroup";
 import HeaderLogo from "../../components/HeaderLogo";
+import PlayerSelectList from "./PlayerSelectList";
 import UrlInput from "./UrlInput";
+import { load_report } from "../../store/user_reports";
+import { useAppDispatch, useAppSelector } from '../../store/store_hooks'
+
 // @ts-ignore
 import styles from "./UserReportIndex.scss"
 
 
-
 export default function UserReportIndex() {
+
+    const dispatch = useAppDispatch()
 
     ////////////////////////////////
     // Hooks
@@ -18,7 +23,10 @@ export default function UserReportIndex() {
     const form_methods  = useForm({mode: "onChange"});
     // for dev only
     useEffect(() => {
-        form_methods.setValue("report_url", "https://www.warcraftlogs.com/reports/j68Fkv7DaVfmWbrc")
+        let report_code = "QKh6q8f2dDAXrTw1"
+        report_code = "j68Fkv7DaVfmWbrc"
+        form_methods.setValue("report_url", `https://www.warcraftlogs.com/reports/${report_code}`)
+        dispatch(load_report(report_code))
     }, [])
 
 
@@ -26,7 +34,7 @@ export default function UserReportIndex() {
     // Callbacks
     //
     function submit(form_data) {
-        console.log("submit!", form_data)
+        console.log("submitting the form!", form_data)
     }
 
 
@@ -50,10 +58,18 @@ export default function UserReportIndex() {
                     <UrlInput />
                 </FormGroup>
 
-                {/* Fight Selection */}
-                <FormGroup title="Fights:">
-                    <FightSelectList />
-                </FormGroup>
+                <div className="d-flex gap-2">
+                    {/* Fight Selection */}
+                    <FormGroup title="Fights:">
+                        <FightSelectList />
+                    </FormGroup>
+
+                    {/* Player Selection */}
+                    <FormGroup title="Players:">
+                        <PlayerSelectList />
+                    </FormGroup >
+                </div>
+
                 <div className="p-2 mt-3">
                     <input type="submit" />
                 </div>

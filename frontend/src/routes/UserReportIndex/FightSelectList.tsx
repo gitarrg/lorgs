@@ -1,13 +1,11 @@
 import FightWidget from "./FightWidget"
-import { get_user_report_fights } from '../../store/user_reports'
-import { useAppSelector } from '../../store/store_hooks'
-import type Fight from "../../types/fight"
-import { group_by } from "../../utils"
 import Icon from "../../components/shared/Icon"
-
-// @ts-ignore
-import styles from "./FightSelectList.scss"
+import type Fight from "../../types/fight"
+import { SelectGroup } from './SelectGroup'
 import { get_boss } from "../../store/bosses"
+import { get_user_report_fights } from '../../store/user_reports'
+import { group_by } from "../../utils"
+import { useAppSelector } from '../../store/store_hooks'
 
 
 function BossGroup({boss_slug, fights} : {boss_slug: string, fights: Fight[]}) {
@@ -16,19 +14,9 @@ function BossGroup({boss_slug, fights} : {boss_slug: string, fights: Fight[]}) {
     if (!boss) { return }
 
     // Render
-    return (
-        <div className={styles.boss_group}>
-            <div className={styles.boss_frame} data-tooltip={boss.full_name}>
-                <Icon spec={boss} size="l"  />
-            </div>
-
-            <div className={styles.fights_group}>
-                {fights.map(fight =>
-                    <FightWidget key={fight.fight_id} fight={fight} />
-                )}
-            </div>
-        </div>
-    )
+    const icon = <Icon spec={boss} size="m"  />
+    const items = fights.map(fight => <FightWidget key={fight.fight_id} fight={fight} />)
+    return <SelectGroup icon={icon} items={items} />
 }
 
 
@@ -43,7 +31,7 @@ export default function FightSelectList() {
 
     // render
     return (
-        <div className={`${styles.container} rounded p-2`}>
+        <div className="d-flex flex-column gap-3">
             {Object.keys(fights_by_boss).map(boss_slug =>
                 <BossGroup key={boss_slug} boss_slug={boss_slug} fights={fights_by_boss[boss_slug]} />
             )}
