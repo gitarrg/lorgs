@@ -159,11 +159,11 @@ class Player(BaseActor):
 
     source_id = me.IntField(primary_key=True)
     name = me.StringField(max_length=12) # names can be max 12 chars
-    total = me.FloatField()
+    total = me.FloatField(default=0)
     spec_slug = me.StringField(required=True)
 
-    covenant_id = me.IntField()
-    soulbind_id = me.IntField()
+    covenant_id = me.IntField(default=0)
+    soulbind_id = me.IntField(default=0)
 
     deaths = me.ListField(me.DictField())
 
@@ -210,22 +210,16 @@ class Player(BaseActor):
 
         # TODO: combine with "Fight._build_cast_query"
         if self.spec.spells:
-            spell_ids = [spell.spell_id for spell in self.spec.all_spells]
-            spell_ids = sorted(list(set(spell_ids)))
-            spell_ids = ",".join(str(spell_id) for spell_id in spell_ids)
-
+            spell_ids = WowSpell.spell_ids_str(self.spec.all_spells)
             cast_filter = f"type='cast' and ability.id in ({spell_ids})"
             if self.name:
                 cast_filter = f"source.name='{self.name}' and {cast_filter}"
             filters.append(cast_filter)
 
         if self.spec.buffs:
-            spell_ids = [spell.spell_id for spell in self.spec.all_buffs]
-            spell_ids = sorted(list(set(spell_ids)))
-            spell_ids = ",".join(str(spell_id) for spell_id in spell_ids)
-
             # we check for "removebuff" as this allows us to also catch buffs
             # that get used prepull (eg.: lust)
+            spell_ids = WowSpell.spell_ids_str(self.spec.all_buffs)
             buffs_filter = f"type in ('applybuff', 'removebuff') and ability.id in ({spell_ids})"
             if self.name:
                 buffs_filter = f"target.name='{self.name}' and {buffs_filter}"
@@ -270,6 +264,8 @@ class Boss(BaseActor):
     ##########################
     # Attributes
     #
+    def __str__(self):
+        return f"Boss(id={self.boss_id})"
 
     @property
     def raid_boss(self) -> RaidBoss:
@@ -312,7 +308,6 @@ class Boss(BaseActor):
             return ""
 
         return f"events({self.fight.table_query_args}, filterExpression: \"{filters}\") {{data}}"
-
 
     def process_query_result(self, query_result):
         """Process the result of a casts-query to create Cast objects."""
