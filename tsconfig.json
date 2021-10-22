@@ -18,5 +18,9 @@
     ],
     "exclude": [ // *** The files to not type check ***
         "node_modules",
+    ],
+
+    "plugins": [
+        { "name": "typescript-plugin-css-modules" }
     ]
 }

@@ -9,6 +9,7 @@ export const MODES = {
     NONE: "none",
     SPEC_RANKING: "spec_ranking",
     COMP_RANKING: "comp_ranking",
+    USER_REPORT: "user_report",
 }
 
 export type Mode = "none" | "spec_ranking" | "comp_ranking"

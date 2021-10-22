@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 
+import FightSelectList from "./FightSelectList";
 import FormGroup from "./FormGroup";
 import HeaderLogo from "../../components/HeaderLogo";
 import UrlInput from "./UrlInput";
+// @ts-ignore
 import styles from "./UserReportIndex.scss"
 
 
@@ -48,6 +50,10 @@ export default function UserReportIndex() {
                     <UrlInput />
                 </FormGroup>
 
+                {/* Fight Selection */}
+                <FormGroup title="Fights:">
+                    <FightSelectList />
+                </FormGroup>
                 <div className="p-2 mt-3">
                     <input type="submit" />
                 </div>

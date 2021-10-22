@@ -59,8 +59,9 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
     ilvl = me.FloatField(default=0)
     damage_taken = me.IntField(default=0)
 
-    # boss percentage at the end. 0 = boss dead
+    # boss percentage at the end. (its 0.01 for kills)
     percent = me.FloatField(default=0)
+    kill = me.BooleanField(default=True)
 
     meta = {
         "strict": False # ignore non existing properties
