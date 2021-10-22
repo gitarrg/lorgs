@@ -39,15 +39,13 @@ class UserReport(me.Document):
         user_report.report = warcraftlogs_report.Report(report_id=report_id)
         return user_report
 
-
     ################################
     # Properties
     #
     def as_dict(self):
-        return {
-            "updated": int(self.updated.timestamp()),
-            "report": self.report.as_dict(), # pylint: disable=no-member
-        }
+        info = self.report.as_dict()
+        info["updated"] = int(self.updated.timestamp())
+        return info
 
     ################################
     # Methods

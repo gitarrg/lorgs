@@ -12,6 +12,8 @@ const CompSearch = lazy(() => import("./routes/CompSearch"));
 const Help = lazy(() => import("./routes/Help/Help"))
 const Index = lazy(() => import("./routes/Index/Index"));
 const SpecRankings = lazy(() => import("./routes/SpecRankings"));
+const UserReportIndex = lazy(() => import("./routes/UserReportIndex/UserReportIndex"));
+const UserReport = lazy(() => import("./routes/UserReport/UserReport"));
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -31,12 +33,25 @@ export default function App() {
             <Router>
                 <Suspense fallback={<div>Loading...</div>}>
                 <Switch>
+
+                    {/* Spec Rankings */}
                     <Route path="/spec_ranking/:spec_slug/:boss_slug" component={SpecRankings} />
+
+                    {/* Comp Rankings */}
                     <Route path="/comp_ranking/search" component={CompSearch} />
                     <Route path="/comp_ranking/:boss_slug" component={CompRankings} />
+
+                    {/* User Reports */}
+                    <Route path="/user_report/" exact={true} component={UserReportIndex} />
+                    <Route path="/user_report/:report_id" component={UserReport} />
+
+                    {/* other routes */}
                     <Route path="/help" component={Help} />
                     <Route path="/lorgmin" component={Admin} />
+
+                    {/* fallback --> Home */}
                     <Route path="/" component={Index} />
+
                 </Switch>
                 </Suspense>
             </Router>

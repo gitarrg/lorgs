@@ -1,0 +1,13 @@
+
+
+
+.container {
+    display: flex;
+    gap: 1rem;
+
+    // max-width: 1280px;
+    flex-basis: 1280px;  // aka prefered width
+
+    flex-direction: column;
+    justify-content: center;
+}
