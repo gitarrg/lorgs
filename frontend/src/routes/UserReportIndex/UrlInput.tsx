@@ -2,7 +2,8 @@ import { KeyboardEvent, useEffect } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useDispatch } from 'react-redux'
 
-import { report_id_changed } from "../../store/user_reports";
+import { load_report } from "../../store/user_reports";
+// @ts-ignore
 import styles from "./UrlInput.scss"
 
 
@@ -56,7 +57,7 @@ export default function UrlInput({input_name="report_url"}) {
     /** Update the stored report code */
     function onClick() {
         setValue("report_code", report_code)
-        dispatch(report_id_changed(report_code))
+        dispatch(load_report(report_code))
     }
 
     /** Allow users to submit their URL by pressing enter */
@@ -68,7 +69,7 @@ export default function UrlInput({input_name="report_url"}) {
     // Render
     return (
 
-        <div>
+        <div className="bg-dark rounded p-2">
             <div className={`${styles.url_input} input-group`}>
 
                 {/* Input */}

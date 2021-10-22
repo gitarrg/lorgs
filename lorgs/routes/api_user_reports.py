@@ -26,7 +26,8 @@ def get_user_report(report_id):
     """
     user_report = UserReport.from_report_id(report_id=report_id)
     if not user_report:
-        return "Report not found.", 404
+        return {"message": "not found"}
+        # return "Report not found.", 404
 
     return user_report.as_dict()
 
@@ -63,6 +64,15 @@ def get_player(report_id, fight_id, source_id):
 
 
 ################################################################################
+
+@blueprint.route("/<string:report_id>/load_overview")
+async def load_user_report_overview(report_id):
+    """Load a Report's Overview/Masterdata."""
+    user_report = UserReport.from_report_id(report_id=report_id, create=True)
+    await user_report.load()
+    user_report.save()
+    return user_report.as_dict()
+
 
 @blueprint.route("/load/<string:report_id>")
 async def load_user_report(report_id):

@@ -55,3 +55,18 @@ export function slug(str: string) {
         .replace(/\s+/g, '-')        // Collapse whitespace and replace by -
         .replace(/-+/g, '-');        // Collapse dashes
 }
+
+
+/**
+ * @description
+ * Takes an Array<V>, and a grouping function,
+ * and returns a Map of the array grouped by the grouping function.
+ */
+export function group_by(list, key_getter) {
+    const result = {};
+    list.forEach((item) => {
+         const key = key_getter(item);
+         result[key] = [...(result[key] || []), item]
+    });
+    return result;
+}

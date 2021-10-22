@@ -160,6 +160,8 @@ class Player(BaseActor):
     source_id = me.IntField(primary_key=True)
     name = me.StringField(max_length=12) # names can be max 12 chars
     total = me.FloatField(default=0)
+
+    class_slug = me.StringField()
     spec_slug = me.StringField(required=True)
 
     covenant_id = me.IntField(default=0)

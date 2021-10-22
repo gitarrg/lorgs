@@ -28,6 +28,8 @@ class Report(warcraftlogs_base.EmbeddedDocument):
     # title of the report
     title: str = me.StringField()
 
+    zone_id: int = me.IntField(default=0)
+
     # list of fights in this report. (they may or may not be loaded)
     fights: typing.List[Fight] = me.ListField(me.EmbeddedDocumentField(Fight))
 
@@ -53,6 +55,7 @@ class Report(warcraftlogs_base.EmbeddedDocument):
             "title": self.title,
             "report_id": self.report_id,
             "date": int(self.start_time.timestamp()),
+            "zone_id": self.zone_id,
         }
 
         # for players and fights we only include essential data
@@ -60,14 +63,15 @@ class Report(warcraftlogs_base.EmbeddedDocument):
             "fight_id": fight.fight_id,
             "boss_slug": fight.boss.raid_boss.full_name_slug,
             "percent": fight.percent,
+            "kill": fight.kill,
             "duration": fight.duration,
             } for fight in self.fights]
 
         info["players"] = [{
             "name": player.name,
             "source_id": player.source_id,
-            "spec": player.spec_slug,
-            "role": player.spec.role.code,
+            "spec": player.spec_slug if player.spec else "",
+            "role": player.spec.role.code if player.spec else "",
             } for player in self.players]
 
         return info
@@ -144,8 +148,13 @@ class Report(warcraftlogs_base.EmbeddedDocument):
             player.name = actor_data.get("name")
 
             icon: str = actor_data.get("icon")
-            class_name, spec_name = icon.split("-")
-            player.spec_slug = f"{class_name.lower()}-{spec_name.lower()}"
+            icon_parts = icon.split("-") + [""] # when people swap specs, we only get the class name
+            class_name, spec_name, = icon_parts[0:2]
+            if not spec_name:
+                continue # FIXME: 
+
+            player.class_slug = class_name.lower()
+            player.spec_slug = f"{player.class_slug}-{spec_name.lower()}"
             self.players.append(player)
 
     def _process_report_fights(self, fights_data):
@@ -164,6 +173,7 @@ class Report(warcraftlogs_base.EmbeddedDocument):
             fight = self.add_fight()
             fight.fight_id = fight_data.get("id")
             fight.percent = fight_data.get("fightPercentage")
+            fight.kill = fight_data.get("kill", True)
 
             # Fight: Boss
             fight.boss = Boss(boss_id=boss_id)
@@ -183,6 +193,8 @@ class Report(warcraftlogs_base.EmbeddedDocument):
         # Update the Report itself
         self.title = report_data.get("title", "")
         self.start_time = arrow.get(report_data.get("startTime", 0))
+        self.zone_id = report_data.get("zone", {}).get("id", -1)
+
         self._process_master_data(report_data.get("masterData"))
         self._process_report_fights(report_data.get("fights"))
 
