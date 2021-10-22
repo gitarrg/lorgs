@@ -6,6 +6,7 @@ import typing
 # IMPORT THIRD PARTY LIBRARIES
 import arrow
 import mongoengine as me
+from lorgs import utils
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.lib import mongoengine_arrow
@@ -22,7 +23,7 @@ def get_composition(players: typing.List[Player]) -> dict:
     """Generate a Composition Dict from a list of Players."""
     players = players or []
 
-    comp = {
+    comp: typing.Dict[str, dict] = {
         "roles": defaultdict(int),
         "specs": defaultdict(int),
         "classes": defaultdict(int),
@@ -57,6 +58,9 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
     deaths = me.IntField(default=0)
     ilvl = me.FloatField(default=0)
     damage_taken = me.IntField(default=0)
+
+    # boss percentage at the end. 0 = boss dead
+    percent = me.FloatField(default=0)
 
     meta = {
         "strict": False # ignore non existing properties
@@ -126,12 +130,15 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
     #################################
     # Methods
     #
-
     def add_player(self, **kwargs) -> Player:
         player = Player(**kwargs)
         player.fight = self
         self.players.append(player)
         return player
+
+    def get_player(self, **kwargs) -> Player:
+        """Returns a single Player based on the kwargs."""
+        return utils.get(self.players, **kwargs)
 
     def add_boss(self, boss_id) -> RaidBoss:
         self.boss_id = boss_id
@@ -156,12 +163,10 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
         """
         if not filters:
             # we gonna query for all spells
-            spell_ids = [spell.spell_id for spell in WowSpell.all]  # TODO: do we ever do this?
-            spell_ids = sorted(list(set(spell_ids)))
-            spell_ids = ",".join(str(spell_id) for spell_id in spell_ids)
+            spell_ids = WowSpell.spell_ids_str(WowSpell.all)
             filters = ["type='cast'", f"ability.id in ({spell_ids})"]
 
-        filters = " and ".join(filters)
+        filters = " and ".join(filters) # type: ignore
 
         return f"""\
             casts: events(

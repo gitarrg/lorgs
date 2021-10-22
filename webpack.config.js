@@ -48,7 +48,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, "static"),
         filename: '[name].js',
-        chunkFilename: '[name].[contenthash].bundle.js',
+        chunkFilename: DEBUG ? '[name].bundle.js' : '[name].[contenthash].bundle.js',
         publicPath: "/static/",
 
         clean: true, // Clean the output directory before emit.
@@ -112,7 +112,7 @@ module.exports = {
      */
     plugins: [
         new MiniCssExtractPlugin({
-            filename: "[name].[contenthash].bundle.css",
+            filename: DEBUG ? "[name].bundle.css" : "[name].[contenthash].bundle.css",
         }),
 
         new CopyPlugin({
@@ -150,6 +150,9 @@ module.exports = {
     optimization: {
 
         usedExports: true,  // tree shacking
+
+        // fix some dev server issues
+        runtimeChunk: 'single',
 
         minimize: !DEBUG,
         minimizer: [new TerserPlugin({

@@ -1,5 +1,8 @@
 """A Spell/Ability in the Game."""
 
+# IMPORT STANDARD LIBRARIES
+import typing
+
 # IMPORT LOCAL LIBRARIES
 from lorgs.models import base
 
@@ -18,6 +21,26 @@ class WowSpell(base.Model):
 
     # tags to indicate special properties
     TAG_DYNAMIC_CD = "dynamic_cd"
+
+    @staticmethod
+    def spell_ids(spells: typing.List["WowSpell"]) -> typing.List[int]:
+        """Converts a list of Spells to their spell_ids."""
+        ids = [spell.spell_id for spell in spells]
+        ids = sorted(list(set(ids)))
+        return ids
+
+    @classmethod
+    def spell_ids_str(cls, spells: typing.List["WowSpell"]) -> str:
+        """Converts a list of Spells into a string of spell ids.
+
+        Used to construct queries
+
+        Example:
+            spell_ids_str([Spell100, Spell200, Spell300])
+            >>> "100,200,300
+        """
+        spell_ids = cls.spell_ids(spells)
+        return ",".join(str(spell_id) for spell_id in spell_ids)
 
 
     def __init__(self, spell_id: int, cooldown: int = 0, duration: int = 0, show: bool = True, **kwargs):
