@@ -28,16 +28,7 @@ def get_user_report(report_id):
     if not user_report:
         return "Report not found.", 404
 
-    info = user_report.as_dict()
-
-    # include fights (if specified)
-    info["fights"] = []
-    for fight_id in flask.request.args.getlist("fight", type=int):
-        fight = user_report.report.get_fight(fight_id=fight_id)
-        if fight:
-            info["fights"].append(fight.as_dict())
-
-    return info
+    return user_report.as_dict()
 
 
 @blueprint.route("/<string:report_id>/fights/<int:fight_id>")

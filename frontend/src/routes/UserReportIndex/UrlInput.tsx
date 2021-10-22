@@ -6,6 +6,7 @@ import { report_id_changed } from "../../store/user_reports";
 import styles from "./UrlInput.scss"
 
 
+
 /** text to show when the URL input is empty */
 const PLACEHOLDER = "https://www.warcraftlogs.com/reports/<report code>"
 
@@ -82,7 +83,7 @@ export default function UrlInput({input_name="report_url"}) {
                 />
 
                 {/* Button */}
-                <button className="button" disabled={!is_valid} onClick={onClick}>load ▶</button>
+                <button type="button" className="button" disabled={!is_valid} onClick={onClick}>load ▶</button>
             </div>
 
             {/* Error Messages */}
