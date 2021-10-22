@@ -94,16 +94,23 @@ class wclclient_mixin:
             chunks_size[int, optional]: load in chunks of this size.
 
         """
-        if not objects:
+        filters = filters or []
+
+        # Generate the queries,
+        # and filter out objects that generted no query (ussualy an indication that the item is already loaded)
+        items = [(obj, obj.get_query(filters)) for obj in objects]
+        items = [(obj, q) for (obj, q) in items if q]
+        if not items:
             return
 
-        for chunk in utils.chunks(objects, chunk_size):
+        for chunk in utils.chunks(items, chunk_size):
+            chunk_queries = [q for (_, q) in chunk]
+            chunk_items = [o for (o, _) in chunk]
 
-            queries = [obj.get_query(filters or []) for obj in chunk]
-            query_result = await self.client.multiquery(queries)
+            query_results = await self.client.multiquery(chunk_queries)
 
-            for obj, obj_data in zip(chunk, query_result):
-                obj.process_query_result(obj_data)
+            for obj, result in zip(chunk_items, query_results):
+                obj.process_query_result(result)
 
     async def load(self, *args, **kwargs):
         return await self.load_many([self], *args, **kwargs)

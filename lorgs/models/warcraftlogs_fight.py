@@ -190,10 +190,20 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
 
             players_to_load = [player for player in self.players if not player.casts]
             if players_to_load:
-                cast_query = "casts: "
-                # TODO: this probl doesn't work with multiple players
-                for player in self.players:
-                    cast_query += player.get_sub_query()
+
+                # combine the filters
+                player_filters = [player.get_sub_query() for player in players_to_load]
+                player_filters = [f"({f})" for f in player_filters] # wrap each in ()
+                player_filters_combined = " or ".join(player_filters)
+
+                # construct the query
+                cast_query = f"""\
+                    casts: events(
+                        {self.table_query_args}
+                        filterExpression: \"{player_filters_combined}\"
+                    )
+                    {{data}}
+                """
 
         else:
             player_query = f"players: table({self.table_query_args}, dataType: Summary)"
@@ -203,9 +213,12 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
         #     BOSS     #
         ################
         boss_query = ""
-        if self.boss:
+        if self.boss and not self.boss.casts:
             boss_query = self.boss.get_sub_query()
             boss_query = f"boss: {boss_query}" if boss_query else ""
+
+        if not (player_query or cast_query or boss_query):
+            return ""
 
         return textwrap.dedent(f"""\
             reportData

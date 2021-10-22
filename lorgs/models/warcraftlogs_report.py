@@ -103,10 +103,6 @@ class Report(warcraftlogs_base.EmbeddedDocument):
                 }
             }
         """
-        # i think we can keep them always like this?
-        fetch_players = True
-        fight_ids = []
-
         return f"""
         reportData
         {{
@@ -116,9 +112,9 @@ class Report(warcraftlogs_base.EmbeddedDocument):
                 zone {{name id}}
                 startTime
 
-                {master_data_query if fetch_players else ""}
+                {master_data_query}
 
-                fights(fightIDs: {fight_ids or []})
+                fights
                 {{
                     id
                     encounterID
@@ -157,6 +153,7 @@ class Report(warcraftlogs_base.EmbeddedDocument):
         # clear out any old data
         self.fights = []
 
+        fights_data = fights_data or []
         for fight_data in fights_data:
             # skip trash fights
             boss_id = fight_data.get("encounterID")
@@ -181,12 +178,11 @@ class Report(warcraftlogs_base.EmbeddedDocument):
 
     def process_query_result(self, query_result: dict):
 
-        report_data = query_result.get("reportData", {}).get("report", {})
+        report_data = query_result.get("report", {})
 
         # Update the Report itself
         self.title = report_data.get("title", "")
         self.start_time = arrow.get(report_data.get("startTime", 0))
-
         self._process_master_data(report_data.get("masterData"))
         self._process_report_fights(report_data.get("fights"))
 

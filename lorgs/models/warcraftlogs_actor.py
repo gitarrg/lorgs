@@ -228,12 +228,9 @@ class Player(BaseActor):
         # combine all filters
         filters = [f"({f})" for f in filters] # wrap each filter into bracers
         filters = " or ".join(filters)
-
-        # wrap everything and return
-        return f"events({self.fight.table_query_args}, filterExpression: \"{filters}\") {{data}}"
+        return filters
 
     def process_death_events(self, death_events):
-
         ability_overwrites = {}
         ability_overwrites[1] = {"name": "Melee", "guid": 260421, "abilityIcon": "ability_meleedamage.jpg"}
         ability_overwrites[3] = {"name": "Fall Damage"}
