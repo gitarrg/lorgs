@@ -4,15 +4,12 @@
 import flask
 
 # IMPORT LOCAL LIBRARIES
+from lorgs.logger import logger
 from lorgs.cache import cache
 from lorgs.models.warcraftlogs_user_report import UserReport
 
 
 blueprint = flask.Blueprint("api.user_reports", __name__)
-
-
-def _get_user_report(report_id) -> UserReport:
-    return UserReport.objects(report__report_id=report_id).first() # pylint: disable=no-member
 
 
 @blueprint.route("/<string:report_id>")
@@ -27,7 +24,7 @@ def get_user_report(report_id):
         players[list[int, optional]]: list of players to include
 
     """
-    user_report = _get_user_report(report_id)
+    user_report = UserReport.from_report_id(report_id=report_id)
     if not user_report:
         return "Report not found.", 404
 
@@ -35,8 +32,8 @@ def get_user_report(report_id):
 
     # include fights (if specified)
     info["fights"] = []
-    for fight_id in flask.request.args.getlist("fight"):
-        fight = user_report.report.get_fight(fight_id=int(fight_id))
+    for fight_id in flask.request.args.getlist("fight", type=int):
+        fight = user_report.report.get_fight(fight_id=fight_id)
         if fight:
             info["fights"].append(fight.as_dict())
 
@@ -47,7 +44,7 @@ def get_user_report(report_id):
 @cache.cached()
 def get_fight(report_id, fight_id):
     """Get a single fight from a report."""
-    user_report = _get_user_report(report_id)
+    user_report = UserReport.from_report_id(report_id=report_id)
     if not user_report:
         return "Report not found.", 404
 
@@ -59,7 +56,7 @@ def get_fight(report_id, fight_id):
 @cache.cached()
 def get_player(report_id, fight_id, source_id):
     """Get a single player from a fight."""
-    user_report = _get_user_report(report_id)
+    user_report = UserReport.from_report_id(report_id=report_id)
     if not user_report:
         return "Report not found.", 404
 
@@ -72,3 +69,31 @@ def get_player(report_id, fight_id, source_id):
         return "Invalid Source ID", 404
 
     return player.as_dict()
+
+
+################################################################################
+
+@blueprint.route("/load/<string:report_id>")
+async def load_user_report(report_id):
+    """Load a Report
+
+    Args:
+        report_id(str): the report to load
+        fights[list(int)]: fight ids
+        player[list(int)]: player ids
+
+    """
+    # parse inputs
+    fight_ids = flask.request.args.getlist("fight", type=int)
+    player_ids = flask.request.args.getlist("player", type=int)
+    logger.info("load: %s / fights: %s / players: %s", report_id, fight_ids, player_ids)
+    if not (fight_ids and player_ids):
+        return "Missing fight or player ids", 403
+
+    # loading...
+    user_report = UserReport.from_report_id(report_id=report_id, create=True)
+    await user_report.load_fights(fight_ids=fight_ids, player_ids=player_ids)
+    user_report.save()
+
+    # return
+    return "done"
