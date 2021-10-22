@@ -26,11 +26,14 @@ class UserReport(me.Document):
     report: warcraftlogs_report.Report = me.EmbeddedDocumentField(warcraftlogs_report.Report)
 
     @classmethod
-    def from_report_id(cls, report_id: str) -> "UserReport":
+    def from_report_id(cls, report_id: str, create=False) -> typing.Union["UserReport", None]:
         """Need to split it, as otherwise the creation with nested parm does;t work"""
         user_report = cls.objects(report__report_id=report_id).first()  # pylint: disable=no-member
         if user_report:
             return user_report
+
+        if not create:
+            return None
 
         user_report = cls()
         user_report.report = warcraftlogs_report.Report(report_id=report_id)
