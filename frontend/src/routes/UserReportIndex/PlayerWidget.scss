@@ -1,0 +1,47 @@
+
+
+.container {
+
+    --border-color: var(--wow-color);
+
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+
+    img {
+        border: none;
+        border-radius: 0 !important;
+        border-right: 2px solid var(--border-color);
+    }
+
+    span {
+        margin-left: 0.5rem;
+        width: 8ch;
+        // line-height: 100%;
+    }
+
+
+    &:hover {
+        --border-color: white;
+        background-color: hsl(0, 0%, 30%);
+
+        opacity: 1.0;
+
+        span {
+            color: white;
+        }
+    }
+
+    &:global.disabled {
+        opacity: 0.5;
+        --border-color: transparent;
+
+        img {
+            filter: saturate(0.7);
+        }
+    }
+}
