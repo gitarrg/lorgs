@@ -141,6 +141,7 @@ export function load_report_overview(report_id: string) {
 
     return async (dispatch: AppDispatch) => {
 
+        // update loading state
         dispatch(SLICE.actions.report_overview_loading_started(true))
 
         // Try to get existing one

@@ -73,5 +73,5 @@ export function group_by(list, key_getter) {
 
 
 export async function sleep(duration=2000) {
-    new Promise(r => setTimeout(r, duration));
+    return new Promise(r => setTimeout(r, duration));
 }
