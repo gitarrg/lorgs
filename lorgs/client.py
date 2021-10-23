@@ -4,6 +4,7 @@
 # IMPORT STANDARD LIBRARIES
 # import asyncio
 import hashlib
+from logging import ERROR
 import os
 
 # IMPORT THIRD PARTY LIBRARIES
@@ -24,6 +25,12 @@ def query_name(query):
     query = query.replace("{", "/")
     query = query[:32] + "..."
     return query
+
+# error text we get from Warcraftlogs if a report does not exist.
+ERROR_MESSAGE_INVALID_REPORT = "This report does not exist."
+
+class InvalidReport(ValueError):
+    """Exception raised when a report was not found"""
 
 
 class WarcraftlogsClient:
@@ -161,6 +168,9 @@ class WarcraftlogsClient:
                     msg = ""
                     for error in result.get("errors"):
                         message = error.get("message")
+
+                        if message == ERROR_MESSAGE_INVALID_REPORT:
+                            raise InvalidReport()
 
                         # this sometimes happens.. just skip those
                         if message == "You do not have permission to view this report.":
