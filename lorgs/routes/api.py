@@ -4,17 +4,17 @@
 import datetime
 
 # IMPORT THIRD PARTY LIBRARIES
-import flask
+import quart
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.routes import api_comp_rankings
 from lorgs.routes import api_spec_rankings
-from lorgs.routes import api_world_data
-from lorgs.routes import api_user_reports
 from lorgs.routes import api_tasks
+from lorgs.routes import api_user_reports
+from lorgs.routes import api_world_data
 
 
-blueprint = flask.Blueprint("api", __name__, cli_group=None)
+blueprint = quart.Blueprint("api", __name__, cli_group=None)
 
 
 ################################################################################
@@ -30,7 +30,7 @@ blueprint.register_blueprint(api_world_data.blueprint, url_prefix="/")
 
 
 @blueprint.route("/<path:path>")
-def page_not_found(path):
+def page_not_found(*args, **kwargs):
     return "Invalid Route", 404
 
 

@@ -4,7 +4,7 @@ eg.: spells, classes, specs
 """
 
 # IMPORT THIRD PARTY LIBRARIES
-import flask
+import quart
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.cache import cache
@@ -15,7 +15,7 @@ from lorgs.models.wow_spec import WowSpec
 from lorgs.models.wow_spell import WowSpell
 
 
-blueprint = flask.Blueprint("api.world_data", __name__)
+blueprint = quart.Blueprint("api/world_data", __name__)
 
 
 ###############################################################################
@@ -23,7 +23,6 @@ blueprint = flask.Blueprint("api.world_data", __name__)
 #       Roles
 #
 ###############################################################################
-
 
 @blueprint.get("/roles")
 @cache.cached()
@@ -86,7 +85,7 @@ def spells_one(spell_id):
     """Get a single Spell by spell_id."""
     spell = WowSpell.get(spell_id=spell_id)
     if not spell:
-        flask.abort(404, description="Spell not found")
+        quart.abort(404, description="Spell not found")
     return spell.as_dict()
 
 
@@ -182,4 +181,3 @@ def get_boss_spells(boss_slug):
     if not boss:
         return "Invalid Boss.", 404
     return {spell.spell_id: spell.as_dict() for spell in boss.spells}
-

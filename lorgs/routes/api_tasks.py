@@ -3,34 +3,33 @@
 These are primarily used in the cron jobs to periodically update the data.
 
 """
-
 # IMPORT STANDARD LIBRARIES
 import os
 import urllib
 import uuid
 
 # IMPORT THIRD PARTY LIBRARIES
-from google.cloud import tasks_v2
 from google.api_core.exceptions import NotFound
-import flask
-import mongoengine as me
+from google.cloud import tasks_v2
+import quart
 
 # IMPORT LOCAL LIBRARIES
+from lorgs import utils
 from lorgs.models.task import Task
 
 
 CLOUD_FUNCTIONS_ROOT = os.getenv("CLOUD_FUNCTIONS_ROOT") or "https://europe-west1-lorrgs.cloudfunctions.net"
 TASK_QUEUE = "projects/lorrgs/locations/europe-west2/queues/lorgs-task-queue"
 
+# Google Cloud Tasks Client Instance
+TASK_CLIENT = tasks_v2.CloudTasksClient()
 
-blueprint = flask.Blueprint("api.tasks", __name__)
 
-
-def get_google_task_client():
-    return tasks_v2.CloudTasksClient()
+blueprint = quart.Blueprint("api/tasks", __name__)
 
 
 def get_task_full_name(name):
+    """Create a fully qualified task name (or rather task path)."""
     return f"{TASK_QUEUE}/tasks/{name}"
 
 
@@ -44,32 +43,35 @@ def get_tasks():
     return {str(task.id): task.as_dict() for task in Task.objects} # pylint: disable=no-member
 
 
+@utils.run_in_executor
+def _get_task(task_id):
+    full_name = get_task_full_name(task_id)
+    return TASK_CLIENT.get_task(name=full_name)
+
+
 @blueprint.route("/<string:task_id>")
-def get_task(task_id):
+async def get_task(task_id):
     """Get a single task by ID."""
     try:
-        task = Task.objects.get(id=task_id) # pylint: disable=no-member
-    except me.DoesNotExist:
-        return "invalid task id", 404
+        await _get_task(task_id)
+    except NotFound:
+        # could be an invalid task id, or completed...
+        # all we know is that its not in the queue
+        return {"status": "not found"}
     else:
-        return task.as_dict()
+        return {"status": "pending"}
 
 
 ################################################################################
 # Google Tasks
 #
+@utils.run_in_executor
 def submit_task(task):
-
-    if flask.current_app.config["LORRGS_DEBUG"]:
-        print("submit_task", task)
-        return
-
-    google_task_client = tasks_v2.CloudTasksClient()
-    return google_task_client.create_task(request={"parent": TASK_QUEUE, "task": task})
+    """Submit a task to the queue"""
+    return TASK_CLIENT.create_task(request={"parent": TASK_QUEUE, "task": task})
 
 
-
-def create_cloud_function_task(function_name, **kwargs):
+async def create_cloud_function_task(function_name, **kwargs):
     """Creates an Task, that will execute a Cloud Function.
 
     Args:
@@ -77,13 +79,14 @@ def create_cloud_function_task(function_name, **kwargs):
     """
 
     task_uuid = uuid.uuid4()
-    full_name = f"{TASK_QUEUE}/tasks/{function_name}__{task_uuid}"
+    task_name = f"{function_name}__{task_uuid}"
+    full_name = get_task_full_name(task_name)
 
     url = f"{CLOUD_FUNCTIONS_ROOT}/{function_name}"
     if kwargs:
         url += "?" + urllib.parse.urlencode(kwargs)
 
-    submit_task({
+    await submit_task({
         "name": full_name,
         "http_request": {  # Specify the type of request.
             "http_method": tasks_v2.HttpMethod.GET,
@@ -91,7 +94,7 @@ def create_cloud_function_task(function_name, **kwargs):
         }
     })
 
-    return task_uuid
+    return task_name
 
 
 def create_app_engine_task(url, **kwargs):

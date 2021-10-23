@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 echo "sourcing .env"
 set -a
 source .env
@@ -8,8 +7,7 @@ set +a
 
 
 export FLASK_ENV=development
-export QUART_ENV=development
-# export DEBUG=true
+export QUART_ENV=$FLASK_ENV
 export LORGS_CONFIG_NAME=lorgs.config.DevelopmentConfig
 
 export PORT=5012
@@ -17,16 +15,13 @@ export FLASK_APP="lorgs/app:create_app()"
 export QUART_APP=$FLASK_APP
 
 
-# Build SASS
-# pysassc --style=compact lorgs/templates/scss/main.scss "lorgs/static/_generated/style.css"
-
-# run flask
 export PYTHONPATH=.  # adds current dir, so we can import
 
 
-# gunicorn "lorgs.app:create_app()" -b :$PORT --worker-class "eventlet" --timeout=240 --reload
+# Dev Servers
+# flask run --host=0.0.0.0 --port=$PORT --without-threads
+quart run --host=0.0.0.0 --port=$PORT
 
-# uvicorn  --port $PORT --factory "lorgs.app:create_app"
-flask run --host=0.0.0.0 --port=$PORT
-# gunicorn -b :$PORT --timeout=240 "lorgs.app:create_app()"
-
+# Prod Commands
+# gunicorn -b :$PORT --timeout=240 "lorgs.app:create_app()" --workers 1
+# hypercorn -b :$PORT "lorgs.app:create_app()" --workers 4
