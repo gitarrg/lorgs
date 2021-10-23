@@ -4,6 +4,7 @@ import { AdminHeader } from './AdminHeader';
 import AdminNavbar from './AdminNavbar';
 import AdminSpells from './AdminSpells';
 import AdminStatus from './AdminStatus';
+import AdminPing from './AdminPing';
 
 
 export default function Admin() {
@@ -28,6 +29,10 @@ export default function Admin() {
 
                 <Route path={`${path}/spells`}>
                     <AdminSpells />
+                </Route>
+
+                <Route path={`${path}/ping`}>
+                    <AdminPing />
                 </Route>
 
             </div>
