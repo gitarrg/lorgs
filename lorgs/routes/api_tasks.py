@@ -7,9 +7,11 @@ These are primarily used in the cron jobs to periodically update the data.
 # IMPORT STANDARD LIBRARIES
 import os
 import urllib
+import uuid
 
 # IMPORT THIRD PARTY LIBRARIES
 from google.cloud import tasks_v2
+from google.api_core.exceptions import NotFound
 import flask
 import mongoengine as me
 
@@ -22,6 +24,14 @@ TASK_QUEUE = "projects/lorrgs/locations/europe-west2/queues/lorgs-task-queue"
 
 
 blueprint = flask.Blueprint("api.tasks", __name__)
+
+
+def get_google_task_client():
+    return tasks_v2.CloudTasksClient()
+
+
+def get_task_full_name(name):
+    return f"{TASK_QUEUE}/tasks/{name}"
 
 
 ################################################################################
@@ -65,19 +75,23 @@ def create_cloud_function_task(function_name, **kwargs):
     Args:
         function_name (str): name of the function to run
     """
-    url = f"{CLOUD_FUNCTIONS_ROOT}/{function_name}"
 
+    task_uuid = uuid.uuid4()
+    full_name = f"{TASK_QUEUE}/tasks/{function_name}__{task_uuid}"
+
+    url = f"{CLOUD_FUNCTIONS_ROOT}/{function_name}"
     if kwargs:
         url += "?" + urllib.parse.urlencode(kwargs)
 
-    task = {
+    submit_task({
+        "name": full_name,
         "http_request": {  # Specify the type of request.
             "http_method": tasks_v2.HttpMethod.GET,
             "url": url,
         }
-    }
-    return submit_task(task)
+    })
 
+    return task_uuid
 
 
 def create_app_engine_task(url, **kwargs):

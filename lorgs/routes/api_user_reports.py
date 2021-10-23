@@ -1,12 +1,15 @@
 # IMPORT STANDARD LIBRARIES
 
 # IMPORT THIRD PARTY LIBRARIES
+import json
 import flask
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.logger import logger
 from lorgs.cache import cache
 from lorgs.models.warcraftlogs_user_report import UserReport
+from lorgs.routes.api_tasks import create_cloud_function_task
+from lorgs.client import InvalidReport
 
 
 blueprint = flask.Blueprint("api.user_reports", __name__)
@@ -69,12 +72,17 @@ def get_player(report_id, fight_id, source_id):
 async def load_user_report_overview(report_id):
     """Load a Report's Overview/Masterdata."""
     user_report = UserReport.from_report_id(report_id=report_id, create=True)
-    await user_report.load()
-    user_report.save()
-    return user_report.as_dict()
+
+    try:
+        await user_report.load()
+    except InvalidReport:
+        return flask.make_response("invalid report", 404)
+    else:
+        user_report.save()
+        return user_report.as_dict()
 
 
-@blueprint.route("/load/<string:report_id>")
+@blueprint.route("/<string:report_id>/load")
 async def load_user_report(report_id):
     """Load a Report
 
@@ -84,17 +92,25 @@ async def load_user_report(report_id):
         player[list(int)]: player ids
 
     """
+    ################################
     # parse inputs
     fight_ids = flask.request.args.getlist("fight", type=int)
     player_ids = flask.request.args.getlist("player", type=int)
+    direct = flask.request.args.get("direct", default=False, type=json.loads)
+
     logger.info("load: %s / fights: %s / players: %s", report_id, fight_ids, player_ids)
     if not (fight_ids and player_ids):
         return "Missing fight or player ids", 403
 
+    ################################
     # loading...
-    user_report = UserReport.from_report_id(report_id=report_id, create=True)
-    await user_report.load_fights(fight_ids=fight_ids, player_ids=player_ids)
-    user_report.save()
+    if direct:
+        user_report = UserReport.from_report_id(report_id=report_id, create=True)
+        await user_report.load_fights(fight_ids=fight_ids, player_ids=player_ids)
+        user_report.save()
+        return "done"
 
-    # return
-    return "done"
+    ################################
+    # create task
+    task_id = create_cloud_function_task("user_report_load")
+    return {"task_id": task_id}
