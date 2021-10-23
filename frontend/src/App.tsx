@@ -14,6 +14,7 @@ const Index = lazy(() => import("./routes/Index/Index"));
 const SpecRankings = lazy(() => import("./routes/SpecRankings"));
 const UserReportIndex = lazy(() => import("./routes/UserReportIndex/UserReportIndex"));
 const UserReport = lazy(() => import("./routes/UserReport/UserReport"));
+const UserReportLoading = lazy(() => import("./routes/UserReportLoading/UserReportLoading"));
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -43,6 +44,7 @@ export default function App() {
 
                     {/* User Reports */}
                     <Route path="/user_report/" exact={true} component={UserReportIndex} />
+                    <Route path="/user_report/load" exact={true} component={UserReportLoading} />
                     <Route path="/user_report/:report_id" component={UserReport} />
 
                     {/* other routes */}
