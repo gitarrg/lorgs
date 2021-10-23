@@ -16,15 +16,13 @@
     // timeline
     --timeline-height: 28px;
     --timeline-ruler-height: var(--timeline-height);
+
+    // default mode settings
+    --timeline-fight-gap: 10px;
 }
 
 
 /* Page Specific */
 .spec_ranking {
-    --timeline-fight-gap: 0px;
-}
-
-
-.comp_ranking {
-    --timeline-fight-gap: 10px;
+    --timeline-fight-gap: 00px;
 }

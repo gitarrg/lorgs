@@ -23,7 +23,6 @@ export interface UserReportData {
 // Utils
 //
 export interface UserReportSearchParams {
-    report_id: string
     player_ids: number[]
     fight_ids: number[]
 }
@@ -31,16 +30,10 @@ export interface UserReportSearchParams {
 
 export function build_url_search_string(params: UserReportSearchParams) {
 
-    let search = new URLSearchParams({
-        report_id: params.report_id
-    })
-    // search.set("report_id", params.report_id)
-
+    let search = new URLSearchParams({})
     params.fight_ids.forEach(fight_id => { search.append("fight", fight_id.toString()) })
     params.player_ids.forEach(player_id => { search.append("player", player_id.toString()) })
-
     return search.toString()
-
 }
 
 
@@ -162,8 +155,7 @@ export function load_report(report_id: string, fight_ids: number[], player_ids: 
         const search_string = build_url_search_string({report_id, fight_ids, player_ids})
         const url = `/api/user_reports/${report_id}/load?${search_string}`;
         let response = await fetch_data(url);
-
-        return response.task_id
+        return response
     }
-
 }
+

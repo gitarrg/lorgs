@@ -35,6 +35,20 @@ def get_user_report(report_id):
     return user_report.as_dict()
 
 
+@blueprint.route("/<string:report_id>/fights")
+@cache.cached(query_string=True)
+def get_fights(report_id):
+    """Get Fights in a report."""
+    user_report = UserReport.from_report_id(report_id=report_id)
+    if not user_report:
+        return "Report not found.", 404
+
+    report = user_report.report
+    return {
+        "fights": [fight.as_dict() for fight in report.fights]
+    }
+
+
 @blueprint.route("/<string:report_id>/fights/<int:fight_id>")
 @cache.cached()
 def get_fight(report_id, fight_id):
@@ -104,6 +118,8 @@ async def load_user_report(report_id):
     player_ids = quart.request.args.getlist("player", type=int)
     direct = quart.request.args.get("direct", default=False, type=json.loads)
 
+    direct = True # for dev
+
     logger.info("load: %s / fights: %s / players: %s", report_id, fight_ids, player_ids)
     if not (fight_ids and player_ids):
         return "Missing fight or player ids", 403
@@ -114,7 +130,7 @@ async def load_user_report(report_id):
         user_report = UserReport.from_report_id(report_id=report_id, create=True)
         await user_report.load_fights(fight_ids=fight_ids, player_ids=player_ids)
         user_report.save()
-        return "done"
+        return {"status": "done"}
 
     ################################
     # create task

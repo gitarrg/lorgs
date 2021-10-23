@@ -12,8 +12,8 @@ const CompSearch = lazy(() => import("./routes/CompSearch"));
 const Help = lazy(() => import("./routes/Help/Help"))
 const Index = lazy(() => import("./routes/Index/Index"));
 const SpecRankings = lazy(() => import("./routes/SpecRankings"));
-const UserReportIndex = lazy(() => import("./routes/UserReportIndex/UserReportIndex"));
 const UserReport = lazy(() => import("./routes/UserReport/UserReport"));
+const UserReportIndex = lazy(() => import("./routes/UserReportIndex/UserReportIndex"));
 const UserReportLoading = lazy(() => import("./routes/UserReportLoading/UserReportLoading"));
 
 
