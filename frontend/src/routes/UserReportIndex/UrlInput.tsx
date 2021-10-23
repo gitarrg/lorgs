@@ -1,11 +1,9 @@
-import { KeyboardEvent, useEffect } from 'react'
+import { KeyboardEvent } from 'react'
+import { load_report_overview, get_is_loading } from "../../store/user_reports";
+import { useAppDispatch, useAppSelector } from '../../store/store_hooks'
 import { useFormContext, useWatch } from 'react-hook-form';
-import { useDispatch } from 'react-redux'
-
-import { load_report } from "../../store/user_reports";
 // @ts-ignore
 import styles from "./UrlInput.scss"
-
 
 
 /** text to show when the URL input is empty */
@@ -39,7 +37,8 @@ export default function UrlInput({input_name="report_url"}) {
 
     ////////////////////////////////
     // Hooks
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
+    const is_loading = useAppSelector(state => get_is_loading(state))
     const { register, setValue, formState: { errors } } = useFormContext();
     const url = useWatch({name: input_name})
 
@@ -57,7 +56,7 @@ export default function UrlInput({input_name="report_url"}) {
     /** Update the stored report code */
     function onClick() {
         setValue("report_code", report_code)
-        dispatch(load_report(report_code))
+        dispatch(load_report_overview(report_code))
     }
 
     /** Allow users to submit their URL by pressing enter */
@@ -84,7 +83,14 @@ export default function UrlInput({input_name="report_url"}) {
                 />
 
                 {/* Button */}
-                <button type="button" className="button" disabled={!is_valid} onClick={onClick}>load ▶</button>
+                <button
+                    type="button"
+                    className="button"
+                    disabled={!is_valid || is_loading}
+                    onClick={onClick}>
+                    load ▶
+                </button>
+
             </div>
 
             {/* Error Messages */}
