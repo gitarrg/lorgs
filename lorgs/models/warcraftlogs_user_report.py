@@ -58,6 +58,10 @@ class UserReport(me.Document):
         if not (fight_ids and player_ids):
             raise ValueError(f"fight or player ids missing: {fight_ids} {player_ids}")
 
+        # make sure the master data is loaded
+        if not (self.report.players and self.report.fights):
+            await self.load()
+
         # for fights, we can simply filter out the fights we want.
         fights_to_load = [fight for fight in self.report.fights if fight.fight_id in fight_ids]  # pylint: disable=no-member
 

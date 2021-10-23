@@ -34,7 +34,6 @@ function InfoBlock({params}) {
 
         const values = params.getAll(key)
         const value = values.join(", ")
-        console.log("key", key)
 
         info_elements.push(
             <Fragment key={key}>

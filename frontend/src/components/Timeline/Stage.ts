@@ -12,6 +12,18 @@ import { IMAGES } from "./Cast";
 Konva.autoDrawEnabled = false;
 
 
+
+// TODO: move this to the fights-reducer, and calculate after fetch.
+function is_empty_fight(fight: Fight) {
+    if (fight.players.some(player => player.casts.length > 0)) {
+        return false;
+    }
+
+    // sorry bro
+    return true
+}
+
+
 export default class Stage extends Konva.Stage{
 
     static ZOOM_RATE = 1.1
@@ -86,7 +98,11 @@ export default class Stage extends Konva.Stage{
 
         this.rows.forEach(row => {
             row.y(y)
-            y += row.height() + this.FIGHT_SPACE  // TODO: add FightRow that can have subrows
+
+            const row_height = row.height()
+            if (row_height > 0) {
+                y += row.height() + this.FIGHT_SPACE
+            }
         })
 
         this.height(y+1) // 1 extra to show the border
@@ -193,6 +209,9 @@ export default class Stage extends Konva.Stage{
 
         // create fresh instances
         new_fights.forEach((fight) => {
+
+            // skip empty fights
+            if (is_empty_fight(fight)) { return }
 
             const row = new FightRow(fight)
             this.back_layer.add(row.background)

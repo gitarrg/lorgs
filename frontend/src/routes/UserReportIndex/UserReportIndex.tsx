@@ -68,7 +68,7 @@ export default function UserReportIndex() {
         }
         // otherwise we can go directly to the report page
         else {
-            url = `/user_report/${report_id}&${search}`
+            url = `/user_report/${report_id}?${search}`
         }
         history.push(url)
     }

@@ -1,6 +1,6 @@
 
 import { createSlice } from '@reduxjs/toolkit'
-
+import { createSelector } from 'reselect'
 import { fetch_data } from '../api'
 import type Actor from '../types/actor';
 import type Fight from '../types/fight';
@@ -9,7 +9,7 @@ import { MODES } from './ui'
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Actions
+// Selectors
 //
 
 export function get_all_fights(state: RootState) : Fight[] {
@@ -17,6 +17,23 @@ export function get_all_fights(state: RootState) : Fight[] {
 }
 
 export const get_fights = get_all_fights;
+
+
+/** Get all specs that occur in any of the fights */
+export const get_occuring_specs = createSelector<RootState, Fight[], string[]>(
+    get_fights,
+    ( fights ) => {
+
+        const specs_set = new Set<string>()
+
+        fights.forEach(fight => {
+            fight.players.forEach(player => {
+                specs_set.add(player.spec)
+            });
+        })
+        return Array.from(specs_set) // Set to Array
+    }
+)
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -42,6 +59,7 @@ function _process_fight(fight: Fight) {
     return fight
 }
 
+
 function _process_fights(fights: Fight[]) {
     return fights.map(fight => _process_fight(fight))
 }
@@ -54,7 +72,7 @@ const SLICE = createSlice({
 
     reducers: {
         set_fights: (_, action) => {
-            return _process_fights(action.payload)
+            return _process_fights(action.payload ?? [])
         },
     }, // reducers
 
@@ -136,3 +154,17 @@ export function load_fights(mode: string, {boss_slug, spec_slug="", search=""} :
     } // async dispatch
 }
 
+
+
+export function load_report_fights(report_id: string, search: string = "") {
+
+    return async (dispatch: AppDispatch) => {
+        dispatch({type: "ui/set_loading", payload: {key: "fights", value: true}})
+
+        const url = `/api/user_reports/${report_id}/fights`;
+        const report_data = await fetch_data(url, search)
+
+        dispatch(set_fights(report_data.fights))
+        dispatch({type: "ui/set_loading", payload: {key: "fights", value: false}})
+    }
+}

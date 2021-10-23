@@ -62,13 +62,23 @@ export function slug(str: string) {
  * Takes an Array<V>, and a grouping function,
  * and returns a Map of the array grouped by the grouping function.
  */
-export function group_by(list, key_getter) {
+export function group_by(list: any[], key_getter: Function) {
     const result = {};
     list.forEach((item) => {
          const key = key_getter(item);
          result[key] = [...(result[key] || []), item]
     });
     return result;
+}
+
+/**
+ * Gets uniuqe values from a list of items.
+ * @param items the items to process
+ * @param getter a function that is used to access which property to use
+ */
+export function get_unique_values(items: any[], getter: Function) {
+    const unique = [...new Set(items.map(item => getter(item)))]
+    return Array.from(unique)
 }
 
 
