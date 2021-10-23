@@ -9,16 +9,45 @@ import os
 import urllib
 
 # IMPORT THIRD PARTY LIBRARIES
-import flask
 from google.cloud import tasks_v2
+import flask
+import mongoengine as me
+
+# IMPORT LOCAL LIBRARIES
+from lorgs.models.task import Task
 
 
 CLOUD_FUNCTIONS_ROOT = os.getenv("CLOUD_FUNCTIONS_ROOT") or "https://europe-west1-lorrgs.cloudfunctions.net"
 TASK_QUEUE = "projects/lorrgs/locations/europe-west2/queues/lorgs-task-queue"
 
 
-###############################
+blueprint = flask.Blueprint("api.tasks", __name__)
 
+
+################################################################################
+# Task Status
+#
+
+@blueprint.route("/")
+def get_tasks():
+    """List all Tasks."""
+    return {str(task.id): task.as_dict() for task in Task.objects} # pylint: disable=no-member
+
+
+@blueprint.route("/<string:task_id>")
+def get_task(task_id):
+    """Get a single task by ID."""
+    try:
+        task = Task.objects.get(id=task_id) # pylint: disable=no-member
+    except me.DoesNotExist:
+        return "invalid task id", 404
+    else:
+        return task.as_dict()
+
+
+################################################################################
+# Google Tasks
+#
 def submit_task(task):
 
     if flask.current_app.config["LORRGS_DEBUG"]:
