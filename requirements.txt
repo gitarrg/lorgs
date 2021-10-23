@@ -3,13 +3,12 @@ aiohttp==3.7.4.post0
 arrow==1.2
 python-dotenv==0.17.1
 
-Flask==2.0
-flask[async]==2.0
+Quart==0.15
 flask_caching
+Hypercorn==0.11
 
-gunicorn==20.1.0
 
 mongoengine==0.23.1
 dnspython==2.1.0
 
-google-cloud-tasks
+google-cloud-tasks==2.6

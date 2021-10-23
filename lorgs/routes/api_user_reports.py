@@ -2,7 +2,7 @@
 
 # IMPORT THIRD PARTY LIBRARIES
 import json
-import flask
+import quart
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.logger import logger
@@ -12,7 +12,7 @@ from lorgs.routes.api_tasks import create_cloud_function_task
 from lorgs.client import InvalidReport
 
 
-blueprint = flask.Blueprint("api.user_reports", __name__)
+blueprint = quart.Blueprint("api/user_reports", __name__)
 
 
 @blueprint.route("/<string:report_id>")
@@ -76,7 +76,7 @@ async def load_user_report_overview(report_id):
     try:
         await user_report.load()
     except InvalidReport:
-        return flask.make_response("invalid report", 404)
+        return "invalid report", 404
     else:
         user_report.save()
         return user_report.as_dict()
@@ -94,9 +94,9 @@ async def load_user_report(report_id):
     """
     ################################
     # parse inputs
-    fight_ids = flask.request.args.getlist("fight", type=int)
-    player_ids = flask.request.args.getlist("player", type=int)
-    direct = flask.request.args.get("direct", default=False, type=json.loads)
+    fight_ids = quart.request.args.getlist("fight", type=int)
+    player_ids = quart.request.args.getlist("player", type=int)
+    direct = quart.request.args.get("direct", default=False, type=json.loads)
 
     logger.info("load: %s / fights: %s / players: %s", report_id, fight_ids, player_ids)
     if not (fight_ids and player_ids):
@@ -112,5 +112,5 @@ async def load_user_report(report_id):
 
     ################################
     # create task
-    task_id = create_cloud_function_task("user_report_load")
+    task_id = await create_cloud_function_task("user_report_load")
     return {"task_id": task_id}

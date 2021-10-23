@@ -14,12 +14,10 @@ automatic_scaling:
 
 
 entrypoint: >
-  gunicorn
+  hypercorn
   -b :$PORT
-  --timeout=600
-  --workers 2
+  --workers 4
   "lorgs.app:create_app()"
-# longer timeout for the api calls that load data
 
 
 env_variables:
