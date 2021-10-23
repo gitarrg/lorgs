@@ -68,18 +68,24 @@ def get_player(report_id, fight_id, source_id):
 
 ################################################################################
 
+
 @blueprint.route("/<string:report_id>/load_overview")
 async def load_user_report_overview(report_id):
     """Load a Report's Overview/Masterdata."""
+    refresh = quart.request.args.get("refresh", default=False, type=json.loads)
+
     user_report = UserReport.from_report_id(report_id=report_id, create=True)
 
-    try:
-        await user_report.load()
-    except InvalidReport:
-        return "invalid report", 404
-    else:
-        user_report.save()
-        return user_report.as_dict()
+    # refresh if asked for, or needed
+    if refresh or user_report.id is None:
+        try:
+            await user_report.load()
+        except InvalidReport:
+            return "invalid report", 404
+        else:
+            user_report.save()
+
+    return user_report.as_dict()
 
 
 @blueprint.route("/<string:report_id>/load")
