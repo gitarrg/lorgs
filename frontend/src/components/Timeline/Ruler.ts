@@ -140,7 +140,7 @@ export default class Ruler extends Konva.Group {
             timestamp.x(x)
         })
 
-        this.#bottom_line && this.#bottom_line.points([0, constants.LINE_HEIGHT-0.5, this.duration * scale_x, constants.LINE_HEIGHT-0.5])
+        this.#bottom_line && this.#bottom_line.points([0, constants.LINE_HEIGHT+0.5, this.duration * scale_x, constants.LINE_HEIGHT+0.5])
 
         this.#bbox.width(this.duration * scale_x)
         this.duration && this.cache()

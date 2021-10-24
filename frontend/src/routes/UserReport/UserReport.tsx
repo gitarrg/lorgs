@@ -11,10 +11,10 @@ import { get_spec, load_spec_spells } from '../../store/specs'
 import { useAppSelector } from '../../store/store_hooks'
 import ReportHeader from './ReportHeader'
 import ReportSettingsBar from './ReportSettingsBar'
-import { load_report_overview, set_report_id } from '../../store/user_reports'
+import { fight_selected, get_user_report_players, load_report_overview, player_selected, set_report_id } from '../../store/user_reports'
 
 import { get_occuring_specs, load_report_fights } from "../../store/fights"
-import ReportNavbar from './ReportNavbar'
+import ReportNavbar from './../../components/ReportNavbar/ReportNavbar'
 
 
 
@@ -41,25 +41,29 @@ export default function UserReport() {
     //
     useTitle(`Lorrgs: Report: ${report_id}`)
 
+
     useEffect(() => {
         dispatch(ui_store.set_mode(mode)) // in useEffect to only run once
     }, [])
+
 
     useEffect(() => {
         dispatch(load_report_overview(report_id))
         dispatch(load_report_fights(report_id))
     }, [report_id])
 
+
     // update player and fight selection
     useEffect(() => {
         const search_params = new URLSearchParams(search)
-        const fight_ids: number[] = search_params.getAll("fight").map(v => parseInt(v))
-        const player_ids: number[] = search_params.getAll("player").map(v => parseInt(v))
 
-        dispatch(ui_store.set_filters({
-            player_ids,
-            fight_ids,
-        }))
+        // optimise later...
+        search_params.getAll("player").forEach(player_id => {
+            dispatch(player_selected({source_id: parseInt(player_id), selected: true}))
+        })
+        search_params.getAll("fight").forEach(fight_id => {
+            dispatch(fight_selected({fight_id: parseInt(fight_id), selected: true}))
+        })
     }, [search])
 
     useEffect(() => {
@@ -89,8 +93,7 @@ export default function UserReport() {
     // useEffect(() => {
     //     dispatch(load_report_fights(report_id, search)) // [fight_id], [player_id]))
     // }, [report_id, fight_id, player_id])
-
-
+    
     ////////////////////////////////////////////////////////////////////////////
     // Render
     //
@@ -99,10 +102,10 @@ export default function UserReport() {
 
             <div className="mt-3 flex-row d-flex flex-wrap-reverse">
                 <ReportHeader />
-                <ReportNavbar />
             </div>
 
-             <div className={`${is_loading ? "loading_trans" : ""}`}>
+             <div className={`${is_loading ? "loading_trans" : ""} mt-2`}>
+                <ReportNavbar />
                 <ReportSettingsBar />
             </div>
             {is_loading && <LoadingOverlay />}

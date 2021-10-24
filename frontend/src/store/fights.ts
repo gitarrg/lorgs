@@ -12,11 +12,22 @@ import { MODES } from './ui'
 // Selectors
 //
 
-export function get_all_fights(state: RootState) : Fight[] {
-    return state.fights
+export function get_all_fights(state: RootState) : {[key: number]: Fight} {
+    return state.fights.fights_by_id
 }
 
-export const get_fights = get_all_fights;
+
+export function get_fight_ids(state: RootState) {
+    return state.fights.fight_ids
+}
+
+
+export const get_fights = createSelector<RootState, {[key: number]: Fight}, Fight[]>(
+    get_all_fights,
+    ( fights_by_id ) => {
+        return Object.values(fights_by_id)
+    }
+)
 
 
 /** Get all specs that occur in any of the fights */
@@ -50,6 +61,15 @@ function _process_actor(actor: Actor) {
 }
 
 
+function is_empty_fight(fight: Fight) {
+    if (fight.players.some(player => player.casts.length > 0)) {
+        return false;
+    }
+    // sorry bro
+    return true
+}
+
+
 function _process_fight(fight: Fight) {
     if (fight.boss) {
         fight.boss = _process_actor(fight.boss)
@@ -60,19 +80,37 @@ function _process_fight(fight: Fight) {
 }
 
 
+
 function _process_fights(fights: Fight[]) {
-    return fights.map(fight => _process_fight(fight))
+
+    fights = fights.map(fight => _process_fight(fight))
+    fights = fights.filter(fight => !is_empty_fight(fight))
+    return fights
+    // return fights.map(fight => _process_fight(fight))
 }
 
 
 const SLICE = createSlice({
     name: "fights",
 
-    initialState: [] as Fight[],
+    initialState: {
+        fights: [] as Fight[],
+        fights_by_id: {},
+        fight_ids: [] as number[],
+    },
 
     reducers: {
-        set_fights: (_, action) => {
-            return _process_fights(action.payload ?? [])
+        set_fights: (state, action) => {
+
+            const fights = _process_fights(action.payload ?? [])
+
+            state.fights_by_id = {}
+            state.fight_ids = []
+            fights.forEach(fight => {
+                state.fights_by_id[fight.fight_id] = fight
+                state.fight_ids.push(fight.fight_id)
+            })
+            return state
         },
     }, // reducers
 
@@ -155,7 +193,6 @@ export function load_fights(mode: string, {boss_slug, spec_slug="", search=""} :
 }
 
 
-
 export function load_report_fights(report_id: string, search: string = "") {
 
     return async (dispatch: AppDispatch) => {
@@ -168,3 +205,6 @@ export function load_report_fights(report_id: string, search: string = "") {
         dispatch({type: "ui/set_loading", payload: {key: "fights", value: false}})
     }
 }
+
+
+

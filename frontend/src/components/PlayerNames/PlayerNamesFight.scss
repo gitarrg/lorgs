@@ -1,7 +1,15 @@
 
+
 .fight {
 
     margin-top: var(--timeline-fight-gap, 0);
+
+    display: flex;
+    // gap: 0.25rem;
+
+    border: 1px solid black;
+    border-right: none;
+
 
     // first fight needs more space for the timeline ruler
     &:first-child {
@@ -9,11 +17,11 @@
     }
 
     // round off first and last childs corners
-    &:first-child div:first-child {
+    &:first-child {
         border-top-left-radius: 0.25rem;
     }
 
-    &:last-child div:last-child {
+    &:last-child {
         border-bottom-left-radius: 0.25rem;
     }
 }

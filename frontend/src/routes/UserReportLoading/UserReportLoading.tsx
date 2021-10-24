@@ -3,6 +3,7 @@ import {useInterval} from 'react-use';
 import { fetch_data } from "../../api";
 import { Fragment } from "react";
 
+
 // @ts-ignore
 import styles from "./UserReportLoading.scss"
 
@@ -18,6 +19,7 @@ const TASK_STATUS_PENDING = "pending"
 
 
 async function get_task_status(task_name : string) {
+    if (task_name === "done") { return "done" }
     return fetch_data(`/api/tasks/${task_name}`)
 }
 

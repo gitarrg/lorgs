@@ -18,10 +18,10 @@ export default interface Actor {
 
     total: number
 
+    casts: Cast[]
+
     pinned?: boolean
 
     // spec ranking
     rank?: number
-
-    casts: Cast[]
 }

@@ -1,9 +1,9 @@
-
-
 import {PlayerName, BossName} from "./PlayerName"
 import type Fight from "../../types/fight";
 import type Actor from "../../types/actor";
+import { FightInfo } from "./FightInfo";
 
+// @ts-ignore
 import styles from "./PlayerNamesFight.scss"
 
 
@@ -23,12 +23,17 @@ function create_players(fight: Fight) {
 }
 
 
+
 export default function PlayerNamesFight( {i, fight} : {i: number, fight: Fight} ) {
 
     return (
         <div className={styles.fight}>
-            {create_boss(fight)}
-            {create_players(fight)}
+            <FightInfo fight={fight} />
+
+            <div className={styles.names_container}>
+                {create_boss(fight)}
+                {create_players(fight)}
+            </div>
         </div>
     )
 }
