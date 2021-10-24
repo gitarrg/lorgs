@@ -22,6 +22,11 @@ export function get_fight_ids(state: RootState) {
 }
 
 
+export function get_fight_is_loaded(state: RootState, fight_id: number) {
+    return state.fights.fight_ids[fight_id] != undefined;
+}
+
+
 export const get_fights = createSelector<RootState, {[key: number]: Fight}, Fight[]>(
     get_all_fights,
     ( fights_by_id ) => {
@@ -205,6 +210,3 @@ export function load_report_fights(report_id: string, search: string = "") {
         dispatch({type: "ui/set_loading", payload: {key: "fights", value: false}})
     }
 }
-
-
-

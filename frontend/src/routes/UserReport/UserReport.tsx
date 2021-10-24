@@ -66,11 +66,12 @@ export default function UserReport() {
         })
     }, [search])
 
-    useEffect(() => {
-        specs.forEach(spec_slug => {
-            dispatch(load_spec_spells(spec_slug))
-        })
-    }, [specs])
+
+    // useEffect(() => {
+    //     specs.forEach(spec_slug => {
+    //         dispatch(load_spec_spells(spec_slug))
+    //     })
+    // }, [specs])
 
     // useEffect(() => {
     // }, [report_id, fight_ids, player_ids])
