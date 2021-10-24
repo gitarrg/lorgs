@@ -3,6 +3,7 @@
  */
 import type Spec from "../types/spec"
 import type { SpellDict } from "../types/spell"
+import type Spell from "../types/spell"
 
 
 // spell types that will be combined with the main spec
