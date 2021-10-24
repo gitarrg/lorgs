@@ -1,10 +1,9 @@
 import { useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
-import FightSelectList from "./FightSelectList";
+// import FightSelectList from "./FightSelectList";
 import FormGroup from "./FormGroup";
 import HeaderLogo from "../../components/HeaderLogo";
 import LoadingOverlay from "../../components/shared/LoadingOverlay";
-import PlayerSelectList from "./PlayerSelectList";
 import UrlInput from "./UrlInput";
 import { build_url_search_string, get_is_loading, load_report, load_report_overview } from "../../store/user_reports";
 import { useAppDispatch, useAppSelector } from '../../store/store_hooks'
@@ -12,6 +11,7 @@ import { useHistory } from "react-router";
 
 // @ts-ignore
 import styles from "./UserReportIndex.scss"
+// import PlayerSelectList from "../../components/PlayerSelect/PlayerSelectList";
 
 
 /** input: [undefined, undefined, true, undefine]
@@ -99,12 +99,12 @@ export default function UserReportIndex() {
                 <div className={`d-flex gap-2 ${is_loading ? "loading_trans" : ""} `}>
                     {/* Fight Selection */}
                     <FormGroup title="Fights:">
-                        <FightSelectList />
+                        {/* <FightSelectList /> */}
                     </FormGroup>
 
                     {/* Player Selection */}
                     <FormGroup title="Players:">
-                        <PlayerSelectList />
+                        {/* <PlayerSelectList /> */}
                     </FormGroup >
                 </div>
 

@@ -1,10 +1,10 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { createSelector } from 'reselect'
-
-import { fetch_data } from '../api'
-import { AppDispatch, RootState } from './store'
 import type Actor from '../types/actor'
 import type Fight from '../types/fight'
+import { AppDispatch, RootState } from './store'
+import { createSelector } from 'reselect'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { fetch_data } from '../api'
+import { get_fight_ids } from './fights'
 
 
 export interface UserReportData {
@@ -13,6 +13,9 @@ export interface UserReportData {
     report_id: string
     fights: Fight[]
     players: Actor[]
+
+    selected_players: {[key: number]: boolean}
+    selected_fights: {[key: number]: boolean}
 
     /**id of the task when loading the data */
     task_id?: string
@@ -75,6 +78,63 @@ export const get_user_report_players = createSelector<RootState, UserReportData,
 )
 
 
+export function get_player_selected(state: RootState, source_id: number) {
+    return state.user_report.selected_players[source_id]
+}
+
+
+function get_selected_fights_map(state: RootState) {
+    return state.user_report.selected_fights
+}
+
+
+export const get_selected_fights = createSelector<RootState, {[key: number]: boolean}, number[]>(
+    get_selected_fights_map,
+    (selected_fights) => {
+        return  Object.keys(selected_fights)
+            .filter(fight_id => selected_fights[fight_id]) // filter out unselected
+            .map(fight_id => parseInt(fight_id)); // convert keys to int
+    }
+)
+
+
+export function get_fight_selected(state: RootState, fight_id: number) {
+    return state.user_report.selected_fights[fight_id]
+}
+
+
+/** Generate a search string based of the current selection */
+export function get_search_string(state: RootState) {
+
+    let search = new URLSearchParams({})
+
+    for (const [key, value] of Object.entries(state.user_report.selected_fights)) {
+        if (value) { search.append("fight", key)}
+    }
+    for (const [key, value] of Object.entries(state.user_report.selected_players)) {
+        if (value) { search.append("player", key)}
+    }
+
+    return search.toString()
+}
+
+
+export const report_requires_reload = createSelector(
+
+    get_fight_ids,
+    get_selected_fights,
+
+    (current_fights, selected_fights) => {
+        // see if at least one of the selected fights is not loaded yet
+        const missing_fight = selected_fights.some(fight_id => !current_fights.includes(fight_id))
+        if (missing_fight) { return true }
+
+        // todo: check players
+        return false
+    }
+)
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Slice
 //
@@ -86,6 +146,9 @@ const INITIAL_STATE: UserReportData = {
     players: [],
     task_id: "",
     is_loading: false,
+
+    selected_players: {},
+    selected_fights: {},
 }
 
 
@@ -114,7 +177,17 @@ const SLICE = createSlice({
                 ...action.payload,
                 is_loading: false,
             }
-        }, // fights_loaded
+        }, // report_overview_loaded
+
+        player_selected: (state, action: PayloadAction<{source_id: number, selected: boolean}>) => {
+            state.selected_players[action.payload.source_id] = action.payload.selected
+            return state
+        },
+
+        fight_selected: (state, action: PayloadAction<{fight_id: number, selected: boolean}>) => {
+            state.selected_fights[action.payload.fight_id] = action.payload.selected
+            return state
+        },
     },
 })
 
@@ -123,6 +196,8 @@ export default SLICE.reducer
 export const {
     set_report_id,
     report_overview_loading_started,
+    player_selected,
+    fight_selected,
 } = SLICE.actions
 
 
@@ -149,10 +224,9 @@ export function load_report_overview(report_id: string) {
 
 export function load_report(report_id: string, fight_ids: number[], player_ids: number[]) {
 
-
     return async (dispatch: AppDispatch) => {
 
-        const search_string = build_url_search_string({report_id, fight_ids, player_ids})
+        const search_string = build_url_search_string({fight_ids, player_ids})
         const url = `/api/user_reports/${report_id}/load?${search_string}`;
         let response = await fetch_data(url);
         return response

@@ -1,5 +1,5 @@
 import FightWidget from "./FightWidget"
-import Icon from "../../components/shared/Icon"
+import Icon from "../shared/Icon"
 import type Fight from "../../types/fight"
 import { SelectGroup } from './SelectGroup'
 import { get_boss } from "../../store/bosses"

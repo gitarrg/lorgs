@@ -130,8 +130,7 @@ async def load_user_report(report_id):
         user_report = UserReport.from_report_id(report_id=report_id, create=True)
         await user_report.load_fights(fight_ids=fight_ids, player_ids=player_ids)
         user_report.save()
-        return {"status": "done"}
-
+        return {"status": "done", "task_id": "done"}
     ################################
     # create task
     task_id = await create_cloud_function_task("user_report_load")

@@ -51,11 +51,17 @@
     background: hsl(0, 0%, 30%);
 
     border-top: none;
+    border-bottom: none;
 
     &:hover {
         background: hsl(0, 0%, 40%);
     }
 }
+
+.player_name + .player_name {
+    border-top: 1px solid black;
+}
+
 
 
 .boss_name {
