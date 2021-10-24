@@ -1,3 +1,4 @@
+import { get_fight_is_loaded } from '../../store/fights'
 import { useAppDispatch, useAppSelector } from '../../store/store_hooks'
 import { fight_selected, get_fight_selected } from '../../store/user_reports'
 import Fight from '../../types/fight'
@@ -29,6 +30,7 @@ export default function FightWidget({fight} : FightWidgetProps) {
     ////////////////////////////////
     const dispatch = useAppDispatch()
     const selected = useAppSelector(state => get_fight_selected(state, fight.fight_id))
+    const loaded = useAppSelector(state => get_fight_is_loaded(state, fight.fight_id))
 
 
     ////////////////////////////////
@@ -46,7 +48,13 @@ export default function FightWidget({fight} : FightWidgetProps) {
     // Render
     return (
         <div
-            className={`${styles.container} ${selected? "selected": ""} ${fight.kill ? "wow-kill": "wow-wipe"} p-1 border rounded`}
+            className={`
+                ${styles.container}
+                ${selected? "selected": ""}
+                ${loaded? "loaded": ""}
+                ${fight.kill ? "wow-kill": "wow-wipe"}
+                p-1 border rounded
+            `}
             onClick={onClick}
         >
             <span className={styles.label_pull}>#{fight.fight_id}</span>

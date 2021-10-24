@@ -2,6 +2,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { createSelector } from 'reselect'
 import type { RootState } from './store'
+import { fight_selected, player_selected } from './user_reports'
 
 
 // modes to switch some page related features
@@ -105,8 +106,8 @@ export interface FilterValues {
     killtime: {min: number | null, max: number | null}
 
     /** Filter based on ID */
-    player_ids: number[]
-    fight_ids: number[]
+    player_ids: { [key:number]: boolean}
+    fight_ids:  { [key:number]: boolean}
 
     /** Filter Groups like:
      * role: { tank: false, heal: true}
@@ -171,8 +172,8 @@ const INITIAL_STATE: UiSliceState = {
         spec: {},
         covenant: {},
 
-        player_ids: [],
-        fight_ids: [],
+        player_ids: {},
+        fight_ids: {},
 
         // fight filters
         killtime: {min: null, max: null},
@@ -237,8 +238,32 @@ const SLICE = createSlice({
             state.tooltip.position = position
             return state
         }
-    },
-})
+    }, // reducers
+
+
+    extraReducers: (builder) => {
+
+        builder
+
+        // this exists so we can show/hide players and fights
+        // based of the current selection.
+        // (as "filter_logic" has only access to this slice)
+        .addCase(player_selected, (state, action: PayloadAction<{source_id: number, selected: boolean}>) => {
+            state.filters.player_ids[action.payload.source_id] = action.payload.selected
+            return state
+        })
+
+        .addCase(fight_selected, (state, action: PayloadAction<{fight_id: number, selected: boolean}>) => {
+            state.filters.fight_ids[action.payload.fight_id] = action.payload.selected
+            return state
+        })
+
+
+    }, // extraReducers
+
+
+
+}) // slice
 
 
 export const {
