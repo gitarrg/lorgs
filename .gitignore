@@ -11,6 +11,7 @@ static
 node_modules
 venv
 _src
+dist
 
 # for ".env", we need this (since its already tracked)
 # >>> git update-index --assume-unchanged .env
