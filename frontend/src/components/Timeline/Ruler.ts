@@ -40,7 +40,7 @@ export default class Ruler extends Konva.Group {
         //////////////////////////
         // bbox used to catch mouse events
         this.#bbox = new Konva.Rect({
-            height: constants.LINE_HEIGHT-2,
+            height: constants.LINE_HEIGHT,
             width: 200, // fixed in handle-zoom
             transformsEnabled: "none",
         })
@@ -70,7 +70,7 @@ export default class Ruler extends Konva.Group {
             name: "bottom_line",
             points: [], // applied in handle_zoom
             stroke: "black",
-            strokeWidth: 0.5,
+            strokeWidth: 1,
             transformsEnabled: "none",
         })
         this.add(this.#bottom_line)
@@ -85,7 +85,7 @@ export default class Ruler extends Konva.Group {
 
             let tick = new Konva.Line({
                 name: "tick",
-                points: [0.5, constants.LINE_HEIGHT-h, 0.5, constants.LINE_HEIGHT-1],
+                points: [0.5, constants.LINE_HEIGHT-h, 0.5, constants.LINE_HEIGHT],
                 stroke: this.#color,
                 strokeWidth: 1,
                 transformsEnabled: "position",

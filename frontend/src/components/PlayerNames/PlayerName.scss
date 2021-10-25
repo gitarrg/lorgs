@@ -8,13 +8,13 @@
 .boss_name {
 
     width: 175px;
-    height: var(--timeline-height);
+    height: calc(var(--timeline-height) + 1px);
     padding-right: 5px;
 
     border: 1px solid black;
+
     overflow: hidden;
     position: relative;
-
 
     &__spec_icon,
     &__role_icon {
@@ -27,8 +27,6 @@
     &__rank,
     &__total {
         font-size: 1.2rem;
-        // font-weight: bold;
-
         position: absolute;
 
         // Y Position
@@ -50,18 +48,16 @@
 .player_name {
     background: hsl(0, 0%, 30%);
 
-    border-top: none;
-    border-bottom: none;
-
     &:hover {
         background: hsl(0, 0%, 40%);
     }
 }
 
-.player_name + .player_name {
-    border-top: 1px solid black;
-}
 
+.boss_name + .player_name,
+.player_name + .player_name {
+    margin-top: -1px;  // 1px overlap on border
+}
 
 
 .boss_name {
@@ -99,25 +95,20 @@
             transition-delay: 1s;
         }
     }
-
-    // hide top border only for the very first row
-    // and for all player lanes
-    // .fight:not(:first-child) .boss_name,
-    // .player_name {
-    //     border-top: none;
-    // }
 }}
+
 
 
 :global .comp_ranking { :local {
 
     // round of the corners per fight
-    // .player_name:last-of-type {
-    //     border-bottom-left-radius: 0.25rem;
-    // }
+    .boss_name:first-child,
+    .player_name:first-child {
+        border-top-left-radius: 0.25rem;
+    }
 
-    // hide top border for all, except topmost row
-    // .boss_name:not(:first-child), .player_name:not(:first-child) {
-    //     border-top: none;
-    // }
+    .boss_name:last-child,
+    .player_name:last-child {
+        border-bottom-left-radius: 0.25rem;
+    }
 }}

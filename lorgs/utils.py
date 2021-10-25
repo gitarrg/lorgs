@@ -52,6 +52,12 @@ def slug(text, space=""):
     return text
 
 
+def str_int_list(string, sep="."):
+    """Converts string-list of intergers into an actual list."""
+    return [int(v) for v in string.split(sep)]
+
+
+
 def flatten(l):
     """Flattens a list of lists into a single large list.
 

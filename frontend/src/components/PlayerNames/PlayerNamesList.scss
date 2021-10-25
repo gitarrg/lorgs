@@ -1,0 +1,12 @@
+
+
+
+.player_names_list {
+
+    display: flex;
+    flex-direction: column;
+
+    margin-top: var(--timeline-ruler-height);
+    // gap: var(--timeline-fight-gap, 0);
+
+}

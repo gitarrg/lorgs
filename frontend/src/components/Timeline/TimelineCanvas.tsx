@@ -38,7 +38,7 @@ export default function TimelineCanvas() {
 
     // Update: ui.mode
     useEffect(() => {
-        stage_ref.current!.FIGHT_SPACE = mode == MODES.SPEC_RANKING ? 0 : 10
+        stage_ref.current!.FIGHT_SPACE = mode == MODES.SPEC_RANKING ? -1 : 10
     }, [mode])
 
     useEffect(() => {
