@@ -1,6 +1,16 @@
 
 
 /********************************
+        Fight
+*********************************/
+.fight {
+    display: flex; // why?
+    margin-bottom: var(--timeline-fight-gap, 0);
+}
+
+
+
+/********************************
         Player Names
 *********************************/
 
@@ -73,9 +83,23 @@
 }
 
 
+/********************************
+        Mode Overwrites
+*********************************/
+
+
 // Edits for the Spec Rankings
 :global .spec_ranking { :local {
 
+
+    .fight:first-of-type .boss_name {
+        border-top-left-radius: 0.25rem;
+    }
+    .fight:last-of-type .player_name {
+        border-bottom-left-radius: 0.25rem;
+    }
+
+    // Hover Blur
     .player_name:hover .player_name__rank,
     .player_name:hover .player_name__total,
     .player_name:not(:hover) .player_name__name {

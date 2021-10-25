@@ -82,8 +82,13 @@ function _process_actor(actor: Actor) {
 
 
 function is_empty_fight(fight: Fight) {
+
+    if (fight.boss?.casts?.length) {
+        return false
+    }
+
     if (fight.players.some(player => player.casts.length > 0)) {
-        return false;
+        return false
     }
     // sorry bro
     return true
@@ -147,17 +152,12 @@ function _pin_first_fight(fights: Fight[]) {
     if (fights.length == 0) { return fights }
 
     const [first_fight, ...others] = fights
-    // extract the boss-fight
-    let pinned_fight = {...first_fight}
-    pinned_fight.pinned = true
-    pinned_fight.players = []
-    if (pinned_fight.boss) {
-        pinned_fight.boss.pinned = true
+    first_fight.pinned = true
+    if (first_fight.boss) {
+        first_fight.boss.pinned = true
     }
 
-    // remove the boss from the original
-    first_fight.boss = undefined
-    return [pinned_fight, first_fight, ...others]
+    return [first_fight, ...others]
 }
 
 
