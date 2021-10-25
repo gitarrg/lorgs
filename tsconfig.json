@@ -14,10 +14,10 @@
         "jsx": "react-jsx", // Support JSX in .tsx files
     },
     "include": [
-        "lorgs/frontend/**/*" // *** The files TypeScript should type check ***
+        "frontend/**/*" // *** The files TypeScript should type check ***
     ],
     "exclude": [ // *** The files to not type check ***
-        "node_modules",
+        "node_modules"
     ],
 
     "plugins": [
