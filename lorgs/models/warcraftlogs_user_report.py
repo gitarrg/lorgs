@@ -19,6 +19,9 @@ class UserReport(me.Document):
     Most things should be managed via the Report Instance on: `self.report`
 
     """
+
+    report_id: str = me.StringField(primary_key=True)
+
     # datetime: timetamp of last update
     updated: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField(default=arrow.utcnow)
 
@@ -28,14 +31,14 @@ class UserReport(me.Document):
     @classmethod
     def from_report_id(cls, report_id: str, create=False) -> typing.Union["UserReport", None]:
         """Need to split it, as otherwise the creation with nested parm does;t work"""
-        user_report = cls.objects(report__report_id=report_id).first()  # pylint: disable=no-member
+        user_report = cls.objects(report_id=report_id).first()  # pylint: disable=no-member
         if user_report:
             return user_report
 
         if not create:
             return None
 
-        user_report = cls()
+        user_report = cls(report_id=report_id)
         user_report.report = warcraftlogs_report.Report(report_id=report_id)
         return user_report
 
@@ -46,6 +49,10 @@ class UserReport(me.Document):
         info = self.report.as_dict()
         info["updated"] = int(self.updated.timestamp())
         return info
+
+    @property
+    def is_loaded(self):
+        return bool(self.report.fights)
 
     ################################
     # Methods

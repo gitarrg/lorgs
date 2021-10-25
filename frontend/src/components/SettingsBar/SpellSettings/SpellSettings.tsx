@@ -17,10 +17,10 @@ function _create_spell_buttons(spec: Boss, spell_ids: number[]) {
 // BOSS
 //
 
-export function BossSpellsGroup() {
+export function BossSpellsGroup({ boss_slug="" }) {
 
     // Get current Boss + Spells
-    const boss = useAppSelector(state => get_boss(state))
+    const boss = useAppSelector(state => get_boss(state, boss_slug))
 
     if (!boss) { return null }
     const spells = boss.spells_by_type?.[boss.full_name_slug]
@@ -28,7 +28,7 @@ export function BossSpellsGroup() {
 
     // Render
     return (
-        <ButtonGroup key="boss" name={boss.name} side="left" extra_class="wow-boss">
+        <ButtonGroup name={boss.name} side="left" extra_class="wow-boss">
             {_create_spell_buttons(boss, spells) }
         </ButtonGroup>
     )

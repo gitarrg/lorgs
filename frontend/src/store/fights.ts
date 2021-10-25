@@ -1,11 +1,10 @@
-
-import { createSlice } from '@reduxjs/toolkit'
-import { createSelector } from 'reselect'
-import { fetch_data } from '../api'
 import type Actor from '../types/actor';
 import type Fight from '../types/fight';
 import type { AppDispatch, RootState } from './store'
 import { MODES } from './ui'
+import { createSelector } from 'reselect'
+import { createSlice } from '@reduxjs/toolkit'
+import { fetch_data } from '../api'
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -23,7 +22,7 @@ export function get_fight_ids(state: RootState) {
 
 
 export function get_fight_is_loaded(state: RootState, fight_id: number) {
-    return state.fights.fight_ids[fight_id] != undefined;
+    return state.fights.fights_by_id[fight_id] != undefined;
 }
 
 
@@ -48,6 +47,20 @@ export const get_occuring_specs = createSelector<RootState, Fight[], string[]>(
             });
         })
         return Array.from(specs_set) // Set to Array
+    }
+)
+
+
+export const get_occuring_bosses = createSelector<RootState, Fight[], string[]>(
+    get_fights,
+    ( fights ) => {
+
+        const boss_names = new Set<string>()
+
+        fights.forEach(fight => {
+            boss_names.add(fight.boss?.name)
+        })
+        return Array.from(boss_names)
     }
 )
 

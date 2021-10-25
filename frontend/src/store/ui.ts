@@ -1,8 +1,6 @@
-
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { createSelector } from 'reselect'
 import type { RootState } from './store'
-import { fight_selected, player_selected } from './user_reports'
+import { createSelector } from 'reselect'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 
 // modes to switch some page related features
@@ -99,15 +97,16 @@ export function sort_spell_types(spell_types: string[]) {
 ////////////////////////////////////////////////////////////////////////////////
 // Slice
 //
-type FilterGroup ="role" | "spec" | "class" | "covenant"
+type FilterGroup =
+    | "role"
+    |  "spec"
+    | "class"
+    | "covenant"
+
 
 export interface FilterValues {
 
     killtime: {min: number | null, max: number | null}
-
-    /** Filter based on ID */
-    player_ids: { [key:number]: boolean}
-    fight_ids:  { [key:number]: boolean}
 
     /** Filter Groups like:
      * role: { tank: false, heal: true}
@@ -171,9 +170,6 @@ const INITIAL_STATE: UiSliceState = {
         class: { boss: false },  // for now, bosses are hidden by default (except the pinned ones)
         spec: {},
         covenant: {},
-
-        player_ids: {},
-        fight_ids: {},
 
         // fight filters
         killtime: {min: null, max: null},
@@ -239,30 +235,6 @@ const SLICE = createSlice({
             return state
         }
     }, // reducers
-
-
-    extraReducers: (builder) => {
-
-        builder
-
-        // this exists so we can show/hide players and fights
-        // based of the current selection.
-        // (as "filter_logic" has only access to this slice)
-        .addCase(player_selected, (state, action: PayloadAction<{source_id: number, selected: boolean}>) => {
-            state.filters.player_ids[action.payload.source_id] = action.payload.selected
-            return state
-        })
-
-        .addCase(fight_selected, (state, action: PayloadAction<{fight_id: number, selected: boolean}>) => {
-            state.filters.fight_ids[action.payload.fight_id] = action.payload.selected
-            return state
-        })
-
-
-    }, // extraReducers
-
-
-
 }) // slice
 
 

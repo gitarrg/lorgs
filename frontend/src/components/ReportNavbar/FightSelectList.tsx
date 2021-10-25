@@ -11,7 +11,7 @@ import { useAppSelector } from '../../store/store_hooks'
 function BossGroup({boss_slug, fights} : {boss_slug: string, fights: Fight[]}) {
 
     const boss = useAppSelector(state => get_boss(state, boss_slug))
-    if (!boss) { return }
+    if (!boss) { return null }
 
     // Render
     const icon = <Icon spec={boss} size="m"  />

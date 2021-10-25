@@ -1,6 +1,4 @@
-import { get_fight_is_loaded } from '../../store/fights'
-import { useAppDispatch, useAppSelector } from '../../store/store_hooks'
-import { fight_selected, get_fight_selected } from '../../store/user_reports'
+import { useFormContext, useWatch } from 'react-hook-form'
 import Fight from '../../types/fight'
 import { toMMSS } from '../../utils'
 
@@ -17,7 +15,6 @@ function get_pull_color(percent: number) {
     return "common"
 }
 
-
 interface FightWidgetProps {
     fight: Fight
     selected? : boolean
@@ -27,18 +24,16 @@ interface FightWidgetProps {
 
 export default function FightWidget({fight} : FightWidgetProps) {
 
-    ////////////////////////////////
-    const dispatch = useAppDispatch()
-    const selected = useAppSelector(state => get_fight_selected(state, fight.fight_id))
-    const loaded = useAppSelector(state => get_fight_is_loaded(state, fight.fight_id))
+    const field_name = `fight[${fight.fight_id}]`
 
+    ////////////////////////////////
+    // Hooks
+    const { setValue } = useFormContext();
+    const selected = useWatch({ name: field_name });
 
     ////////////////////////////////
     function onClick() {
-        dispatch(fight_selected({
-            fight_id: fight.fight_id,
-            selected: !selected,
-        }))
+        setValue(field_name, !selected)
     }
 
     ////////////////////////////////
@@ -51,7 +46,6 @@ export default function FightWidget({fight} : FightWidgetProps) {
             className={`
                 ${styles.container}
                 ${selected? "selected": ""}
-                ${loaded? "loaded": ""}
                 ${fight.kill ? "wow-kill": "wow-wipe"}
                 p-1 border rounded
             `}
@@ -63,7 +57,6 @@ export default function FightWidget({fight} : FightWidgetProps) {
             {!fight.kill &&
                 <div className={styles.pbar_outer}>
                     <div className={`${styles.pbar_inner} wow-${pull_color}`} style={{width: `${100-fight.percent}%`}} />
-                    {/* <div className={styles.pbar_label}>{fight.percent}%</div> */}
                 </div>
             }
 

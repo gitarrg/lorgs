@@ -4,7 +4,6 @@ import { AppDispatch, RootState } from './store'
 import { createSelector } from 'reselect'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { fetch_data } from '../api'
-import { get_fight_ids } from './fights'
 
 
 export interface UserReportData {
@@ -13,9 +12,6 @@ export interface UserReportData {
     report_id: string
     fights: Fight[]
     players: Actor[]
-
-    selected_players: {[key: number]: boolean}
-    selected_fights: {[key: number]: boolean}
 
     /**id of the task when loading the data */
     task_id?: string
@@ -78,31 +74,6 @@ export const get_user_report_players = createSelector<RootState, UserReportData,
 )
 
 
-export function get_player_selected(state: RootState, source_id: number) {
-    return state.user_report.selected_players[source_id]
-}
-
-
-function get_selected_fights_map(state: RootState) {
-    return state.user_report.selected_fights
-}
-
-
-export const get_selected_fights = createSelector<RootState, {[key: number]: boolean}, number[]>(
-    get_selected_fights_map,
-    (selected_fights) => {
-        return  Object.keys(selected_fights)
-            .filter(fight_id => selected_fights[fight_id]) // filter out unselected
-            .map(fight_id => parseInt(fight_id)); // convert keys to int
-    }
-)
-
-
-export function get_fight_selected(state: RootState, fight_id: number) {
-    return state.user_report.selected_fights[fight_id]
-}
-
-
 /** Generate a search string based of the current selection */
 export function get_search_string(state: RootState) {
 
@@ -119,22 +90,6 @@ export function get_search_string(state: RootState) {
 }
 
 
-export const report_requires_reload = createSelector(
-
-    get_fight_ids,
-    get_selected_fights,
-
-    (current_fights, selected_fights) => {
-        // see if at least one of the selected fights is not loaded yet
-        const missing_fight = selected_fights.some(fight_id => !current_fights.includes(fight_id))
-        if (missing_fight) { return true }
-
-        // todo: check players
-        return false
-    }
-)
-
-
 ////////////////////////////////////////////////////////////////////////////////
 // Slice
 //
@@ -146,9 +101,6 @@ const INITIAL_STATE: UserReportData = {
     players: [],
     task_id: "",
     is_loading: false,
-
-    selected_players: {},
-    selected_fights: {},
 }
 
 
@@ -171,23 +123,13 @@ const SLICE = createSlice({
         },
 
         report_overview_loaded: (state, action: PayloadAction<UserReportData>) => {
-            console.log("report_loaded", action)
+            // using initial state, to clear out previously loaded values
             return {
-                ...state,
+                ...INITIAL_STATE,
                 ...action.payload,
                 is_loading: false,
             }
         }, // report_overview_loaded
-
-        player_selected: (state, action: PayloadAction<{source_id: number, selected: boolean}>) => {
-            state.selected_players[action.payload.source_id] = action.payload.selected
-            return state
-        },
-
-        fight_selected: (state, action: PayloadAction<{fight_id: number, selected: boolean}>) => {
-            state.selected_fights[action.payload.fight_id] = action.payload.selected
-            return state
-        },
     },
 })
 
@@ -196,8 +138,6 @@ export default SLICE.reducer
 export const {
     set_report_id,
     report_overview_loading_started,
-    player_selected,
-    fight_selected,
 } = SLICE.actions
 
 
@@ -214,6 +154,7 @@ export function load_report_overview(report_id: string) {
 
         // Try to get existing one
         const url = `/api/user_reports/${report_id}/load_overview`;
+
         const report_data = await fetch_data(url);
 
         // store result

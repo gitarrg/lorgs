@@ -37,8 +37,10 @@ function SpellTypeGroup({spec, spell_type}: {spec: Spec, spell_type: string}  ) 
 }
 
 
-export default function SpecGroup({spec} : {spec: Spec }) {
+export default function SpecGroup({spec_slug=""}) {
 
+    // Hooks
+    const spec = useAppSelector(state => get_spec(state, spec_slug))
     if (!spec) { return null }
 
     let spell_types = Object.keys(spec.spells_by_type || {})
