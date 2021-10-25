@@ -13,8 +13,9 @@ import json
 # IMPORT LOCAL LIBRARIES
 from lorgs import db   # pylint: disable=unused-import
 from lorgs import data # pylint: disable=unused-import
+from lorgs import utils
 from lorgs.models import warcraftlogs_ranking
-
+from lorgs.models.warcraftlogs_user_report import UserReport
 
 
 def load_spec_rankings(request):
@@ -50,3 +51,31 @@ def load_spec_rankings(request):
     ranking.save()
 
     return "done"
+
+
+def load_user_report(request):
+    """Load a Report
+
+    Args:
+        report_id(str): the report to load
+        fights[list(int)]: fight ids
+        player[list(int)]: player ids
+
+    """
+    ################################
+    # parse inputs
+    report_id = request.args.get("report_id", type=str)
+    fight_ids = request.args.get("fight", type=utils.str_int_list)
+    player_ids = request.args.get("player", type=utils.str_int_list)
+
+    print(f"[load_user_report] report_id={report_id} fight_ids={fight_ids} player_ids={player_ids}")
+    if not (report_id and fight_ids and player_ids):
+        return "Missing fight or player ids", 400
+
+    ################################
+    # loading...
+    user_report = UserReport.from_report_id(report_id=report_id, create=True)
+    task = user_report.load_fights(fight_ids=fight_ids, player_ids=player_ids)
+    asyncio.run(task)
+    user_report.save()
+    return {"status": "done", "task_id": "done"}
