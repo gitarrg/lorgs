@@ -167,7 +167,7 @@ const INITIAL_STATE: UiSliceState = {
 
         // player filters
         role: {},
-        class: { boss: false },  // for now, bosses are hidden by default (except the pinned ones)
+        class: {},
         spec: {},
         covenant: {},
 

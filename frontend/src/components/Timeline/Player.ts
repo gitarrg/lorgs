@@ -75,7 +75,7 @@ export default class Player extends Konva.Group {
     }
 
     _handle_zoom_change(scale_x: number) {
-        this.clipWidth(this.row.duration * scale_x)
+        this.clipWidth((this.row.duration * scale_x) - 1)  // 1px to allow border to show
     }
 
     handle_event(event_name: string, payload: any) {

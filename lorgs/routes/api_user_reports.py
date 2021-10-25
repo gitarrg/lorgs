@@ -6,6 +6,7 @@ import quart
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.logger import logger
+from lorgs import utils
 from lorgs.cache import cache
 from lorgs.models.warcraftlogs_user_report import UserReport
 from lorgs.routes.api_tasks import create_cloud_function_task
@@ -41,8 +42,8 @@ def get_fights(report_id):
     """Get Fights in a report."""
     user_report = UserReport.from_report_id(report_id=report_id)
 
-    fight_ids = quart.request.args.getlist("fight", type=int)
-    player_ids = quart.request.args.getlist("player", type=int)
+    fight_ids = quart.request.args.get("fight", type=utils.str_int_list)
+    player_ids = quart.request.args.get("player", type=utils.str_int_list)
 
     if not user_report:
         return "Report not found.", 404
@@ -121,24 +122,20 @@ async def load_user_report(report_id):
     """
     ################################
     # parse inputs
-    fight_ids = quart.request.args.getlist("fight", type=int)
-    player_ids = quart.request.args.getlist("player", type=int)
-    direct = quart.request.args.get("direct", default=False, type=json.loads)
-
-    direct = True # for dev
+    # keep as str, as we just pass them trough
+    fight_ids = quart.request.args.get("fight", type=str)
+    player_ids = quart.request.args.get("player", type=str)
 
     logger.info("load: %s / fights: %s / players: %s", report_id, fight_ids, player_ids)
     if not (fight_ids and player_ids):
         return "Missing fight or player ids", 403
 
     ################################
-    # loading...
-    if direct:
-        user_report = UserReport.from_report_id(report_id=report_id, create=True)
-        await user_report.load_fights(fight_ids=fight_ids, player_ids=player_ids)
-        user_report.save()
-        return {"status": "done", "task_id": "done"}
-    ################################
     # create task
-    task_id = await create_cloud_function_task("user_report_load")
+    task_id = await create_cloud_function_task(
+        function_name="load_user_report",
+        report_id=report_id,
+        fight=fight_ids,
+        player=player_ids,
+    )
     return {"task_id": task_id}

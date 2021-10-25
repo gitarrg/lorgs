@@ -58,7 +58,9 @@ export const get_occuring_bosses = createSelector<RootState, Fight[], string[]>(
         const boss_names = new Set<string>()
 
         fights.forEach(fight => {
-            boss_names.add(fight.boss?.name)
+            if (fight.boss) {
+                boss_names.add(fight.boss.name)
+            }
         })
         return Array.from(boss_names)
     }
@@ -100,11 +102,9 @@ function _process_fight(fight: Fight) {
 
 
 function _process_fights(fights: Fight[]) {
-
     fights = fights.map(fight => _process_fight(fight))
     fights = fights.filter(fight => !is_empty_fight(fight))
     return fights
-    // return fights.map(fight => _process_fight(fight))
 }
 
 
@@ -112,9 +112,8 @@ const SLICE = createSlice({
     name: "fights",
 
     initialState: {
-        fights: [] as Fight[],
-        fights_by_id: {},
-        fight_ids: [] as number[],
+        fights_by_id: {} as {[key: string]: Fight},
+        fight_ids: [] as string[],
     },
 
     reducers: {
@@ -125,8 +124,9 @@ const SLICE = createSlice({
             state.fights_by_id = {}
             state.fight_ids = []
             fights.forEach(fight => {
-                state.fights_by_id[fight.fight_id] = fight
-                state.fight_ids.push(fight.fight_id)
+                const fight_key = `${fight.report_id}/${fight.fight_id}`
+                state.fights_by_id[fight_key] = fight
+                state.fight_ids.push(fight_key)
             })
             return state
         },

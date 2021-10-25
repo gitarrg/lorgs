@@ -3,6 +3,9 @@ import PlayerNamesFight from "./PlayerNamesFight";
 import { get_fights } from "../../store/fights";
 import { useAppSelector } from "../../store/store_hooks";
 
+// @ts-ignore
+import styles from "./PlayerNamesList.scss"
+
 
 export default function PlayerNamesList() {
 
@@ -17,7 +20,7 @@ export default function PlayerNamesList() {
     ///////////////////
     // render
     return (
-        <div>
+        <div className={styles.player_names_list}>
             {visible_fights.map((fight, i) => (
                 <PlayerNamesFight key={i} fight={fight} i={i}/>
             ))}

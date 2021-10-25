@@ -89,10 +89,9 @@ export default class Stage extends Konva.Stage{
 
             const row_height = row.height()
             if (row_height > 0) {
-                y += row.height() + this.FIGHT_SPACE + 2  // 2px border
+                y += row.height() + this.FIGHT_SPACE + 1 // 1px for border
             }
         })
-
         this.height(y+1) // 1 extra to show the border
     }
 
