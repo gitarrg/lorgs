@@ -30,8 +30,8 @@ export interface UserReportSearchParams {
 export function build_url_search_string(params: UserReportSearchParams) {
 
     let search = new URLSearchParams({})
-    params.fight_ids.forEach(fight_id => { search.append("fight", fight_id.toString()) })
-    params.player_ids.forEach(player_id => { search.append("player", player_id.toString()) })
+    search.append("fight", params.fight_ids.join("."))
+    search.append("player", params.player_ids.join("."))
     return search.toString()
 }
 
@@ -72,23 +72,6 @@ export const get_user_report_players = createSelector<RootState, UserReportData,
         return user_report.players
     }
 )
-
-
-/** Generate a search string based of the current selection */
-export function get_search_string(state: RootState) {
-
-    let search = new URLSearchParams({})
-
-    for (const [key, value] of Object.entries(state.user_report.selected_fights)) {
-        if (value) { search.append("fight", key)}
-    }
-    for (const [key, value] of Object.entries(state.user_report.selected_players)) {
-        if (value) { search.append("player", key)}
-    }
-
-    return search.toString()
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Slice
