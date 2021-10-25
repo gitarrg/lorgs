@@ -6,6 +6,12 @@ source .env
 set +a
 
 
+if [ "$VIRTUAL_ENV" = "" ]
+then
+    source ./venv/bin/activate
+fi
+
+
 export FLASK_ENV=development
 export QUART_ENV=$FLASK_ENV
 export LORGS_CONFIG_NAME=lorgs.config.DevelopmentConfig
