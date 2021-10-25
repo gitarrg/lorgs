@@ -51,8 +51,8 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
     end_time_old: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField(db_field="end_time")
 
     boss_id = me.IntField()
-    players = me.ListField(me.EmbeddedDocumentField(Player))
-    boss = me.EmbeddedDocumentField(Boss)
+    players: typing.List[Player] = me.ListField(me.EmbeddedDocumentField(Player))
+    boss: Boss = me.EmbeddedDocumentField(Boss)
 
     composition = me.DictField()
     deaths = me.IntField(default=0)
@@ -80,9 +80,15 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
     def __str__(self):
         return f"{self.__class__.__name__}(id={self.fight_id}, players={len(self.players)})"
 
-    def as_dict(self) -> dict:
-        players = sorted(self.players, key=lambda player: (player.spec.role, player.spec, player.total))
+    def as_dict(self, player_ids: typing.List[int] = []) -> dict:
 
+        # Get players
+        players = self.players
+        if player_ids:
+            players = [player for player in players if player.source_id in player_ids]
+        players = sorted(players, key=lambda player: (player.spec.role, player.spec, player.total))
+
+        # Return
         return {
             "fight_id": self.fight_id,
             "report_id": self.report.report_id,

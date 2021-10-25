@@ -40,12 +40,19 @@ def get_user_report(report_id):
 def get_fights(report_id):
     """Get Fights in a report."""
     user_report = UserReport.from_report_id(report_id=report_id)
+
+    fight_ids = quart.request.args.getlist("fight", type=int)
+    player_ids = quart.request.args.getlist("player", type=int)
+
     if not user_report:
         return "Report not found.", 404
 
     report = user_report.report
+    fights = [fight for fight in report.fights if fight.fight_id in fight_ids]
+
+
     return {
-        "fights": [fight.as_dict() for fight in report.fights]
+        "fights": [fight.as_dict(player_ids=player_ids) for fight in fights]
     }
 
 
@@ -90,8 +97,8 @@ async def load_user_report_overview(report_id):
 
     user_report = UserReport.from_report_id(report_id=report_id, create=True)
 
-    # refresh if asked for, or needed
-    if refresh or user_report.id is None:
+    needs_to_load = refresh or not user_report.is_loaded
+    if needs_to_load:
         try:
             await user_report.load()
         except InvalidReport:

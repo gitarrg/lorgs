@@ -1,7 +1,8 @@
-import { KeyboardEvent } from 'react'
+import { KeyboardEvent, useEffect } from 'react'
 import { load_report_overview, get_is_loading } from "../../store/user_reports";
 import { useAppDispatch, useAppSelector } from '../../store/store_hooks'
 import { useFormContext, useWatch } from 'react-hook-form';
+import { useLocation } from 'react-router';
 // @ts-ignore
 import styles from "./UrlInput.scss"
 
@@ -20,7 +21,7 @@ const URL_REGEX = RegExp(
 
 
 /** Extract the report code from an url. */
-function report_code_from_url(url="") {
+function report_id_from_url(url="") {
     if (!url) { return ""}
 
     const match = url.match(URL_REGEX);
@@ -36,33 +37,47 @@ function report_code_from_url(url="") {
 export default function UrlInput({input_name="report_url"}) {
 
     ////////////////////////////////
-    // Hooks
+    // Hooks: Redux
     const dispatch = useAppDispatch()
     const is_loading = useAppSelector(state => get_is_loading(state))
+    // Hooks: Router
+    const { search } = useLocation();
+    // Hooks: Form
     const { register, setValue, formState: { errors } } = useFormContext();
     const url = useWatch({name: input_name})
 
 
     ////////////////////////////////
     // Vars
-    const report_code = report_code_from_url(url)
-    const is_valid = report_code != ""
-    const valid_css = is_valid ? "valid" : "invalid"
+    const report_id = report_id_from_url(url)
+    const is_valid = report_id != ""
 
 
     ////////////////////////////////
     // Handlers
+    useEffect(() => {
+        const search_params = new URLSearchParams(search)
+        const report_id = search_params.get("report_id")
+        if (!report_id) { return }
+        setValue("report_url", `https://www.warcraftlogs.com/reports/${report_id}`)
+
+        setValue("report_code", report_id)
+        dispatch(load_report_overview(report_id))
+    }, [search])
+
 
     /** Update the stored report code */
     function onClick() {
-        setValue("report_code", report_code)
-        dispatch(load_report_overview(report_code))
+        setValue("report_code", report_id)
+        dispatch(load_report_overview(report_id))
     }
+
 
     /** Allow users to submit their URL by pressing enter */
     function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
         if (event.key == "Enter") { onClick() }
     }
+
 
     ////////////////////////////////
     // Render
@@ -78,7 +93,7 @@ export default function UrlInput({input_name="report_url"}) {
                     })}
                     type="text"
                     onKeyDown={onKeyDown}
-                    className={`form-input form-control ${valid_css}`}
+                    className={`form-input form-control ${is_valid ? "valid" : "invalid"}`}
                     placeholder={PLACEHOLDER}
                 />
 

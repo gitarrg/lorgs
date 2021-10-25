@@ -4,12 +4,13 @@ import type Fight from "../../types/fight"
 import { MODES } from "../../store/ui";
 import { WCL_URL } from "../../constants"
 import { get_boss } from "../../store/bosses";
+import { get_role } from "../../store/roles";
+import { get_spec } from "../../store/specs";
 import { kFormatter } from "../../utils"
 import { useAppSelector } from "../../store/store_hooks";
 
+// @ts-ignore
 import styles from "./PlayerName.scss"
-import { get_spec } from "../../store/specs";
-import { get_role } from "../../store/roles";
 
 
 function spec_ranking_color(i = 0) {

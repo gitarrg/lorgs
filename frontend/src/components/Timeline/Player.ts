@@ -1,7 +1,6 @@
-
-import Konva from "konva"
 import * as constants from "./constants"
 import Cast from "./Cast"
+import Konva from "konva"
 import type Actor from "../../types/actor"
 import type PlayerRow from "./PlayerRow"
 
