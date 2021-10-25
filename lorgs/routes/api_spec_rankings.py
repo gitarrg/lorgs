@@ -28,6 +28,11 @@ def spec_ranking(spec_slug, boss_slug):
     if limit:
         fights = spec_ranking.fights[:limit]
 
+    # remove bosses
+    for fight in fights[1:]:
+        fight.boss = None
+
+
     return {
         "fights": [fight.as_dict() for fight in fights],
         "updated": int(spec_ranking.updated.timestamp()),

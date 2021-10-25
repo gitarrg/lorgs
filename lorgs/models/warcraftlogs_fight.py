@@ -80,7 +80,7 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
     def __str__(self):
         return f"{self.__class__.__name__}(id={self.fight_id}, players={len(self.players)})"
 
-    def as_dict(self, player_ids: typing.List[int] = []) -> dict:
+    def as_dict(self, player_ids: typing.List[int] = None) -> dict:
 
         # Get players
         players = self.players

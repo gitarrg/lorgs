@@ -4,7 +4,7 @@ import type Actor from "../../types/actor";
 import { FightInfo } from "./FightInfo";
 
 // @ts-ignore
-import styles from "./PlayerNamesFight.scss"
+import styles from "./PlayerName.scss"
 
 
 function create_boss(fight: Fight) {
