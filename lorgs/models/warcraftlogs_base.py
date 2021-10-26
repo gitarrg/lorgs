@@ -111,7 +111,10 @@ class wclclient_mixin:
 
 class EmbeddedDocument(me.EmbeddedDocument, wclclient_mixin):
     """docstring for Base"""
-    meta = {"allow_inheritance": True}
+    meta = {
+        "allow_inheritance": True,
+        "strict": False # ignore non existing properties
+    }
 
 
 class Document(me.Document, wclclient_mixin):
@@ -119,6 +122,7 @@ class Document(me.Document, wclclient_mixin):
 
     meta = {
         'abstract': True,
+        "strict": False # ignore non existing properties
     }
 
     @classmethod
