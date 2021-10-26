@@ -26,6 +26,10 @@ env_variables:
   LORGS_CONFIG_NAME: lorgs.config.ProductionConfig
   SECRET_KEY: {{SECRET_KEY}}
 
+  # Third Party Credentials
+  WCL_CLIENT_ID: {{WCL_CLIENT_ID}}
+  WCL_CLIENT_SECRET: {{WCL_CLIENT_SECRET}}
+
   # Database Credentials
   MONGO_URI: {{MONGO_URI}}
 
