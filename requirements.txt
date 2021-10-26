@@ -3,10 +3,9 @@ aiohttp==3.7.4.post0
 arrow==1.2
 python-dotenv==0.17.1
 
-Flask==2.0
-flask[async]==2.0
-flask_caching
-gunicorn==20.1.0
+fastapi==0.70.0
+fastapi-cache2[memcache]==0.1.6
+uvicorn[standard]==0.15.0
 
 mongoengine==0.23.1
 dnspython==2.1.0

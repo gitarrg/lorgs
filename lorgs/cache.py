@@ -1,11 +1,11 @@
 """Create and configure the Cache."""
 
 # IMPORT THIRD PARTY LIBRARIES
-import flask_caching
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.inmemory import InMemoryBackend
 
 
-cache = flask_caching.Cache()
-
-
-def init_app(app):
-    cache.init_app(app)
+def init(config):
+    backend = InMemoryBackend()
+    FastAPICache.init(backend, expire=config.CACHE_DEFAULT_TIMEOUT)
+    return FastAPICache

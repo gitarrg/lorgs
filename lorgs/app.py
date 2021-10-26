@@ -1,17 +1,32 @@
 #!/usr/bin/env python
-"""Main Entrypoint to create the FlaskAPP."""
+"""Main Entrypoint to create the Backend-APP."""
 
 # IMPORT STANDARD LIBRARIES
 import os
 
 # IMPORT THIRD PARTY LIBRARIES
-import flask
+import fastapi
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import db  # pylint: disable=unused-import
-from lorgs import data   # pylint: disable=unused-import
 from lorgs import cache
+from lorgs import config
+from lorgs import data   # pylint: disable=unused-import
+from lorgs import db  # pylint: disable=unused-import
 from lorgs.routes import api
+
+
+
+def get_config(name=""):
+    name = name or os.getenv("LORGS_CONFIG_NAME") or "lorgs.config.DevelopmentConfig"
+    if name == "lorgs.config.ProductionConfig":
+        return config.ProductionConfig
+
+    return config.DevelopmentConfig
+
+
+def allow_cors(app):
+    from fastapi.middleware.cors import CORSMiddleware
+    app.add_middleware(CORSMiddleware, allow_origins="*")
 
 
 def create_app():
@@ -21,18 +36,15 @@ def create_app():
         <Quart>: the new Quart-app instance
 
     """
+    config_obj = get_config()
+
     # Quart
-    app = flask.Flask(__name__)
+    app = fastapi.FastAPI()
+    cache.init(config_obj)
+    app.include_router(api.router, prefix="/api")
 
-    config_name = os.getenv("LORGS_CONFIG_NAME") or "lorgs.config.DevelopmentConfig"
-    app.config.from_object(config_name)
 
-    if app.config["LORRGS_DEBUG"]:
-        from flask_cors import CORS
-        cors = CORS(app)
+    if config_obj.LORRGS_DEBUG:
+        allow_cors(app)
 
-    # Blueprints
-    app.register_blueprint(api.blueprint, url_prefix="/api")
-
-    cache.init_app(app)
     return app

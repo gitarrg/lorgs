@@ -1,24 +1,34 @@
 """API Routes to get and update Comp Rankings."""
 
 # IMPORT STANDARD LIBRARIES
-import json
+import typing
 
 # IMPORT THIRD PARTY LIBRARIES
-import flask
+import fastapi
+from fastapi_cache.decorator import cache
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import data
-from lorgs.cache import cache
 from lorgs.models import warcraftlogs_comp_ranking
 from lorgs.routes import api_tasks
 
 
-blueprint = flask.Blueprint("api/comp_rankings", __name__)
+router = fastapi.APIRouter()
 
 
-@blueprint.route("/comp_ranking/<string:boss_slug>")
-@cache.cached(query_string=True)
-def get_comp_ranking(boss_slug):
+
+@router.get("/comp_ranking/{boss_slug}")
+@cache()
+async def get_comp_ranking(
+        boss_slug: str,
+
+        # Query Params
+        limit: int = 20,
+        role: typing.List[str] = None,
+        spec: typing.List[str] = None,
+        killtime_min: int=0,
+        killtime_max: int=0,
+):
     """Fetch comp rankings for a given boss encounter.
 
     Args:
@@ -28,7 +38,6 @@ def get_comp_ranking(boss_slug):
         limit (int): max number of fights to fetch (default: 20)
         role (list[str]): role filters
         spec (list[str]): spec filters
-        class (list[str]): class filters
 
     Returns:
         dict:
@@ -36,17 +45,13 @@ def get_comp_ranking(boss_slug):
             updated
 
     """
-    limit = flask.request.args.get("limit", default=20, type=int)
-
     # get search inputs
     search = {}
-    search["fights.composition.roles"] = flask.request.args.getlist("role")
-    search["fights.composition.specs"] = flask.request.args.getlist("spec")
-    search["fights.composition.classes"] = flask.request.args.getlist("class")
+    search["fights.composition.roles"] = role or []
+    search["fights.composition.specs"] = spec or []
+    search["fights.composition.classes"] = []  # implement this, if needed
 
     search["fights"] = []
-    killtime_min = flask.request.args.get("killtime_min", type=int, default=0)
-    killtime_max = flask.request.args.get("killtime_max", type=int, default=0)
     if killtime_min:
         search["fights"] += [f"duration.gt.{killtime_min * 1000}"]
     if killtime_max:
@@ -66,8 +71,8 @@ def get_comp_ranking(boss_slug):
     }
 
 
-@blueprint.route("/load_comp_ranking/<string:boss_slug>")
-async def load_comp_ranking(boss_slug):
+@router.get("/load_comp_ranking/{boss_slug}")
+async def load_comp_ranking(boss_slug: str, limit: int = 50, clear: bool = False):
     """Load Comp Rankings from Warcraftlogs and save them in our DB.
 
     Args:
@@ -78,10 +83,6 @@ async def load_comp_ranking(boss_slug):
         clear (bool): delete old fights (default: false)
 
     """
-    # inputs
-    limit = flask.request.args.get("limit", default=50, type=int)
-    clear = flask.request.args.get("clear", default=False, type=json.loads)
-
     # get comp ranking object
     comp_ranking = warcraftlogs_comp_ranking.CompRanking(boss_slug=boss_slug)
     if not comp_ranking.valid:
@@ -98,9 +99,9 @@ async def load_comp_ranking(boss_slug):
 # Tasks
 #
 
-@blueprint.route("/task/load_comp_ranking")
-@blueprint.route("/task/load_comp_ranking/all")
-@blueprint.route("/task/load_comp_ranking/<string:boss_slug>")
+@router.get("/task/load_comp_ranking")
+@router.get("/task/load_comp_ranking/all")
+@router.get("/task/load_comp_ranking/{boss_slug}")
 def task_load_comp_rankings(boss_slug=""):
     """Submit a scheduled task to update a single or all Comp Rankings."""
 

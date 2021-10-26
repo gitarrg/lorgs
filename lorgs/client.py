@@ -2,20 +2,13 @@
 """Warcaftlogs API Client."""
 
 # IMPORT STANDARD LIBRARIES
-# import asyncio
-import hashlib
-from logging import ERROR
 import os
 
 # IMPORT THIRD PARTY LIBRARIES
 import aiohttp
 
 # IMPORT LOCAL LIBRARIES
-from lorgs.cache import cache
 from lorgs.logger import logger
-
-#: int: cache time for the queries
-CACHE_TIMEOUT = 60 * 60 * 2 # 2 hours minutes
 
 
 def query_name(query):
@@ -70,10 +63,6 @@ class WarcraftlogsClient:
         self.headers = {}
 
         logger.info("NEW CLIENT: %s", self.client_id)
-
-        self.cached = os.getenv("WCL_CACHED") or False
-        self.cache = cache
-
         self._num_queries = 0
 
     ################################
@@ -110,38 +99,18 @@ class WarcraftlogsClient:
             pointsResetIn
         }
         """
-        result = await self.query(query, usecache=False)
+        result = await self.query(query)
         info = result.get("rateLimitData", {})
         return info.get("limitPerHour", 0) - info.get("pointsSpentThisHour", 0)
 
-    async def query(self, query, usecache=True):
-        """
-
-        TODO:
-            - add a "@cached"-wrapper to clean this up
-
-        """
+    async def query(self, query):
         self._num_queries += 1
         logger.debug("Num Queries: %d", self._num_queries)
-
-        usecache = self.cached and usecache
 
         query = f"""
         query {{
             {query}
         }}"""
-
-        logger.debug("run query: %s", query_name(query))
-        cache_key = "query/" + str(hashlib.md5(query.encode()).hexdigest())
-
-        # caching
-        if usecache:
-            cached_result = usecache and self.cache.get(cache_key)
-            if cached_result:
-                logger.debug("using cached result")
-                return cached_result
-
-        logger.debug("not cached: %s", cache_key)
 
         # auth
         if not self.headers:
@@ -182,11 +151,8 @@ class WarcraftlogsClient:
                         print(query)
                         raise ValueError(msg)
 
-                data = result.get("data", {})
-                if usecache:
-                    self.cache.set(cache_key, data, timeout=CACHE_TIMEOUT)
+                return result.get("data", {})
 
-                return data
 
     async def multiquery(self, queries):
         """Execute a list of queries as a batch.
