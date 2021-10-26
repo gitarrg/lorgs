@@ -1,23 +1,25 @@
 {
     "compilerOptions": {
-        "target": "ES2015", // Specify ECMAScript target version
+        "target": "ES5", // Specify ECMAScript target version
         "lib": [
             "dom",
             "DOM.Iterable",
             "esnext"
         ], // List of library files to be included in the compilation
         "module": "commonjs",
-        "declaration": true,
-        "outDir": "dist",
+        "noEmit": true,
         "strict": true,
-        "esModuleInterop": true,
-        "jsx": "react-jsx", // Support JSX in .tsx files
+        "skipLibCheck": true,
+        "jsx": "react", // Support JSX in .tsx files
+        "types": [],
     },
+
     "include": [
-        "frontend/**/*" // *** The files TypeScript should type check ***
+        "frontend/src/*" // *** The files TypeScript should type check ***
     ],
+
     "exclude": [ // *** The files to not type check ***
-        "node_modules"
+        "node_modules",
     ],
 
     "plugins": [

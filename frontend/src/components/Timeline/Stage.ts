@@ -22,7 +22,7 @@ export default class Stage extends Konva.Stage{
     FIGHT_SPACE = 10 // distance between fights in pixels
 
     scale_x: number
-    rows: FightRow[] = []
+    private rows: FightRow[] = []
 
     // bool: true if any spell is selected
     has_selection: boolean

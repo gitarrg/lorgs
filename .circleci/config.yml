@@ -151,3 +151,4 @@ workflows:
             branches:
               only:
                 - develop
+                - feature/user_reports

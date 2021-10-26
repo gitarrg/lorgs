@@ -20,8 +20,8 @@ export default class FightRow {
     KILLTIME_MARGIN = 5
 
     duration: number
-    #_visible: boolean
-    #fight_data: Fight
+    _visible: boolean
+    _fight_data: Fight
 
     foreground: Konva.Group
     background: Konva.Group
@@ -32,10 +32,10 @@ export default class FightRow {
 
     constructor(fight_data: Fight) {
 
-        this.#_visible = true
+        this._visible = true
 
         // input data
-        this.#fight_data = fight_data
+        this._fight_data = fight_data
         this.duration = Math.ceil(fight_data.duration / 1000); // ms to s
 
         // Groups
@@ -99,11 +99,11 @@ export default class FightRow {
     visible(value?: boolean) {
 
         if (value !== undefined) {
-            this.#_visible = value
+            this._visible = value
             this.rows.forEach(row => row.visible(value))
             this.killtime_text.visible(value)
         }
-        return this.#_visible
+        return this._visible
     }
 
     height() : number {
@@ -131,7 +131,7 @@ export default class FightRow {
     }
 
     _handle_apply_filters_pre(filters: FilterValues) {
-        const visible = filter_logic.is_fight_visible(this.#fight_data, filters)
+        const visible = filter_logic.is_fight_visible(this._fight_data, filters)
         this.visible(visible)
     }
 
