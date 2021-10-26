@@ -2,7 +2,7 @@
 import json
 
 # IMPORT THIRD PARTY LIBRARIES
-import quart
+import flask
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import data
@@ -14,13 +14,13 @@ from lorgs.routes import api_tasks
 
 
 
-blueprint = quart.Blueprint("api/spec_rankings", __name__)
+blueprint = flask.Blueprint("api/spec_rankings", __name__)
 
 
 @blueprint.route("/spec_ranking/<string:spec_slug>/<string:boss_slug>")
 @cache.cached(query_string=True)
 def spec_ranking(spec_slug, boss_slug):
-    limit = quart.request.args.get("limit", default=0, type=int)
+    limit = flask.request.args.get("limit", default=0, type=int)
 
     spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(boss_slug=boss_slug, spec_slug=spec_slug)
     fights = spec_ranking.fights
@@ -41,8 +41,8 @@ def spec_ranking(spec_slug, boss_slug):
 
 @blueprint.route("/load_spec_ranking/<string:spec_slug>/<string:boss_slug>")
 async def load_spec_ranking(spec_slug, boss_slug):
-    limit = quart.request.args.get("limit", default=50, type=int)
-    clear = quart.request.args.get("clear", default=False, type=json.loads)
+    limit = flask.request.args.get("limit", default=50, type=int)
+    clear = flask.request.args.get("clear", default=False, type=json.loads)
 
     logger.info("START | spec=%s | boss=%s | limit=%d | clear=%s", spec_slug, boss_slug, limit, clear)
 
@@ -83,7 +83,7 @@ def task_load_spec_rankings_multi(spec_slug="all", boss_slug="all"):
             "bosses": bosses,
         }
 
-    kwargs = quart.request.args or {}
+    kwargs = flask.request.args or {}
 
     # expand specs
     if spec_slug == "all":

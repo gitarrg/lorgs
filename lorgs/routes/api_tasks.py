@@ -11,7 +11,7 @@ import uuid
 # IMPORT THIRD PARTY LIBRARIES
 from google.api_core.exceptions import NotFound
 from google.cloud import tasks_v2
-import quart
+import flask
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
@@ -25,7 +25,7 @@ TASK_QUEUE = "projects/lorrgs/locations/europe-west2/queues/lorgs-task-queue"
 TASK_CLIENT = tasks_v2.CloudTasksClient()
 
 
-blueprint = quart.Blueprint("api/tasks", __name__)
+blueprint = flask.Blueprint("api/tasks", __name__)
 
 
 def get_task_full_name(name):

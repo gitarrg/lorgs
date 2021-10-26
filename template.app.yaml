@@ -14,9 +14,10 @@ automatic_scaling:
 
 
 entrypoint: >
-  hypercorn
+  gunicorn
   -b :$PORT
-  --workers 4
+  --workers 2
+  --timeout=600
   "lorgs.app:create_app()"
 
 
