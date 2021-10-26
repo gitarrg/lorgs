@@ -11,11 +11,10 @@ import uuid
 # IMPORT THIRD PARTY LIBRARIES
 from google.api_core.exceptions import NotFound
 from google.cloud import tasks_v2
-import flask
+import fastapi
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
-from lorgs.models.task import Task
 
 
 CLOUD_FUNCTIONS_ROOT = os.getenv("CLOUD_FUNCTIONS_ROOT") or "https://europe-west1-lorrgs.cloudfunctions.net"
@@ -25,7 +24,7 @@ TASK_QUEUE = "projects/lorrgs/locations/europe-west2/queues/lorgs-task-queue"
 TASK_CLIENT = tasks_v2.CloudTasksClient()
 
 
-blueprint = flask.Blueprint("api/tasks", __name__)
+router = fastapi.APIRouter(tags=["tasks"])
 
 
 def get_task_full_name(name):
@@ -36,21 +35,14 @@ def get_task_full_name(name):
 ################################################################################
 # Task Status
 #
-
-@blueprint.route("/")
-def get_tasks():
-    """List all Tasks."""
-    return {str(task.id): task.as_dict() for task in Task.objects} # pylint: disable=no-member
-
-
 @utils.run_in_executor
 def _get_task(task_id):
     full_name = get_task_full_name(task_id)
     return TASK_CLIENT.get_task(name=full_name)
 
 
-@blueprint.route("/<string:task_id>")
-async def get_task(task_id):
+@router.get("/{task_id}")
+async def get_task(task_id: str):
     """Get a single task by ID."""
     try:
         await _get_task(task_id)
@@ -97,7 +89,7 @@ async def create_cloud_function_task(function_name, **kwargs):
     return task_name
 
 
-def create_app_engine_task(url, **kwargs):
+async def create_app_engine_task(url, **kwargs):
     """Creates a task that will call an app engine endpoint.
 
     Args:
@@ -113,4 +105,4 @@ def create_app_engine_task(url, **kwargs):
             "relative_uri": url
         }
     }
-    return submit_task(task)
+    return await submit_task(task)

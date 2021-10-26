@@ -12,4 +12,3 @@ disable=locally-disabled,redefined-builtin,logging-fstring-interpolation
 
 good-names=
     id,
-    blueprint,  # for flask blueprints

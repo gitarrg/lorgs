@@ -6,27 +6,25 @@ source .env
 set +a
 
 
+# env
 if [ "$VIRTUAL_ENV" = "" ]
 then
     source ./venv/bin/activate
 fi
-
-
-export FLASK_ENV=development
-export QUART_ENV=$FLASK_ENV
-export LORGS_CONFIG_NAME=lorgs.config.DevelopmentConfig
-
-export PORT=5012
-export FLASK_APP="lorgs/app:create_app()"
-export QUART_APP=$FLASK_APP
-
-
 export PYTHONPATH=.  # adds current dir, so we can import
 
 
+# config
+export APP="lorgs.app:create_app"
+export PORT=5012
+export LORGS_CONFIG_NAME=lorgs.config.DevelopmentConfig
+
+
 # Dev Servers
-flask run --host=0.0.0.0 --port=$PORT
+# flask run --host=0.0.0.0 --port=$PORT
 # quart run --host=0.0.0.0 --port=$PORT
+uvicorn $APP --port=$PORT --reload
+
 
 # Prod Commands
 # gunicorn -b :$PORT --timeout=240 "lorgs.app:create_app()" --workers 1
