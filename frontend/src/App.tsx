@@ -39,20 +39,20 @@ export default function App() {
                     <Route path="/spec_ranking/:spec_slug/:boss_slug" component={SpecRankings} />
 
                     {/* Comp Rankings */}
-                    <Route path="/comp_ranking/search" component={CompSearch} />
-                    <Route path="/comp_ranking/:boss_slug" component={CompRankings} />
+                    <Route exact path="/comp_ranking/search" component={CompSearch} />
+                    <Route exact path="/comp_ranking/:boss_slug" component={CompRankings} />
 
                     {/* User Reports */}
-                    <Route path="/user_report/" exact={true} component={UserReportIndex} />
-                    <Route path="/user_report/load" exact={true} component={UserReportLoading} />
-                    <Route path="/user_report/:report_id" component={UserReport} />
+                    <Route exact path="/user_report/load" component={UserReportLoading} />
+                    <Route exact path="/user_report/:report_id" component={UserReport} />
+                    <Route exact path="/user_report" component={UserReportIndex} />
 
                     {/* other routes */}
-                    <Route path="/help" component={Help} />
-                    <Route path="/lorgmin" component={Admin} />
+                    <Route exact path="/help" component={Help} />
+                    <Route exact path="/lorgmin" component={Admin} />
 
                     {/* fallback --> Home */}
-                    <Route path="/" component={Index} />
+                    <Route exact path="/" component={Index} />
 
                 </Switch>
                 </Suspense>

@@ -97,13 +97,14 @@ jobs:
           command: >
             gcloud --quiet app deploy
             --project lorrgs
+            --version=user-reports
             <<^ parameters.promote >> --no-promote<</ parameters.promote >>
 
       # 3) deploy the cloud functions
       # Note: this does not have a promote yes/no flag
-      - run:
-          name: Deploy Cloud Funtions
-          command: ./scripts/deploy_functions
+      # - run:
+      #     name: Deploy Cloud Funtions
+      #     command: ./scripts/deploy_functions
 
       ####################################
       # Discrd Notification
@@ -128,7 +129,7 @@ workflows:
       # always execute "build"
       - build
 
-      - sonarscan
+      # - sonarscan
 
       # deploy for /master
       - deploy:
