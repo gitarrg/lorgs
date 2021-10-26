@@ -37,3 +37,9 @@ def page_not_found(*args, **kwargs):
 @router.get("/ping")
 def ping():
     return {"reply": "Hi!", "time": datetime.datetime.utcnow().isoformat()}
+
+
+@router.get("/error")
+def error():
+    """Route to test error handling"""
+    raise ValueError("something went wrong!")
