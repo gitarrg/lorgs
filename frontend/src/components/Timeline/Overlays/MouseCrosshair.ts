@@ -8,7 +8,7 @@ import Stage from "../Stage"
 export default class MouseCrosshair extends Konva.Line {
 
     // last known pointer position in seconds on the timeline
-    #time = 0
+    private time = 0
 
     constructor() {
         super({
@@ -22,9 +22,9 @@ export default class MouseCrosshair extends Konva.Line {
         })
     }
 
-    #update_position() {
+    private update_position() {
         const stage = this.getStage() as Stage || null
-        this.x( this.#time * (stage?.scale_x  || constants.DEFAULT_ZOOM ))
+        this.x( this.time * (stage?.scale_x  || constants.DEFAULT_ZOOM ))
     }
 
     handle_mousemove() {
@@ -37,11 +37,11 @@ export default class MouseCrosshair extends Konva.Line {
         if (!pointer) { return }
 
         // store the time the mouse is at
-        this.#time = (pointer.x - stage.x()) / stage.scale_x
-        this.#update_position()
+        this.time = (pointer.x - stage.x()) / stage.scale_x
+        this.update_position()
     }
 
     handle_event(event_name: string, _: any) {
-        if (event_name === constants.EVENT_ZOOM_CHANGE) { this.#update_position()}
+        if (event_name === constants.EVENT_ZOOM_CHANGE) { this.update_position()}
     }
 }

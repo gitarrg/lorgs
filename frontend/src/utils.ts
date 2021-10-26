@@ -3,7 +3,9 @@
 // FIXME: why does this take ms?
 export function toMMSS(seconds: number) {
 
+    // @ts-ignore: changing type from number to string
     seconds = seconds.toFixed(0)
+
     let sign = ""
     if (seconds < 0) { // events that occur prepull
         seconds *= -1.0;
