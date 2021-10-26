@@ -5,8 +5,7 @@
 import os
 
 # IMPORT THIRD PARTY LIBRARIES
-import quart
-import quart.flask_patch
+import flask
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import db  # pylint: disable=unused-import
@@ -23,14 +22,14 @@ def create_app():
 
     """
     # Quart
-    app = quart.Quart(__name__)
+    app = flask.Flask(__name__)
 
     config_name = os.getenv("LORGS_CONFIG_NAME") or "lorgs.config.DevelopmentConfig"
     app.config.from_object(config_name)
 
     if app.config["LORRGS_DEBUG"]:
-        import quart_cors
-        app = quart_cors.cors(app, allow_origin="*")
+        from flask_cors import CORS
+        cors = CORS(app)
 
     # Blueprints
     app.register_blueprint(api.blueprint, url_prefix="/api")

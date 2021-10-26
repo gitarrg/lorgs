@@ -4,7 +4,7 @@ eg.: spells, classes, specs
 """
 
 # IMPORT THIRD PARTY LIBRARIES
-import quart
+import flask
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.cache import cache
@@ -15,7 +15,7 @@ from lorgs.models.wow_spec import WowSpec
 from lorgs.models.wow_spell import WowSpell
 
 
-blueprint = quart.Blueprint("api/world_data", __name__)
+blueprint = flask.Blueprint("api/world_data", __name__)
 
 
 ###############################################################################
@@ -85,7 +85,7 @@ def spells_one(spell_id):
     """Get a single Spell by spell_id."""
     spell = WowSpell.get(spell_id=spell_id)
     if not spell:
-        quart.abort(404, description="Spell not found")
+        flask.abort(404, description="Spell not found")
     return spell.as_dict()
 
 

@@ -4,7 +4,7 @@
 import json
 
 # IMPORT THIRD PARTY LIBRARIES
-import quart
+import flask
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import data
@@ -13,7 +13,7 @@ from lorgs.models import warcraftlogs_comp_ranking
 from lorgs.routes import api_tasks
 
 
-blueprint = quart.Blueprint("api/comp_rankings", __name__)
+blueprint = flask.Blueprint("api/comp_rankings", __name__)
 
 
 @blueprint.route("/comp_ranking/<string:boss_slug>")
@@ -36,17 +36,17 @@ def get_comp_ranking(boss_slug):
             updated
 
     """
-    limit = quart.request.args.get("limit", default=20, type=int)
+    limit = flask.request.args.get("limit", default=20, type=int)
 
     # get search inputs
     search = {}
-    search["fights.composition.roles"] = quart.request.args.getlist("role")
-    search["fights.composition.specs"] = quart.request.args.getlist("spec")
-    search["fights.composition.classes"] = quart.request.args.getlist("class")
+    search["fights.composition.roles"] = flask.request.args.getlist("role")
+    search["fights.composition.specs"] = flask.request.args.getlist("spec")
+    search["fights.composition.classes"] = flask.request.args.getlist("class")
 
     search["fights"] = []
-    killtime_min = quart.request.args.get("killtime_min", type=int, default=0)
-    killtime_max = quart.request.args.get("killtime_max", type=int, default=0)
+    killtime_min = flask.request.args.get("killtime_min", type=int, default=0)
+    killtime_max = flask.request.args.get("killtime_max", type=int, default=0)
     if killtime_min:
         search["fights"] += [f"duration.gt.{killtime_min * 1000}"]
     if killtime_max:
@@ -79,8 +79,8 @@ async def load_comp_ranking(boss_slug):
 
     """
     # inputs
-    limit = quart.request.args.get("limit", default=50, type=int)
-    clear = quart.request.args.get("clear", default=False, type=json.loads)
+    limit = flask.request.args.get("limit", default=50, type=int)
+    clear = flask.request.args.get("clear", default=False, type=json.loads)
 
     # get comp ranking object
     comp_ranking = warcraftlogs_comp_ranking.CompRanking(boss_slug=boss_slug)

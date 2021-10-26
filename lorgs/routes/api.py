@@ -4,7 +4,7 @@
 import datetime
 
 # IMPORT THIRD PARTY LIBRARIES
-import quart
+import flask
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.routes import api_comp_rankings
@@ -14,7 +14,7 @@ from lorgs.routes import api_user_reports
 from lorgs.routes import api_world_data
 
 
-blueprint = quart.Blueprint("api", __name__, cli_group=None)
+blueprint = flask.Blueprint("api", __name__, cli_group=None)
 
 
 ################################################################################

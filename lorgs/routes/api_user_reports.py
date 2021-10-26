@@ -2,7 +2,7 @@
 
 # IMPORT THIRD PARTY LIBRARIES
 import json
-import quart
+import flask
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.logger import logger
@@ -13,7 +13,7 @@ from lorgs.routes.api_tasks import create_cloud_function_task
 from lorgs.client import InvalidReport
 
 
-blueprint = quart.Blueprint("api/user_reports", __name__)
+blueprint = flask.Blueprint("api/user_reports", __name__)
 
 
 @blueprint.route("/<string:report_id>")
@@ -42,8 +42,8 @@ def get_fights(report_id):
     """Get Fights in a report."""
     user_report = UserReport.from_report_id(report_id=report_id)
 
-    fight_ids = quart.request.args.get("fight", type=utils.str_int_list)
-    player_ids = quart.request.args.get("player", type=utils.str_int_list)
+    fight_ids = flask.request.args.get("fight", type=utils.str_int_list)
+    player_ids = flask.request.args.get("player", type=utils.str_int_list)
 
     if not user_report:
         return "Report not found.", 404
@@ -94,7 +94,7 @@ def get_player(report_id, fight_id, source_id):
 @blueprint.route("/<string:report_id>/load_overview")
 async def load_user_report_overview(report_id):
     """Load a Report's Overview/Masterdata."""
-    refresh = quart.request.args.get("refresh", default=False, type=json.loads)
+    refresh = flask.request.args.get("refresh", default=False, type=json.loads)
 
     user_report = UserReport.from_report_id(report_id=report_id, create=True)
 
@@ -123,8 +123,8 @@ async def load_user_report(report_id):
     ################################
     # parse inputs
     # keep as str, as we just pass them trough
-    fight_ids = quart.request.args.get("fight", type=str)
-    player_ids = quart.request.args.get("player", type=str)
+    fight_ids = flask.request.args.get("fight", type=str)
+    player_ids = flask.request.args.get("player", type=str)
 
     logger.info("load: %s / fights: %s / players: %s", report_id, fight_ids, player_ids)
     if not (fight_ids and player_ids):

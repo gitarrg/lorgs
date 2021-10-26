@@ -25,8 +25,8 @@ export PYTHONPATH=.  # adds current dir, so we can import
 
 
 # Dev Servers
-# flask run --host=0.0.0.0 --port=$PORT --without-threads
-quart run --host=0.0.0.0 --port=$PORT
+flask run --host=0.0.0.0 --port=$PORT
+# quart run --host=0.0.0.0 --port=$PORT
 
 # Prod Commands
 # gunicorn -b :$PORT --timeout=240 "lorgs.app:create_app()" --workers 1
