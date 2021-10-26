@@ -14,11 +14,10 @@ automatic_scaling:
 
 
 entrypoint: >
-  gunicorn
-  -b :$PORT
+  uvicorn
+  --port $PORT
   --workers 2
-  --timeout=600
-  "lorgs.app:create_app()"
+  "lorgs.app:create_app"
 
 
 env_variables:
