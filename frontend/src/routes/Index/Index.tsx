@@ -4,7 +4,7 @@ import IndexSpecs from './IndexSpecs'
 import styles from "./Index.scss"
 import IndexLinks from './IndexLinks'
 import IndexCompsGroup from './IndexCompsGroup'
-import { Link } from 'react-router-dom'
+import IndexUserReport from "./IndexUserReport"
 
 
 const INFO_TEXT = <div>
@@ -55,9 +55,9 @@ export default function Index() {
             <div className={styles.col_right}>
                 <IndexSpecs />
                 <IndexCompsGroup />
-                <IndexLinks />
+                <IndexUserReport />
 
-                <Link to="/user_report">user reports</Link>
+                <IndexLinks />
             </div>
 
         </div>
