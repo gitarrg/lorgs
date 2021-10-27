@@ -39,7 +39,9 @@ def create_app():
     config_obj = get_config()
 
     # Quart
-    app = fastapi.FastAPI()
+    app = fastapi.FastAPI(
+        docs_url="/api/docs"
+    )
     cache.init(config_obj)
     app.include_router(api.router, prefix="/api")
 
