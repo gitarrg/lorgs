@@ -3,7 +3,7 @@ import type Fight from '../types/fight';
 import type { AppDispatch, RootState } from './store'
 import { MODES } from './ui'
 import { createSelector } from 'reselect'
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { fetch_data } from '../api'
 
 
@@ -122,7 +122,7 @@ const SLICE = createSlice({
     },
 
     reducers: {
-        set_fights: (state, action) => {
+        set_fights: (state, action: PayloadAction<Fight[]>) => {
 
             const fights = _process_fights(action.payload ?? [])
 
@@ -218,6 +218,9 @@ export function load_report_fights(report_id: string, search: string = "") {
 
         const url = `/api/user_reports/${report_id}/fights`;
         const report_data = await fetch_data(url, search)
+
+        // user_reports returns the fights as a dict
+        const fights = Object.values(report_data.fights)
 
         dispatch(set_fights(report_data.fights))
         dispatch({type: "ui/set_loading", payload: {key: "fights", value: false}})

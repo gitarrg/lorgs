@@ -80,13 +80,11 @@ class UserReport(me.Document):
             await self.load()
 
         # for fights, we can simply filter out the fights we want.
-        fights_to_load = [fight for fight in self.report.fights if fight.fight_id in fight_ids]  # pylint: disable=no-member
+        fights_to_load = self.report.get_fights(*fight_ids)
 
         ###############################
         # players are trickier..
         #
-        source_players = {player.source_id: player for player in self.report.players}  # pylint: disable=no-member
-
         for fight in fights_to_load:
             for player_id in player_ids:
                 # check if the fight already has that player loaded
@@ -96,7 +94,7 @@ class UserReport(me.Document):
                     continue
 
                 # get the source player to copy (from the report)
-                source_player = source_players.get(player_id)
+                source_player = self.report.players.get(str(player_id))
                 if not source_player:
                     logger.warning("no source player for id: %s", player_id)
                     continue

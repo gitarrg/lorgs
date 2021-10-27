@@ -27,4 +27,8 @@ class CommandLogger(monitoring.CommandListener):
 
 
 URI = os.getenv("MONGO_URI")
+
+if not URI:
+    raise EnvironmentError("MONGO_URI not set!")
+
 me.connect(host=URI)

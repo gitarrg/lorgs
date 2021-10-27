@@ -28,7 +28,7 @@ export default function FightSelectList() {
     if (fights.length == 0) { return null }
 
     // group fights by boss
-    const fights_by_boss: {[key: string]: Fight[]} = group_by(fights, (fight: Fight) => fight.boss_slug)
+    const fights_by_boss: {[key: string]: Fight[]} = group_by(fights, (fight: Fight) => fight.boss?.name)
 
     // render
     return (
