@@ -7,7 +7,7 @@ import { RootState } from './store'
 import { set_boss_spells } from './bosses'
 import { set_fights } from './fights'
 import { set_spec_spells } from './specs'
-import { SpellDict } from '../types/spell'
+import type { SpellDict } from '../types/spell'
 
 const ICON_ROOT = "https://wow.zamimg.com/images/wow/icons/small"
 
@@ -24,6 +24,9 @@ export interface SpellSliceState {
 
     /** all spells that are currently selected/focused */
     selected_spells: number[]
+
+    spell_types: string[],
+    spells_by_type: {[key: string]: number[]}
 }
 
 // interface SpellMap { [key: number]: Spell }
@@ -43,22 +46,15 @@ export function get_spells(state: RootState) {
     return state.spells.all_spells
 }
 
-/*
-    Note: returns a new list each time. useMemo this one!
-*/
 
-export const get_spells_by_type = createSelector(
-    get_spells,
-    (spells) => {
-        const v: { [key: string] : Spell[] } = {}
-        Object.values(spells).forEach(spell => {
-            v[spell.spell_type] = v[spell.spell_type] || []
-            v[spell.spell_type].push(spell)
+export function get_spell_types(state: RootState) {
+    return state.spells.spell_types
+}
 
-        })
-        return v
-    }
-)
+
+export function get_spells_for_type(state: RootState, spell_type: string) {
+    return state.spells.spells_by_type[spell_type] || []
+}
 
 
 export function get_spell_visible(state: RootState, spell_id: number) : boolean {
@@ -66,12 +62,18 @@ export function get_spell_visible(state: RootState, spell_id: number) : boolean 
     return state.spells.spell_display[spell_id] !== false;
 }
 
+
 /* check if a given spell was ever used.
    Used to eg.: avoid creating spell buttons for ever possible trinket,
    even if nobody is using it.
 */
 export function get_used_spells(state: RootState) : number[] {
     return state.spells.used_spell_ids
+}
+
+
+export function get_spell_was_used(state: RootState, spell_id: number) {
+    return state.spells.used_spell_ids.includes(spell_id)
 }
 
 
@@ -111,10 +113,33 @@ export function process_spells(spells?: SpellDict ) {
 }
 
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // Slice
 //
+
+/* add a prefix to the input, to aid with sorting */
+function _sort_spell_type_sort_key(spell_type: string) {
+
+    let prefix = "50" // start middle
+    if (spell_type == "raid")           { prefix = "60"} // raid cd's after class
+    if (spell_type.startsWith("other")) { prefix = "80"} // other types go behind
+
+    return [prefix, spell_type].join("-")
+}
+
+/* Sort spell types as:
+   - boss
+   - specs
+   - other
+*/
+export function sort_spell_types(spell_types: string[]) {
+    return spell_types.sort((a, b) => {
+        const key_a = _sort_spell_type_sort_key(a)
+        const key_b = _sort_spell_type_sort_key(b)
+        return key_a > key_b ? 1 : -1
+    })
+}
+
 
 /**
  * Shared logic to append new spells to the slice
@@ -124,11 +149,16 @@ function _add_spells_to_state(state: SpellSliceState , new_spells: SpellDict ) {
     new_spells = process_spells(new_spells)
     state.all_spells = {...state.all_spells, ...new_spells}
 
+    state.spells_by_type = {} // reset the list
     Object.values(state.all_spells).forEach(spell => {
         state.spell_display[spell.spell_id] = spell.show;
+        state.spells_by_type[spell.spell_type] = [...(state.spells_by_type[spell.spell_type] || []), spell.spell_id]
     })
-    return state
 
+
+    state.spell_types = sort_spell_types(Object.keys(state.spells_by_type))
+
+    return state
 }
 
 
@@ -137,6 +167,10 @@ const INITIAL_STATE : SpellSliceState  = {
     used_spell_ids: [],
     spell_display: {},
     selected_spells: [],
+
+    spell_types: [],
+    spells_by_type: {},
+
 }
 
 
@@ -201,7 +235,6 @@ const SLICE = createSlice({
 
         .addCase(set_fights, (state, action: PayloadAction<Fight[]> ) => {
             const fights = action.payload
-
             state.used_spell_ids = filter_used_spells(fights)
             return state
         })

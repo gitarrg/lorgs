@@ -8,20 +8,21 @@ import { useAppSelector } from '../../../store/store_hooks'
 
 
 
-function SpellTypeGroup({spec, spell_type}: {spec: Spec, spell_type: string}  ) {
+function SpellTypeGroup({spell_type}: {spell_type: string}  ) {
 
-    // fetch spells for combined types
-    // let spells: number[] = []
-    let spells = spec.spells_by_type[spell_type] || []
 
-    // check if there is a dedicated "spec" for the type (eg.: trinkets and potions)
-    const type_spec = useAppSelector(state => get_spec(state, spell_type))
-    spec = type_spec || spec
+    const spec = useAppSelector(state => get_spec(state, spell_type))
+    const all_spells = useAppSelector(get_spells_by_type)
+    const used_spells = useAppSelector(get_used_spells)
+    const type_spells = all_spells[spell_type] || []
+    const spells = type_spells.filter(spell_id =>  used_spells.includes(spell_id))
+
+    if (!spec) { return null }
+    if (spells.length === 0) { return null }
+
+    console.log("spec", spec)
+
     const extra_class = "wow-" + spec.class.name_slug
-
-    const used_spells = useAppSelector(state => get_used_spells(state))
-    spells = spells.filter(spell_id =>  used_spells.includes(spell_id))
-    if (spells.length == 0) { return null}
 
     // Build a nice Group Name: either the Spec- or Class Name
     let group_name = spec.name || spec.full_name
@@ -34,23 +35,25 @@ function SpellTypeGroup({spec, spell_type}: {spec: Spec, spell_type: string}  ) 
             {spells.map(spell_id => <SpellButton key={spell_id} spec={spec} spell_id={spell_id} />)}
         </ButtonGroup>
     )
+
 }
 
 
 export default function SpecGroup({spec_slug=""}) {
 
     // Hooks
-    const spec = useAppSelector(state => get_spec(state, spec_slug))
-    if (!spec) { return null }
 
-    let spell_types = Object.keys(spec.spells_by_type || {})
-    spell_types = sort_spell_types(spell_types)
+
+    // let spell_types = Object.keys(spec.spells_by_type || {})
+    // spell_types = sort_spell_types(spell_types)
+
+    const spell_types = [spec_slug]
 
     // Render
     return (
         <>
             {spell_types.map(spell_type =>
-                <SpellTypeGroup key={spell_type} spec={spec} spell_type={spell_type} />
+                <SpellTypeGroup key={spell_type} spell_type={spell_type} />
             )}
         </>
     )

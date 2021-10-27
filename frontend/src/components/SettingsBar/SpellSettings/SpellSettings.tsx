@@ -1,35 +1,31 @@
-
-import ButtonGroup from './../shared/ButtonGroup'
-import SpellButton from './SpellButton'
-import { get_boss } from '../../../store/bosses'
-import type Boss from '../../../types/boss'
-import { useAppSelector } from '../../../store/store_hooks'
-
-// TODO: is this even used anymore?
-
-function _create_spell_buttons(spec: Boss, spell_ids: number[]) {
-    if ( !spell_ids ) { return }
-    return spell_ids.map(spell_id => <SpellButton key={`${spec.full_name_slug}/${spell_id}`} spec={spec} spell_id={spell_id} />)
-}
+import { get_bosses } from "../../../store/bosses"
+import { get_spell_types } from "../../../store/spells"
+import { useAppSelector } from "../../../store/store_hooks"
+import { SpellTypeGroup } from "./SpellTypeGroup"
 
 
-///////////////////////////////////////
-// BOSS
-//
 
-export function BossSpellsGroup({ boss_slug="" }) {
+export default function SpellSettings() {
+    const all_spell_types = useAppSelector(get_spell_types)
 
-    // Get current Boss + Spells
-    const boss = useAppSelector(state => get_boss(state, boss_slug))
+    const bosses = useAppSelector(get_bosses)
+    const boss_names = Object.keys(bosses)
 
-    if (!boss) { return null }
-    const spells = boss.spells_by_type?.[boss.full_name_slug]
-    if (!spells) { return null }
+    // ensure boss spells are listed first
+    const spell_types = [
+        ...boss_names,
+        ...all_spell_types.filter(type => !boss_names.includes(type))
+    ]
 
     // Render
     return (
-        <ButtonGroup name={boss.name} side="left" extra_class="wow-boss">
-            {_create_spell_buttons(boss, spells) }
-        </ButtonGroup>
+        <>
+            {spell_types.map(spell_type =>
+                <SpellTypeGroup
+                    key={spell_type}
+                    spell_type={spell_type}
+                />
+            )}
+        </>
     )
 }

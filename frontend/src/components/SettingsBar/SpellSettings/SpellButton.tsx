@@ -8,6 +8,7 @@ import type Boss from '../../../types/boss'
 import { useAppSelector } from '../../../store/store_hooks'
 
 import styles from "./SpellButton.scss"
+import Class from '../../../types/class'
 
 
 /* to avoid react rerenders when clicking the <a> tags */
@@ -24,23 +25,20 @@ const DYNAMIC_CD_WARNING = (
     >{WARNING_SIGN}</div>
 )
 
-export default function SpellButton({spec, spell_id, onClick} : { spec: Spec|Boss, spell_id: number, onClick?: Function } ) {
+export default function SpellButton({spec, spell_id, onClick} : { spec: Spec|Boss|Class, spell_id: number, onClick?: Function } ) {
 
     ////////////////////////////////////////////////////////////////////////////
     // Hooks
     //
     const dispatch = useDispatch()
     const spell = useAppSelector(state => get_spell(state, spell_id))
-    const visible = useAppSelector(state => get_spell_visible(state, spell?.spell_id))
+    const visible = useAppSelector(state => get_spell_visible(state, spell_id))
     const group_context = useContext(ButtonGroupContext)
-
-    if (!spell) { return null}
-    if (!spec) { return null}
 
     ////////////////////////////////////////////////////////////////////////////
     // Vars
     //
-    let wow_class = spec.class.name_slug
+    let wow_class = spec.class?.name_slug || spec.name_slug
     const disabled = visible ? "" : "disabled"
     const dynamic_cd = spell.tags?.includes("dynamic_cd")// ? "dynamic_cd" : "";
 
@@ -87,6 +85,9 @@ export default function SpellButton({spec, spell_id, onClick} : { spec: Spec|Bos
         onClick && onClick(group_context.active)
 
     }, [group_context.active])
+
+    if (!spell) { return null }
+    if (!spec) { return null }
 
     ////////////////////////////////
     // Render
