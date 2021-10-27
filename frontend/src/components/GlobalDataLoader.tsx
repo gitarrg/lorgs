@@ -4,8 +4,9 @@ import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
 import { load_bosses } from "../store/bosses"
-import { load_specs } from "../store/specs"
+import { load_classes } from '../store/classes'
 import { load_roles } from "../store/roles"
+import { load_specs } from "../store/specs"
 
 
 export default function GlobalDataLoader() {
@@ -15,6 +16,7 @@ export default function GlobalDataLoader() {
     useEffect(() => {
         console.log("loading global data")
         dispatch(load_bosses())
+        dispatch(load_classes())
         dispatch(load_roles())
         dispatch(load_specs())
     }, [])

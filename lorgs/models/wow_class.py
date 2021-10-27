@@ -37,7 +37,6 @@ class WowClass(base.Model):
 
     def as_dict(self):
         return {
-            "id": self.id,
             "name": self.name,
             "name_slug": self.name_slug,
         }

@@ -10,6 +10,7 @@ from fastapi_cache.decorator import cache
 # IMPORT LOCAL LIBRARIES
 from lorgs.models.raid_boss import RaidBoss
 from lorgs.models.raid_zone import RaidZone
+from lorgs.models.wow_class import WowClass
 from lorgs.models.wow_role import WowRole
 from lorgs.models.wow_spec import WowSpec
 from lorgs.models.wow_spell import WowSpell
@@ -32,6 +33,18 @@ async def get_roles():
     return {
         "roles": [role.as_dict() for role in WowRole.all]
     }
+
+
+###############################################################################
+#
+#       Classes
+#
+###############################################################################
+
+@router.get("/classes")
+@cache()
+async def get_classes():
+    return {c.name_slug: c.as_dict() for c in WowClass.all}
 
 
 ###############################################################################
