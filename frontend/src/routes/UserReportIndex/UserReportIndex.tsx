@@ -1,25 +1,13 @@
 import FightSelectGrid from "../../components/ReportNavbar/FightSelectList"
-import FormGroup from "./FormGroup"
 import HeaderLogo from "../../components/HeaderLogo"
 import LoadingOverlay from "../../components/shared/LoadingOverlay"
 import PlayerSelectGrid from "../../components/ReportNavbar/PlayerSelectList"
 import UrlInput from "./UrlInput"
+import styles from "./UserReportIndex.scss"
 import { SubmitButton } from "./SubmitButton";
 import { get_is_loading } from "../../store/user_reports"
 import { useAppSelector } from "../../store/store_hooks"
 import { useForm, FormProvider } from "react-hook-form";
-
-// @ts-ignore
-import styles from "./UserReportIndex.scss"
-
-
-/** input: [undefined, undefined, true, undefine]
- * step 1: extract indicies (put null where it was undefined)
- * step 2: filter out only the indicies that are non null
- */
-export function filter_form_select(values: [boolean|undefined]) {
-    return values?.map((v, i) => v ? i : null).filter(i => i !== null)
-}
 
 
 export default function UserReportIndex() {
@@ -46,22 +34,16 @@ export default function UserReportIndex() {
                 </h2>
 
                 {/* URL Input */}
-                <FormGroup title="Report URL:">
+                <div>
+                    <h4 className="mb-1">Report URL:</h4>
                     <UrlInput />
-                </FormGroup>
+                </div>
 
                 {is_loading && <LoadingOverlay />}
 
-                <div className={`d-flex gap-2 ${is_loading ? "loading_trans" : ""} `}>
-                    {/* Fight Selection */}
-                    <FormGroup title="Fights:">
-                        <FightSelectGrid />
-                    </FormGroup>
-
-                    {/* Player Selection */}
-                    <FormGroup title="Players:">
-                        <PlayerSelectGrid />
-                    </FormGroup >
+                <div className={`d-flex gap-2 justify-content-center  ${is_loading ? "loading_trans" : ""} `}>
+                    <FightSelectGrid />
+                    <PlayerSelectGrid />
                 </div>
 
                 <div className="mt-3 ml-auto">

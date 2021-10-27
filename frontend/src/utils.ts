@@ -64,8 +64,8 @@ export function slug(str: string) {
  * Takes an Array<V>, and a grouping function,
  * and returns a Map of the array grouped by the grouping function.
  */
-export function group_by(list: any[], key_getter: Function) {
-    const result = {};
+export function group_by<T>(list: T[], key_getter: Function) {
+    const result: {[key: string|number]: T[]} = {};
     list.forEach((item) => {
          const key = key_getter(item);
          result[key] = [...(result[key] || []), item]

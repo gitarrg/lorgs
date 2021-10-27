@@ -1,0 +1,35 @@
+
+
+// container for the items for each row
+.row__items__container {
+    --item-width: 6rem;
+
+    display: grid;
+
+    width: 100%; // fill the parent container
+    grid-template-columns: repeat(auto-fit, var(--item-width));
+
+    gap: 0.25rem;
+}
+
+
+// container for a single item
+.item__container {
+
+    // size
+    width: var(--item-width);
+    height: 32px; // same as icon-m
+    padding: 3px; // to center a icon-s inside incl border
+
+    // style
+    background: var(--bg-dark);
+
+    // interaction
+    user-select: none;
+    cursor: pointer;
+
+    &:hover {
+        border-color: white;
+        background-color: hsl(0, 0%, 30%);
+    }
+}

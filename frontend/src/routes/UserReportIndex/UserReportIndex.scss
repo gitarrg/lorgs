@@ -3,7 +3,10 @@
     display: flex;
     gap: 1rem;
 
-    flex-basis: 1280px;  // aka prefered width
+    // flex-basis: 1280px;  // aka prefered width
+
+    // the width we currently need for the 2 select grids
+    flex-basis: 1072px;
 
     flex-direction: column;
     justify-content: center;

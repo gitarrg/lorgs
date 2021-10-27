@@ -1,12 +1,13 @@
 import Icon from '../../components/shared/Icon'
 import PlayerWidget from './PlayerWidget'
+import SelectGrid from './SelectGrid/SelectGrid'
 import type Actor from '../../types/actor'
 import type Role from '../../types/role'
+import { SelectGroup } from './SelectGrid/SelectGroup'
 import { get_player_roles } from '../../store/roles'
 import { get_user_report_players } from  '../../store/user_reports'
 import { group_by } from '../../utils'
 import { useAppSelector } from '../../store/store_hooks'
-import { SelectGroup } from './SelectGroup'
 
 
 function RoleGroup({role, players} : {role: Role, players: Actor[]}) {
@@ -22,17 +23,19 @@ function RoleGroup({role, players} : {role: Role, players: Actor[]}) {
 
 export default function PlayerSelectList() {
 
-    const players = useAppSelector(state => get_user_report_players(state))
-    const players_by_role = group_by(players, player => player.role)
+    const players = useAppSelector(get_user_report_players)
+    const players_by_role = group_by(players, (player: Actor) => player.role)
+    const roles = useAppSelector(get_player_roles)
 
-    const roles = useAppSelector(state => get_player_roles(state))
+    if (players.length == 0) { return null }
+
 
     // Render
     return (
-        <div className="d-flex flex-column gap-1">
+        <SelectGrid title="Players:">
             {Object.values(roles).map(role =>
                 <RoleGroup key={role.code} role={role} players={players_by_role[role.code]} />
             )}
-        </div>
+        </SelectGrid>
     )
 }
