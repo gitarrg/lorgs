@@ -17,7 +17,7 @@ entrypoint: >
   uvicorn
   --port $PORT
   --workers 2
-  "lorgs.app:create_app"
+  --factory "lorgs.app:create_app"
 
 
 env_variables:
