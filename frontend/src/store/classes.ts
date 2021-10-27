@@ -1,5 +1,5 @@
 import type Class from "../types/class"
-import { AppDispatch } from "./store"
+import { AppDispatch, RootState } from "./store"
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { fetch_data } from "../api"
 
@@ -9,6 +9,21 @@ type ClassesSlice = {
     classes: {[key: string]: Class}
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+// Selectors
+
+export function get_classes(state: RootState) {
+    return state.classes.classes
+}
+
+export function get_class(state: RootState, class_name_slug: string) {
+    return state.classes.classes[class_name_slug]
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Slice
 
 const INITIAL_STATE: ClassesSlice = {
     class_names: [],

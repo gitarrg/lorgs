@@ -73,7 +73,7 @@ class RaidBoss(base.Model):
             self.events.append(end_event)
 
         # spell instance used for UI things
-        kwargs.setdefault("spell_type", "boss")
+        kwargs.setdefault("spell_type", self.full_name_slug)
         spell = WowSpell(**kwargs)
 
         spell.specs = [self]
