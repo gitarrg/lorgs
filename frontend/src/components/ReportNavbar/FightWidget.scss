@@ -2,22 +2,10 @@
 
 
 .container {
-
-    width: 6rem;
-    user-select: none;
-    cursor: pointer;
-
     display: grid;
     grid-template-columns: 1fr 1fr;
     justify-content: space-between;
 
-    background: var(--bg-dark);
-
-
-    &:hover {
-        border-color: white;
-        background-color: hsl(0, 0%, 30%);
-    }
 
     &:global.selected {
         background: hsl(175, 20%, 40%);
@@ -25,6 +13,7 @@
     }
 
 }
+
 
 .label_duration {
     color:white;
@@ -40,7 +29,7 @@
     position: relative;
 
     grid-column: 1 / -1;
-    margin-top: 5px;
+    // margin-top: 5px;
 }
 
 .pbar_inner {
