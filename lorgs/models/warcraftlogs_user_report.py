@@ -13,6 +13,10 @@ from lorgs.lib import mongoengine_arrow
 from lorgs.models import warcraftlogs_report
 
 
+# expire time for the tasks (2 weeks)
+TTL = 60 * 60 * 24 * 7 * 2
+
+
 class UserReport(me.Document):
     """Shallow Wrapper around a `warcraftlogs_report.Report`.
 
@@ -27,6 +31,12 @@ class UserReport(me.Document):
 
     # the wrapped report object
     report: warcraftlogs_report.Report = me.EmbeddedDocumentField(warcraftlogs_report.Report)
+
+    meta = {
+        'indexes': [
+            {'fields': ['updated'], 'expireAfterSeconds': TTL}
+        ]
+    }
 
     @classmethod
     def from_report_id(cls, report_id: str, create=False) -> typing.Union["UserReport", None]:
