@@ -10,8 +10,9 @@ export interface UserReportData {
     is_loading: boolean
     title: string
     report_id: string
-    fights: Fight[]
-    players: Actor[]
+
+    fights: {[key: string]: Fight}
+    players: {[key: string]: Actor}
 
     /**id of the task when loading the data */
     task_id?: string
@@ -61,7 +62,7 @@ export function get_is_loading(state: RootState) {
 export const get_user_report_fights = createSelector<RootState, UserReportData, Fight[]>(
     get_user_report,
     (user_report) => {
-        return user_report.fights
+        return Object.values(user_report.fights)
     }
 )
 
@@ -69,7 +70,7 @@ export const get_user_report_fights = createSelector<RootState, UserReportData, 
 export const get_user_report_players = createSelector<RootState, UserReportData, Actor[]>(
     get_user_report,
     (user_report) => {
-        return user_report.players
+        return Object.values(user_report.players)
     }
 )
 
@@ -80,8 +81,8 @@ export const get_user_report_players = createSelector<RootState, UserReportData,
 const INITIAL_STATE: UserReportData = {
     title: "",
     report_id: "",
-    fights: [],
-    players: [],
+    fights: {},
+    players: {},
     task_id: "",
     is_loading: false,
 }

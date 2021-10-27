@@ -45,10 +45,11 @@ class CompRankingReport(warcraftlogs_base.Document):
         return (self.report.report_id, self.fight.fight_id)
 
     @property
-    def fight(self) -> warcraftlogs_fight.Fight:
+    def fight(self) -> typing.Optional[warcraftlogs_fight.Fight]:
         """First Fight found in this report (there should only be one)."""
-        for fight in self.report.fights:
+        for fight in self.report.fights.values():
             return fight
+        return None
 
 
 class CompRanking(warcraftlogs_base.Document):
@@ -129,7 +130,7 @@ class CompRanking(warcraftlogs_base.Document):
 
             eg.: Darkness, RallyCry, AMZ
         """
-        spells = [spell for spell in WowSpell.all if spell.spell_type== spell.TYPE_RAID]
+        spells = [spell for spell in WowSpell.all if spell.spell_type == spell.TYPE_RAID]
         return utils.uniqify(spells, key=lambda spell: spell.spell_id)
 
     @staticmethod
@@ -137,7 +138,6 @@ class CompRanking(warcraftlogs_base.Document):
         spell_ids = sorted([spell.spell_id for spell in spells])
         spell_ids = ",".join(str(spell_id) for spell_id in spell_ids)
         return f"type='cast' and ability.id in ({spell_ids})"
-
 
     def get_filter(self) -> str:
         """Filter that is applied to the query."""
@@ -224,7 +224,7 @@ class CompRanking(warcraftlogs_base.Document):
 
         return new_reports
 
-    async def update_reports(self, limit=50, clear_old=False) -> typing.List[CompRankingReport]:
+    async def update_reports(self, limit=50, clear_old=False):
         """Fetch reports for this BossRanking.
 
         params:

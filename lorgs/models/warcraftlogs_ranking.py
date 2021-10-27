@@ -2,6 +2,7 @@
 
 # IMPORT STANDARD LIBRARIES
 import datetime
+import typing
 
 # IMPORT THIRD PARTY LIBRARIES
 import arrow
@@ -13,24 +14,27 @@ from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
 from lorgs.models import warcraftlogs_report
 from lorgs.models.raid_boss import RaidBoss
+from lorgs.models.warcraftlogs_actor import Player
+from lorgs.models.warcraftlogs_fight import Fight
 from lorgs.models.wow_spec import WowSpec
 
 
 class SpecRanking(warcraftlogs_base.Document):
 
-    spec_slug = me.StringField(required=True)
-    boss_slug = me.StringField(required=True)
+    spec_slug: str = me.StringField(required=True)
+    boss_slug: str = me.StringField(required=True)
 
     updated = me.DateTimeField(default=datetime.datetime.utcnow)
 
-    reports = me.ListField(me.EmbeddedDocumentField(warcraftlogs_report.Report))
+    reports: typing.List[warcraftlogs_report.Report] = me.ListField(me.EmbeddedDocumentField(warcraftlogs_report.Report))
 
     meta = {
-        'indexes': [
+        'indexes': [  # type: ignore
             ("boss_slug", "spec_slug"),
             "spec_slug",
             "boss_slug",
-        ]
+        ],
+        "strict": False # ignore non existing properties
     }
 
     ##########################
@@ -45,11 +49,11 @@ class SpecRanking(warcraftlogs_base.Document):
         return RaidBoss.get(full_name_slug=self.boss_slug)
 
     @property
-    def fights(self):
-        return utils.flatten(report.fights for report in self.reports)
+    def fights(self) -> typing.List[Fight]:
+        return utils.flatten(report.fights.values() for report in self.reports)
 
     @property
-    def players(self):
+    def players(self) -> typing.List[Player]:
         return utils.flatten(fight.players for fight in self.fights)
 
     @property

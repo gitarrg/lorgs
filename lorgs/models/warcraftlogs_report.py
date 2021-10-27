@@ -30,21 +30,26 @@ class Report(warcraftlogs_base.EmbeddedDocument):
 
     zone_id: int = me.IntField(default=0)
 
-    # list of fights in this report. (they may or may not be loaded)
-    fights: typing.List[Fight] = me.ListField(me.EmbeddedDocumentField(Fight))
+    # fights in this report keyed by fight_id. (they may or may not be loaded)
+    fights: typing.Dict[str, Fight] = me.MapField(me.EmbeddedDocumentField(Fight), default={})
 
     # players in this report.
     #   Note: not every player might participate in every fight.
-    players: typing.List[warcraftlogs_actor.Player] = me.EmbeddedDocumentListField(warcraftlogs_actor.Player, default=[], db_field="players")
+    players: typing.Dict[str, warcraftlogs_actor.Player] = me.MapField(me.EmbeddedDocumentField(warcraftlogs_actor.Player), default={})
 
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for fight in self.fights:
+
+        # convert list to dict for old DB entries
+        if isinstance(self.fights, list):
+            self.fights = {fight.fight_id: fight for fight in self.fights}
+
+        for fight in self.fights.values():
             fight.report = self
 
     def __str__(self):
-        return f"<BaseReport({self.report_id}, num_fights={len(self.fights)})>"
+        return f"<BaseReport({self.report_id}, num_fights={len(self.fights.values())})>"
 
     ##########################
     # Attributes
@@ -59,35 +64,36 @@ class Report(warcraftlogs_base.EmbeddedDocument):
         }
 
         # for players and fights we only include essential data
-        info["fights"] = [{
-            "fight_id": fight.fight_id,
-            "boss_slug": fight.boss.raid_boss.full_name_slug,
-            "percent": fight.percent,
-            "kill": fight.kill,
-            "duration": fight.duration,
-            } for fight in self.fights]
-
-        info["players"] = [{
-            "name": player.name,
-            "source_id": player.source_id,
-            "spec": player.spec_slug if player.spec else "",
-            "role": player.spec.role.code if player.spec else "",
-            } for player in self.players]
-
+        info["fights"] = {fight.fight_id: fight.summary() for fight in self.fights.values()}
+        info["players"] = {player.source_id: player.summary() for player in self.players.values()}
         return info
 
     ##########################
     # Methods
     #
-    def add_fight(self, **kwargs):
-        fight = Fight(**kwargs)
+    def add_fight(self, **fight_data):
+        fight = Fight()
+
+        fight.fight_id = fight_data.get("id")
         fight.report = self
-        self.fights.append(fight)
+
+        fight.percent = fight_data.get("fightPercentage")
+        fight.kill = fight_data.get("kill", True)
+
+        # Fight: Time/Duration
+        start_time = fight_data.get("startTime") or 0
+        end_time = fight_data.get("endTime") or 0
+        fight.start_time = self.start_time.shift(seconds=start_time / 1000)
+        fight.duration = (end_time - start_time)
+
+        # store and return
+        self.fights[str(fight.fight_id)] = fight
         return fight
 
-    def get_fight(self, **kwargs) -> Fight:
-        """Returns a single Fight based on the kwargs."""
-        return utils.get(self.fights, **kwargs)
+    def get_fights(self, *fight_ids: int):
+        """Get a multiple fights based of their fight ids."""
+        fights = [self.fights.get(str(fight_id)) for fight_id in fight_ids]
+        return [f for f in fights if f] # filter out nones
 
     ##########################
     # Query
@@ -137,7 +143,7 @@ class Report(warcraftlogs_base.EmbeddedDocument):
             return
 
         # clear out any old instances
-        self.players = []
+        self.players = {}
         for actor_data in master_data.get("actors", []):
             # pets
             if actor_data.get("subType") == "Unknown":
@@ -155,12 +161,12 @@ class Report(warcraftlogs_base.EmbeddedDocument):
 
             player.class_slug = class_name.lower()
             player.spec_slug = f"{player.class_slug}-{spec_name.lower()}"
-            self.players.append(player)
+            self.players[str(player.source_id)] = player
 
     def _process_report_fights(self, fights_data):
         """Update the Fights in this report."""
         # clear out any old data
-        self.fights = []
+        self.fights = {}
 
         fights_data = fights_data or []
         for fight_data in fights_data:
@@ -170,21 +176,12 @@ class Report(warcraftlogs_base.EmbeddedDocument):
                 continue
 
             # Fight
-            fight = self.add_fight()
-            fight.fight_id = fight_data.get("id")
-            fight.percent = fight_data.get("fightPercentage")
-            fight.kill = fight_data.get("kill", True)
+            fight = self.add_fight(**fight_data)
 
             # Fight: Boss
             fight.boss = Boss(boss_id=boss_id)
             if fight.boss: # could be a boss unknown to Lorrgs
                 fight.boss.fight = fight
-
-            # Fight: Time/Duration
-            start_time = fight_data.get("startTime") or 0
-            end_time = fight_data.get("endTime") or 0
-            fight.start_time = self.start_time.shift(seconds=start_time / 1000)
-            fight.duration = (end_time - start_time)
 
     def process_query_result(self, query_result: dict):
 
@@ -200,7 +197,7 @@ class Report(warcraftlogs_base.EmbeddedDocument):
 
     async def load_fight(self, fight_id: int, player_id=int):
         """Load a single Fight from this Report."""
-        fight = self.get_fight(fight_id=fight_id)
+        fight = self.fights[str(fight_id)]
         if not fight:
             raise ValueError("invalid fight id")
 

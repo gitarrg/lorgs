@@ -155,7 +155,7 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
 
 
 class Player(BaseActor):
-    """A PlayerCharater in a Fight."""
+    """A PlayerCharater in a Fight (or report)."""
 
     source_id = me.IntField(primary_key=True)
     name = me.StringField(max_length=12) # names can be max 12 chars
@@ -172,18 +172,22 @@ class Player(BaseActor):
     def __str__(self):
         return f"Player(id={self.source_id} name={self.name} spec={self.spec})" # casts={len(self.casts)})"
 
-    def as_dict(self):
+    def summary(self):
         return {
             "name": self.name,
-            "total": int(self.total),
-
             "source_id": self.source_id,
-            "covenant": self.covenant.name_slug,
-            "casts": [cast.as_dict() for cast in self.casts],
+            "class": self.spec.wow_class.name_slug,
 
             "spec": self.spec_slug,
             "role": self.spec.role.code,
-            "class": self.spec.wow_class.name_slug,
+        }
+
+    def as_dict(self):
+        return {
+            **self.summary(),
+            "total": int(self.total),
+            "covenant": self.covenant.name_slug,
+            "casts": [cast.as_dict() for cast in self.casts],
         }
 
     ##########################

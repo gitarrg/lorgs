@@ -1,6 +1,5 @@
 # IMPORT THIRD PARTY LIBRARIES
 import fastapi
-from fastapi.routing import run_endpoint_function
 from fastapi_cache.decorator import cache
 
 # IMPORT LOCAL LIBRARIES
@@ -16,7 +15,7 @@ router = fastapi.APIRouter()
 
 @router.get("/{report_id}")
 @cache()
-async def get_user_report(report_id):
+async def get_user_report(report_id: str):
     """Returns the overview about a user report."""
     user_report = UserReport.from_report_id(report_id=report_id)
     if not user_report:
@@ -28,7 +27,7 @@ async def get_user_report(report_id):
 
 @router.get("/{report_id}/fights")
 @cache()
-async def get_fights(report_id, fight: str, player: str):
+async def get_fights(report_id: str, fight: str, player: str):
     """Get Fights in a report.
 
     Args:
@@ -45,41 +44,10 @@ async def get_fights(report_id, fight: str, player: str):
     player_ids = utils.str_int_list(player)
 
     report = user_report.report
-    fights = [fight for fight in report.fights if fight.fight_id in fight_ids]
+    fights = report.get_fights(*fight_ids)
     return {
         "fights": [fight.as_dict(player_ids=player_ids) for fight in fights]
     }
-
-
-@router.get("/{report_id}/fights/{fight_id}")
-@cache()
-async def get_fight(report_id: str, fight_id: int):
-    """Get a single fight from a report."""
-    user_report = UserReport.from_report_id(report_id=report_id)
-    if not user_report:
-        return "Report not found.", 404
-
-    fight = user_report.report.get_fight(fight_id=fight_id)
-    return fight.as_dict()
-
-
-@router.get("/{report_id}/fights/{fight_id}/players/{source_id}")
-@cache()
-async def get_player(report_id: str, fight_id: int, source_id: int):
-    """Get a single player from a fight."""
-    user_report = UserReport.from_report_id(report_id=report_id)
-    if not user_report:
-        return "Report not found.", 404
-
-    fight = user_report.report.get_fight(fight_id=fight_id)
-    if not fight:
-        return "Invalid Fight ID", 404
-
-    player = fight.get_player(source_id=source_id)
-    if not player:
-        return "Invalid Source ID", 404
-
-    return player.as_dict()
 
 
 ################################################################################

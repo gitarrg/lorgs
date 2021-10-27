@@ -40,7 +40,7 @@ def get_composition(players: typing.List[Player]) -> dict:
     return comp
 
 
-class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
+class Fight(warcraftlogs_base.EmbeddedDocument):
 
     fight_id = me.IntField(primary_key=True)
 
@@ -63,22 +63,26 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
     percent = me.FloatField(default=0)
     kill = me.BooleanField(default=True)
 
-    meta = {
-        "strict": False # ignore non existing properties
-    }
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.report = None
-
         if self.boss:
             self.boss.fight = self
-
         for player in self.players:
             player.fight = self
 
     def __str__(self):
         return f"{self.__class__.__name__}(id={self.fight_id}, players={len(self.players)})"
+
+    def summary(self):
+        return {
+            "report_id": self.report.report_id,
+            "fight_id": self.fight_id,
+            "percent": self.percent,
+            "kill": self.kill,
+            "duration": self.duration,
+            "boss": {"name": self.boss.raid_boss.full_name_slug} if self.boss else {},
+        }
 
     def as_dict(self, player_ids: typing.List[int] = None) -> dict:
 
@@ -90,9 +94,7 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
 
         # Return
         return {
-            "fight_id": self.fight_id,
-            "report_id": self.report.report_id,
-            "duration": self.duration_fix,
+            **self.summary(),
             "players": [player.as_dict() for player in players],
             "boss": self.boss.as_dict() if self.boss else {},
         }
