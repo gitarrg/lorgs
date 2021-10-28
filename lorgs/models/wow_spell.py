@@ -11,7 +11,7 @@ class WowSpell(base.Model):
     """Container to define a spell."""
 
     # TODO: those should be constants somewhere
-    TYPE_RAID = "raid"
+    TYPE_RAID = "other-raid"
     TYPE_PERSONAL = "personal"
     TYPE_EXTERNAL = "external"
 

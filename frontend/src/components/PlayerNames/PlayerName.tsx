@@ -62,6 +62,7 @@ export function PlayerName({fight, player} : {fight: Fight, player: Actor}) {
     ///////////////////
     // apply filters
     if (!player) { return null}
+    if (!spec) { return null}
     if (!FILTERS.is_player_visible(player, filters)) { return null}
 
     ///////////////////
