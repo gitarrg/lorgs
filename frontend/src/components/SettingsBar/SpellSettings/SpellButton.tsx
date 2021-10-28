@@ -9,6 +9,7 @@ import { useAppSelector } from '../../../store/store_hooks'
 
 import styles from "./SpellButton.scss"
 import Class from '../../../types/class'
+import { get_spec_for_spell_id } from '../../../store/specs'
 
 
 /* to avoid react rerenders when clicking the <a> tags */
@@ -34,6 +35,13 @@ export default function SpellButton({spec, spell_id, onClick} : { spec: Spec|Bos
     const spell = useAppSelector(state => get_spell(state, spell_id))
     const visible = useAppSelector(state => get_spell_visible(state, spell_id))
     const group_context = useContext(ButtonGroupContext)
+
+    // hack for raid cd's, which are listed as 
+    // const spec2 = useAppSelector(state => get_spec_for_spell_id(state, spell_id))
+    // console.log({spec})
+    // if (spec.full_name_slug == "other-raid") {
+    //     spec = spec2
+    // }
 
     ////////////////////////////////////////////////////////////////////////////
     // Vars

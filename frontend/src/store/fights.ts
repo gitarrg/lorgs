@@ -58,7 +58,7 @@ export const get_occuring_bosses = createSelector<RootState, Fight[], string[]>(
         const boss_names = new Set<string>()
 
         fights.forEach(fight => {
-            if (fight.boss) {
+            if (fight.boss?.name) {
                 boss_names.add(fight.boss.name)
             }
         })
