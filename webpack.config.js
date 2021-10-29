@@ -153,11 +153,11 @@ module.exports = {
         // fix some dev server issues
         runtimeChunk: 'single',
 
-        minimize: false, //!DEBUG,
+        minimize: !DEBUG,
         minimizer: [new TerserPlugin({
             terserOptions: {
                 compress: {
-                    // drop_console: true,
+                    drop_console: true,
                 }
             }
         })],
