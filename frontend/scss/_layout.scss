@@ -24,6 +24,16 @@ $sizes: (
     overflow-x: hidden;
 }
 
+
+/** Wrapper to center content in the middle of the page */
+.content_center {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
 footer {
     /* for now to match bootstrap */
     // padding-right: 15px;
@@ -76,6 +86,10 @@ footer {
 
 .justify-content-center {
     justify-content: center;
+}
+
+.justify-content-end {
+    justify-content: flex-end;
 }
 
 .justify-content-space-between {

@@ -56,6 +56,11 @@ a, a:hover, a:visited, a:active {
 .text-black {
     color: #000;
 }
+
+.text-white {
+    color: #FFF;
+}
+
 .text-muted {
     color: #888 !important;
 }
@@ -70,7 +75,6 @@ a, a:hover, a:visited, a:active {
 .text-danger {
     color: var(--danger);
 }
-
 
 
 /*******************************************************************************

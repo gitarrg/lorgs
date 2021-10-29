@@ -5,6 +5,7 @@ import styles from "./Index.scss"
 import IndexLinks from './IndexLinks'
 import IndexCompsGroup from './IndexCompsGroup'
 import IndexUserReport from "./IndexUserReport"
+import LoginButton from "../auth/LoginButton"
 
 
 const INFO_TEXT = <div>
@@ -46,8 +47,13 @@ export default function Index() {
 
     useTitle("Lorrgs: Index")
 
-    return (
-        <div className={`${styles.container} mt-5`}>
+    return <>
+
+        <div className="mt-1 d-flex justify-content-end">
+            <LoginButton />
+        </div>
+
+        <div className={`${styles.container} mt-4`}>
             <div className={styles.col_left}>
                 {INFO_TEXT}
                 {DISCLAIMER}
@@ -59,7 +65,7 @@ export default function Index() {
 
                 <IndexLinks />
             </div>
-
         </div>
-    )
+
+    </>
 }
