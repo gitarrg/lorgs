@@ -17,7 +17,7 @@ function UserReportIcon() {
 export default function IndexUserReport() {
 
     const user = useUser()
-    if (!user.permissions.user_reports) { return null }
+    if (!user.permissions.includes("user_reports")) { return null}
 
 
     return (

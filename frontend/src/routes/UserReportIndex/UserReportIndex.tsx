@@ -4,10 +4,12 @@ import LoadingOverlay from "../../components/shared/LoadingOverlay"
 import PlayerSelectGrid from "../../components/ReportNavbar/PlayerSelectList"
 import UrlInput from "./UrlInput"
 import styles from "./UserReportIndex.scss"
+import useUser from "../auth/useUser"
 import { SubmitButton } from "./SubmitButton";
 import { get_is_loading } from "../../store/user_reports"
 import { useAppSelector } from "../../store/store_hooks"
 import { useForm, FormProvider } from "react-hook-form";
+import { useHistory } from "react-router"
 
 
 export default function UserReportIndex() {
@@ -17,6 +19,13 @@ export default function UserReportIndex() {
     //
     const is_loading = useAppSelector(get_is_loading)
     const form_methods  = useForm();
+
+
+    const user = useUser()
+    const history = useHistory()
+    if (!user.permissions.includes("user_reports")) {
+        history.push("/")
+    }
 
     ////////////////////////////////
     // Render
