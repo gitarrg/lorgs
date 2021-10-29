@@ -6,6 +6,10 @@ fastapi==0.70.0
 fastapi-cache2==0.1.7
 uvicorn[standard]==0.15.0
 
+# we still use gunicorn as our prod server
+gunicorn==20.1.0
+
+
 # for user auth
 PyJWT==2.3.0
 
