@@ -12,6 +12,7 @@ import specs_reducer from "./specs"
 import spells_reducer from "./spells"
 import status_reducer from "./status"
 import ui_reducer from "./ui"
+import user_reducer from "./user"
 import user_report_reducer from "./user_reports"
 
 
@@ -33,6 +34,7 @@ const store = configureStore({
         spells: spells_reducer,
         status: status_reducer,
         ui: ui_reducer,
+        user: user_reducer,
         user_report: user_report_reducer,
     },
     devTools: LORRGS_DEBUG,

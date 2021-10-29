@@ -1,7 +1,6 @@
-import { Link } from "react-router-dom";
 import IndexModuleLink from "./IndexModuleLink";
-
 import styles from "./Index.scss"
+import useUser from "./../auth/useUser"
 
 function UserReportIcon() {
 
@@ -16,6 +15,10 @@ function UserReportIcon() {
 
 
 export default function IndexUserReport() {
+
+    const user = useUser()
+    if (!user.permissions.user_reports) { return null }
+
 
     return (
         <IndexModuleLink title="Custom Report:" url="/user_report" className={styles.user_report_link}>
