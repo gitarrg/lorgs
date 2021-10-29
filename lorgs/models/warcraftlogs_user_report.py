@@ -67,6 +67,11 @@ class UserReport(me.Document):
     ################################
     # Methods
     #
+    def save(self, *args, **kwargs):
+        """Update the timestamp and Sve the Report."""
+        self.updated = arrow.utcnow()
+        return super().save(*args, **kwargs)
+
     async def load(self, *args, **kwargs):
         await self.report.load(*args, **kwargs)  # pylint: disable=no-member
 
