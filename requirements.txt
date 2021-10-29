@@ -1,10 +1,9 @@
 aiofiles==0.6
 aiohttp==3.7.4.post0
 arrow==1.2
-python-dotenv==0.17.1
 
 fastapi==0.70.0
-fastapi-cache2[memcache]==0.1.6
+fastapi-cache2==0.1.7
 uvicorn[standard]==0.15.0
 
 # for user auth
@@ -14,3 +13,7 @@ mongoengine==0.23.1
 dnspython==2.1.0
 
 google-cloud-tasks==2.6
+
+
+# Dev Only
+# python-dotenv==0.17.1
