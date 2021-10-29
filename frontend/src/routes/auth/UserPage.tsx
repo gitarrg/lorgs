@@ -8,7 +8,6 @@ export default function UserPage() {
 
     const user = useUser()
 
-
     return (
         <div className="content_center mt-5">
 

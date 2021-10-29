@@ -20,7 +20,7 @@ interface UserSliceState {
     logged_in: boolean
     name: string
     id: string
-    permissions: {[key: string]: boolean}
+    permissions: string[],
 
     error?: string
     error_message?: string
@@ -31,7 +31,7 @@ const INITIAL_STATE: UserSliceState = {
     logged_in: false,
     name: "",
     id: "",
-    permissions: {}
+    permissions: []
 }
 
 
