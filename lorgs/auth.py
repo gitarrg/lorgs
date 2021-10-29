@@ -16,7 +16,7 @@ DISCORD_CLIENT_ID = os.getenv("DISCORD_CLIENT_ID")
 DISCORD_CLIENT_SECRET = os.getenv("DISCORD_CLIENT_SECRET")
 DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 DISCORD_API = "https://discordapp.com/api"
-REDIRECT_URI = "https://lorrgs.nw.r.appspot.com/"
+REDIRECT_URI = os.getenv("REDIRECT_URI") or "http://127.0.0.1:9001/login"
 
 
 # int: server ID for the lorgs disocrd.
@@ -24,9 +24,15 @@ LORRGS_SERVER_ID  = 885638678607708172
 
 # Role IDs:
 # used to check what features a logged-in user can access
-ROLE_ID_MOD       = 885660390120362024  # Morrgerator
-ROLE_ID_ADMIN     = 885660648510455839  # Arrgmin
-ROLE_ID_PATREON   = 886595672525119538  # Investorrg
+ROLE_ID_ADMIN     = "885660648510455839"  # Arrgmin
+ROLE_ID_MOD       = "885660390120362024"  # Morrgerator
+ROLE_ID_PATREON   = "886595672525119538"  # Investorrg
+
+ROLE_PERMISSIONS = {
+    ROLE_ID_ADMIN:   ["user_reports", "mod", "admin"],
+    ROLE_ID_MOD:     ["user_reports", "mod"],
+    ROLE_ID_PATREON: ["ser_reports"],
+}
 
 
 ################################################################################
@@ -155,11 +161,13 @@ async def get_member_roles(user_id: int) -> typing.List[str]:
     return member_info.get("roles", [])
 
 
-async def get_member_features(user_id):
-    """Check which features a given user is allows to use."""
+async def get_member_permissions(user_id: int) -> typing.Set[str]:
+    """Check what permissions a given user has."""
     roles = await get_member_roles(user_id=user_id)
-    features = {}
-    features["admin"] = str(ROLE_ID_ADMIN) in roles
-    features["mod"] = str(ROLE_ID_MOD) in roles
-    features["patreon"] = str(ROLE_ID_PATREON) in roles
-    return features
+
+    permissions = set()
+    for role_id in roles:
+        role_permissions = ROLE_PERMISSIONS.get(role_id, [])
+        permissions.update(role_permissions)
+
+    return permissions

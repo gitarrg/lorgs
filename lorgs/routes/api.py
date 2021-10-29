@@ -12,6 +12,7 @@ from lorgs.routes import api_spec_rankings
 from lorgs.routes import api_tasks
 from lorgs.routes import api_user_reports
 from lorgs.routes import api_world_data
+from lorgs.routes import auth
 
 
 router = fastapi.APIRouter()
@@ -24,6 +25,7 @@ router.include_router(api_spec_rankings.router)
 router.include_router(api_tasks.router, prefix="/tasks")
 router.include_router(api_user_reports.router, prefix="/user_reports")
 router.include_router(api_world_data.router)
+router.include_router(auth.router, prefix="/auth")
 
 
 ################################################################################
