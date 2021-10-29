@@ -32,9 +32,10 @@ async def test_get_member_info():
     print(member_info)
 
 
-async def test_get_member_features():
+async def test_get_member_permissions():
     user_id = 392483139991240714  # thats me!
-    member_info = await auth.get_member_features(user_id)
+
+    member_info = await auth.get_member_permissions(user_id)
     print(member_info)
 
 
@@ -43,4 +44,4 @@ if __name__ == "__main__":
     # asyncio.run(test_get_user_profile())
     # asyncio.run(test_get_member_info())
     # asyncio.run(test_get_member_info())
-    asyncio.run(test_get_member_features())
+    asyncio.run(test_get_member_permissions())

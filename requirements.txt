@@ -7,6 +7,9 @@ fastapi==0.70.0
 fastapi-cache2[memcache]==0.1.6
 uvicorn[standard]==0.15.0
 
+# for user auth
+PyJWT==2.3.0
+
 mongoengine==0.23.1
 dnspython==2.1.0
 
