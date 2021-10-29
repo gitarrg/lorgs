@@ -32,11 +32,27 @@ async def test_get_member_info():
     print(member_info)
 
 
+async def test_get_member_info_with_invalid_id():
+    user_id = 123123123
+    member_info = await auth.get_member_info(user_id)
+    print(member_info)
+
+
+async def test_get_member_info_user_who_is_not_in_lorrgs():
+    user_id = 0  # copy some random persons id (i don't want to put anyones ID into source control tho.)
+    member_info = await auth.get_member_info(user_id)
+    print(member_info)
+
+
 async def test_get_member_permissions():
     user_id = 392483139991240714  # thats me!
+    user_id = 1321313  # thats me!
 
     member_info = await auth.get_member_permissions(user_id)
     print(member_info)
+
+
+
 
 
 if __name__ == "__main__":
@@ -44,4 +60,5 @@ if __name__ == "__main__":
     # asyncio.run(test_get_user_profile())
     # asyncio.run(test_get_member_info())
     # asyncio.run(test_get_member_info())
-    asyncio.run(test_get_member_permissions())
+    # asyncio.run(test_get_member_info_with_invalid_id())
+    asyncio.run(test_get_member_info_user_who_is_not_in_lorrgs())
