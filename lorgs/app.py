@@ -40,7 +40,8 @@ def create_app():
 
     # Quart
     app = fastapi.FastAPI(
-        docs_url="/api/docs"
+        docs_url="/api/docs",
+        openapi_url="/api/openapi.json",  # must be in "/api" so the AppEngine route works
     )
     cache.init(config_obj)
     app.include_router(api.router, prefix="/api")
