@@ -29,7 +29,6 @@ router = fastapi.APIRouter()
 @cache()
 async def get_roles():
     """Get all roles (tank, heal, mpds, rdps)."""
-    print("getting roles")
     return {
         "roles": [role.as_dict() for role in WowRole.all]
     }
