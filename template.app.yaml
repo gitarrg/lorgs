@@ -14,10 +14,12 @@ automatic_scaling:
 
 
 entrypoint: >
-  uvicorn
-  --port $PORT
+  gunicorn
+  --bind :$PORT
   --workers 2
-  --factory "lorgs.app:create_app"
+  --log-level warning
+  --worker-class uvicorn.workers.UvicornWorker
+  "lorgs.app:create_app"
 
 
 env_variables:
