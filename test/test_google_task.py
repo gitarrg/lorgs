@@ -107,9 +107,6 @@ def get_task_status():
         print("task", task)
 
 
-from aiogoogle import Aiogoogle
-
-
 # from aiogoogle.auth.creds import ServiceAccountCreds
 # creds = ServiceAccountCreds(
 #     scopes=[
@@ -120,54 +117,3 @@ from aiogoogle import Aiogoogle
 #         "https://www.googleapis.com/auth/cloud-platform",
 #     ],
 # )
-
-
-# async def create_gogole_client(name, version):
-#     async with Aiogoogle() as aiogoogle:
-#         # Downloads the API specs and creates an API object
-#         return await aiogoogle.discover(name, version)
-# 
-# async def create_task_client():
-#     return await create_gogole_client("cloudtasks", "v2")
-from aiogoogle.auth.creds import ServiceAccountCreds
-
-service_account_key = json.load(open("./google_creds.json"))
-# print("service_account_key", service_account_key)
-
-creds = ServiceAccountCreds(
-    scopes=["https://www.googleapis.com/auth/cloud-tasks"],
-    **service_account_key
-)
-
-
-async def async_google_test():
-
-    TASK_QUEUE = "projects/lorrgs/locations/europe-west2/queues/lorgs-task-queue"
-
-    task_name = "user_report_load__8fb1d213-4632-40b7-a577-b6713052a488"
-    task_path = f"{TASK_QUEUE}/tasks/{task_name}"
-
-    async with Aiogoogle(service_account_creds=creds) as aiogoogle:
-        task_client = await aiogoogle.discover("cloudtasks", "v2")
-
-        res = await aiogoogle.as_service_account(
-            # task_client.projects.locations.list(name="projects/lorrgs")
-            task_client.projects.locations.queues.tasks.get(name=task_path)
-        )
-        print(res)
-
-    # https://cloud.google.com/tasks/docs/reference/rest/v2/projects.locations.queues.tasks/list
-
-
-
-if __name__ == '__main__':
-    # load_all()
-    # create_test_task()
-    # get_task_status()
-
-    import asyncio
-
-    asyncio.run(async_google_test())
-
-    # from google.cloud import tasks_v2
-    # print(tasks_v2)
