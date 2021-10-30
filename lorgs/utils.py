@@ -4,6 +4,7 @@ import asyncio
 import datetime
 import functools
 import itertools
+import typing
 
 import arrow
 
@@ -54,8 +55,22 @@ def slug(text, space=""):
 
 def str_int_list(string, sep="."):
     """Converts string-list of intergers into an actual list."""
+    if not string:
+        return []
+
     return [int(v) for v in string.split(sep)]
 
+
+def get_nested_value(dct: typing.Dict[str, typing.Any], *keys: str, default=None):
+
+    data = dct
+    for key in keys:
+        try:
+            data = data[key]
+        except KeyError:
+            return default
+
+    return data
 
 
 def flatten(l):
