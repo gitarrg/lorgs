@@ -186,46 +186,57 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
             {{data}}
         """
 
-    def get_query(self, filters: typing.List[str] = None) -> str:
-
-        filters = list(filters or [])
-
-        ################
-        #   PLAYERS    #
-        ################
-        player_query = ""
-        cast_query = ""
+    def get_player_query(self):
+        """Get the Query to fetch the players in this fight."""
         if self.players:
+            return ""
+        return f"players: table({self.table_query_args}, dataType: Summary)"
 
-            players_to_load = [player for player in self.players if not player.casts]
-            if players_to_load:
+    def get_player_casts_query(self):
+        """Query to fetch the Casts (and buffs) for players in this fight."""
+        if not self.players:
+            raise ValueError("Fight has no players!")
 
-                # combine the filters
-                player_filters = [player.get_sub_query() for player in players_to_load]
-                player_filters = [f"({f})" for f in player_filters] # wrap each in ()
-                player_filters_combined = " or ".join(player_filters)
+        players_to_load = [player for player in self.players if not player.casts]
+        if not players_to_load:
+            return ""
 
-                # construct the query
-                cast_query = f"""\
-                    casts: events(
-                        {self.table_query_args}
-                        filterExpression: \"{player_filters_combined}\"
-                    )
-                    {{data}}
-                """
+        player_queries = [player.get_sub_query() for player in players_to_load]
+        player_queries_combined = " or ".join(player_queries)
 
-        else:
-            player_query = f"players: table({self.table_query_args}, dataType: Summary)"
-            cast_query = self._build_cast_query(filters)
+        # construct the query
+        return textwrap.dedent(f"""\
+            casts: events(
+                {self.table_query_args}
+                filterExpression: \"{player_queries_combined}\"
+                )
+                {{data}}
+            """)
 
+    def get_boss_query(self):
+        """Get the Query to load the boss for this fight."""
+        if self.boss and self.boss.casts:
+            return ""
+
+        if not self.raid_boss:
+            return ""
+
+        boss_query = self.raid_boss.get_sub_query()
+        return textwrap.dedent(f"""\
+            boss: events(
+                {self.table_query_args},
+                filterExpression: "{boss_query}"
+                )
+                {{data}}
+            """)
+
+    def get_query(self) -> str:
+        """Get the Query to load all elements for this Fight."""
         ################
-        #     BOSS     #
-        ################
-        boss_query = ""
-        if self.boss and not self.boss.casts:
-            boss_query = self.boss.get_sub_query()
-            boss_query = f"boss: {boss_query}" if boss_query else ""
-
+        # get sub queries
+        player_query = self.get_player_query()
+        cast_query = self.get_player_casts_query()
+        boss_query = self.get_boss_query()
         if not (player_query or cast_query or boss_query):
             return ""
 
@@ -241,7 +252,7 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
             }}
         """)
 
-    def process_fight_players(self, players_data):
+    def process_players(self, players_data):
         if not players_data:
             logger.warning("players_data is empty")
             return
@@ -282,22 +293,30 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
             player.name = composition_data.get("name")
             player.total = total
 
+        # call this before filtering to always get the full comp
+        self.composition = get_composition(self.players)
+
+    def process_boss(self, boss_data: typing.Dict[str, typing.Any]):
+        """Process the Query results for the Boss"""
+        if not boss_data:
+            return
+
+        if not self.boss:
+            self.add_boss(self.boss_id)
+
+        self.boss.process_query_result(boss_data)
+
     def process_query_result(self, query_result):
         logger.debug("start")
         report_data = query_result.get("report") or {}
 
-        if self.boss:
-            boss_casts = report_data.get("boss", {})
-            self.boss.process_query_result(boss_casts)
+        # Boss
+        boss_data = report_data.get("boss", {})
+        self.process_boss(boss_data)
 
         # load players
-        if not self.players: # only if they arn't loaded yet
-            logger.debug("create players")
-            players_data = report_data.get("players", {}).get("data", {})
-            self.process_fight_players(players_data)
-
-            # call this before filtering to always get the full comp
-            self.composition = get_composition(self.players)
+        players_data = report_data.get("players", {}).get("data", {})
+        self.process_players(players_data)
 
         # load player casts
         if self.players:
