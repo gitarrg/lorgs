@@ -298,35 +298,3 @@ class Boss(BaseActor):
             "name": self.raid_boss.full_name_slug,
             "casts": [cast.as_dict() for cast in self.casts]
         }
-
-    ##########################
-    # Methods
-    #
-    def get_sub_query(self, filters=None) -> str:
-        filters = filters or []
-
-        for event in self.raid_boss.events:
-
-            # get all event parts
-            parts = []
-            if event.get("event_type"):
-                parts.append("type='{event_type}'")
-            if event.get("spell_id"):
-                parts.append("ability.id={spell_id}")
-            if event.get("extra_filter"):
-                parts.append("{extra_filter}")
-
-            # combine filter
-            event_filter = " and ".join(parts)
-            event_filter = f"({event_filter})"
-            event_filter = event_filter.format(**event)
-
-            # add filter to list
-            filters.append(event_filter)
-
-        filters = " or ".join(filters)
-
-        if not filters:
-            return ""
-
-        return f"events({self.fight.table_query_args}, filterExpression: \"{filters}\") {{data}}"
