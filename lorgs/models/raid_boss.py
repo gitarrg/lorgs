@@ -25,7 +25,7 @@ class RaidBoss(base.Model):
         self.icon = f"bosses/{self.zone.name_slug}/{self.full_name_slug}.jpg"
 
         # spells or buffs to track
-        self.events = []
+        self.events: typing.List[typing.Dict[str, str]] = []
 
         # we track them as "spells" for now
         self.spells: typing.List["WowSpell"] = []
@@ -78,3 +78,30 @@ class RaidBoss(base.Model):
 
         spell.specs = [self]
         self.spells.append(spell)
+
+    ##########################
+    # Methods
+    #
+    def get_sub_query(self, filters=None) -> str:
+        filters = filters or []
+
+        for event in self.events:
+
+            # get all event parts
+            parts = []
+            if event.get("event_type"):
+                parts.append("type='{event_type}'")
+            if event.get("spell_id"):
+                parts.append("ability.id={spell_id}")
+            if event.get("extra_filter"):
+                parts.append("{extra_filter}")
+
+            # combine filter
+            event_filter = " and ".join(parts)
+            event_filter = f"({event_filter})"
+            event_filter = event_filter.format(**event)
+
+            # add filter to list
+            filters.append(event_filter)
+
+        return " or ".join(filters)
