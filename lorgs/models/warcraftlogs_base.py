@@ -78,7 +78,7 @@ class wclclient_mixin:
         return WarcraftlogsClient.get_instance()
 
     @abc.abstractmethod
-    def get_query(self, filters=None):
+    def get_query(self):
         """Get the Query string to fetch all information for this object."""
         return ""
 
