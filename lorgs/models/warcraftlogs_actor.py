@@ -61,7 +61,7 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
     """
 
     # list of cast
-    casts = me.ListField(me.EmbeddedDocumentField(Cast))
+    casts: typing.List[Cast] = me.ListField(me.EmbeddedDocumentField(Cast))
     source_id = -1
 
     meta = {
@@ -131,6 +131,8 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
 
         active_buffs: typing.Dict[int, Cast] = {}
 
+        fight_start = self.fight.start_time_rel if self.fight else 0
+
         for cast_data in casts_data:
 
             # TODO: fetch source_id's?
@@ -140,7 +142,7 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
             # Add the Cast Object
             cast = Cast()
             cast.spell_id = cast_data["abilityGameID"]
-            cast.timestamp = cast_data["timestamp"] - self.fight.start_time_rel
+            cast.timestamp = cast_data["timestamp"] - fight_start
 
             # we check if the buff was applied before..
             if cast_data["type"] == "removebuff":
@@ -250,10 +252,12 @@ class Player(BaseActor):
         filters.append(buffs_query)
 
         # combine all filters
-        filters = [f for f in filters if f]   # fitler the filters
+        filters = [f for f in filters if f]   # filter the filters
         filters = [f"({f})" for f in filters] # wrap each filter into bracers
-        filters = " or ".join(filters)
-        return filters
+        filters = [" or ".join(filters)]
+
+        queries_combined = " and ".join(filters)
+        return f"({queries_combined})"
 
     def process_death_events(self, death_events):
         ability_overwrites = {}

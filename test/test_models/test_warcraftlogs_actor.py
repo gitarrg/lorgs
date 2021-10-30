@@ -1,8 +1,11 @@
 
 import unittest
+import random
 from unittest import mock
 
-from lorgs.models import warcraftlogs_actor, wow_class, wow_role, wow_spec
+import arrow
+
+from lorgs.models import warcraftlogs_actor, warcraftlogs_fight, wow_class, wow_role, wow_spec
 from lorgs.models.wow_spell import WowSpell
 
 # pylint: disable=protected-access
@@ -35,7 +38,6 @@ class TestBaseActor(unittest.TestCase):
 
     def setUp(self):
         self.actor = warcraftlogs_actor.BaseActor()
-        return super().setUp()
 
     ################################
     # source id
@@ -81,6 +83,93 @@ class TestBaseActor(unittest.TestCase):
         q = self.actor.get_buff_query(spells)
         assert q == expected
 
+    ################################
+    # process query result
+    #
+    def test__process_casts__simple(self):
+        casts_data = {"data": [
+            {
+                "timestamp": 1001,
+                "type": "cast",
+                "sourceID": 10,
+                "abilityGameID": 101,
+            },
+            {
+                "timestamp": 1002,
+                "type": "cast",
+                "sourceID": 10,
+                "abilityGameID": 102,
+            },
+            {
+                "timestamp": 1010,
+                "type": "cast",
+                "sourceID": 10,
+                "abilityGameID": 101,
+            },
+        ]}
+
+        self.actor.source_id = 10
+        self.actor.process_query_result(casts_data)
+
+        assert self.actor.casts != []
+        assert len(self.actor.casts) == 3
+
+        cast = self.actor.casts[2]
+        assert cast.spell_id == 101
+        assert cast.timestamp == 1010
+
+    def test__process_casts__ignore_other_source_ids(self):
+        """Make sure a cast from another ID is not added"""
+        casts_data = {"data": [
+            {
+                "sourceID": 123,
+            }
+        ]}
+
+        assert not self.actor.casts
+        self.actor.source_id = 10
+        self.actor.process_query_result(casts_data)
+        assert not self.actor.casts
+
+    def test__process_casts__use_all_casts_if_actor_has_no_id(self):
+        casts_data = {"data": [
+            {"type": "cast", "sourceID": 1, "timestamp": 10, "abilityGameID": 0},
+            {"type": "cast", "sourceID": 2, "timestamp": 20, "abilityGameID": 0},
+            {"type": "cast", "sourceID": 3, "timestamp": 30, "abilityGameID": 0},
+        ]}
+
+        assert not self.actor.casts
+        self.actor.source_id = -1
+        self.actor.process_query_result(casts_data)
+        assert len(self.actor.casts) == 3
+
+    def test__process_query_result__calc_buff_duration(self):
+        casts_data = {"data": [
+            {"type": "applybuff",  "timestamp": 100, "abilityGameID": 10},
+            {"type": "removebuff", "timestamp": 250, "abilityGameID": 10},
+        ]}
+
+        self.actor.process_query_result(casts_data)
+        cast = self.actor.casts[0]
+        assert cast.timestamp == 100
+        assert cast.duration == 0.15
+
+    def test__process_query_result__calc_buff_duration_when_applied_prepull(self):
+        casts_data = {"data": [
+            {"type": "removebuff", "timestamp": 4500, "abilityGameID": 10},
+        ]}
+
+        with mock.patch("lorgs.models.wow_spell.WowSpell.get") as mock_get_spell:
+            mock_get_spell.return_value = mock.MagicMock()
+            mock_get_spell.return_value.duration = 5  # 5 sec = 5000ms
+
+            # Run
+            self.actor.process_query_result(casts_data)
+
+        # Test
+        cast = self.actor.casts[0]
+        assert cast.timestamp == -500
+
 
 class TestPlayer(unittest.TestCase):
 
@@ -88,39 +177,44 @@ class TestPlayer(unittest.TestCase):
         self.player = warcraftlogs_actor.Player(
             spec_slug=MOCK_SPEC.full_name_slug
         )
+        self.spells = [WowSpell(spell_id=101)]
+
+        self.cast_query_patch = mock.patch("lorgs.models.warcraftlogs_actor.BaseActor.get_cast_query")
+        self.cast_query_mock = self.cast_query_patch.start()
+        self.cast_query_mock.return_value = "CAST_QUERY"
+        self.buff_query_patch = mock.patch("lorgs.models.warcraftlogs_actor.BaseActor.get_buff_query")
+        self.buff_query_mock = self.buff_query_patch.start()
+        self.buff_query_mock.return_value = "BUFF_QUERY"
+
+    def tearDown(self):
+        self.cast_query_patch.stop()
+        self.buff_query_patch.stop()
 
     def test_spec(self):
         assert self.player.spec == MOCK_SPEC
 
     ################################
     # get_cast_query
-    def test_get_cast_query_includes_name(self):
-        # inputs
-        spells = [WowSpell(spell_id=101)]
+    #
+
+    def test_get_cast_query__includes_player_name(self):
         self.player.name = "PlayerName"
 
-        # run and test
-        assert "source.name='PlayerName'" in self.player.get_cast_query(spells)
+        query = self.player.get_cast_query()
+        print("query", query)
+        assert "source.name='PlayerName'" in query
 
-    def test_get_buff_query_includes_name(self):
-        # inputs
-        spells = [WowSpell(spell_id=101)]
+    def test_get_buff_query__includes_player_name(self):
         self.player.name = "PlayerName"
 
-        # run and test
-        assert "target.name='PlayerName'" in self.player.get_buff_query(spells)
+        query = self.player.get_buff_query()
+        assert "target.name='PlayerName'" in query
 
-    @mock.patch("lorgs.models.warcraftlogs_actor.BaseActor.get_cast_query")
-    @mock.patch("lorgs.models.warcraftlogs_actor.BaseActor.get_buff_query")
-    def get_sub_query(self, cast_query_mock: mock.MagicMock, buff_query_mock: mock.MagicMock):
-
-        cast_query_mock.return_value = "CAST_QUERY"
-        buff_query_mock.return_value = "BUFF_QUERY"
-
+    def test_get_sub_query(self):
 
         query = self.player.get_sub_query()
-        assert cast_query_mock.called_once()
-        assert buff_query_mock.called_once()
+        assert self.cast_query_mock.called_once()
+        assert self.buff_query_mock.called_once()
 
         assert "CAST_QUERY" in query
         assert "BUFF_QUERY" in query

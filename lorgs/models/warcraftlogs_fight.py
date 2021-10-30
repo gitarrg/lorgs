@@ -149,13 +149,17 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
         """Returns a single Player based on the kwargs."""
         return utils.get(self.players, **kwargs)
 
+    def get_players(self, source_ids=typing.List[int]):
+        """Gets multiple players based on source id."""
+        return [self.get_player(source_id=source_id) for source_id in source_ids]
+
     def add_boss(self, boss_id) -> RaidBoss:
         self.boss_id = boss_id
         self.boss = Boss(boss_id=boss_id)
         self.boss.fight = self
         return self.boss
 
-    #################################
+    ############################################################################
     # Query
     #
     @property
@@ -248,52 +252,58 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
         self.process_overview(result)
 
     ############################################################################
-    #   Casts
+    #   Load Player:
     #
+    def get_player_casts_query(self, player_ids: typing.List[int] = None, cast_limit=1000):
+        """Query to fetch the Casts (and buffs) for players in this fight.
 
-    def _build_cast_query(self, filters: typing.List[str] = None, cast_limit=1000) -> str:
-        """
         Args:
-            cast_limit (int): maximum number of casts to query.
-            (not sure if we need to loop trough pages..)
+            player_ids(list[int]): player ids to load
+            cast_limit(int, optional): number of casts to load. (default=1000)
 
         """
-        if not filters:
-            # we gonna query for all spells
-            spell_ids = WowSpell.spell_ids_str(WowSpell.all)
-            filters = ["type='cast'", f"ability.id in ({spell_ids})"]
-
-        filters = " and ".join(filters) # type: ignore
-
-        return f"""\
-            casts: events(
-                limit: {cast_limit}
-                {self.table_query_args},
-                dataType: Casts,
-                filterExpression: "{filters}")
-            {{data}}
-        """
-
-    def get_player_casts_query(self):
-        """Query to fetch the Casts (and buffs) for players in this fight."""
         if not self.players:
             raise ValueError("Fight has no players!")
 
-        players_to_load = [player for player in self.players if not player.casts]
+        # filter which players to load
+        players = self.get_players(player_ids) if player_ids else self.players
+        players_to_load = [player for player in players if not player.casts]
         if not players_to_load:
             return ""
 
+        # construct the query
         player_queries = [player.get_sub_query() for player in players_to_load]
+        player_queries = [f"({query})" for query in player_queries]
         player_queries_combined = " or ".join(player_queries)
 
-        # construct the query
         return textwrap.dedent(f"""\
             casts: events(
-                {self.table_query_args}
-                filterExpression: \"{player_queries_combined}\"
+                {self.table_query_args},
+                limit: {cast_limit}
+                filterExpression: {player_queries_combined}
                 )
                 {{data}}
             """)
+
+    def process_player_casts(self, query_result):
+
+        report_data = query_result.get("reportData", {}).get("report", {})
+        casts_data = report_data.get("casts", {})
+        for player in self.players:
+            player.process_query_result(casts_data)
+
+    async def load_players(self, player_ids: typing.List[int]):
+
+        query = self.get_player_casts_query(player_ids)
+        if not query:
+            return  # nothing to load
+
+        result = await self.client.query(query)
+        self.process_player_casts(result)
+
+    ############################################################################
+    #   Boss
+    #
 
     def get_boss_query(self):
         """Get the Query to load the boss for this fight."""
@@ -312,14 +322,13 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
                 {{data}}
             """)
 
-    def get_query(self) -> str:
+    def get_cast_query(self) -> str:
         """Get the Query to load all elements for this Fight."""
         ################
         # get sub queries
-        player_query = self.get_player_query()
         cast_query = self.get_player_casts_query()
         boss_query = self.get_boss_query()
-        if not (player_query or cast_query or boss_query):
+        if not (cast_query or boss_query):
             return ""
 
         return textwrap.dedent(f"""\
@@ -327,12 +336,14 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
             {{
                 report(code: "{self.report.report_id}")
                 {{
-                    {player_query}
                     {cast_query}
                     {boss_query}
                 }}
             }}
         """)
+
+    ################################
+    # Processing
 
     def process_boss(self, boss_data: typing.Dict[str, typing.Any]):
         """Process the Query results for the Boss"""
@@ -355,15 +366,18 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
         # load players
         players_data = report_data.get("players", {}).get("data", {})
         self.process_players(players_data)
-
-        # load player casts
-        if self.players:
-            logger.debug("create player casts")
-            casts_data = report_data.get("casts", {})
-            logger.debug("num casts: %d", len(casts_data.get("data", [])))
-
-            for player in self.players:
-                player.process_query_result(casts_data)
-
         # filter out players with no casts
         self.players = [player for player in self.players if player.casts]
+
+    def process_casts(self, query_result):
+        print("process_casts")
+
+    ################################
+    # Main
+    async def load_casts(self):
+
+        query = self.get_cast_query()
+        print("query")
+        print(query)
+        # result = await self.client.query(query)
+        # self.process_casts(result)
