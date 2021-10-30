@@ -82,6 +82,23 @@ class wclclient_mixin:
         """Get the Query string to fetch all information for this object."""
         return ""
 
+    @staticmethod
+    def combine_queries(*queries, op="or"):
+        """Combine multiple queries.
+
+        Example:
+            >>> combine_queries("foo", "bar or baz", op="and")
+            ((foo) and ("bar" or "baz"))
+
+        """
+        # combine all filters
+        queries = [q for q in queries if q]   # filter out empty statements
+        queries = [f"({q})" for q in queries] # wrap each into bracers
+
+        queries_combined = f" {op} ".join(queries)
+        return f"({queries_combined})"
+
+    @abc.abstractmethod
     def process_query_result(self, query_result: dict):
         """Implement some custom logic here to process our results from the query."""
 

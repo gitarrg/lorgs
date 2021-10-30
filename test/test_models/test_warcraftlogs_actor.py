@@ -1,11 +1,12 @@
 
 import unittest
-import random
 from unittest import mock
 
-import arrow
 
-from lorgs.models import warcraftlogs_actor, warcraftlogs_fight, wow_class, wow_role, wow_spec
+from lorgs.models import warcraftlogs_actor
+from lorgs.models import wow_class
+from lorgs.models import wow_role
+from lorgs.models import wow_spec
 from lorgs.models.wow_spell import WowSpell
 
 # pylint: disable=protected-access
@@ -18,20 +19,6 @@ MOCK_ROLE = wow_role.WowRole(id=4, name="Test")
 MOCK_CLASS = wow_class.WowClass(id=4, name="Test")
 MOCK_SPEC = wow_spec.WowSpec(name="TestSpec", wow_class=MOCK_CLASS, role=MOCK_ROLE)
 
-
-class TestCast(unittest.TestCase):
-
-    def test_get_end_time(self):
-        cast = warcraftlogs_actor.Cast(timestamp=2000, duration=10)
-        # start time + duration in MS
-        assert cast.end_time == 2000 + 10000
-
-    def test_set_end_time(self):
-        cast = warcraftlogs_actor.Cast(timestamp=2000)
-        cast.end_time = 10000
-
-        assert cast.end_time == 10000
-        assert cast.duration == 8  # in seconds
 
 
 class TestBaseActor(unittest.TestCase):

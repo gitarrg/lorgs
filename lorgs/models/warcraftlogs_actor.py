@@ -11,46 +11,11 @@ import mongoengine as me
 from lorgs import utils
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
-from lorgs.models.raid_boss import RaidBoss
+from lorgs.models.warcraftlogs_cast import Cast
+from lorgs.models.wow_covenant import WowCovenant
 from lorgs.models.wow_spec import WowSpec
 from lorgs.models.wow_spell import WowSpell
-from lorgs.models.wow_covenant import WowCovenant
 
-
-class Cast(me.EmbeddedDocument):
-    """docstring for Cast"""
-
-    timestamp = me.IntField()
-    spell_id = me.IntField()
-    duration = me.IntField()
-
-    def __str__(self):
-        time_fmt = utils.format_time(self.timestamp)
-        return f"Cast({self.spell_id}, at={time_fmt})"
-
-    def as_dict(self):
-        dict = {
-            "ts": self.timestamp,
-            "id": self.spell_id,
-        }
-        if self.duration:
-            dict["d"] = self.duration
-        return dict
-
-    ##########################
-    # Attributes
-    #
-    @property
-    def spell(self):
-        return WowSpell.get(spell_id=self.spell_id)
-
-    @property
-    def end_time(self):
-        return self.timestamp + (self.duration * 1000)
-
-    @end_time.setter
-    def end_time(self, value):
-        self.duration = (value - self.timestamp) / 1000
 
 
 class BaseActor(warcraftlogs_base.EmbeddedDocument):
@@ -102,16 +67,16 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
         return buffs_query
 
     @abc.abstractmethod
-    def get_sub_query(self, filters=None):
+    def get_sub_query(self):
         return ""
 
-    def get_query(self, filters=None):
+    def get_query(self):
         return textwrap.dedent(f"""\
             reportData
             {{
                 report(code: "{self.fight.report.report_id}")
                 {{
-                    {self.get_sub_query(filters)}
+                    {self.get_sub_query()}
                 }}
             }}
         """)
@@ -241,9 +206,9 @@ class Player(BaseActor):
             buffs_query = f"target.name='{self.name}' and {buffs_query}"
         return buffs_query
 
-    def get_sub_query(self, filters=None) -> str:
+    def get_sub_query(self) -> str:
         """Get the Query for fetch all relevant data for this player."""
-        filters = filters or []
+        filters = []
 
         cast_query = self.get_cast_query(self.spec.all_spells)
         filters.append(cast_query)
@@ -279,26 +244,3 @@ class Player(BaseActor):
                 death_data["ability"] = ability_overwrites[ability_id]
 
             self.deaths.append(death_data)
-
-
-class Boss(BaseActor):
-    """A NPC/Boss in a Fight."""
-
-    boss_id = me.IntField(required=True)
-    percent = me.FloatField(default=100)
-
-    ##########################
-    # Attributes
-    #
-    def __str__(self):
-        return f"Boss(id={self.boss_id})"
-
-    @property
-    def raid_boss(self) -> RaidBoss:
-        return RaidBoss.get(id=self.boss_id)
-
-    def as_dict(self):
-        return {
-            "name": self.raid_boss.full_name_slug,
-            "casts": [cast.as_dict() for cast in self.casts]
-        }
