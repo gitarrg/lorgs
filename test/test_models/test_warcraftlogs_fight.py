@@ -1,3 +1,4 @@
+import asyncio
 from unittest import mock
 import arrow
 import json
@@ -15,8 +16,8 @@ from lorgs.models.raid_zone import RaidZone
 # pylint: disable=attribute-defined-outside-init
 
 
-def create_fake_player(role="", spec=""):
-    player = mock.MagicMock()
+def create_fake_player(role="", spec="", **kwargs):
+    player = mock.MagicMock(**kwargs)
     player.spec.role.code = role
     player.spec.full_name_slug = spec
 
@@ -110,7 +111,9 @@ class TestFight(unittest.TestCase):
         assert result == "fightIDs: 5, startTime: 1000, endTime: 4000"
 
     #############################################
-    # Get Query
+    # Get Query: Summary
+    #
+
     def test_get_summary_query__no_players(self):
         self.fight.players = []
         query = self.fight.get_summary_query()
@@ -122,11 +125,15 @@ class TestFight(unittest.TestCase):
         query = self.fight.get_summary_query()
         assert query == ""
 
+    #############################################
+    # Players
+    #
+
     def test_get_player_casts_query__no_players(self):
         self.fight.players = []
         self.assertRaises(ValueError, self.fight.get_player_casts_query)
 
-    def test_get_casts_query__skips_players_with_casts(self):
+    def test_get_player_casts_query__skips_players_with_casts(self):
 
         player_A = create_fake_player()
         player_A.casts = []
@@ -139,13 +146,50 @@ class TestFight(unittest.TestCase):
         assert player_A.get_sub_query.called
         assert not player_B.get_sub_query.called
 
+    def test_get_player_casts_query__only_selected_players(self):
+        player_a = create_fake_player(source_id=1, casts=[])
+        player_b = create_fake_player(source_id=2, casts=[])
+        player_c = create_fake_player(source_id=3, casts=[])
+        player_d = create_fake_player(source_id=4, casts=["some casts"])
+        self.fight.players = [player_a, player_b, player_c, player_d]
+
+        _ = self.fight.get_player_casts_query(player_ids=[2, 3])
+
+        assert not player_a.get_sub_query.called
+        assert player_b.get_sub_query.called
+        assert player_c.get_sub_query.called
+        assert not player_d.get_sub_query.called
+
+    def test_process_player_casts(self):
+
+        
+
+
+        pass
+
+
+    def test_load_player(self):
+
+        player_a = create_fake_player(source_id=1)
+        player_b = create_fake_player(source_id=2)
+        player_c = create_fake_player(source_id=3)
+
+        self.fight.players = [player_a, player_b, player_c]
+        asyncio.run(self.fight.load_players(player_ids=[1, 2]))
+
+
+
+
+    #############################################
+    # Get Query: Boss
+    #
+    def test_get_boss_query__no_boss(self):
+        self.fight.boss_id = 321 # some invalid valie
+        assert self.fight.get_boss_query() == ""
+
     def test_get_boss_query__do_nothing_if_already_loaded(self):
         self.fight.boss = mock.MagicMock()
         self.fight.boss.casts = ["some", "casts"]
-        assert self.fight.get_boss_query() == ""
-
-    def test_get_boss_query__no_boss(self):
-        self.fight.boss_id = 321 # some invalid valie
         assert self.fight.get_boss_query() == ""
 
     @mock.patch("lorgs.models.raid_boss.RaidBoss.get_sub_query")
@@ -195,10 +239,7 @@ class TestFight_ProcessPlayers(unittest.TestCase):
 
     def setUp(self):
         self.fight = warcraftlogs_fight.Fight()
-
         self.patch_get_spec = mock.patch("lorgs.models.wow_spec.WowSpec.get")
-        # self.mock_get_spec.start()
-
 
     ##########################################
 
@@ -248,7 +289,6 @@ class TestFight_ProcessPlayers(unittest.TestCase):
             assert self.fight.add_player.called
             assert player_mock.spec_slug == "fake_spec"
 
-
     def test__example_fixture1(self):
         """Test an example Response.
 
@@ -286,3 +326,6 @@ class TestFight_ProcessPlayers(unittest.TestCase):
         assert player_arrg.name == "Arrg"  # thats me!!
         assert player_arrg.spec_slug == "druid-restoration"
         assert player_arrg.total == 10761152
+
+
+
