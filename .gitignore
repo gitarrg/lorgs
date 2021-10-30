@@ -6,6 +6,7 @@ __pycache__/
 *.sublime-workspace
 *.scannerwork
 .vscode
+.coverage
 
 static
 node_modules

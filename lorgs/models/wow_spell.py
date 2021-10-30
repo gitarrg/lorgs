@@ -42,7 +42,6 @@ class WowSpell(base.Model):
         spell_ids = cls.spell_ids(spells)
         return ",".join(str(spell_id) for spell_id in spell_ids)
 
-
     def __init__(self, spell_id: int, cooldown: int = 0, duration: int = 0, show: bool = True, **kwargs):
         self.spell_id = spell_id
         self.cooldown = cooldown

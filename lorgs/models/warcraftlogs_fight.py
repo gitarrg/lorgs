@@ -13,10 +13,10 @@ from lorgs.lib import mongoengine_arrow
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
 from lorgs.models.raid_boss import RaidBoss
-from lorgs.models.warcraftlogs_actor import Boss
+from lorgs.models.warcraftlogs_boss import Boss
 from lorgs.models.warcraftlogs_actor import Player
 from lorgs.models.wow_spec import WowSpec
-from lorgs.models.wow_spell import WowSpell
+
 
 
 def get_composition(players: typing.List[Player]) -> dict:
