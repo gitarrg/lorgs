@@ -84,6 +84,23 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
     #################################
     # Query
     #
+    def get_cast_query(self, spells=typing.List[WowSpell]):
+        if not spells:
+            return ""
+
+        spell_ids = WowSpell.spell_ids_str(spells)
+        cast_filter = f"type='cast' and ability.id in ({spell_ids})"
+        return cast_filter
+
+    def get_buff_query(self, spells=typing.List[WowSpell]):
+        if not spells:
+            return ""
+        # we check for "removebuff" as this allows us to also catch buffs
+        # that get used prepull (eg.: lust)
+        spell_ids = WowSpell.spell_ids_str(spells)
+        buffs_query = f"type in ('applybuff', 'removebuff') and ability.id in ({spell_ids})"
+        return buffs_query
+
     @abc.abstractmethod
     def get_sub_query(self, filters=None):
         return ""
@@ -210,28 +227,30 @@ class Player(BaseActor):
     #################################
     # Query
     #
+    def get_cast_query(self, spells=typing.List[WowSpell]):
+        cast_query = super().get_cast_query(spells=spells)
+        if self.name:
+            cast_query = f"source.name='{self.name}' and {cast_query}"
+        return cast_query
+
+    def get_buff_query(self, spells=typing.List[WowSpell]):
+        buffs_query = super().get_buff_query(spells=spells)
+        if self.name:
+            buffs_query = f"target.name='{self.name}' and {buffs_query}"
+        return buffs_query
+
     def get_sub_query(self, filters=None) -> str:
         """Get the Query for fetch all relevant data for this player."""
         filters = filters or []
 
-        # TODO: combine with "Fight._build_cast_query"
-        if self.spec.spells:
-            spell_ids = WowSpell.spell_ids_str(self.spec.all_spells)
-            cast_filter = f"type='cast' and ability.id in ({spell_ids})"
-            if self.name:
-                cast_filter = f"source.name='{self.name}' and {cast_filter}"
-            filters.append(cast_filter)
+        cast_query = self.get_cast_query(self.spec.all_spells)
+        filters.append(cast_query)
 
-        if self.spec.buffs:
-            # we check for "removebuff" as this allows us to also catch buffs
-            # that get used prepull (eg.: lust)
-            spell_ids = WowSpell.spell_ids_str(self.spec.all_buffs)
-            buffs_filter = f"type in ('applybuff', 'removebuff') and ability.id in ({spell_ids})"
-            if self.name:
-                buffs_filter = f"target.name='{self.name}' and {buffs_filter}"
-            filters.append(buffs_filter)
+        buffs_query = self.get_buff_query(self.spec.all_buffs)
+        filters.append(buffs_query)
 
         # combine all filters
+        filters = [f for f in filters if f]   # fitler the filters
         filters = [f"({f})" for f in filters] # wrap each filter into bracers
         filters = " or ".join(filters)
         return filters
@@ -311,38 +330,3 @@ class Boss(BaseActor):
             return ""
 
         return f"events({self.fight.table_query_args}, filterExpression: \"{filters}\") {{data}}"
-
-    def process_query_result(self, query_result):
-        """Process the result of a casts-query to create Cast objects."""
-        super().process_query_result(query_result)
-
-
-        """
-        for event in self.raid_boss.events:
-
-            # skip events without explicit until-statement
-            if not event.get("until"):
-                continue
-
-            until_event = event.get("until")
-            event_spell = event.get("spell_id")
-            end_spell_id = until_event.get("spell_id")
-
-            start_cast = None
-            end_casts = []
-            for cast in self.casts:
-
-                # look for the start event
-                if not start_cast and cast.spell_id == event_spell:
-                    start_cast = cast
-                    continue
-
-                # look for the ending event
-                if start_cast and cast.spell_id == end_spell_id:
-                    start_cast.end_time = cast.timestamp
-                    start_cast = None
-                    end_casts.append(cast)
-        """
-        # # end casts should not show up on their own
-        # self.casts = [cast for cast in self.casts if cast not in end_casts]
-
