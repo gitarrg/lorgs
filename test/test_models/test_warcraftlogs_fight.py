@@ -1,7 +1,9 @@
-import unittest
-import pytest
-import arrow
 from unittest import mock
+import arrow
+import json
+import os
+import pytest
+import unittest
 
 
 from lorgs.models import warcraftlogs_fight
@@ -33,6 +35,13 @@ def test_raid_boss():
     zone = RaidZone(id=1, name="TestZone")
     boss = RaidBoss(id=RAID_BOSS_ID, zone=zone, name="TestBoss")
     return boss
+
+
+def load_fixture(file_name):
+
+    file_path = os.path.join("./test/fixtures/", file_name)
+    with open(file_path, "r") as json_file:
+        return json.load(json_file)
 
 
 class TestGetComposition(unittest.TestCase):
@@ -102,14 +111,15 @@ class TestFight(unittest.TestCase):
 
     #############################################
     # Get Query
-    def test_get_player_query__no_players(self):
+    def test_get_summary_query__no_players(self):
         self.fight.players = []
-        query = self.fight.get_player_query()
-        assert query == "players: table(fightIDs: 5, startTime: 1000, endTime: 4000, dataType: Summary)"
+        query = self.fight.get_summary_query()
+        expected = "table(fightIDs: 5, startTime: 1000, endTime: 4000, dataType: Summary)"
+        assert expected in query
 
-    def test_get_player_query__with_players(self):
+    def test_get_summary_query__with_players(self):
         self.fight.players = ["A", "B"]   # just anything non zero
-        query = self.fight.get_player_query()
+        query = self.fight.get_summary_query()
         assert query == ""
 
     def test_get_player_casts_query__no_players(self):
@@ -237,3 +247,42 @@ class TestFight_ProcessPlayers(unittest.TestCase):
             mock_get_spec.assert_called_with(name_slug_cap="TestSpec", wow_class__name_slug_cap="TestClass")
             assert self.fight.add_player.called
             assert player_mock.spec_slug == "fake_spec"
+
+
+    def test__example_fixture1(self):
+        """Test an example Response.
+
+        load via:
+        >>> query {
+        >>>     reportData {
+        >>>         report(code: "Jx1cWpb8nFLhBfPa") {
+        >>>             summary: table(fightIDs: 19, startTime: 10881328, endTime: 11609926, dataType: Summary)
+        >>>         }
+        >>>     }
+        >>> }
+
+        """
+        # load class/specs
+        from lorgs import data  # pylint: disable=unused-import
+
+        fight = self.fight
+
+        fight_data = load_fixture("fight_summary_1.json")
+        fight_data = fight_data.get("data")
+        fight.process_overview(fight_data)
+
+        assert len(fight.players) == 20
+
+        # check if the comp was loaded
+        comp = fight.composition
+        assert comp["roles"]["tank"] == 2
+        assert comp["roles"]["heal"] == 4
+        assert comp["specs"]["hunter-marksmanship"] == 2
+        assert comp["specs"]["monk-windwalker"] == 1
+        assert comp["classes"]["warlock"] == 2
+
+        # test a player from the report
+        player_arrg = fight.get_player(source_id=17)
+        assert player_arrg.name == "Arrg"  # thats me!!
+        assert player_arrg.spec_slug == "druid-restoration"
+        assert player_arrg.total == 10761152

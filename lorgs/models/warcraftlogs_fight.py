@@ -158,10 +158,98 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
     #################################
     # Query
     #
-
     @property
     def table_query_args(self) -> str:
         return f"fightIDs: {self.fight_id}, startTime: {self.start_time_rel}, endTime: {self.end_time_rel}"
+
+    ############################################################################
+    #   Summary
+    #
+    def get_summary_query(self):
+        """Get the Query to load the fights summary."""
+        if self.players:
+            return ""
+
+        return textwrap.dedent(f"""\
+            reportData
+            {{
+                report(code: "{self.report.report_id}")
+                {{
+                    summary: table({self.table_query_args}, dataType: Summary)
+                }}
+            }}
+        """)
+
+    def process_players(self, players_data):
+        if not players_data:
+            logger.warning("players_data is empty")
+            return
+
+        total_damage = players_data.get("damageDone", [])
+        total_healing = players_data.get("healingDone", [])
+
+        for composition_data in players_data.get("composition", []):
+
+            spec_data = composition_data.get("specs", [])
+            if not spec_data:
+                logger.warning("Player has no spec: %s", composition_data.get("name"))
+                continue
+
+            spec_data = spec_data[0]
+            spec_name = spec_data.get("spec")
+            class_name = composition_data.get("type")
+
+            spec = WowSpec.get(name_slug_cap=spec_name, wow_class__name_slug_cap=class_name)
+            if not spec:
+                logger.warning("Unknown Spec: %s", spec_name)
+                continue
+
+            # Get Total Damage or Healing
+            spec_role = spec_data.get("role")
+            total_data = total_healing if spec_role == "healer" else total_damage
+            for data in total_data:
+                if data.get("id", -1) == composition_data.get("id"):
+                    total = data.get("total", 0) / (self.duration / 1000)
+                    break
+            else:
+                total = 0
+
+            # create and return yield player object
+            player = self.add_player()
+            player.spec_slug = spec.full_name_slug
+            player.source_id = composition_data.get("id")
+            player.name = composition_data.get("name")
+            player.total = int(total)
+
+        # call this before filtering to always get the full comp
+        self.composition = get_composition(self.players)
+
+    def process_overview(self, data):
+        """Process the data retured from an Overview-Query."""
+        summary_data = data.get("reportData", {}).get("report", {}).get("summary", {}).get("data")
+        self.duration = self.duration or (summary_data.get("totalTime") / 1000)
+        self.process_players(summary_data)
+
+    async def load_overview(self, force=False):
+        """Load this fights Overview.
+
+        Args:
+            force(boolean, optional): load even if its already loaded
+
+        """
+        if force:
+            self.players = []
+
+        if self.players:
+            return ""
+
+        query = self.get_summary_query()
+        result = await self.client.query(query)
+        self.process_overview(result)
+
+    ############################################################################
+    #   Casts
+    #
 
     def _build_cast_query(self, filters: typing.List[str] = None, cast_limit=1000) -> str:
         """
@@ -185,12 +273,6 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
                 filterExpression: "{filters}")
             {{data}}
         """
-
-    def get_player_query(self):
-        """Get the Query to fetch the players in this fight."""
-        if self.players:
-            return ""
-        return f"players: table({self.table_query_args}, dataType: Summary)"
 
     def get_player_casts_query(self):
         """Query to fetch the Casts (and buffs) for players in this fight."""
@@ -251,50 +333,6 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
                 }}
             }}
         """)
-
-    def process_players(self, players_data):
-        if not players_data:
-            logger.warning("players_data is empty")
-            return
-
-        total_damage = players_data.get("damageDone", [])
-        total_healing = players_data.get("healingDone", [])
-
-        for composition_data in players_data.get("composition", []):
-
-            spec_data = composition_data.get("specs", [])
-            if not spec_data:
-                logger.warning("Player has no spec: %s", composition_data.get("name"))
-                continue
-
-            spec_data = spec_data[0]
-            spec_name = spec_data.get("spec")
-            class_name = composition_data.get("type")
-
-            spec = WowSpec.get(name_slug_cap=spec_name, wow_class__name_slug_cap=class_name)
-            if not spec:
-                logger.warning("Unknown Spec: %s", spec_name)
-                continue
-
-            # Get Total Damage or Healing
-            spec_role = spec_data.get("role")
-            total_data = total_healing if spec_role == "healer" else total_damage
-            for data in total_data:
-                if data.get("id", -1) == composition_data.get("id"):
-                    total = data.get("total", 0) / (self.duration / 1000)
-                    break
-            else:
-                total = 0
-
-            # create and return yield player object
-            player = self.add_player()
-            player.spec_slug = spec.full_name_slug
-            player.source_id = composition_data.get("id")
-            player.name = composition_data.get("name")
-            player.total = total
-
-        # call this before filtering to always get the full comp
-        self.composition = get_composition(self.players)
 
     def process_boss(self, boss_data: typing.Dict[str, typing.Any]):
         """Process the Query results for the Boss"""

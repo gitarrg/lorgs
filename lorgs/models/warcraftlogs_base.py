@@ -98,7 +98,7 @@ class wclclient_mixin:
 
         # Generate the queries,
         # and filter out objects that generted no query (ussualy an indication that the item is already loaded)
-        items = [(obj, obj.get_query(filters)) for obj in objects]
+        items = [(obj, obj.get_query()) for obj in objects]
         items = [(obj, q) for (obj, q) in items if q]
         if not items:
             return
