@@ -54,8 +54,8 @@ class Report(warcraftlogs_base.EmbeddedDocument):
         super().__init__(*args, **kwargs)
 
         # convert list to dict for old DB entries
-        if isinstance(self.fights, list):
-            self.fights = {fight.fight_id: fight for fight in self.fights}
+        # if isinstance(self.fights, list):
+        #     self.fights = {fight.fight_id: fight for fight in self.fights}
 
         for fight in self.fights.values():
             fight.report = self
@@ -84,7 +84,7 @@ class Report(warcraftlogs_base.EmbeddedDocument):
     # Methods
     #
     def add_fight(self, **fight_data):
-
+        """Add a new Fight to this Report."""
         # skip trash fights
         boss_id = fight_data.get("encounterID")
         if not boss_id:
@@ -92,7 +92,7 @@ class Report(warcraftlogs_base.EmbeddedDocument):
 
         fight = Fight()
 
-        fight.fight_id = fight_data.get("code")
+        fight.fight_id = fight_data.get("id")
         fight.report = self
 
         fight.percent = fight_data.get("fightPercentage")
@@ -110,12 +110,16 @@ class Report(warcraftlogs_base.EmbeddedDocument):
             fight.boss.fight = fight
 
         # store and return
-        self.fights[fight.fight_id] = fight
+        self.fights[str(fight.fight_id)] = fight
         return fight
+
+    def get_fight(self, fight_id: int):
+        """Get a single fight from this Report."""
+        return self.fights.get(str(fight_id))
 
     def get_fights(self, *fight_ids: int):
         """Get a multiple fights based of their fight ids."""
-        fights = [self.fights.get(str(fight_id)) for fight_id in fight_ids]
+        fights = [self.get_fight(fight_id) for fight_id in fight_ids]
         return [f for f in fights if f] # filter out nones
 
     def add_player(self, **actor_data):
@@ -138,10 +142,9 @@ class Report(warcraftlogs_base.EmbeddedDocument):
         player.spec_slug = spec_slug
 
         # add to to the report
-        self.players[player.source_id] = player
+        self.players[str(player.source_id)] = player
 
-
-    ##########################
+    ############################################################################
     # Query
     #
     def get_query(self):
@@ -210,6 +213,10 @@ class Report(warcraftlogs_base.EmbeddedDocument):
 
         self.process_master_data(report_data.get("masterData"))
         self.process_report_fights(report_data.get("fights"))
+
+    async def load_summary(self):
+        await self.load()
+
 
     async def load_fight(self, fight_id: int, player_id=int):
         """Load a single Fight from this Report."""

@@ -67,22 +67,21 @@ class UserReport(me.Document):
     ################################
     # Methods
     #
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
         """Update the timestamp and Sve the Report."""
         self.updated = arrow.utcnow()
         return super().save(*args, **kwargs)
 
-    async def load(self, *args, **kwargs):
-        await self.report.load(*args, **kwargs)  # pylint: disable=no-member
-
     async def load_fights(self, fight_ids: typing.List[int], player_ids: typing.List[int]):
-
+        """
+        TODO: move this to the Report-Class
+        """
         if not (fight_ids and player_ids):
             raise ValueError(f"fight or player ids missing: {fight_ids} {player_ids}")
 
         # make sure the master data is loaded
         if not (self.report.players and self.report.fights):
-            await self.load()
+            await self.report.load_overview()
 
         # for fights, we can simply filter out the fights we want.
         fights_to_load = self.report.get_fights(*fight_ids)

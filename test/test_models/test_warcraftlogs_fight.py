@@ -160,24 +160,13 @@ class TestFight(unittest.TestCase):
         assert player_c.get_sub_query.called
         assert not player_d.get_sub_query.called
 
-    def test_process_player_casts(self):
-
-        
-
-
-        pass
-
-
     def test_load_player(self):
-
         player_a = create_fake_player(source_id=1)
         player_b = create_fake_player(source_id=2)
         player_c = create_fake_player(source_id=3)
 
         self.fight.players = [player_a, player_b, player_c]
         asyncio.run(self.fight.load_players(player_ids=[1, 2]))
-
-
 
 
     #############################################
@@ -236,10 +225,8 @@ class TestFight(unittest.TestCase):
 
 class TestFight_ProcessPlayers(unittest.TestCase):
 
-
     def setUp(self):
         self.fight = warcraftlogs_fight.Fight()
-        self.patch_get_spec = mock.patch("lorgs.models.wow_spec.WowSpec.get")
 
     ##########################################
 
@@ -279,7 +266,7 @@ class TestFight_ProcessPlayers(unittest.TestCase):
             ]
         }
 
-        with self.patch_get_spec as mock_get_spec:
+        with mock.patch("lorgs.models.wow_spec.WowSpec.get") as mock_get_spec:
             mock_get_spec.return_value = mock.MagicMock()
             mock_get_spec.return_value.full_name_slug = "fake_spec"
 

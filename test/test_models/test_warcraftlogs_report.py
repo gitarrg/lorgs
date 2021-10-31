@@ -128,7 +128,7 @@ class TestReport(unittest.TestCase):
     def test__add_fight__basic(self):
 
         fight_data = {
-            "code": 10,
+            "id": 10,
             "encounterID": 2407,
             "fightPercentage": 70.99,
             "kill": False,
@@ -138,10 +138,9 @@ class TestReport(unittest.TestCase):
         self.report.add_fight(**fight_data)
 
         assert self.report.fights
-        fight = self.report.fights[10]
+        fight = self.report.fights["10"]
 
         assert fight.percent == 70.99
         assert fight.kill == False  # pylint: disable=singleton-comparison
         assert fight.start_time.timestamp() == 406.559
         assert fight.end_time.timestamp() == 589.257
-

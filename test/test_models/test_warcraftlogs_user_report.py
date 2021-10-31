@@ -9,7 +9,6 @@ from lorgs.models.warcraftlogs_user_report import UserReport
 
 class TestUserReport(unittest.TestCase):
 
-
     def setUp(self):
         self.user_report = UserReport()
         self.user_report.report = mock.MagicMock()

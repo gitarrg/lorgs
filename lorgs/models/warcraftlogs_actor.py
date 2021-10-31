@@ -76,7 +76,8 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
             {{
                 report(code: "{self.fight.report.report_id}")
                 {{
-                    {self.get_sub_query()}
+                    events({self.fight.table_query_args}, filterExpression: "{self.get_sub_query()}")
+                        {{data}}
                 }}
             }}
         """)
@@ -88,6 +89,7 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
         query_result = query_result.get("reportData") or query_result
         query_result = query_result.get("report") or query_result
         query_result = query_result.get("events") or query_result
+
 
         casts_data = query_result.get("data") or []
         if not casts_data:

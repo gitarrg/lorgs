@@ -30,8 +30,8 @@ async def load_fight_overview():
     """Load a fight that has no reference in our DB yet."""
 
     fight = create_fight()
-    print(fight.get_summary_query())
-    # await fight.load_overview()
+    # print(fight.get_summary_query())
+    await fight.load_overview()
     print(fight.players)
 
 
@@ -50,4 +50,5 @@ async def load_casts():
 
 
 if __name__ == "__main__":
-    asyncio.run(load_casts())
+    asyncio.run(load_fight_overview())
+    # asyncio.run(load_casts())

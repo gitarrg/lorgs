@@ -51,7 +51,7 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
     end_time_old: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField(db_field="end_time")
 
     boss_id = me.IntField()
-    players: typing.List[Player] = me.ListField(me.EmbeddedDocumentField(Player))
+    players: typing.Dict[str, Player] = me.MapField(me.EmbeddedDocumentField(Player))
     boss: Boss = me.EmbeddedDocumentField(Boss)
 
     composition = me.DictField()
@@ -68,7 +68,7 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
         self.report = None
         if self.boss:
             self.boss.fight = self
-        for player in self.players:
+        for player in self.players.values():
             player.fight = self
 
     def __str__(self):
@@ -87,7 +87,7 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
     def as_dict(self, player_ids: typing.List[int] = None) -> dict:
 
         # Get players
-        players = self.players
+        players = list(self.players.values())
         if player_ids:
             players = [player for player in players if player.source_id in player_ids]
         players = sorted(players, key=lambda player: (player.spec.role, player.spec, player.total))
@@ -139,19 +139,14 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
     #################################
     # Methods
     #
-    def add_player(self, **kwargs) -> Player:
-        player = Player(**kwargs)
-        player.fight = self
-        self.players.append(player)
-        return player
-
     def get_player(self, **kwargs) -> Player:
         """Returns a single Player based on the kwargs."""
-        return utils.get(self.players, **kwargs)
+        return utils.get(self.players.values(), **kwargs)
 
     def get_players(self, source_ids=typing.List[int]):
         """Gets multiple players based on source id."""
-        return [self.get_player(source_id=source_id) for source_id in source_ids]
+        players = [self.get_player(source_id=source_id) for source_id in source_ids]
+        return [player for player in players if player]
 
     def add_boss(self, boss_id) -> RaidBoss:
         self.boss_id = boss_id
@@ -219,30 +214,33 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
                 total = 0
 
             # create and return yield player object
-            player = self.add_player()
+            player = Player()
+            player.fight = self
             player.spec_slug = spec.full_name_slug
             player.source_id = composition_data.get("id")
             player.name = composition_data.get("name")
             player.total = int(total)
+            self.players[str(player.source_id)] = player
+
 
         # call this before filtering to always get the full comp
-        self.composition = get_composition(self.players)
+        self.composition = get_composition(self.players.values())
 
     def process_overview(self, data):
         """Process the data retured from an Overview-Query."""
-        summary_data = data.get("reportData", {}).get("report", {}).get("summary", {}).get("data")
+        summary_data = utils.get_nested_value(data, "report", "summary", "data") or {}
         self.duration = self.duration or (summary_data.get("totalTime") / 1000)
         self.process_players(summary_data)
 
-    async def load_overview(self, force=False):
-        """Load this fights Overview.
+    async def load_summary(self, force=False):
+        """Load this fights Summary.
 
         Args:
             force(boolean, optional): load even if its already loaded
 
         """
         if force:
-            self.players = []
+            self.players = {}
 
         if self.players:
             return ""
@@ -250,6 +248,13 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
         query = self.get_summary_query()
         result = await self.client.query(query)
         self.process_overview(result)
+
+
+    # alias to set the default "load"-behaviour
+    process_query_result = process_overview
+    get_query = get_summary_query
+
+    '''
 
     ############################################################################
     #   Load Player:
@@ -267,20 +272,21 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
 
         # filter which players to load
         players = self.get_players(player_ids) if player_ids else self.players
+        print("players", players)
         players_to_load = [player for player in players if not player.casts]
         if not players_to_load:
             return ""
 
         # construct the query
         player_queries = [player.get_sub_query() for player in players_to_load]
-        player_queries = [f"({query})" for query in player_queries]
+        # player_queries = [f"({query})" for query in player_queries]
         player_queries_combined = " or ".join(player_queries)
 
         return textwrap.dedent(f"""\
             casts: events(
                 {self.table_query_args},
-                limit: {cast_limit}
-                filterExpression: {player_queries_combined}
+                limit: {cast_limit},
+                filterExpression: "{player_queries_combined}"
                 )
                 {{data}}
             """)
@@ -289,22 +295,33 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
 
         report_data = query_result.get("reportData", {}).get("report", {})
         casts_data = report_data.get("casts", {})
-        for player in self.players:
+        for player in self.players.values():
             player.process_query_result(casts_data)
 
     async def load_players(self, player_ids: typing.List[int]):
 
-        query = self.get_player_casts_query(player_ids)
-        if not query:
+        player_casts_query = self.get_player_casts_query(player_ids)
+        if not player_casts_query:
             return  # nothing to load
 
+        query = textwrap.dedent(f"""\
+            reportData
+            {{
+                report(code: "{self.report.report_id}")
+                {{
+                    {player_casts_query}
+                }}
+            }}
+        """)
+
         result = await self.client.query(query)
+
+
         self.process_player_casts(result)
 
     ############################################################################
     #   Boss
     #
-
     def get_boss_query(self):
         """Get the Query to load the boss for this fight."""
         if self.boss and self.boss.casts:
@@ -322,6 +339,19 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
                 {{data}}
             """)
 
+    def process_boss(self, boss_data: typing.Dict[str, typing.Any]):
+        """Process the Query results for the Boss"""
+        if not boss_data:
+            return
+
+        if not self.boss:
+            self.add_boss(self.boss_id)
+
+        self.boss.process_query_result(boss_data)
+
+    ############################################################################
+    #   Main
+    #
     def get_cast_query(self) -> str:
         """Get the Query to load all elements for this Fight."""
         ################
@@ -342,20 +372,7 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
             }}
         """)
 
-    ################################
-    # Processing
-
-    def process_boss(self, boss_data: typing.Dict[str, typing.Any]):
-        """Process the Query results for the Boss"""
-        if not boss_data:
-            return
-
-        if not self.boss:
-            self.add_boss(self.boss_id)
-
-        self.boss.process_query_result(boss_data)
-
-    def process_query_result(self, query_result):
+    def process_query_result_OLD(self, query_result):
         logger.debug("start")
         report_data = query_result.get("report") or {}
 
@@ -366,11 +383,10 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
         # load players
         players_data = report_data.get("players", {}).get("data", {})
         self.process_players(players_data)
+
         # filter out players with no casts
         self.players = [player for player in self.players if player.casts]
 
-    def process_casts(self, query_result):
-        print("process_casts")
 
     ################################
     # Main
@@ -381,3 +397,6 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
         print(query)
         # result = await self.client.query(query)
         # self.process_casts(result)
+
+
+    '''

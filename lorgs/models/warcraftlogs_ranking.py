@@ -73,15 +73,15 @@ class SpecRanking(warcraftlogs_base.Document):
     #
     def sort_reports(self):
         """Sort the reports in place by the highest dps player."""
-        def get_dps(report):
+        def get_total(report):
             top = 0
             for fight in report.fights:
                 for player in fight.players:
                     top = max(top, player.total)
             return top
-        self.reports = sorted(self.reports, key=get_dps, reverse=True)
+        self.reports = sorted(self.reports, key=get_total, reverse=True)
 
-    ##########################
+    ############################################################################
     # Query
     #
 
