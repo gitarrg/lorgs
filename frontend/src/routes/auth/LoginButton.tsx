@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom"
 import { DISCORD_LOGIN_URL, DISCORD_CLIENT_ID } from "../../constants"
 import useUser from "./useUser"
+import style from "./LoginPage.scss"
+
+
+
 
 function get_login_url() {
     const login_url = new URL("/login", document.baseURI)
@@ -25,5 +29,5 @@ export default function LoginButton() {
     }
 
     const url = get_login_url()
-    return <a href={url.toString()}>Login</a>
+    return <a className={style.loginLink} href={url.toString()}>Login</a>
 }
