@@ -73,8 +73,8 @@ class TestReport(unittest.TestCase):
 
         self.report.add_player(**actor_data)
 
-        assert 32 in self.report.players
-        player = self.report.players[32]
+        assert "32" in self.report.players
+        player = self.report.players["32"]
         assert player.source_id == 32
         assert player.name == "PlayerName"
         assert player.spec_slug == "shaman-restoration"
@@ -90,8 +90,8 @@ class TestReport(unittest.TestCase):
 
         self.report.add_player(**actor_data)
 
-        assert 5 in self.report.players
-        player = self.report.players[5]
+        assert "5" in self.report.players
+        player = self.report.players["5"]
         assert player.spec_slug == ""
         assert player.class_slug == "hunter"
 

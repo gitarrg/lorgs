@@ -67,7 +67,10 @@ export function PlayerName({fight, player} : {fight: Fight, player: Actor}) {
 
     ///////////////////
     // vars
-    const report_url = `${WCL_URL}/reports/${fight.report_id}#fight=${fight.fight_id}`
+    let report_url = `${WCL_URL}/reports/${fight.report_id}#fight=${fight.fight_id}`
+    if (player.source_id && player.source_id > 0) {
+        report_url = `${report_url}&source=${player.source_id}`
+    }
 
     ///////////////////
     // render

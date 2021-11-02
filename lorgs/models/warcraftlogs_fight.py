@@ -143,9 +143,12 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
         """Returns a single Player based on the kwargs."""
         return utils.get(self.players.values(), **kwargs)
 
-    def get_players(self, source_ids=typing.List[int]):
+    def get_players(self, source_ids: typing.List[int] = None):
         """Gets multiple players based on source id."""
-        players = [self.get_player(source_id=source_id) for source_id in source_ids]
+        players = list(self.players.values())
+        if source_ids:
+            players = [player for player in players if player.source_id in source_ids]
+
         return [player for player in players if player]
 
     def add_boss(self, boss_id) -> RaidBoss:
@@ -229,7 +232,7 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
     def process_overview(self, data):
         """Process the data retured from an Overview-Query."""
         summary_data = utils.get_nested_value(data, "report", "summary", "data") or {}
-        self.duration = self.duration or (summary_data.get("totalTime") / 1000)
+        self.duration = self.duration or (summary_data.get("totalTime", 0) / 1000)
         self.process_players(summary_data)
 
     async def load_summary(self, force=False):
@@ -249,154 +252,24 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
         result = await self.client.query(query)
         self.process_overview(result)
 
-
     # alias to set the default "load"-behaviour
     process_query_result = process_overview
     get_query = get_summary_query
 
-    '''
-
     ############################################################################
     #   Load Player:
     #
-    def get_player_casts_query(self, player_ids: typing.List[int] = None, cast_limit=1000):
-        """Query to fetch the Casts (and buffs) for players in this fight.
+    async def load_players(self, player_ids: typing.List[int] = None):
 
-        Args:
-            player_ids(list[int]): player ids to load
-            cast_limit(int, optional): number of casts to load. (default=1000)
-
-        """
         if not self.players:
-            raise ValueError("Fight has no players!")
+            await self.load_summary()
 
-        # filter which players to load
-        players = self.get_players(player_ids) if player_ids else self.players
-        print("players", players)
-        players_to_load = [player for player in players if not player.casts]
-        if not players_to_load:
-            return ""
+        # Get Actors to load
+        actors_to_load = self.get_players(player_ids)
+        actors_to_load += [self.boss]
 
-        # construct the query
-        player_queries = [player.get_sub_query() for player in players_to_load]
-        # player_queries = [f"({query})" for query in player_queries]
-        player_queries_combined = " or ".join(player_queries)
+        # filter out if already loaded
+        actors_to_load = [actor for actor in actors_to_load if not actor.casts]
 
-        return textwrap.dedent(f"""\
-            casts: events(
-                {self.table_query_args},
-                limit: {cast_limit},
-                filterExpression: "{player_queries_combined}"
-                )
-                {{data}}
-            """)
-
-    def process_player_casts(self, query_result):
-
-        report_data = query_result.get("reportData", {}).get("report", {})
-        casts_data = report_data.get("casts", {})
-        for player in self.players.values():
-            player.process_query_result(casts_data)
-
-    async def load_players(self, player_ids: typing.List[int]):
-
-        player_casts_query = self.get_player_casts_query(player_ids)
-        if not player_casts_query:
-            return  # nothing to load
-
-        query = textwrap.dedent(f"""\
-            reportData
-            {{
-                report(code: "{self.report.report_id}")
-                {{
-                    {player_casts_query}
-                }}
-            }}
-        """)
-
-        result = await self.client.query(query)
-
-
-        self.process_player_casts(result)
-
-    ############################################################################
-    #   Boss
-    #
-    def get_boss_query(self):
-        """Get the Query to load the boss for this fight."""
-        if self.boss and self.boss.casts:
-            return ""
-
-        if not self.raid_boss:
-            return ""
-
-        boss_query = self.raid_boss.get_sub_query()
-        return textwrap.dedent(f"""\
-            boss: events(
-                {self.table_query_args},
-                filterExpression: "{boss_query}"
-                )
-                {{data}}
-            """)
-
-    def process_boss(self, boss_data: typing.Dict[str, typing.Any]):
-        """Process the Query results for the Boss"""
-        if not boss_data:
-            return
-
-        if not self.boss:
-            self.add_boss(self.boss_id)
-
-        self.boss.process_query_result(boss_data)
-
-    ############################################################################
-    #   Main
-    #
-    def get_cast_query(self) -> str:
-        """Get the Query to load all elements for this Fight."""
-        ################
-        # get sub queries
-        cast_query = self.get_player_casts_query()
-        boss_query = self.get_boss_query()
-        if not (cast_query or boss_query):
-            return ""
-
-        return textwrap.dedent(f"""\
-            reportData
-            {{
-                report(code: "{self.report.report_id}")
-                {{
-                    {cast_query}
-                    {boss_query}
-                }}
-            }}
-        """)
-
-    def process_query_result_OLD(self, query_result):
-        logger.debug("start")
-        report_data = query_result.get("report") or {}
-
-        # Boss
-        boss_data = report_data.get("boss", {})
-        self.process_boss(boss_data)
-
-        # load players
-        players_data = report_data.get("players", {}).get("data", {})
-        self.process_players(players_data)
-
-        # filter out players with no casts
-        self.players = [player for player in self.players if player.casts]
-
-
-    ################################
-    # Main
-    async def load_casts(self):
-
-        query = self.get_cast_query()
-        print("query")
-        print(query)
-        # result = await self.client.query(query)
-        # self.process_casts(result)
-
-
-    '''
+        # load
+        await self.load_many(actors_to_load)
