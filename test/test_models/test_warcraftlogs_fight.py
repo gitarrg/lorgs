@@ -10,6 +10,7 @@ import unittest
 from lorgs.models import warcraftlogs_fight
 from lorgs.models.raid_boss import RaidBoss
 from lorgs.models.raid_zone import RaidZone
+from ..helpers import load_fixture
 
 
 # pylint: disable=protected-access
@@ -38,11 +39,7 @@ def test_raid_boss():
     return boss
 
 
-def load_fixture(file_name):
 
-    file_path = os.path.join("./test/fixtures/", file_name)
-    with open(file_path, "r") as json_file:
-        return json.load(json_file)
 
 
 class TestGetComposition(unittest.TestCase):
@@ -125,103 +122,6 @@ class TestFight(unittest.TestCase):
         query = self.fight.get_summary_query()
         assert query == ""
 
-    #############################################
-    # Players
-    #
-
-    def test_get_player_casts_query__no_players(self):
-        self.fight.players = []
-        self.assertRaises(ValueError, self.fight.get_player_casts_query)
-
-    def test_get_player_casts_query__skips_players_with_casts(self):
-
-        player_A = create_fake_player()
-        player_A.casts = []
-        player_B = create_fake_player()
-        player_B.casts = ["some", "values"]
-        self.fight.players = [player_A, player_B]
-
-        _ = self.fight.get_player_casts_query()
-
-        assert player_A.get_sub_query.called
-        assert not player_B.get_sub_query.called
-
-    def test_get_player_casts_query__only_selected_players(self):
-        player_a = create_fake_player(source_id=1, casts=[])
-        player_b = create_fake_player(source_id=2, casts=[])
-        player_c = create_fake_player(source_id=3, casts=[])
-        player_d = create_fake_player(source_id=4, casts=["some casts"])
-        self.fight.players = [player_a, player_b, player_c, player_d]
-
-        _ = self.fight.get_player_casts_query(player_ids=[2, 3])
-
-        assert not player_a.get_sub_query.called
-        assert player_b.get_sub_query.called
-        assert player_c.get_sub_query.called
-        assert not player_d.get_sub_query.called
-
-    def test_load_player(self):
-        player_a = create_fake_player(source_id=1)
-        player_b = create_fake_player(source_id=2)
-        player_c = create_fake_player(source_id=3)
-
-        self.fight.players = [player_a, player_b, player_c]
-        asyncio.run(self.fight.load_players(player_ids=[1, 2]))
-
-
-    #############################################
-    # Get Query: Boss
-    #
-    def test_get_boss_query__no_boss(self):
-        self.fight.boss_id = 321 # some invalid valie
-        assert self.fight.get_boss_query() == ""
-
-    def test_get_boss_query__do_nothing_if_already_loaded(self):
-        self.fight.boss = mock.MagicMock()
-        self.fight.boss.casts = ["some", "casts"]
-        assert self.fight.get_boss_query() == ""
-
-    @mock.patch("lorgs.models.raid_boss.RaidBoss.get_sub_query")
-    def test_get_boss_query___valid(self, raid_boss_get_sub_query_mock):
-
-        raid_boss_get_sub_query_mock.return_value = "RaidBossQuery"
-
-        assert not raid_boss_get_sub_query_mock.called
-        query = self.fight.get_boss_query()
-        assert raid_boss_get_sub_query_mock.called
-        assert "RaidBossQuery" in query
-
-    #############################################
-    # Process Results: Boss
-    def test_process_query_result_boss__no_input(self):
-
-        self.fight.boss = mock.MagicMock()
-        self.fight.boss.process_query_result = mock.MagicMock()
-        self.fight.add_boss = mock.MagicMock()
-
-        self.fight.process_boss(boss_data={})
-        assert not self.fight.add_boss.called
-        assert not self.fight.boss.process_query_result.called
-
-    def test_process_boss__use_boss_if_exists(self):
-        self.fight.boss = "something"
-        self.fight.add_boss = mock.MagicMock()
-
-        self.fight.process_boss(boss_data={})
-
-        assert not self.fight.add_boss.called
-
-    def test_process_boss__valid(self):
-
-        boss_data = {"some": "data"}
-
-        self.fight.boss = mock.MagicMock()
-        self.fight.boss.process_query_result = mock.MagicMock()
-
-        self.fight.process_boss(boss_data=boss_data)
-
-        self.fight.boss.process_query_result.assert_called_once_with(boss_data)
-
 
 class TestFight_ProcessPlayers(unittest.TestCase):
 
@@ -251,9 +151,6 @@ class TestFight_ProcessPlayers(unittest.TestCase):
         assert not self.fight.add_player.called
 
     def test__valid_player(self):
-        player_mock = mock.MagicMock()
-        self.fight.add_player = mock.MagicMock(return_value=player_mock)
-
         data = {
             "composition": [
                 {
@@ -272,9 +169,7 @@ class TestFight_ProcessPlayers(unittest.TestCase):
 
             self.fight.process_players(data)
 
-            mock_get_spec.assert_called_with(name_slug_cap="TestSpec", wow_class__name_slug_cap="TestClass")
-            assert self.fight.add_player.called
-            assert player_mock.spec_slug == "fake_spec"
+            mock_get_spec.assert_called_with(full_name_slug="fake_spec")
 
     def test__example_fixture1(self):
         """Test an example Response.
@@ -313,6 +208,3 @@ class TestFight_ProcessPlayers(unittest.TestCase):
         assert player_arrg.name == "Arrg"  # thats me!!
         assert player_arrg.spec_slug == "druid-restoration"
         assert player_arrg.total == 10761152
-
-
-

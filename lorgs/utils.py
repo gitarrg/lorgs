@@ -83,7 +83,7 @@ def flatten(l):
 
 def as_list(func):
     """Wrap a Generator to return a list."""
-    @wraps(func)
+    @functools.wraps(func)
     def wrapped(*args, **kwargs):
         return list(func(*args, **kwargs))
 

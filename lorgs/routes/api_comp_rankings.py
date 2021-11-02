@@ -24,8 +24,8 @@ async def get_comp_ranking(
 
         # Query Params
         limit: int = 20,
-        role: typing.List[str] = None,
-        spec: typing.List[str] = None,
+        role: typing.List[str] = fastapi.Query([""]),
+        spec: typing.List[str] = fastapi.Query([""]),
         killtime_min: int=0,
         killtime_max: int=0,
 ):
@@ -47,15 +47,15 @@ async def get_comp_ranking(
     """
     # get search inputs
     search = {}
-    search["fights.composition.roles"] = role or []
-    search["fights.composition.specs"] = spec or []
-    search["fights.composition.classes"] = []  # implement this, if needed
+    search["fights.0.composition.roles"] = role or []
+    search["fights.0.composition.specs"] = spec or []
+    search["fights.0.composition.classes"] = []  # implement this, if needed
 
     search["fights"] = []
     if killtime_min:
-        search["fights"] += [f"duration.gt.{killtime_min * 1000}"]
+        search["fights.0"] += [f"duration.gt.{killtime_min * 1000}"]
     if killtime_max:
-        search["fights"] += [f"duration.lt.{killtime_max * 1000}"]
+        search["fights.0"] += [f"duration.lt.{killtime_max * 1000}"]
 
     # lookup DB
     comp_ranking = warcraftlogs_comp_ranking.CompRanking(boss_slug=boss_slug)

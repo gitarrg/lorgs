@@ -1,6 +1,5 @@
 """Quick test server to help developer the Cloud Functions.
 (functions_framework was weird)
-
 """
 
 import dotenv

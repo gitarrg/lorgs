@@ -111,6 +111,11 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
             cast.spell_id = cast_data["abilityGameID"]
             cast.timestamp = cast_data["timestamp"] - fight_start
 
+            # for spec rankings we don't know the source ID upfront..
+            # but we can fill that gap here
+            if not self._has_source_id and cast_data["type"] == "cast":
+                self.source_id = cast_data.get("sourceID")
+
             # we check if the buff was applied before..
             if cast_data["type"] == "removebuff":
                 start_cast = active_buffs.get(cast.spell_id)
