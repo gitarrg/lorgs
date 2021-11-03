@@ -99,8 +99,8 @@ class Report(warcraftlogs_base.EmbeddedDocument):
         fight.kill = fight_data.get("kill", True)
 
         # Fight: Time/Duration
-        start_time = fight_data.get("startTime", 0) / 1000
-        end_time = fight_data.get("endTime", 0) / 1000 or 0
+        start_time = fight_data.get("startTime", 0)
+        end_time = fight_data.get("endTime", 0)
         fight.start_time = self.start_time.shift(seconds=start_time)
         fight.duration = (end_time - start_time)
 
@@ -217,7 +217,6 @@ class Report(warcraftlogs_base.EmbeddedDocument):
     async def load_summary(self):
         await self.load()
 
-
     async def load_fight(self, fight_id: int, player_ids=typing.List[int]):
         """Load a single Fight from this Report."""
         fight = self.fights[str(fight_id)]
@@ -225,23 +224,6 @@ class Report(warcraftlogs_base.EmbeddedDocument):
             raise ValueError("invalid fight id")
 
         await fight.load_players(player_ids=player_ids)
-
-        """
-        report_player = utils.get(self.players, source_id=player_id)
-        if not report_player:
-            raise ValueError("invalid player id")
-
-        # Get or create the player inside the fight
-        fight_player = utils.get(fight.players, source_id=player_id)
-        if not fight_player:
-            fight_player = fight.add_player()
-            fight_player.spec_slug = report_player.spec_slug
-            fight_player.source_id = report_player.source_id
-            fight_player.name = report_player.name
-        """
-
-        # LOAD!!!!
-        await fight.load()
 
     async def load_fights(self, fight_ids: typing.List[int], player_ids: typing.List[int]):
 

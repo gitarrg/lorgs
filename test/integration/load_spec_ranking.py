@@ -11,7 +11,7 @@ from lorgs.models.warcraftlogs_ranking import SpecRanking
 
 
 async def test__load_rankings():
-    spec_ranking = SpecRanking.get_or_create(spec_slug="paladin-holy", boss_slug="painsmith-raznal")
+    spec_ranking = SpecRanking.get_or_create(spec_slug="druid-restoration", boss_slug="painsmith-raznal")
 
     await spec_ranking.load(limit=15)
     spec_ranking.save()
