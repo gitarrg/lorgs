@@ -4,7 +4,7 @@ import SelectGrid from './SelectGrid/SelectGrid'
 import type Actor from '../../types/actor'
 import type Role from '../../types/role'
 import { SelectGroup } from './SelectGrid/SelectGroup'
-import { get_player_roles } from '../../store/roles'
+import { get_roles } from '../../store/roles'
 import { get_user_report_players } from  '../../store/user_reports'
 import { group_by } from '../../utils'
 import { useAppSelector } from '../../store/store_hooks'
@@ -25,7 +25,7 @@ export default function PlayerSelectList() {
 
     const players = useAppSelector(get_user_report_players)
     const players_by_role = group_by(players, (player: Actor) => player.role)
-    const roles = useAppSelector(get_player_roles)
+    const roles = useAppSelector(get_roles)
 
     if (players.length == 0) { return null }
 

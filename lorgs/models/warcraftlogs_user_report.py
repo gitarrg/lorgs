@@ -81,7 +81,7 @@ class UserReport(me.Document):
 
         # make sure the master data is loaded
         if not (self.report.players and self.report.fights):
-            await self.report.load_overview()
+            await self.report.load_summary()
 
         # for fights, we can simply filter out the fights we want.
         fights_to_load = self.report.get_fights(*fight_ids)

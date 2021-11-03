@@ -63,7 +63,7 @@ async def load_user_report_overview(report_id: str, refresh=False):
     needs_to_load = refresh or not user_report.is_loaded
     if needs_to_load:
         try:
-            await user_report.load()
+            await user_report.report.load_summary()
         except InvalidReport:
             return "invalid report", 404
         else:
