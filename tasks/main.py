@@ -75,7 +75,7 @@ def load_user_report(request):
     ################################
     # loading...
     user_report = UserReport.from_report_id(report_id=report_id, create=True)
-    task = user_report.load_fights(fight_ids=fight_ids, player_ids=player_ids)
+    task = user_report.report.load_fights(fight_ids=fight_ids, player_ids=player_ids)
     asyncio.run(task)
     user_report.save()
     return {"status": "done", "task_id": "done"}
