@@ -231,8 +231,9 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
 
     def process_overview(self, data):
         """Process the data retured from an Overview-Query."""
+        data = data.get("reportData") or data
         summary_data = utils.get_nested_value(data, "report", "summary", "data") or {}
-        self.duration = self.duration or (summary_data.get("totalTime", 0) / 1000)
+        self.duration = self.duration or summary_data.get("totalTime", 0)
         self.process_players(summary_data)
 
     async def load_summary(self, force=False):
@@ -267,6 +268,7 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
         # Get Actors to load
         actors_to_load = self.get_players(player_ids)
         actors_to_load += [self.boss]
+
 
         # filter out if already loaded
         actors_to_load = [actor for actor in actors_to_load if not actor.casts]
