@@ -9,7 +9,6 @@ import arrow
 import mongoengine as me
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import utils
 from lorgs.lib import mongoengine_arrow
 from lorgs.models import warcraftlogs_actor
 from lorgs.models.warcraftlogs_actor import Player

@@ -167,10 +167,10 @@ class Player(BaseActor):
         return {
             "name": self.name,
             "source_id": self.source_id,
-            "class": self.spec.wow_class.name_slug,
+            "class": self.class_slug,
 
             "spec": self.spec_slug,
-            "role": self.spec.role.code,
+            "role": self.spec.role.code if self.spec else "",
         }
 
     def as_dict(self):
