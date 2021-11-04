@@ -2,6 +2,7 @@
 import abc
 import re
 import json
+from typing import Type, TypeVar
 
 # IMPORT THIRD PARTY LIBRARIES
 import mongoengine as me
@@ -141,6 +142,9 @@ class EmbeddedDocument(me.EmbeddedDocument, wclclient_mixin):
     }
 
 
+T = TypeVar('T', bound="Document")
+
+
 class Document(me.Document, wclclient_mixin):
     """docstring for Document"""
 
@@ -150,7 +154,7 @@ class Document(me.Document, wclclient_mixin):
     }
 
     @classmethod
-    def get_or_create(cls, **kwargs):
+    def get_or_create(cls: Type[T], **kwargs) -> T:
         obj = cls.objects(**kwargs).first()
         obj = obj or cls(**kwargs)
         return obj

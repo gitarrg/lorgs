@@ -84,24 +84,23 @@ class TestFight(unittest.TestCase):
         self.fight = warcraftlogs_fight.Fight()
         self.fight.fight_id = 5
         self.fight.start_time = arrow.get(101.000)
-        self.fight.duration = 3
+        self.fight.duration = 3000
         self.fight.boss_id = RAID_BOSS_ID
 
         self.fight.report = mock.MagicMock()
         self.fight.report.start_time = arrow.get(100.000)
         self.fight.report.report_id = "REPORT_ID"
 
-
     def test_start_time_rel(self):
         self.fight.report.start_time = arrow.get(100.000)
-        self.fight.start_time = arrow.get(101.000)
-        assert self.fight.start_time_rel == 1000
+        self.fight.start_time = arrow.get(121.000)
+        assert self.fight.start_time_rel == 21000
 
     def test_end_time_rel(self):
         self.fight.report.start_time = arrow.get(100.000)
-        self.fight.start_time = arrow.get(101.000)
-        self.fight.duration = 5  # in seconds
-        assert self.fight.end_time_rel == 6000
+        self.fight.start_time = arrow.get(120.000)
+        self.fight.duration = 600 * 1000
+        assert self.fight.end_time_rel == 620 * 1000
 
     def test_table_query_args(self):
         result = self.fight.table_query_args
@@ -194,6 +193,7 @@ class TestFight_ProcessPlayers(unittest.TestCase):
         fight.process_overview(fight_data)
 
         assert len(fight.players) == 20
+        assert fight.duration == 728598
 
         # check if the comp was loaded
         comp = fight.composition
@@ -207,4 +207,4 @@ class TestFight_ProcessPlayers(unittest.TestCase):
         player_arrg = fight.get_player(source_id=17)
         assert player_arrg.name == "Arrg"  # thats me!!
         assert player_arrg.spec_slug == "druid-restoration"
-        assert player_arrg.total == 10761152
+        assert player_arrg.total == 10761

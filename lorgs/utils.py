@@ -19,13 +19,22 @@ def chunks(lst, n):
         yield lst[i:i + n]
 
 
-def format_time(timestamp):
+def format_time(timestamp: int):
+    """Format a time/duration.
 
-    t = datetime.timedelta(milliseconds=timestamp)
+    Args:
+        timestamp: time in milliseconds
 
-    t = str(t) # "0:05:12.00000"
-    t = t[2:7]
-    return t
+    Example:
+        >>> format_time(272000)
+        "4:32"
+
+    """
+    duration = datetime.timedelta(milliseconds=timestamp)
+
+    duration_str = str(duration) # "0:05:12.00000"
+    duration_str = duration_str[2:7]
+    return duration_str
 
 
 def format_timestamp(timestamp):

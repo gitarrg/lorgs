@@ -39,4 +39,5 @@ class Boss(warcraftlogs_actor.BaseActor):
         cast_query = self.get_cast_query(self.raid_boss.spells)
         buffs_query = self.get_buff_query(self.raid_boss.buffs)
 
+
         return self.combine_queries(cast_query, buffs_query)

@@ -8,7 +8,7 @@ from lorgs import db
 from lorgs.models.warcraftlogs_user_report import UserReport
 
 
-REPORT_ID = "j68Fkv7DaVfmWbrc"
+REPORT_ID = "K3r7fF9vBnDd1Zwm"
 
 
 async def test_load_summary():
@@ -21,7 +21,7 @@ async def test_load_summary():
     # make sure things are loaded
     assert user_report.report.title == "Sanctum of Domination"
     assert len(user_report.report.players) == 20
-    assert len(user_report.report.fights) == 21, user_report.report.fights
+    assert len(user_report.report.fights) > 0
 
     user_report.save()
 
@@ -78,15 +78,16 @@ async def test_load_multiple_fights():
 
 async def test_load():
 
-    user_report = UserReport.from_report_id(report_id=REPORT_ID)
+    user_report = UserReport.from_report_id(report_id=REPORT_ID, create=True)
 
-    await user_report.report.load_fights(fight_ids=[2, 4, 8], player_ids=[3, 6, 9])
+
+    await user_report.report.load_fights(fight_ids=[18], player_ids=[9])
     user_report.save()
 
 
 
 async def main():
-    await test_load_summary()
+    # await test_load_summary()
     # await test_load_fight_summary()
     # await test_load_single_player()
     # await test_load_multiple_players()
