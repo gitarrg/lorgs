@@ -38,6 +38,10 @@ class Boss(warcraftlogs_actor.BaseActor):
 
         cast_query = self.get_cast_query(self.raid_boss.spells)
         buffs_query = self.get_buff_query(self.raid_boss.buffs)
+        events_query = self.raid_boss.get_events_query()
 
+        return self.combine_queries(cast_query, buffs_query, events_query)
 
-        return self.combine_queries(cast_query, buffs_query)
+    def process_query_result(self, query_result):
+        query_result = self.raid_boss.preprocess_query_results(query_result)
+        return super().process_query_result(query_result)

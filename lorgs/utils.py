@@ -74,6 +74,7 @@ def get_nested_value(dct: typing.Dict[str, typing.Any], *keys: str, default=None
 
     data = dct
     for key in keys:
+        data = data or {}
         try:
             data = data[key]
         except KeyError:

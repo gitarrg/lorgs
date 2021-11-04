@@ -30,6 +30,7 @@ class RaidBoss(base.Model):
         # we track them as "spells" for now
         self.spells: typing.List["WowSpell"] = []
         self.buffs: typing.List["WowSpell"] = []
+        self.event_spells: typing.List["WowSpell"] = []
         # alias to match the Spec Interface
         # self.role = "boss"
 
@@ -44,10 +45,13 @@ class RaidBoss(base.Model):
             "full_name_slug": self.full_name_slug,
         }
 
+    @property
+    def all_abilities(self):
+        return self.spells + self.buffs + self.event_spells
+
     ##########################
     # Methods
     #
-
     def add_cast(self, **kwargs) -> WowSpell:
         kwargs.setdefault("spell_type", self.full_name_slug)
         spell = WowSpell(**kwargs)
@@ -69,18 +73,6 @@ class RaidBoss(base.Model):
         # track the event (for query)
         self.events.append(kwargs)
 
-        # auto duration (mostly for boss buffs/debuffs)
-        if kwargs.get("duration") == "auto":
-            kwargs.pop("duration")
-
-            kwargs["until"] = {}
-            if kwargs.get("event_type") == "applybuff":
-                kwargs["until"]["event_type"] = "removebuff"
-            if kwargs.get("event_type") == "applydebuff":
-                kwargs["until"]["event_type"] = "removedebuff"
-            if kwargs["until"]:
-                kwargs["until"]["spell_id"] = kwargs.get("spell_id", 0)
-
         # dedicated "stop" event, for events with non static timers.. eg: intermissions
         end_event = kwargs.get("until", {})
         if end_event:
@@ -91,14 +83,14 @@ class RaidBoss(base.Model):
         spell = WowSpell(**kwargs)
 
         spell.specs = [self]
-        self.spells.append(spell)
+        self.event_spells.append(spell)
 
     ##########################
     # Methods
     #
-    def get_sub_query(self, filters=None) -> str:
-        raise ValueError("Deprecated")
-        filters = filters or []
+    def get_events_query(self) -> str:
+
+        filters = []
 
         for event in self.events:
 
@@ -120,3 +112,51 @@ class RaidBoss(base.Model):
             filters.append(event_filter)
 
         return " or ".join(filters)
+
+    
+
+    def preprocess_query_results(self, query_results):
+
+        casts = utils.get_nested_value(query_results, "report", "events", "data") or []
+        events_by_id = {event.get("spell_id"): event for event in self.events}
+
+        def get_duration(event_data, cast_data, casts):
+            """
+                event_data: the event we are checking
+                cast_data: the current cast of that event
+                casts: list of all casts
+            """
+            until = event_data.get("until")
+            if not until:
+                return
+
+            until_id = until.get("spell_id")
+            timestamp = cast_data.get("timestamp")
+
+            end_events = [
+                cast for cast in casts if
+                cast.get("abilityGameID") == until_id and cast.get("timestamp") > timestamp
+            ]
+            if not end_events:
+                return
+            end_event = end_events[0]
+            end_event["remove"] = True
+            cast_data["duration"] = end_event.get("timestamp") - cast_data.get("timestamp")
+
+
+        for cast_data  in casts:
+            spell_id = cast_data.get("abilityGameID")
+
+            # check if this is a custom event
+            event_data = events_by_id.get(spell_id)
+            if not event_data:
+                continue
+
+            get_duration(event_data, cast_data, casts)
+
+
+        casts = [cast for cast in casts if not cast.get("remove")]
+
+        query_results["report"]["events"]["data"] = casts
+        return query_results
+
