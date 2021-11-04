@@ -113,7 +113,6 @@ class RaidBoss(base.Model):
 
         return " or ".join(filters)
 
-    
 
     def preprocess_query_results(self, query_results):
 

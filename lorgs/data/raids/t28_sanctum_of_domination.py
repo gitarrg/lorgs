@@ -84,44 +84,35 @@ FATESCRIBE.add_buff(spell_id=357739, color="#4bbf68", name="Intermisson", icon="
 ################################################################################
 # 09: Kel'Thuzad
 KELTHUZAD = SANCTUM_OF_DOMINATION.add_boss(id=2422, name="Kel'Thuzad")
-KELTHUZAD.add_cast(spell_id=362569, duration=8, color="#03eaff", name="Frost Blast",  icon="spell_frost_glacier.jpg")
-KELTHUZAD.add_cast(spell_id=358999, duration=8, color="#03eaff", name="Frost Blast",  icon="spell_frost_glacier.jpg", show=False)  # different ID for last phase
-
+KELTHUZAD.add_cast(spell_id=362569, duration=8, color="#03eaff", name="Frost Blast",  icon="spell_frost_glacier.jpg", variations=[358999]) # different ID for last phase
 KELTHUZAD.add_cast(spell_id=362565, duration=0, color="#03fcc6", name="Soul Fracture",  icon="spell_necro_deathlyecho.jpg", show=False)
 KELTHUZAD.add_buff(spell_id=362494, color="#c7eaff", name="Howling Blizzard",  icon="spell_frost_arcticwinds.jpg")
 KELTHUZAD.add_event(event_type="applydebuff", spell_id=346530, duration=10, color="#ff4538", name="Spike",  icon="ability_mage_coldasice.jpg", extra_filter="target.role='tank'")
 
 # for the KT intermission, there is no easy way to track its duration..
 KELTHUZAD.add_event(
-    color="#933ac9",
-    name="Intermisson",
-    icon="spell_warlock_darkregeneration.jpg",
-    # start = begincast of the 45sec channel
-    event_type="begincast", spell_id=352293,
-    # end = gaining a stack of the Necrotic Surge
-    until={"event_type": "applybuffstack", "spell_id": 352051}
+    color="#933ac9", name="Intermisson", icon="spell_warlock_darkregeneration.jpg",
+    event_type="begincast", spell_id=352293, # start = begincast of the 45sec channel
+    until={"event_type": "applybuffstack", "spell_id": 352051} # end = gaining a stack of the Necrotic Surge
 )
 
 
 ################################################################################
 # 10: Sylvanas Windrunner
 SYLVANAS = SANCTUM_OF_DOMINATION.add_boss(id=2435, name="Sylvanas Windrunner", nick="Sylvanas")
+SYLVANAS.add_cast(spell_id=347726, duration=5, color="#228c89", name="Veil of Darkness", icon="ability_argus_deathfog.jpg", variations=[347741, 354142])
 
 # P1
 SYLVANAS.add_cast(spell_id=349419, duration=7, color="#00aaff", name="Chains", icon="inv_belt_44.jpg")
 SYLVANAS.add_cast(spell_id=358704, duration=1.5, color="#ff4f42", name="Arrow", icon="ability_theblackarrow.jpg")
-SYLVANAS.add_cast(spell_id=347726, duration=5, color="#228c89", name="Veil of Darkness", icon="ability_argus_deathfog.jpg")
 SYLVANAS.add_cast(spell_id=347670, duration=9, color="#7820e3", name="Shadow Dagger", icon="ability_throw.jpg")
 
-
 # P2
-SYLVANAS.add_cast(spell_id=347741, duration=3, color="#228c89", name="Veil of Darkness", icon="ability_argus_deathfog.jpg")
 SYLVANAS.add_cast(spell_id=351117, duration=9, color="#a76ded", name="Crushing Dread", icon="spell_shadow_gathershadows.jpg")
 SYLVANAS.add_cast(spell_id=348109, duration=9, color="#3cb5ab", name="Banshee Wail", icon="spell_shadow_soulleech_3.jpg", show=False)
 SYLVANAS.add_cast(spell_id=356021, duration=2, color="#eb4034", name="Dark Communion (Orbs)", icon="spell_animamaw_buff.jpg", show=True)
 
 # P3
-SYLVANAS.add_cast(spell_id=354142, duration=1, color="#228c89", name="Veil of Darkness", icon="ability_argus_deathfog.jpg")
 SYLVANAS.add_cast(spell_id=351353, duration=1, color="##ff425b", name="Banshee's Fury", icon="spell_shadow_shadowfury.jpg")
 SYLVANAS.add_cast(spell_id=354011, duration=0.5, color="#9442ff", name="Bane Arrows", icon="spell_shadow_painspike.jpg")
 SYLVANAS.add_cast(spell_id=347609, duration=3, color="#ff4f42", name="Wailing Arrow", icon="ability_theblackarrow.jpg")

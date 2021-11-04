@@ -97,7 +97,6 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
         query_result = query_result.get("report") or query_result
         query_result = query_result.get("events") or query_result
 
-
         casts_data = query_result.get("data") or []
         if not casts_data:
             logger.warning("casts_data is empty")
@@ -118,15 +117,11 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
             # Add the Cast Object
             cast = Cast()
             cast.spell_id = cast_data["abilityGameID"]
+            cast.spell_id = WowSpell.resolve_spell_id(cast.spell_id)
             cast.timestamp = cast_data["timestamp"] - fight_start
             cast.duration = cast_data.get("duration")
             if cast.duration:
                 cast.duration *= 0.001
-
-            # for spec rankings we don't know the source ID upfront..
-            # but we can fill that gap here
-            if not self._has_source_id and cast_data["type"] == "cast":
-                self.source_id = cast_data.get("sourceID")
 
             # we check if the buff was applied before..
             if cast_data["type"] == "removebuff":
@@ -239,6 +234,18 @@ class Player(BaseActor):
 
         queries_combined = " and ".join(filters)
         return f"({queries_combined})"
+
+    def process_query_result(self, query_result):
+        super().process_query_result(query_result)
+
+        # for spec rankings we don't know the source ID upfront..
+        # but we can fill that gap here
+        if not self._has_source_id:
+            casts = utils.get_nested_value(query_result, "report", "events", "data") or []
+            for cast in casts:
+                if cast.get("type") == "cast":
+                    self.source_id = cast.get("sourceID")
+                    break
 
     def process_death_events(self, death_events):
         ability_overwrites = {}
