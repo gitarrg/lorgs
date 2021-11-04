@@ -61,6 +61,19 @@
     &:hover {
         background: hsl(0, 0%, 40%);
     }
+
+    // slowly fade back
+    &:not(:hover) {
+        .player_name__rank,
+        .player_name__total,
+        .player_name__name {
+            transition-property: filter, opacity;
+            transition-timing-function: ease-in;
+            transition-duration: 4s;
+            transition-delay: 1s;
+        }
+    }
+
 }
 
 
@@ -83,9 +96,17 @@
 }
 
 
+
+
+
+
 /********************************
         Mode Overwrites
 *********************************/
+@mixin blur {
+    filter: blur(2px);
+    opacity: 0;
+}
 
 
 // Edits for the Spec Rankings
@@ -103,24 +124,9 @@
     .player_name:hover .player_name__rank,
     .player_name:hover .player_name__total,
     .player_name:not(:hover) .player_name__name {
-        opacity: 0;
-        filter: blur(2px);
-        color: #808080;
-    }
-
-    // slowly fade back
-    .player_name:not(:hover) {
-        .player_name__rank,
-        .player_name__total,
-        .player_name__name {
-            transition-property: filter, opacity, color;
-            transition-timing-function: ease-in;
-            transition-duration: 4s;
-            transition-delay: 1s;
-        }
+        @include blur;
     }
 }}
-
 
 
 :global .comp_ranking { :local {
@@ -135,4 +141,18 @@
     .player_name:last-child {
         border-bottom-left-radius: 0.25rem;
     }
+}}
+
+
+:global .comp_ranking,
+:global .user_report {
+    :local {
+
+    // Hover Blur
+    .player_name:not(:hover) .player_name__total,
+    .player_name:hover .player_name__name {
+        @include blur;
+    }
+
+
 }}
