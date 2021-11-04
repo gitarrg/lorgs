@@ -3,6 +3,7 @@
 import abc
 import textwrap
 import typing
+import math
 
 # IMPORT THIRD PARTY LIBRARIES
 import mongoengine as me
@@ -63,7 +64,13 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
         # we check for "removebuff" as this allows us to also catch buffs
         # that get used prepull (eg.: lust)
         spell_ids = WowSpell.spell_ids_str(spells)
-        buffs_query = f"type in ('applybuff', 'removebuff') and ability.id in ({spell_ids})"
+
+        # TODO: split buffs/debuffs for performance?
+        event_types = ["applybuff", "removebuff", "applydebuff", "removedebuff"]
+        event_types = [f"'{event}'" for event in event_types]
+        event_types = ",".join(event_types)
+
+        buffs_query = f"type in ({event_types}) and ability.id in ({spell_ids})"
         return buffs_query
 
     @abc.abstractmethod
@@ -112,6 +119,9 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
             cast = Cast()
             cast.spell_id = cast_data["abilityGameID"]
             cast.timestamp = cast_data["timestamp"] - fight_start
+            cast.duration = cast_data.get("duration")
+            if cast.duration:
+                cast.duration *= 0.001
 
             # for spec rankings we don't know the source ID upfront..
             # but we can fill that gap here
@@ -139,7 +149,7 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
             active_buffs[cast.spell_id] = cast
 
         # Filter out same event at the same time (eg.: raid wide debuff apply)
-        self.casts = utils.uniqify(self.casts, key=lambda cast: (cast.spell_id, cast.timestamp))
+        self.casts = utils.uniqify(self.casts, key=lambda cast: (cast.spell_id, math.floor(cast.timestamp / 1000)))
         self.casts = list(self.casts) # `utils.uniqify` returns dict values, which mongoengine doesn't like
 
         # make sure casts are sorted correctly
@@ -166,10 +176,13 @@ class Player(BaseActor):
         return f"Player(id={self.source_id} name={self.name} spec={self.spec})" # casts={len(self.casts)})"
 
     def summary(self):
+
+        class_slug = self.class_slug or self.spec_slug.split("-")[0]
+
         return {
             "name": self.name,
             "source_id": self.source_id,
-            "class": self.class_slug,
+            "class": class_slug,
 
             "spec": self.spec_slug,
             "role": self.spec.role.code if self.spec else "",

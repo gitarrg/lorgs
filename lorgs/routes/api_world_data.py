@@ -195,5 +195,4 @@ async def get_boss_spells(boss_slug: str):
     if not boss:
         return "Invalid Boss.", 404
 
-    spells = boss.spells + boss.buffs
-    return {spell.spell_id: spell.as_dict() for spell in spells}
+    return {spell.spell_id: spell.as_dict() for spell in boss.all_abilities}
