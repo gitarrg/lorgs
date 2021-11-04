@@ -48,17 +48,17 @@ REMNANT.add_event(event_type="cast", spell_id=351067, duration=2.6, color="#ff47
 # 05: Soulrender Dormazain
 SOULRENDER = SANCTUM_OF_DOMINATION.add_boss(id=2434, name="Soulrender Dormazain", nick="Soulrender")
 SOULRENDER.add_event(event_type="removedebuff", spell_id=348987, duration=9, color="#b07f6b", name="Break Shackles",           icon="inv_belt_18.jpg")
-SOULRENDER.add_event(event_type="cast", spell_id=350615, duration=0, color="#24cbd1", name="Adds", icon="inv_mawguardpet_red.jpg")
-SOULRENDER.add_event(event_type="cast", spell_id=352933, duration=30, color="#4cb840", name="Dance", icon="spell_animarevendreth_wave.jpg")
+SOULRENDER.add_cast(spell_id=350615, duration=0, color="#24cbd1", name="Adds", icon="inv_mawguardpet_red.jpg")
+SOULRENDER.add_cast(spell_id=352933, duration=30, color="#4cb840", name="Dance", icon="spell_animarevendreth_wave.jpg")
 
 
 ################################################################################
 # 06: Painsmith Raznal
 PAINSMITH = SANCTUM_OF_DOMINATION.add_boss(id=2430, name="Painsmith Raznal", nick="Painsmith")
-PAINSMITH.add_event(event_type="cast", spell_id=359033, duration=45, color="#30c235", name="Intermission",  icon="ability_mage_moltenarmor.jpg")
-PAINSMITH.add_event(event_type="cast", spell_id=355571, duration=6, color="#3fd4cf", name="Axe",           icon="inv_axe_2h_mawraid_diff.jpg")
-PAINSMITH.add_event(event_type="cast", spell_id=348513, duration=6, color="#3fd4cf", name="Hammer",        icon="inv_mace_2h_maw_c_01.jpg")
-PAINSMITH.add_event(event_type="cast", spell_id=355787, duration=6, color="#3fd4cf", name="Scythe",        icon="inv_polearm_2h_mawnecromancerboss_d_01_grey.jpg")
+PAINSMITH.add_cast(spell_id=359033, duration=45, color="#30c235", name="Intermission",  icon="ability_mage_moltenarmor.jpg")
+PAINSMITH.add_cast(spell_id=355571, duration=6, color="#3fd4cf", name="Axe",           icon="inv_axe_2h_mawraid_diff.jpg")
+PAINSMITH.add_cast(spell_id=348513, duration=6, color="#3fd4cf", name="Hammer",        icon="inv_mace_2h_maw_c_01.jpg")
+PAINSMITH.add_cast(spell_id=355787, duration=6, color="#3fd4cf", name="Scythe",        icon="inv_polearm_2h_mawnecromancerboss_d_01_grey.jpg")
 # we only filter tank debuffs to minimize the number of events returned
 PAINSMITH.add_event(event_type="applydebuff", spell_id=356870, duration=1.5, color="#db5f39", name="Flameclasp Trap",  icon="ability_hunter_steeltrap.jpg", extra_filter="target.role='tank'")
 
@@ -66,18 +66,18 @@ PAINSMITH.add_event(event_type="applydebuff", spell_id=356870, duration=1.5, col
 ################################################################################
 # 07: Guardian of the First Ones
 GUARDIAN = SANCTUM_OF_DOMINATION.add_boss(id=2436, name="Guardian of the First Ones", nick="Guardian")
-GUARDIAN.add_event(event_type="cast", spell_id=352538, duration=5, color="#24d1ce", name="Purging Protocol",  icon="spell_progenitor_areadenial.jpg")
-GUARDIAN.add_event(event_type="cast", spell_id=350732, duration=2, color="#a42cd4", name="Sunder",            icon="inv_warbreaker.jpg")
-GUARDIAN.add_event(event_type="cast", spell_id=355352, duration=2, color="#d4a72c", name="Obliterate",        icon="spell_progenitor_orb2.jpg")
-GUARDIAN.add_event(event_type="cast", spell_id=352589, duration=6, color="#75d42c", name="Meltdown",          icon="spell_progenitor_nova.jpg")
+GUARDIAN.add_cast(spell_id=352538, duration=5, color="#24d1ce", name="Purging Protocol",  icon="spell_progenitor_areadenial.jpg")
+GUARDIAN.add_cast(spell_id=350732, duration=2, color="#a42cd4", name="Sunder",            icon="inv_warbreaker.jpg")
+GUARDIAN.add_cast(spell_id=355352, duration=2, color="#d4a72c", name="Obliterate",        icon="spell_progenitor_orb2.jpg")
+GUARDIAN.add_cast(spell_id=352589, duration=6, color="#75d42c", name="Meltdown",          icon="spell_progenitor_nova.jpg")
 
 
 ################################################################################
 # 08: Fatescribe Roh-Kalo
 FATESCRIBE = SANCTUM_OF_DOMINATION.add_boss(id=2431, name="Fatescribe Roh-Kalo", nick="Fatescribe")
-FATESCRIBE.add_event(event_type="cast", spell_id=354265, duration=6, color="#af24ff", name="Twist Fate",  icon="spell_animamaw_debuff.jpg")
-FATESCRIBE.add_event(event_type="cast", spell_id=351680, duration=8, color="#ffda24", name="Destiny",  icon="spell_animamaw_buff.jpg")
-FATESCRIBE.add_event(event_type="applybuff", spell_id=357739, duration="auto", color="#4bbf68", name="Intermisson",  icon="spell_shadow_painfulafflictions.jpg")
+FATESCRIBE.add_cast(spell_id=354265, duration=6, color="#af24ff", name="Twist Fate",  icon="spell_animamaw_debuff.jpg")
+FATESCRIBE.add_cast(spell_id=351680, duration=8, color="#ffda24", name="Destiny",  icon="spell_animamaw_buff.jpg")
+FATESCRIBE.add_buff(spell_id=357739, color="#4bbf68", name="Intermisson", icon="spell_shadow_painfulafflictions.jpg")
 
 
 ################################################################################

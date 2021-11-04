@@ -45,7 +45,9 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
     fight_id = me.IntField(primary_key=True)
 
     start_time: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField()
-    duration = me.IntField(default=0)
+
+    # fight duration in milliseconds
+    duration: int = me.IntField(default=0)
 
     # deprecated in favor of "duration".
     end_time_old: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField(db_field="end_time")
@@ -101,36 +103,19 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
 
     ##########################
     # Attributes
-
-    @property
-    def duration_fix(self) -> int:
-        # fix for old report, that have no "duration"-field
-        if self.duration:
-            return self.duration
-        duration = self.end_time_old - self.start_time
-        return duration.total_seconds()
-
     @property
     def end_time(self) -> arrow.Arrow:
-        return self.start_time.shift(seconds=self.duration_fix)
+        return self.start_time.shift(seconds=self.duration / 1000)
 
     @property
     def start_time_rel(self) -> int:
-        """Fight start time, relative to its parent report (in milliseconds)."""
-        start_time = self.start_time.timestamp() - self.report.start_time.timestamp()
-        start_time = start_time * 1000
-        return int(start_time)
+        """Fight start time, relative the parent report (in milliseconds)."""
+        return 1000 * int(self.start_time.timestamp() - self.report.start_time.timestamp())
 
     @property
     def end_time_rel(self) -> int:
-        """fight end time, relative to its parent report (in milliseconds)."""
-        end_time = self.end_time.timestamp() -  self.report.start_time.timestamp()
-        end_time = end_time * 1000
-        return int(end_time)
-
-    @property
-    def report_url(self) -> str:
-        return f"{self.report.report_url}#fight={self.fight_id}"
+        """fight end time, relative to the report (in milliseconds)."""
+        return 1000 * int(self.end_time.timestamp() -  self.report.start_time.timestamp())
 
     @property
     def raid_boss(self) -> RaidBoss:

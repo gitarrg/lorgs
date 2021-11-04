@@ -102,9 +102,11 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
 
         for cast_data in casts_data:
 
-            # TODO: fetch source_id's?
-            if self._has_source_id and cast_data.get("sourceID") != self.source_id:
-                continue
+            if self._has_source_id:
+                if cast_data["type"] == "cast" and cast_data.get("sourceID") != self.source_id:
+                    continue
+                if cast_data["type"] == "applybuff" and cast_data.get("targetID") != self.source_id:
+                    continue
 
             # Add the Cast Object
             cast = Cast()
@@ -148,15 +150,15 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
 class Player(BaseActor):
     """A PlayerCharater in a Fight (or report)."""
 
-    source_id = me.IntField(primary_key=True)
-    name = me.StringField(max_length=12) # names can be max 12 chars
-    total = me.FloatField(default=0)
+    source_id: int = me.IntField(primary_key=True)
+    name: str = me.StringField(max_length=12) # names can be max 12 chars
+    total: int = me.IntField(default=0)
 
-    class_slug = me.StringField()
-    spec_slug = me.StringField(required=True)
+    class_slug: str = me.StringField()
+    spec_slug: str = me.StringField(required=True)
 
-    covenant_id = me.IntField(default=0)
-    soulbind_id = me.IntField(default=0)
+    covenant_id: int = me.IntField(default=0)
+    soulbind_id: int = me.IntField(default=0)
 
     deaths = me.ListField(me.DictField())
 
@@ -192,13 +194,7 @@ class Player(BaseActor):
     def covenant(self) -> WowCovenant:
         return WowCovenant.get(id=self.covenant_id or 0)
 
-    @property
-    def report_url(self):
-        if self._has_source_id:
-            return f"{self.fight.report_url}&source={self.source_id}"
-        return f"{self.fight.report_url}"
-
-    #################################
+    ############################################################################
     # Query
     #
     def get_cast_query(self, spells=typing.List[WowSpell]):

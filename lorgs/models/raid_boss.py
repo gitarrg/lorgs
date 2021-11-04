@@ -47,6 +47,22 @@ class RaidBoss(base.Model):
     ##########################
     # Methods
     #
+
+    def add_cast(self, **kwargs) -> WowSpell:
+        kwargs.setdefault("spell_type", self.full_name_slug)
+        spell = WowSpell(**kwargs)
+
+        self.spells.append(spell)
+        return spell
+
+    def add_buff(self, spell_id, **kwargs) -> WowSpell:
+
+        kwargs.setdefault("spell_type", self.full_name_slug)
+        spell = WowSpell(spell_id=spell_id, **kwargs)
+
+        self.buffs.append(spell)
+        return spell
+
     def add_event(self, **kwargs): # event_type, spell_id, name: str, icon: str, duration: int = 0):
         kwargs.setdefault("event_type", "cast")
 
@@ -81,6 +97,7 @@ class RaidBoss(base.Model):
     # Methods
     #
     def get_sub_query(self, filters=None) -> str:
+        raise ValueError("Deprecated")
         filters = filters or []
 
         for event in self.events:

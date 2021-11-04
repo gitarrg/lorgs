@@ -132,8 +132,8 @@ class TestReport(unittest.TestCase):
             "encounterID": 2407,
             "fightPercentage": 70.99,
             "kill": False,
-            "startTime": 406559,
-            "endTime": 589257
+            "startTime": 400000,
+            "endTime": 500000
         }
         self.report.add_fight(**fight_data)
 
@@ -142,5 +142,6 @@ class TestReport(unittest.TestCase):
 
         assert fight.percent == 70.99
         assert fight.kill == False  # pylint: disable=singleton-comparison
-        assert fight.start_time.timestamp() == 406.559
-        assert fight.end_time.timestamp() == 589.257
+        assert fight.duration == 100000
+        assert fight.start_time.timestamp() == 400
+        assert fight.end_time.timestamp() == 500

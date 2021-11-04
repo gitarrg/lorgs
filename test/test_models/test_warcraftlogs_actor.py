@@ -118,17 +118,16 @@ class TestBaseActor(unittest.TestCase):
         self.actor.process_query_result(casts_data)
         assert not self.actor.casts
 
-    def test__process_casts__use_all_casts_if_actor_has_no_id(self):
+    def test__process_casts__sets_source_id_from_casts(self):
         casts_data = {"data": [
-            {"type": "cast", "sourceID": 1, "timestamp": 10, "abilityGameID": 0},
-            {"type": "cast", "sourceID": 2, "timestamp": 20, "abilityGameID": 0},
-            {"type": "cast", "sourceID": 3, "timestamp": 30, "abilityGameID": 0},
+            {"type": "cast", "sourceID": 32, "timestamp": 10, "abilityGameID": 0},
         ]}
 
         assert not self.actor.casts
         self.actor.source_id = -1
         self.actor.process_query_result(casts_data)
-        assert len(self.actor.casts) == 3
+        assert len(self.actor.casts) == 1
+        assert self.actor.source_id == 32
 
     def test__process_query_result__calc_buff_duration(self):
         casts_data = {"data": [

@@ -99,10 +99,10 @@ class Report(warcraftlogs_base.EmbeddedDocument):
         fight.kill = fight_data.get("kill", True)
 
         # Fight: Time/Duration
-        start_time = fight_data.get("startTime", 0)
-        end_time = fight_data.get("endTime", 0)
+        start_time = fight_data.get("startTime", 0) / 1000
+        end_time = fight_data.get("endTime", 0) / 1000
         fight.start_time = self.start_time.shift(seconds=start_time)
-        fight.duration = (end_time - start_time)
+        fight.duration = (end_time - start_time) * 1000
 
         # Fight: Boss
         fight.boss = Boss(boss_id=boss_id)
@@ -226,6 +226,9 @@ class Report(warcraftlogs_base.EmbeddedDocument):
         await fight.load_players(player_ids=player_ids)
 
     async def load_fights(self, fight_ids: typing.List[int], player_ids: typing.List[int]):
+
+        if not self.fights:
+            await self.load_summary()
 
         for fight_id in fight_ids:
             await self.load_fight(fight_id=fight_id, player_ids=player_ids)

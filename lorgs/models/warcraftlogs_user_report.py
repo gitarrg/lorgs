@@ -76,6 +76,8 @@ class UserReport(me.Document):
         """
         TODO: move this to the Report-Class
         """
+        raise DeprecationWarning("NOT")
+
         if not (fight_ids and player_ids):
             raise ValueError(f"fight or player ids missing: {fight_ids} {player_ids}")
 
