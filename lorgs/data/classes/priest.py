@@ -49,5 +49,4 @@ PRIEST_SHADOW.add_spell(       spell_id=263165, cooldown=30,  duration=3,       
 # Shadowfiend/Mindbeder Variations (with different glyphs etc)
 for spec in (PRIEST_SHADOW, PRIEST_DISCIPLINE):
     spec.add_spell(spell_id=200174, cooldown=60,  duration=15, color="#58db97", name="Mindbender", icon="spell_shadow_soulleech_3.jpg")
-    for spell_id in (34433, 254232, 254224, 132603):
-        spec.add_spell(spell_id=spell_id, cooldown=180, duration=15, color="#58db97", name="Shadowfiend", icon="spell_shadow_shadowfiend.jpg")
+    spec.add_spell(spell_id=132603, cooldown=180, duration=15, color="#58db97", name="Shadowfiend", icon="spell_shadow_shadowfiend.jpg", variations=[34433, 254232, 254224])

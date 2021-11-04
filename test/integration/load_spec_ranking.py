@@ -14,16 +14,12 @@ async def test__load_rankings():
     spec_ranking = SpecRanking.get_or_create(spec_slug="druid-restoration", boss_slug="fatescribe-rohkalo")
     spec_ranking = SpecRanking.get_or_create(spec_slug="druid-restoration", boss_slug="painsmith-raznal")
     spec_ranking = SpecRanking.get_or_create(spec_slug="druid-restoration", boss_slug="kelthuzad")
+    spec_ranking = SpecRanking.get_or_create(spec_slug="priest-discipline", boss_slug="sylvanas-windrunner")
     # spec_ranking = SpecRanking.get_or_create(spec_slug="warlock-demonology", boss_slug="guardian-of-the-first-ones")
 
-
-    await spec_ranking.load(limit=2, clear_old=True)
-
-    """
-    for fight in spec_ranking.fights:
-        print(fight.boss.get_query())
-    """
+    await spec_ranking.load(limit=5, clear_old=True)
     spec_ranking.save()
+
 
 async def test__load_all_rankings():
 
@@ -35,12 +31,9 @@ async def test__load_all_rankings():
         spec_ranking.save()
 
 
-
-
-
 async def main():
-    await test__load_rankings()
-    # await test__load_all_rankings()
+    # await test__load_rankings()
+    await test__load_all_rankings()
 
 
 if __name__ == "__main__":
