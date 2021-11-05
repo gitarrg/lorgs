@@ -7,7 +7,7 @@ import asyncio
 from lorgs import data  # pylint: disable=unused-import
 from lorgs import db   # pylint: disable=unused-import
 
-from lorgs.models.warcraftlogs_comp_ranking import CompRanking, CompRankingReport
+from lorgs.models.warcraftlogs_comp_ranking import CompRanking
 
 
 async def test__load_rankings():
