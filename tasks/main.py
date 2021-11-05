@@ -58,20 +58,18 @@ def load_spec_rankings(request):
 
 
 def load_comp_rankings(request):
-    """Load comp rankings from Warcraftlogs and save them to the Database.
+    """Load Comp Rankings from Warcraftlogs and save them in our DB.
 
-    Arguments should be passed as request args.
-    Args:
-        boss_slug (str)
-        spec_slug (str)
-        limit (int, optional): default=50
-        clear (bool, optional): default=False
+    Query Parms:
+        boss_slug (str): name of the boss (full_name_slug)
+        limit (int): maximum number of fights to fetch (default: 100)
+        clear (bool): delete old fights (default: false)
 
     """
     ################################
     # Get inputs
     boss_slug = request.args.get("boss_slug", type=str)
-    limit = request.args.get("limit", type=int, default=50)
+    limit = request.args.get("limit", type=int, default=200)
     clear = request.args.get("clear", default=False, type=json.loads)
 
     ################################

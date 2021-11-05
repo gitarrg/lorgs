@@ -72,30 +72,6 @@ async def get_comp_ranking(
     }
 
 
-@router.get("/load_comp_ranking/{boss_slug}")
-async def load_comp_ranking(boss_slug: str, limit: int = 50, clear: bool = False):
-    """Load Comp Rankings from Warcraftlogs and save them in our DB.
-
-    Args:
-        boss_slug (str): name of the boss (full_name_slug)
-
-    Query Parms:
-        limit (int): maximum number of fights to fetch (default: 100)
-        clear (bool): delete old fights (default: false)
-
-    """
-    # get comp ranking object
-    comp_ranking = warcraftlogs_comp_ranking.CompRanking(boss_slug=boss_slug)
-    if not comp_ranking.valid:
-        return "Invalid Boss.", 404
-
-    # update
-    await comp_ranking.update_reports(limit=limit, clear_old=clear)
-    comp_ranking.save()
-
-    return "done"
-
-
 ################################################################################
 # Tasks
 #
@@ -112,7 +88,7 @@ async def task_load_comp_rankings(boss_slug: str = "all", limit: int = 50, clear
 
     # create tasks
     for boss_slug in bosses:
-        api_tasks.create_cloud_function_task(
+        await api_tasks.create_cloud_function_task(
             function_name="load_comp_rankings",
             boss_slug=boss_slug,
             **kwargs
