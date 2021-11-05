@@ -82,6 +82,7 @@ def load_comp_rankings(request):
     task = comp_ranking.load(limit=limit, clear_old=clear)
     asyncio.run(task)
     comp_ranking.save()
+    return {"status": "done", "task_id": "done"}
 
 
 def load_user_report(request):
