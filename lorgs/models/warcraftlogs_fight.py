@@ -250,13 +250,19 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
         if not self.players:
             await self.load_summary()
 
-        # Get Actors to load
-        actors_to_load = self.get_players(player_ids)
-        actors_to_load += [self.boss]
+        # Get Players to load
+        players_to_load = self.get_players(player_ids)
+        players_to_load = [player for player in players_to_load if not player.casts]
 
+        # see if we need to load the boss
+        boss = [] if (self.boss and self.boss.casts) else [self.boss]
 
-        # filter out if already loaded
-        actors_to_load = [actor for actor in actors_to_load if not actor.casts]
+        if not (players_to_load or boss):
+            return
 
         # load
-        await self.load_many(actors_to_load)
+        await self.load_many(players_to_load + boss)
+
+        # re-add them to the dict, as otherwise we get some mongodb issues
+        for actor in players_to_load:
+            self.players[str(actor.source_id)] = actor
