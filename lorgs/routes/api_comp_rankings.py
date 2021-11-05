@@ -6,6 +6,7 @@ import typing
 # IMPORT THIRD PARTY LIBRARIES
 import fastapi
 from fastapi_cache.decorator import cache
+from google.api_core import retry
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import data
@@ -98,17 +99,23 @@ async def load_comp_ranking(boss_slug: str, limit: int = 50, clear: bool = False
 ################################################################################
 # Tasks
 #
-
-@router.get("/task/load_comp_ranking")
-@router.get("/task/load_comp_ranking/all")
 @router.get("/task/load_comp_ranking/{boss_slug}")
-def task_load_comp_rankings(boss_slug=""):
+async def task_load_comp_rankings(boss_slug: str = "all", limit: int = 50, clear: bool = False):
     """Submit a scheduled task to update a single or all Comp Rankings."""
+    kwargs = {"limit": limit, "clear": clear}
 
-    zone = data.SANCTUM_OF_DOMINATION # just hardcoded for now
-    bosses = [boss_slug] if boss_slug else [boss.full_name_slug for boss in zone.bosses]
+    # expand bosses
+    if boss_slug == "all":
+        bosses = [boss.full_name_slug for boss in data.CURRENT_ZONE.bosses]
+    else:
+        bosses = [boss_slug]
 
+    # create tasks
     for boss_slug in bosses:
-        url = f"/api/load_comp_ranking/{boss_slug}"
-        api_tasks.create_cloud_function_task(url)
-    return f"{len(bosses)} tasks queued"
+        api_tasks.create_cloud_function_task(
+            function_name="load_comp_rankings",
+            boss_slug=boss_slug,
+            **kwargs
+        )
+
+    return {"message": "tasks queued", "bosses": bosses}
