@@ -2,28 +2,22 @@
 """Warcaftlogs API Client."""
 
 # IMPORT STANDARD LIBRARIES
-# import asyncio
-import hashlib
 import os
+import typing
 
 # IMPORT THIRD PARTY LIBRARIES
 import aiohttp
 
 # IMPORT LOCAL LIBRARIES
-from lorgs.cache import cache
-from lorgs.logger import logger
-
-#: int: cache time for the queries
-CACHE_TIMEOUT = 60 * 60 * 2 # 2 hours minutes
+from lorgs.logger import logger, timeit
 
 
-def query_name(query):
-    """str: short version of the query, used to logging."""
-    query = query.replace("\n", "")
-    query = query.replace(" ", "")
-    query = query.replace("{", "/")
-    query = query[:32] + "..."
-    return query
+# error text we get from Warcraftlogs if a report does not exist.
+ERROR_MESSAGE_INVALID_REPORT = "This report does not exist."
+
+
+class InvalidReport(ValueError):
+    """Exception raised when a report was not found"""
 
 
 class WarcraftlogsClient:
@@ -31,11 +25,11 @@ class WarcraftlogsClient:
     URL_API = "https://www.warcraftlogs.com/api/v2/client"
     URL_AUTH = "https://www.warcraftlogs.com/oauth/token"
 
-    _instance = None
-    # <WarcraftlogsClient> or None: reference used to provide a singelton interface.
+    # reference used to provide a singelton interface.
+    _instance: typing.Optional["WarcraftlogsClient"] = None
 
     @classmethod
-    def get_instance(cls, *args, **kwargs):
+    def get_instance(cls, *args, **kwargs) -> "WarcraftlogsClient":
         """Get an instance of the Client.
 
         This is a singleton-style wrapper,
@@ -54,19 +48,15 @@ class WarcraftlogsClient:
             cls._instance = cls(*args, **kwargs)
         return cls._instance
 
-    def __init__(self, client_id="", client_secret=""):
+    def __init__(self, client_id: str = "", client_secret: str = ""):
         super().__init__()
 
         # credentials
         self.client_id = client_id or os.getenv("WCL_CLIENT_ID")
         self.client_secret = client_secret or os.getenv("WCL_CLIENT_SECRET")
-        self.headers = {}
+        self.headers: typing.Dict[str, str] = {}
 
         logger.info("NEW CLIENT: %s", self.client_id)
-
-        self.cached = os.getenv("WCL_CACHED") or False
-        self.cache = cache
-
         self._num_queries = 0
 
     ################################
@@ -93,6 +83,11 @@ class WarcraftlogsClient:
         token = data.get("access_token", "")
         self.headers["Authorization"] = "Bearer " + token
 
+    async def ensure_auth(self):
+        if self.headers:
+            return
+        await self.update_auth_token()
+
     async def get_points_left(self):
         """Points left until we hit the rate limit."""
         query = """
@@ -103,42 +98,21 @@ class WarcraftlogsClient:
             pointsResetIn
         }
         """
-        result = await self.query(query, usecache=False)
+        result = await self.query(query)
         info = result.get("rateLimitData", {})
         return info.get("limitPerHour", 0) - info.get("pointsSpentThisHour", 0)
 
-    async def query(self, query, usecache=True):
-        """
-
-        TODO:
-            - add a "@cached"-wrapper to clean this up
-
-        """
+    @timeit
+    async def query(self, query):
         self._num_queries += 1
         logger.debug("Num Queries: %d", self._num_queries)
-
-        usecache = self.cached and usecache
 
         query = f"""
         query {{
             {query}
         }}"""
 
-        logger.debug("run query: %s", query_name(query))
-        cache_key = "query/" + str(hashlib.md5(query.encode()).hexdigest())
-
-        # caching
-        if usecache:
-            cached_result = usecache and self.cache.get(cache_key)
-            if cached_result:
-                logger.debug("using cached result")
-                return cached_result
-
-        logger.debug("not cached: %s", cache_key)
-
-        # auth
-        if not self.headers:
-            await self.update_auth_token()
+        await self.ensure_auth()
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url=self.URL_API, json={"query": query}, headers=self.headers) as resp:
@@ -162,6 +136,9 @@ class WarcraftlogsClient:
                     for error in result.get("errors"):
                         message = error.get("message")
 
+                        if message == ERROR_MESSAGE_INVALID_REPORT:
+                            raise InvalidReport()
+
                         # this sometimes happens.. just skip those
                         if message == "You do not have permission to view this report.":
                             continue
@@ -172,11 +149,7 @@ class WarcraftlogsClient:
                         print(query)
                         raise ValueError(msg)
 
-                data = result.get("data", {})
-                if usecache:
-                    self.cache.set(cache_key, data, timeout=CACHE_TIMEOUT)
-
-                return data
+                return result.get("data", {})
 
     async def multiquery(self, queries):
         """Execute a list of queries as a batch.

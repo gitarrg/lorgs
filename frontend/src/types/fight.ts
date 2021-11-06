@@ -15,5 +15,9 @@ export default interface Fight {
 
     pinned?: boolean
 
+    /** boss percent at the end of the fight */
+    percent?: number
+
+    kill?: boolean
 }
 

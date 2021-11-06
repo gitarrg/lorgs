@@ -51,9 +51,39 @@ export function kFormatter(n: number, digits=2) {
 
 export function slug(str: string) {
     return str
-        .replace(/^\s+|\s+$/g, '')   // trim
+        .replace(/(^\s+)|(\s+$)/g, '')   // trim
         .toLowerCase()
         .replace(/[^a-z0-9 -]/g, '') // Remove invalid chars
         .replace(/\s+/g, '-')        // Collapse whitespace and replace by -
         .replace(/-+/g, '-');        // Collapse dashes
+}
+
+
+/**
+ * @description
+ * Takes an Array<V>, and a grouping function,
+ * and returns a Map of the array grouped by the grouping function.
+ */
+export function group_by<T>(list: T[], key_getter: Function) {
+    const result: {[key: string|number]: T[]} = {};
+    list.forEach((item) => {
+         const key = key_getter(item);
+         result[key] = [...(result[key] || []), item]
+    });
+    return result;
+}
+
+/**
+ * Gets uniuqe values from a list of items.
+ * @param items the items to process
+ * @param getter a function that is used to access which property to use
+ */
+export function get_unique_values(items: any[], getter: Function) {
+    const unique = [...new Set(items.map(item => getter(item)))]
+    return Array.from(unique)
+}
+
+
+export async function sleep(duration=2000) {
+    return new Promise(r => setTimeout(r, duration));
 }

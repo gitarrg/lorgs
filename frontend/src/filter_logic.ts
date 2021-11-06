@@ -3,7 +3,6 @@ import type Actor from "./types/actor"
 import type Fight from "./types/fight"
 
 
-
 function is_fight_visible(fight: Fight, filters: FilterValues) {
 
     if (fight.pinned) { return true }

@@ -19,12 +19,11 @@ export async function fetch_data(url : string, params={}) {
     }
     const console_key = `request: ${url}`
 
-    if (PRINT_REQUEST_TIMES) {console.time(console_key)}
-    let response = await fetch(url);
-    if (PRINT_REQUEST_TIMES) {console.timeEnd(console_key)}
+    PRINT_REQUEST_TIMES && console.time(console_key)
+    let response = await fetch(url)
+    PRINT_REQUEST_TIMES && console.timeEnd(console_key)
 
-    if (response.status != 200) {
-        return {}
-    }
+    if (!response.ok)            { return {} }
+    if (response.status !== 200) { return {} }
     return response.json()
 }

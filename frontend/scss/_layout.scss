@@ -24,6 +24,16 @@ $sizes: (
     overflow-x: hidden;
 }
 
+
+/** Wrapper to center content in the middle of the page */
+.content_center {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
 footer {
     /* for now to match bootstrap */
     // padding-right: 15px;
@@ -78,6 +88,19 @@ footer {
     justify-content: center;
 }
 
+.justify-content-end {
+    justify-content: flex-end;
+}
+
+.justify-content-space-between {
+    justify-content: space-between;
+}
+
+
+.align-items-start {
+    align-items: flex-start;
+}
+
 .align-items-center {
     align-items: center;
 }
@@ -85,6 +108,12 @@ footer {
 .align-items-end {
     align-items: end;
 }
+
+
+.align-content-start {
+    align-content: flex-start;
+}
+
 
 
 /*******************************************************************************

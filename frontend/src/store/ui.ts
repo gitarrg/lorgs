@@ -1,7 +1,6 @@
-
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { createSelector } from 'reselect'
 import type { RootState } from './store'
+import { createSelector } from 'reselect'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 
 // modes to switch some page related features
@@ -9,9 +8,35 @@ export const MODES = {
     NONE: "none",
     SPEC_RANKING: "spec_ranking",
     COMP_RANKING: "comp_ranking",
+    USER_REPORT: "user_report",
 }
 
 export type Mode = "none" | "spec_ranking" | "comp_ranking"
+
+
+// TODO: ModeSettings should be in some "constants"-file
+
+interface ModeSetting {
+    /** space in pixels between each fight row */
+    fight_space: number
+}
+
+const MODE_SETTINGS: {[key: string]: ModeSetting } = {}
+
+
+const default_setting: ModeSetting = {
+    fight_space: 10,
+}
+
+MODE_SETTINGS[MODES.NONE] = default_setting
+
+MODE_SETTINGS[MODES.SPEC_RANKING] = {
+    ...default_setting,
+    fight_space: 0,
+}
+
+MODE_SETTINGS[MODES.COMP_RANKING] = default_setting
+MODE_SETTINGS[MODES.USER_REPORT] = default_setting
 
 
 
@@ -22,9 +47,14 @@ export function get_mode(state: RootState) {
     return state.ui.mode
 }
 
+export function get_mode_setting(state: RootState) {
+    return MODE_SETTINGS[state.ui.mode] || default_setting
+}
+
 export function get_filters(state: RootState) {
     return state.ui.filters
 }
+
 
 export const get_is_loading = createSelector(
     (state: RootState) => state.ui._loading, // dependency
@@ -39,34 +69,15 @@ export function get_tooltip(state: RootState) {
 }
 
 
-/* add a prefix to the input, to aid with sorting */
-function _sort_spell_type_sort_key(spell_type: string) {
-
-    let prefix = "50" // start middle
-    if (spell_type == "raid")           { prefix = "60"} // raid cd's after class
-    if (spell_type.startsWith("other")) { prefix = "80"} // other types go behind
-
-    return [prefix, spell_type].join("-")
-}
-
-/* Sort spell types as:
-   - boss
-   - specs
-   - other
-*/
-export function sort_spell_types(spell_types: string[]) {
-    return spell_types.sort((a, b) => {
-        const key_a = _sort_spell_type_sort_key(a)
-        const key_b = _sort_spell_type_sort_key(b)
-        return key_a > key_b ? 1 : -1
-    })
-}
-
-
 ////////////////////////////////////////////////////////////////////////////////
 // Slice
 //
-type FilterGroup ="role" | "spec" | "class" | "covenant"
+type FilterGroup =
+    | "role"
+    |  "spec"
+    | "class"
+    | "covenant"
+
 
 export interface FilterValues {
 
@@ -131,7 +142,7 @@ const INITIAL_STATE: UiSliceState = {
 
         // player filters
         role: {},
-        class: { boss: false },  // for now, bosses are hidden by default (except the pinned ones)
+        class: {},
         spec: {},
         covenant: {},
 
@@ -198,8 +209,8 @@ const SLICE = createSlice({
             state.tooltip.position = position
             return state
         }
-    },
-})
+    }, // reducers
+}) // slice
 
 
 export const {

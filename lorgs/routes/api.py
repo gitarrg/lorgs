@@ -4,32 +4,44 @@
 import datetime
 
 # IMPORT THIRD PARTY LIBRARIES
-import flask
+import fastapi
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.routes import api_comp_rankings
 from lorgs.routes import api_spec_rankings
+from lorgs.routes import api_tasks
+from lorgs.routes import api_user_reports
 from lorgs.routes import api_world_data
+from lorgs.routes import auth
 
 
-blueprint = flask.Blueprint("api", __name__, cli_group=None)
+router = fastapi.APIRouter()
 
 
 ################################################################################
 # Child Blueprints
-blueprint.register_blueprint(api_comp_rankings.blueprint, url_prefix="/")
-blueprint.register_blueprint(api_spec_rankings.blueprint, url_prefix="/")
-blueprint.register_blueprint(api_world_data.blueprint, url_prefix="/")
+router.include_router(api_comp_rankings.router)
+router.include_router(api_spec_rankings.router)
+router.include_router(api_tasks.router, prefix="/tasks")
+router.include_router(api_user_reports.router, prefix="/user_reports")
+router.include_router(api_world_data.router)
+router.include_router(auth.router, prefix="/auth")
 
 
 ################################################################################
 
 
-@blueprint.route("/<path:path>")
-def page_not_found(path):
+@router.route("/<path:path>")
+def page_not_found(*args, **kwargs):
     return "Invalid Route", 404
 
 
-@blueprint.get("/ping")
+@router.get("/ping")
 def ping():
     return {"reply": "Hi!", "time": datetime.datetime.utcnow().isoformat()}
+
+
+@router.get("/error")
+def error():
+    """Route to test error handling"""
+    raise ValueError("something went wrong!")

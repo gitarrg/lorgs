@@ -3,6 +3,7 @@
 import abc
 import textwrap
 import typing
+import math
 
 # IMPORT THIRD PARTY LIBRARIES
 import mongoengine as me
@@ -11,46 +12,11 @@ import mongoengine as me
 from lorgs import utils
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
-from lorgs.models.raid_boss import RaidBoss
+from lorgs.models.warcraftlogs_cast import Cast
+from lorgs.models.wow_covenant import WowCovenant
 from lorgs.models.wow_spec import WowSpec
 from lorgs.models.wow_spell import WowSpell
-from lorgs.models.wow_covenant import WowCovenant
 
-
-class Cast(me.EmbeddedDocument):
-    """docstring for Cast"""
-
-    timestamp = me.IntField()
-    spell_id = me.IntField()
-    duration = me.IntField()
-
-    def __str__(self):
-        time_fmt = utils.format_time(self.timestamp)
-        return f"Cast({self.spell_id}, at={time_fmt})"
-
-    def as_dict(self):
-        dict = {
-            "ts": self.timestamp,
-            "id": self.spell_id,
-        }
-        if self.duration:
-            dict["d"] = self.duration
-        return dict
-
-    ##########################
-    # Attributes
-    #
-    @property
-    def spell(self):
-        return WowSpell.get(spell_id=self.spell_id)
-
-    @property
-    def end_time(self):
-        return self.timestamp + (self.duration * 1000)
-
-    @end_time.setter
-    def end_time(self, value):
-        self.duration = (value - self.timestamp) / 1000
 
 
 class BaseActor(warcraftlogs_base.EmbeddedDocument):
@@ -61,7 +27,7 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
     """
 
     # list of cast
-    casts = me.ListField(me.EmbeddedDocumentField(Cast))
+    casts: typing.List[Cast] = me.ListField(me.EmbeddedDocumentField(Cast))
     source_id = -1
 
     meta = {
@@ -84,17 +50,41 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
     #################################
     # Query
     #
+    def get_cast_query(self, spells=typing.List[WowSpell]):
+        if not spells:
+            return ""
+
+        spell_ids = WowSpell.spell_ids_str(spells)
+        cast_filter = f"type='cast' and ability.id in ({spell_ids})"
+        return cast_filter
+
+    def get_buff_query(self, spells=typing.List[WowSpell]):
+        if not spells:
+            return ""
+        # we check for "removebuff" as this allows us to also catch buffs
+        # that get used prepull (eg.: lust)
+        spell_ids = WowSpell.spell_ids_str(spells)
+
+        # TODO: split buffs/debuffs for performance?
+        event_types = ["applybuff", "removebuff", "applydebuff", "removedebuff"]
+        event_types = [f"'{event}'" for event in event_types]
+        event_types = ",".join(event_types)
+
+        buffs_query = f"type in ({event_types}) and ability.id in ({spell_ids})"
+        return buffs_query
+
     @abc.abstractmethod
-    def get_sub_query(self, filters=None):
+    def get_sub_query(self):
         return ""
 
-    def get_query(self, filters=None):
+    def get_query(self):
         return textwrap.dedent(f"""\
             reportData
             {{
                 report(code: "{self.fight.report.report_id}")
                 {{
-                    {self.get_sub_query(filters)}
+                    events({self.fight.table_query_args}, filterExpression: "{self.get_sub_query()}")
+                        {{data}}
                 }}
             }}
         """)
@@ -114,19 +104,29 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
 
         active_buffs: typing.Dict[int, Cast] = {}
 
-        for cast_data in casts_data:
+        fight_start = self.fight.start_time_rel if self.fight else 0
 
-            # TODO: fetch source_id's?
-            if self._has_source_id and cast_data.get("sourceID") != self.source_id:
+        for cast_data in casts_data:
+            cast_type: str = cast_data.get("type") or "unknown"
+
+            cast_actor_id = cast_data.get("sourceID")
+            if cast_type == "applybuff":
+                cast_actor_id = cast_data.get("targetID")
+
+            if self._has_source_id and (cast_actor_id != self.source_id):
                 continue
 
             # Add the Cast Object
             cast = Cast()
-            cast.spell_id = cast_data["abilityGameID"]
-            cast.timestamp = cast_data["timestamp"] - self.fight.start_time_rel
+            cast.spell_id = cast_data.get("abilityGameID")
+            cast.spell_id = WowSpell.resolve_spell_id(cast.spell_id)
+            cast.timestamp = cast_data.get("timestamp", 0) - fight_start
+            cast.duration = cast_data.get("duration")
+            if cast.duration:
+                cast.duration *= 0.001
 
             # we check if the buff was applied before..
-            if cast_data["type"] == "removebuff":
+            if cast_type == "removebuff":
                 start_cast = active_buffs.get(cast.spell_id)
 
                 # special case for buffs that are applied pre pull
@@ -146,7 +146,7 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
             active_buffs[cast.spell_id] = cast
 
         # Filter out same event at the same time (eg.: raid wide debuff apply)
-        self.casts = utils.uniqify(self.casts, key=lambda cast: (cast.spell_id, cast.timestamp))
+        self.casts = utils.uniqify(self.casts, key=lambda cast: (cast.spell_id, math.floor(cast.timestamp / 1000)))
         self.casts = list(self.casts) # `utils.uniqify` returns dict values, which mongoengine doesn't like
 
         # make sure casts are sorted correctly
@@ -155,33 +155,42 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
 
 
 class Player(BaseActor):
-    """A PlayerCharater in a Fight."""
+    """A PlayerCharater in a Fight (or report)."""
 
-    source_id = me.IntField(primary_key=True)
-    name = me.StringField(max_length=12) # names can be max 12 chars
-    total = me.FloatField()
-    spec_slug = me.StringField(required=True)
+    source_id: int = me.IntField(primary_key=True)
+    name: str = me.StringField(max_length=12) # names can be max 12 chars
+    total: int = me.IntField(default=0)
 
-    covenant_id = me.IntField()
-    soulbind_id = me.IntField()
+    class_slug: str = me.StringField()
+    spec_slug: str = me.StringField(required=True)
+
+    covenant_id: int = me.IntField(default=0)
+    soulbind_id: int = me.IntField(default=0)
 
     deaths = me.ListField(me.DictField())
 
     def __str__(self):
-        return f"Player(id={self.source_id} name={self.name} spec={self.spec})" # casts={len(self.casts)})"
+        return f"Player(id={self.source_id} name={self.name} spec={self.spec})"
+
+    def summary(self):
+
+        class_slug = self.class_slug or self.spec_slug.split("-")[0]
+
+        return {
+            "name": self.name,
+            "source_id": self.source_id,
+            "class": class_slug,
+
+            "spec": self.spec_slug,
+            "role": self.spec.role.code if self.spec else "",
+        }
 
     def as_dict(self):
         return {
-            "name": self.name,
+            **self.summary(),
             "total": int(self.total),
-
-            "source_id": self.source_id,
             "covenant": self.covenant.name_slug,
             "casts": [cast.as_dict() for cast in self.casts],
-
-            "spec": self.spec_slug,
-            "role": self.spec.role.code,
-            "class": self.spec.wow_class.name_slug,
         }
 
     ##########################
@@ -195,51 +204,55 @@ class Player(BaseActor):
     def covenant(self) -> WowCovenant:
         return WowCovenant.get(id=self.covenant_id or 0)
 
-    @property
-    def report_url(self):
-        if self._has_source_id:
-            return f"{self.fight.report_url}&source={self.source_id}"
-        return f"{self.fight.report_url}"
-
-    #################################
+    ############################################################################
     # Query
     #
-    def get_sub_query(self, filters=None) -> str:
+    def get_cast_query(self, spells=typing.List[WowSpell]):
+        cast_query = super().get_cast_query(spells=spells)
+        if self.name:
+            cast_query = f"source.name='{self.name}' and {cast_query}"
+        return cast_query
+
+    def get_buff_query(self, spells=typing.List[WowSpell]):
+        buffs_query = super().get_buff_query(spells=spells)
+        if self.name:
+            buffs_query = f"target.name='{self.name}' and {buffs_query}"
+        return buffs_query
+
+    def get_sub_query(self) -> str:
         """Get the Query for fetch all relevant data for this player."""
-        filters = filters or []
+        filters = []
 
-        # TODO: combine with "Fight._build_cast_query"
-        if self.spec.spells:
-            spell_ids = [spell.spell_id for spell in self.spec.all_spells]
-            spell_ids = sorted(list(set(spell_ids)))
-            spell_ids = ",".join(str(spell_id) for spell_id in spell_ids)
+        cast_query = self.get_cast_query(self.spec.all_spells)
+        filters.append(cast_query)
 
-            cast_filter = f"type='cast' and ability.id in ({spell_ids})"
-            if self.name:
-                cast_filter = f"source.name='{self.name}' and {cast_filter}"
-            filters.append(cast_filter)
-
-        if self.spec.buffs:
-            spell_ids = [spell.spell_id for spell in self.spec.all_buffs]
-            spell_ids = sorted(list(set(spell_ids)))
-            spell_ids = ",".join(str(spell_id) for spell_id in spell_ids)
-
-            # we check for "removebuff" as this allows us to also catch buffs
-            # that get used prepull (eg.: lust)
-            buffs_filter = f"type in ('applybuff', 'removebuff') and ability.id in ({spell_ids})"
-            if self.name:
-                buffs_filter = f"target.name='{self.name}' and {buffs_filter}"
-            filters.append(buffs_filter)
+        buffs_query = self.get_buff_query(self.spec.all_buffs)
+        filters.append(buffs_query)
 
         # combine all filters
+        filters = [f for f in filters if f]   # filter the filters
         filters = [f"({f})" for f in filters] # wrap each filter into bracers
-        filters = " or ".join(filters)
+        filters = [" or ".join(filters)]
 
-        # wrap everything and return
-        return f"events({self.fight.table_query_args}, filterExpression: \"{filters}\") {{data}}"
+        queries_combined = " and ".join(filters)
+        return f"({queries_combined})"
+
+    def process_query_result(self, query_result):
+        super().process_query_result(query_result)
+
+        # for spec rankings we don't know the source ID upfront..
+        # but we can fill that gap here
+        print("1", "process_query_result", self._has_source_id)
+        if not self._has_source_id:
+            casts = utils.get_nested_value(query_result, "report", "events", "data") or []
+            print("CASTS", casts)
+            for cast in casts:
+                if cast.get("type") == "cast":
+                    self.source_id = cast.get("sourceID")
+                    print("2", "process_query_result", self.source_id)
+                    break
 
     def process_death_events(self, death_events):
-
         ability_overwrites = {}
         ability_overwrites[1] = {"name": "Melee", "guid": 260421, "abilityIcon": "ability_meleedamage.jpg"}
         ability_overwrites[3] = {"name": "Fall Damage"}
@@ -259,92 +272,3 @@ class Player(BaseActor):
                 death_data["ability"] = ability_overwrites[ability_id]
 
             self.deaths.append(death_data)
-
-
-class Boss(BaseActor):
-    """A NPC/Boss in a Fight."""
-
-    boss_id = me.IntField(required=True)
-    percent = me.FloatField(default=100)
-
-    ##########################
-    # Attributes
-    #
-
-    @property
-    def raid_boss(self) -> RaidBoss:
-        return RaidBoss.get(id=self.boss_id)
-
-    def as_dict(self):
-        return {
-            "name": self.raid_boss.full_name_slug,
-            "casts": [cast.as_dict() for cast in self.casts]
-        }
-
-    ##########################
-    # Methods
-    #
-    def get_sub_query(self, filters=None) -> str:
-        filters = filters or []
-
-        for event in self.raid_boss.events:
-
-            # get all event parts
-            parts = []
-            if event.get("event_type"):
-                parts.append("type='{event_type}'")
-            if event.get("spell_id"):
-                parts.append("ability.id={spell_id}")
-            if event.get("extra_filter"):
-                parts.append("{extra_filter}")
-
-            # combine filter
-            event_filter = " and ".join(parts)
-            event_filter = f"({event_filter})"
-            event_filter = event_filter.format(**event)
-
-            # add filter to list
-            filters.append(event_filter)
-
-        filters = " or ".join(filters)
-
-        if not filters:
-            return ""
-
-        return f"events({self.fight.table_query_args}, filterExpression: \"{filters}\") {{data}}"
-
-
-    def process_query_result(self, query_result):
-        """Process the result of a casts-query to create Cast objects."""
-        super().process_query_result(query_result)
-
-
-        """
-        for event in self.raid_boss.events:
-
-            # skip events without explicit until-statement
-            if not event.get("until"):
-                continue
-
-            until_event = event.get("until")
-            event_spell = event.get("spell_id")
-            end_spell_id = until_event.get("spell_id")
-
-            start_cast = None
-            end_casts = []
-            for cast in self.casts:
-
-                # look for the start event
-                if not start_cast and cast.spell_id == event_spell:
-                    start_cast = cast
-                    continue
-
-                # look for the ending event
-                if start_cast and cast.spell_id == end_spell_id:
-                    start_cast.end_time = cast.timestamp
-                    start_cast = None
-                    end_casts.append(cast)
-        """
-        # # end casts should not show up on their own
-        # self.casts = [cast for cast in self.casts if cast not in end_casts]
-

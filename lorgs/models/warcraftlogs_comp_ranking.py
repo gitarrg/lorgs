@@ -11,7 +11,7 @@ import mongoengine as me
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
 from lorgs.models import warcraftlogs_base
-from lorgs.models import warcraftlogs_fight
+from lorgs.models.warcraftlogs_fight import Fight
 from lorgs.models import warcraftlogs_report
 from lorgs.models.raid_boss import RaidBoss
 from lorgs.models.wow_spec import WowSpec
@@ -23,10 +23,6 @@ class CompRankingReport(warcraftlogs_base.Document):
 
     report: warcraftlogs_report.Report = me.EmbeddedDocumentField(warcraftlogs_report.Report)
     updated: datetime.datetime = me.DateTimeField(default=datetime.datetime.utcnow)
-
-    meta = {
-        "strict": False # ignore non existing properties
-    }
 
     def __repr__(self):
         return f"<{type(self).__name__} {self.key}>"
@@ -45,10 +41,11 @@ class CompRankingReport(warcraftlogs_base.Document):
         return (self.report.report_id, self.fight.fight_id)
 
     @property
-    def fight(self) -> warcraftlogs_fight.Fight:
+    def fight(self) -> typing.Optional[Fight]:
         """First Fight found in this report (there should only be one)."""
-        for fight in self.report.fights:
+        for fight in self.report.fights.values():
             return fight
+        return None
 
 
 class CompRanking(warcraftlogs_base.Document):
@@ -85,7 +82,7 @@ class CompRanking(warcraftlogs_base.Document):
         filter_kwargs = {}
 
         # filter by boss
-        filter_kwargs["report__fights__boss__boss_id"] = self.boss.id
+        filter_kwargs["report__fights__0__boss__boss_id"] = self.boss.id
 
         # filter by inputs
         search = search or {}
@@ -118,8 +115,8 @@ class CompRanking(warcraftlogs_base.Document):
         Right now, this simply returns every spell healers have
 
         """
-        healers = [spec for spec in WowSpec.all if spec.role.code == "heal"]
-        spells = utils.flatten(spec.spells for spec in healers)
+        healers: typing.List[WowSpec] = [spec for spec in WowSpec.all if spec.role.code == "heal"]
+        spells = utils.flatten(spec.all_spells for spec in healers)
         spells = [spell for spell in spells if spell.is_healing_cooldown()]
         return spells
 
@@ -129,7 +126,7 @@ class CompRanking(warcraftlogs_base.Document):
 
             eg.: Darkness, RallyCry, AMZ
         """
-        spells = [spell for spell in WowSpell.all if spell.spell_type== spell.TYPE_RAID]
+        spells = [spell for spell in WowSpell.all if spell.spell_type == spell.TYPE_RAID]
         return utils.uniqify(spells, key=lambda spell: spell.spell_id)
 
     @staticmethod
@@ -137,7 +134,6 @@ class CompRanking(warcraftlogs_base.Document):
         spell_ids = sorted([spell.spell_id for spell in spells])
         spell_ids = ",".join(str(spell_id) for spell_id in spell_ids)
         return f"type='cast' and ability.id in ({spell_ids})"
-
 
     def get_filter(self) -> str:
         """Filter that is applied to the query."""
@@ -150,14 +146,14 @@ class CompRanking(warcraftlogs_base.Document):
 
         return f"({filter_healing_cds}) or ({raid_cds_filter})"
 
-    def _get_query(self, metric="execution", page=0) -> str:
+    def get_query(self, metric="execution", page=0) -> str:
         return f"""
             worldData
             {{
                 encounter(id: {self.boss.id})
                 {{
                     fightRankings(
-                        metric: {metric},
+                        metric: {metric}
                         page: {page}
                     )
                 }}
@@ -180,7 +176,7 @@ class CompRanking(warcraftlogs_base.Document):
 
         ################
         # Fight
-        fight = report.add_fight()
+        fight = report.add_fight(encounterID=self.boss.id)
         fight.fight_id = report_data.get("fightID")
         fight_start = ranking_data.get("startTime", 0)
         fight.start_time = arrow.get(fight_start)
@@ -196,7 +192,7 @@ class CompRanking(warcraftlogs_base.Document):
 
         return comp_report
 
-    async def load_new_reports(self, metric="execution", limit=5):
+    async def load_new_reports(self, metric="execution", limit=5) -> typing.List[CompRankingReport]:
         """Get Top Fights for a given encounter."""
         limit = limit or 50  # in case limit defaults to 0 somewhere
 
@@ -207,7 +203,7 @@ class CompRanking(warcraftlogs_base.Document):
             page += 1
 
             # execute the query
-            query = self._get_query(metric=metric, page=page)
+            query = self.get_query(metric=metric, page=page)
             data = await self.client.query(query)
             data = data.get("worldData", {}).get("encounter", {}).get("fightRankings", {})
 
@@ -224,7 +220,30 @@ class CompRanking(warcraftlogs_base.Document):
 
         return new_reports
 
-    async def update_reports(self, limit=50, clear_old=False) -> typing.List[CompRankingReport]:
+    async def load_fight(self, fight: Fight):
+
+        query = f"""
+            reportData
+            {{
+                report(code: "{fight.report.report_id}")
+                {{
+                    events(
+                        {fight.table_query_args},
+                        filterExpression: "{self.get_filter()}"
+                    )
+                    {{data}}
+                }}
+            }}
+        """
+        query_result = await self.client.query(query=query)
+        for actor in fight.players.values():
+            actor.process_query_result(query_result)
+
+        await fight.boss.load()
+
+        fight.players = {k: player for k, player in fight.players.items() if player.casts}
+
+    async def load(self, limit=50, clear_old=False):
         """Fetch reports for this BossRanking.
 
         params:
@@ -232,25 +251,29 @@ class CompRanking(warcraftlogs_base.Document):
             clear_old (bool): if true old reports will be deleted.
 
         """
-        old_reports = self.get_reports()
-
         # old reports
         if clear_old:
-            old_reports.delete()
-            old_reports = []
+            for r in  self.reports:
+                try:
+                    r.delete()
+                except AttributeError:
+                    pass
             self.reports = []
 
         # new reports
         new_reports = await self.load_new_reports(limit=limit)
 
         # compare old vs new reports
-        old_report_keys = [report.key for report  in old_reports]
+        old_report_keys = [report.key for report  in self.reports]
         new_reports = [report for report in new_reports if report.key not in old_report_keys]
 
         # load only the fights that need to be loaded
         fights = [report.fight for report in new_reports]
         fights = [fight for fight in fights if not fight.players]
         fights = fights[:limit] # should already be enforced from the "load_new_reports"... but better safe then sorry
-        await self.load_many(fights, filters=[self.get_filter()], chunk_size=5)
+
+        await self.load_many(fights, chunk_size=5)
+        for fight in fights:
+            await self.load_fight(fight)
 
         self.reports += new_reports

@@ -1,12 +1,10 @@
-
-import { useRef, useEffect} from "react";
-
 import * as constants from "./constants";
 import Stage from "./Stage"
-import { get_is_loading, MODES } from "../../store/ui";
-import { get_fights } from "../../store/fights";
 import TimelineTooltip from "./TimelineTooltip";
+import { get_fights } from "../../store/fights";
+import { get_is_loading, MODES } from "../../store/ui";
 import { useAppSelector } from "../../store/store_hooks";
+import { useRef, useEffect} from "react";
 
 
 export default function TimelineCanvas() {
@@ -20,8 +18,8 @@ export default function TimelineCanvas() {
 
     // state vars
     const mode = useAppSelector(state => state.ui.mode)
-    const is_loading = useAppSelector(state => get_is_loading(state))
-    const fights = useAppSelector(state => get_fights(state))
+    const is_loading = useAppSelector(get_is_loading)
+    const fights = useAppSelector(get_fights)
     const ui_settings = useAppSelector(state => state.ui.settings)
     const spell_display = useAppSelector(state => state.spells.spell_display)
     const selected_spells = useAppSelector(state => state.spells.selected_spells)
@@ -40,7 +38,7 @@ export default function TimelineCanvas() {
 
     // Update: ui.mode
     useEffect(() => {
-        stage_ref.current!.FIGHT_SPACE = mode == MODES.SPEC_RANKING ? 0 : 10
+        stage_ref.current!.FIGHT_SPACE = mode == MODES.SPEC_RANKING ? -1 : 10
     }, [mode])
 
     useEffect(() => {

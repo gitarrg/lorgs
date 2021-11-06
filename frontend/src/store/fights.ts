@@ -1,22 +1,70 @@
-
-import { createSlice } from '@reduxjs/toolkit'
-
-import { fetch_data } from '../api'
 import type Actor from '../types/actor';
 import type Fight from '../types/fight';
 import type { AppDispatch, RootState } from './store'
 import { MODES } from './ui'
+import { createSelector } from 'reselect'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { fetch_data } from '../api'
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Actions
+// Selectors
 //
 
-export function get_all_fights(state: RootState) : Fight[] {
-    return state.fights
+export function get_all_fights(state: RootState) : {[key: number]: Fight} {
+    return state.fights.fights_by_id
 }
 
-export const get_fights = get_all_fights;
+
+export function get_fight_ids(state: RootState) {
+    return state.fights.fight_ids
+}
+
+
+export function get_fight_is_loaded(state: RootState, fight_id: number) {
+    return state.fights.fights_by_id[fight_id] != undefined;
+}
+
+
+export const get_fights = createSelector<RootState, {[key: number]: Fight}, Fight[]>(
+    get_all_fights,
+    ( fights_by_id ) => {
+        return Object.values(fights_by_id)
+    }
+)
+
+
+/** Get all specs that occur in any of the fights */
+export const get_occuring_specs = createSelector<RootState, Fight[], string[]>(
+    get_fights,
+    ( fights ) => {
+
+        const specs_set = new Set<string>()
+
+        fights.forEach(fight => {
+            fight.players.forEach(player => {
+                specs_set.add(player.spec)
+            });
+        })
+        return Array.from(specs_set) // Set to Array
+    }
+)
+
+
+export const get_occuring_bosses = createSelector<RootState, Fight[], string[]>(
+    get_fights,
+    ( fights ) => {
+
+        const boss_names = new Set<string>()
+
+        fights.forEach(fight => {
+            if (fight.boss?.name) {
+                boss_names.add(fight.boss.name)
+            }
+        })
+        return Array.from(boss_names)
+    }
+)
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -33,6 +81,20 @@ function _process_actor(actor: Actor) {
 }
 
 
+function is_empty_fight(fight: Fight) {
+
+    if (fight.boss?.casts?.length) {
+        return false
+    }
+
+    if (fight.players.some(player => player.casts.length > 0)) {
+        return false
+    }
+    // sorry bro
+    return true
+}
+
+
 function _process_fight(fight: Fight) {
     if (fight.boss) {
         fight.boss = _process_actor(fight.boss)
@@ -42,19 +104,36 @@ function _process_fight(fight: Fight) {
     return fight
 }
 
+
+
 function _process_fights(fights: Fight[]) {
-    return fights.map(fight => _process_fight(fight))
+    fights = fights.map(fight => _process_fight(fight))
+    fights = fights.filter(fight => !is_empty_fight(fight))
+    return fights
 }
 
 
 const SLICE = createSlice({
     name: "fights",
 
-    initialState: [] as Fight[],
+    initialState: {
+        fights_by_id: {} as {[key: string]: Fight},
+        fight_ids: [] as string[],
+    },
 
     reducers: {
-        set_fights: (_, action) => {
-            return _process_fights(action.payload)
+        set_fights: (state, action: PayloadAction<Fight[]>) => {
+
+            const fights = _process_fights(action.payload ?? [])
+
+            state.fights_by_id = {}
+            state.fight_ids = []
+            fights.forEach(fight => {
+                const fight_key = `${fight.report_id}/${fight.fight_id}`
+                state.fights_by_id[fight_key] = fight
+                state.fight_ids.push(fight_key)
+            })
+            return state
         },
     }, // reducers
 
@@ -73,17 +152,12 @@ function _pin_first_fight(fights: Fight[]) {
     if (fights.length == 0) { return fights }
 
     const [first_fight, ...others] = fights
-    // extract the boss-fight
-    let pinned_fight = {...first_fight}
-    pinned_fight.pinned = true
-    pinned_fight.players = []
-    if (pinned_fight.boss) {
-        pinned_fight.boss.pinned = true
+    first_fight.pinned = true
+    if (first_fight.boss) {
+        first_fight.boss.pinned = true
     }
 
-    // remove the boss from the original
-    first_fight.boss = undefined
-    return [pinned_fight, first_fight, ...others]
+    return [first_fight, ...others]
 }
 
 
@@ -136,3 +210,19 @@ export function load_fights(mode: string, {boss_slug, spec_slug="", search=""} :
     } // async dispatch
 }
 
+
+export function load_report_fights(report_id: string, search: string = "") {
+
+    return async (dispatch: AppDispatch) => {
+        dispatch({type: "ui/set_loading", payload: {key: "fights", value: true}})
+
+        const url = `/api/user_reports/${report_id}/fights`;
+        const report_data = await fetch_data(url, search)
+
+        // user_reports returns the fights as a dict
+        const fights = Object.values(report_data.fights)
+
+        dispatch(set_fights(report_data.fights))
+        dispatch({type: "ui/set_loading", payload: {key: "fights", value: false}})
+    }
+}

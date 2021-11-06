@@ -4,16 +4,17 @@ import type Fight from "../../types/fight"
 import { MODES } from "../../store/ui";
 import { WCL_URL } from "../../constants"
 import { get_boss } from "../../store/bosses";
+import { get_role } from "../../store/roles";
+import { get_spec } from "../../store/specs";
 import { kFormatter } from "../../utils"
 import { useAppSelector } from "../../store/store_hooks";
 
+// @ts-ignore
 import styles from "./PlayerName.scss"
-import { get_spec } from "../../store/specs";
-import { get_role } from "../../store/roles";
 
 
 function spec_ranking_color(i = 0) {
-    if (i == -1) { return "" } else
+    if (i <= 0) { return "" } else
     if (i == 1) { return "wow-artifact" } else
     if (i <= 25) { return "wow-astounding" } else
     if (i <= 100) { return "wow-legendary" } else
@@ -61,24 +62,30 @@ export function PlayerName({fight, player} : {fight: Fight, player: Actor}) {
     ///////////////////
     // apply filters
     if (!player) { return null}
+    if (!spec) { return null}
     if (!FILTERS.is_player_visible(player, filters)) { return null}
 
     ///////////////////
     // vars
-    const report_url = `${WCL_URL}/reports/${fight.report_id}#fight=${fight.fight_id}`
+    let report_url = `${WCL_URL}/reports/${fight.report_id}#fight=${fight.fight_id}`
+    if (player.source_id && player.source_id > 0) {
+        report_url = `${report_url}&source=${player.source_id}`
+    }
+
+    const className = spec_ranking_color(player.rank) || `wow-${player.class}`
 
     ///////////////////
     // render
     return (
-        <div className={`${styles.player_name} ${spec_ranking_color(player.rank)}`}>
+        <div className={`${styles.player_name} ${className}`}>
 
             <a target="_blank" href={report_url}>
                 {mode_comp && <img className={styles.player_name__role_icon} src={role.icon_path}></img>}
                 <img className={styles.player_name__spec_icon} src={spec.icon_path}></img>
 
-                <span className={`${styles.player_name__name} wow-${player.class}`}>{player.name}</span>
+                <span className={`${styles.player_name__name}`}>{player.name}</span>
                 {mode_spec && player.rank && <span className={styles.player_name__rank}>#{player.rank}</span>}
-                {mode_spec && player.rank && player.total && <span className={styles.player_name__total}>{kFormatter(player.total)}</span>}
+                {player.total && <span className={styles.player_name__total}>{kFormatter(player.total)}</span>}
             </a>
         </div>
     )

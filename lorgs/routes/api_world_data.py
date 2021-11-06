@@ -4,18 +4,19 @@ eg.: spells, classes, specs
 """
 
 # IMPORT THIRD PARTY LIBRARIES
-import flask
+import fastapi
+from fastapi_cache.decorator import cache
 
 # IMPORT LOCAL LIBRARIES
-from lorgs.cache import cache
 from lorgs.models.raid_boss import RaidBoss
 from lorgs.models.raid_zone import RaidZone
+from lorgs.models.wow_class import WowClass
 from lorgs.models.wow_role import WowRole
 from lorgs.models.wow_spec import WowSpec
 from lorgs.models.wow_spell import WowSpell
 
 
-blueprint = flask.Blueprint("api.world_data", __name__)
+router = fastapi.APIRouter()
 
 
 ###############################################################################
@@ -24,10 +25,9 @@ blueprint = flask.Blueprint("api.world_data", __name__)
 #
 ###############################################################################
 
-
-@blueprint.get("/roles")
-@cache.cached()
-def get_roles():
+@router.get("/roles")
+@cache()
+async def get_roles():
     """Get all roles (tank, heal, mpds, rdps)."""
     return {
         "roles": [role.as_dict() for role in WowRole.all]
@@ -36,30 +36,42 @@ def get_roles():
 
 ###############################################################################
 #
+#       Classes
+#
+###############################################################################
+
+@router.get("/classes")
+@cache()
+async def get_classes():
+    return {c.name_slug: c.as_dict() for c in WowClass.all}
+
+
+###############################################################################
+#
 #       Specs
 #
 ###############################################################################
 
-@blueprint.get("/specs")
-@cache.cached(query_string=True)
-def get_specs_all():
+@router.get("/specs", tags=["specs"])
+@cache()
+async def get_specs_all():
     all_specs = sorted(WowSpec.all)
     all_specs = [specs.as_dict() for specs in all_specs]
     return {"specs": all_specs}
 
 
-@blueprint.get("/specs/<string:spec_slug>")
-@cache.cached()
-def get_spec(spec_slug):
+@router.get("/specs/{spec_slug}", tags=["specs"])
+@cache()
+async def get_spec(spec_slug: str):
     spec = WowSpec.get(full_name_slug=spec_slug)
     if not spec:
         return "Invalid Spec.", 404
     return spec.as_dict()
 
 
-@blueprint.get("/specs/<string:spec_slug>/spells")
-@cache.cached()
-def get_spec_spells(spec_slug):
+@router.get("/specs/{spec_slug}/spells", tags=["specs"])
+@cache()
+async def get_spec_spells(spec_slug: str):
     """Get all spells for a given spec.
 
     Args:
@@ -80,19 +92,19 @@ def get_spec_spells(spec_slug):
 #
 ###############################################################################
 
-@blueprint.get("/spells/<int:spell_id>")
-@cache.cached()
-def spells_one(spell_id):
+@router.get("/spells/{spell_id}", tags=["spells"])
+@cache()
+async def spells_one(spell_id: int):
     """Get a single Spell by spell_id."""
     spell = WowSpell.get(spell_id=spell_id)
     if not spell:
-        flask.abort(404, description="Spell not found")
+        return "Spell not found", 400
     return spell.as_dict()
 
 
-@blueprint.get("/spells")
-@cache.cached()
-def spells_all():
+@router.get("/spells", tags=["spells"])
+@cache()
+async def spells_all():
     """Get all Spells."""
     spells = WowSpell.all
     return {spell.spell_id: spell.as_dict() for spell in spells}
@@ -104,17 +116,17 @@ def spells_all():
 #
 ###############################################################################
 
-@blueprint.get("/zones")
-@cache.cached()
-def get_zones():
+@router.get("/zones", tags=["raids"])
+@cache()
+async def get_zones():
     """Get all raid-zones."""
     zones = RaidZone.all
     return {zone.id: zone.as_dict() for zone in zones}
 
 
-@blueprint.get("/zones/<int:zone_id>")
-@cache.cached()
-def get_zone(zone_id):
+@router.get("/zones/{zone_id}", tags=["raids"])
+@cache()
+async def get_zone(zone_id: int):
     """Get a specific (raid-)Zone."""
     zone = RaidZone.get(id=zone_id)
     if not zone:
@@ -122,9 +134,9 @@ def get_zone(zone_id):
     return zone.as_dict()
 
 
-@blueprint.get("/zones/<int:zone_id>/bosses")
-@cache.cached()
-def get_zone_bosses(zone_id):
+@router.get("/zones/{zone_id}/bosses", tags=["raids"])
+@cache()
+async def get_zone_bosses(zone_id: int):
     """Get all Bosses in a given Raid Zone."""
     zone = RaidZone.get(id=zone_id)
     if not zone:
@@ -140,9 +152,9 @@ def get_zone_bosses(zone_id):
 
 
 
-@blueprint.get("/bosses")
-@cache.cached()
-def get_bosses():
+@router.get("/bosses", tags=["raids"])
+@cache()
+async def get_bosses():
     """Gets all Bosses
 
     Warning:
@@ -155,9 +167,9 @@ def get_bosses():
     }
 
 
-@blueprint.get("/bosses/<string:boss_slug>")
-@cache.cached(query_string=True)
-def get_boss(boss_slug):
+@router.get("/bosses/{boss_slug}", tags=["raids"])
+@cache()
+async def get_boss(boss_slug: str):
     """Get a single Boss.
 
     Args:
@@ -170,8 +182,9 @@ def get_boss(boss_slug):
     return boss.as_dict()
 
 
-@blueprint.get("/bosses/<string:boss_slug>/spells")
-def get_boss_spells(boss_slug):
+@router.get("/bosses/{boss_slug}/spells", tags=["raids"])
+@cache()
+async def get_boss_spells(boss_slug: str):
     """Get Spells for a given Boss.
 
     Args:
@@ -181,5 +194,5 @@ def get_boss_spells(boss_slug):
     boss = RaidBoss.get(full_name_slug=boss_slug)
     if not boss:
         return "Invalid Boss.", 404
-    return {spell.spell_id: spell.as_dict() for spell in boss.spells}
 
+    return {spell.spell_id: spell.as_dict() for spell in boss.all_abilities}

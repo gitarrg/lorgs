@@ -10,6 +10,8 @@
 
     3) Borders
 
+    4) Form Inputs
+
 
 */
 
@@ -54,6 +56,11 @@ a, a:hover, a:visited, a:active {
 .text-black {
     color: #000;
 }
+
+.text-white {
+    color: #FFF;
+}
+
 .text-muted {
     color: #888 !important;
 }
@@ -63,6 +70,10 @@ a, a:hover, a:visited, a:active {
 
 .text-dark {
     color: #303030; // only used on the help page
+}
+
+.text-danger {
+    color: var(--danger);
 }
 
 
@@ -111,5 +122,34 @@ a, a:hover, a:visited, a:active {
 
 .rounded {
     border-radius: 0.25rem !important;
+}
+
+
+/*******************************************************************************
+ *
+ * 4) Form Inputs
+ *
+*******************************************************************************/
+
+.form-input {
+
+    // only apply the styles when the inputs arn't empty
+    &:not(:placeholder-shown) {
+        font-weight: bold;
+
+        // not empty + valid
+        :not(:focus):valid,
+        :not(:focus).valid
+        {
+            border: var(--success) solid 2px;
+        }
+
+        &:invalid,
+        &.invalid
+        {
+            border: var(--danger) solid 2px;
+            color: var(--danger);
+        }
+    }
 }
 

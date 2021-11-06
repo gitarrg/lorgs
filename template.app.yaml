@@ -15,11 +15,11 @@ automatic_scaling:
 
 entrypoint: >
   gunicorn
-  -b :$PORT
-  --timeout=600
+  --bind :$PORT
   --workers 2
-  "lorgs.app:create_app()"
-# longer timeout for the api calls that load data
+  --log-level warning
+  --worker-class uvicorn.workers.UvicornWorker
+  "lorgs.app:create_app"
 
 
 env_variables:
@@ -27,6 +27,15 @@ env_variables:
   # Lorgs Config
   LORGS_CONFIG_NAME: lorgs.config.ProductionConfig
   SECRET_KEY: {{SECRET_KEY}}
+
+  # Third Party Credentials
+  WCL_CLIENT_ID: {{WCL_CLIENT_ID}}
+  WCL_CLIENT_SECRET: {{WCL_CLIENT_SECRET}}
+
+  DISCORD_CLIENT_ID: {{DISCORD_CLIENT_ID}}
+  DISCORD_CLIENT_SECRET: {{DISCORD_CLIENT_SECRET}}
+  DISCORD_BOT_TOKEN: {{DISCORD_BOT_TOKEN}}
+  REDIRECT_URI: {{REDIRECT_URI}}
 
   # Database Credentials
   MONGO_URI: {{MONGO_URI}}

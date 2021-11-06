@@ -2,14 +2,11 @@
 
 .container {
 
+    border: 1px solid salmon;
+
     --hover-scale: 1.05;
 
     cursor: pointer;
-
-    :global .icon-l {
-        border-width: 1.5px;
-    }
-
 
     &:hover {
         border-color: white;
