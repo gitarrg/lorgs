@@ -20,7 +20,6 @@ async def get_user_report(report_id: str):
     user_report = UserReport.from_report_id(report_id=report_id)
     if not user_report:
         return {"message": "not found"}
-        # return "Report not found.", 404
 
     return user_report.as_dict()
 

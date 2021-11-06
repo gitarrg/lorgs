@@ -51,7 +51,7 @@ export function kFormatter(n: number, digits=2) {
 
 export function slug(str: string) {
     return str
-        .replace(/^\s+|\s+$/g, '')   // trim
+        .replace(/(^\s+)|(\s+$)/g, '')   // trim
         .toLowerCase()
         .replace(/[^a-z0-9 -]/g, '') // Remove invalid chars
         .replace(/\s+/g, '-')        // Collapse whitespace and replace by -
