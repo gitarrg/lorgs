@@ -107,24 +107,26 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
         fight_start = self.fight.start_time_rel if self.fight else 0
 
         for cast_data in casts_data:
+            cast_type: str = cast_data.get("type") or "unknown"
 
-            if self._has_source_id:
-                if cast_data["type"] == "cast" and cast_data.get("sourceID") != self.source_id:
-                    continue
-                if cast_data["type"] == "applybuff" and cast_data.get("targetID") != self.source_id:
-                    continue
+            cast_actor_id = cast_data.get("sourceID")
+            if cast_type == "applybuff":
+                cast_actor_id = cast_data.get("targetID")
+
+            if self._has_source_id and (cast_actor_id != self.source_id):
+                continue
 
             # Add the Cast Object
             cast = Cast()
-            cast.spell_id = cast_data["abilityGameID"]
+            cast.spell_id = cast_data.get("abilityGameID")
             cast.spell_id = WowSpell.resolve_spell_id(cast.spell_id)
-            cast.timestamp = cast_data["timestamp"] - fight_start
+            cast.timestamp = cast_data.get("timestamp", 0) - fight_start
             cast.duration = cast_data.get("duration")
             if cast.duration:
                 cast.duration *= 0.001
 
             # we check if the buff was applied before..
-            if cast_data["type"] == "removebuff":
+            if cast_type == "removebuff":
                 start_cast = active_buffs.get(cast.spell_id)
 
                 # special case for buffs that are applied pre pull
@@ -240,11 +242,14 @@ class Player(BaseActor):
 
         # for spec rankings we don't know the source ID upfront..
         # but we can fill that gap here
+        print("1", "process_query_result", self._has_source_id)
         if not self._has_source_id:
             casts = utils.get_nested_value(query_result, "report", "events", "data") or []
+            print("CASTS", casts)
             for cast in casts:
                 if cast.get("type") == "cast":
                     self.source_id = cast.get("sourceID")
+                    print("2", "process_query_result", self.source_id)
                     break
 
     def process_death_events(self, death_events):

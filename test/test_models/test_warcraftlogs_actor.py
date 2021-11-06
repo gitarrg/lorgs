@@ -64,7 +64,7 @@ class TestBaseActor(unittest.TestCase):
         #inputs
         spells = [WowSpell(spell_id=101), WowSpell(spell_id=102)]
 
-        expected = "type in ('applybuff', 'removebuff') and ability.id in (101,102)"
+        expected = "type in ('applybuff','removebuff','applydebuff','removedebuff') and ability.id in (101,102)"
 
         # run and test
         q = self.actor.get_buff_query(spells)
@@ -91,7 +91,7 @@ class TestBaseActor(unittest.TestCase):
                 "timestamp": 1010,
                 "type": "cast",
                 "sourceID": 10,
-                "abilityGameID": 101,
+                "abilityGameID": 103,
             },
         ]}
 
@@ -102,7 +102,7 @@ class TestBaseActor(unittest.TestCase):
         assert len(self.actor.casts) == 3
 
         cast = self.actor.casts[2]
-        assert cast.spell_id == 101
+        assert cast.spell_id == 103
         assert cast.timestamp == 1010
 
     def test__process_casts__ignore_other_source_ids(self):
@@ -117,17 +117,6 @@ class TestBaseActor(unittest.TestCase):
         self.actor.source_id = 10
         self.actor.process_query_result(casts_data)
         assert not self.actor.casts
-
-    def test__process_casts__sets_source_id_from_casts(self):
-        casts_data = {"data": [
-            {"type": "cast", "sourceID": 32, "timestamp": 10, "abilityGameID": 0},
-        ]}
-
-        assert not self.actor.casts
-        self.actor.source_id = -1
-        self.actor.process_query_result(casts_data)
-        assert len(self.actor.casts) == 1
-        assert self.actor.source_id == 32
 
     def test__process_query_result__calc_buff_duration(self):
         casts_data = {"data": [
@@ -204,3 +193,14 @@ class TestPlayer(unittest.TestCase):
 
         assert "CAST_QUERY" in query
         assert "BUFF_QUERY" in query
+
+    def test__process_casts__sets_source_id_from_casts(self):
+        casts_data = {"report": {"events": { "data": [
+            {"type": "cast", "sourceID": 32},
+        ]}}}
+
+        assert not self.player.casts
+        self.player.source_id = -2
+        self.player.process_query_result(casts_data)
+        assert len(self.player.casts) == 1
+        assert self.player.source_id == 32
