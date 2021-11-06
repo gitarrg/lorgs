@@ -16,8 +16,5 @@ from lorgs.data.potions import *
 from lorgs.data.trinkets import *
 
 # Raids
-from lorgs.data.raids.t26_castle_nathria import *
-from lorgs.data.raids.t28_sanctum_of_domination import *
+from lorgs.data.raids import *
 
-
-CURRENT_ZONE = SANCTUM_OF_DOMINATION

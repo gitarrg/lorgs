@@ -91,7 +91,6 @@ class CompRanking(warcraftlogs_base.Document):
             prefix = f"report.{key}"
             search_kwargs = warcraftlogs_base.query_args_to_mongo(*value, prefix=prefix)
             filter_kwargs.update(search_kwargs)
-            print("filter_kwargs", filter_kwargs)
 
         # Query
         reports = CompRankingReport.objects  # todo: find a way to use the self.reports list field instead

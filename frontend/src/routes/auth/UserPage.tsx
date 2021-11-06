@@ -1,7 +1,7 @@
 import HeaderLogo from '../../components/HeaderLogo'
+import LogoutButton from "./LogoutButton"
 import style from "./UserPage.scss"
 import useUser from "./useUser"
-import LogoutButton from "./LogoutButton"
 
 
 export default function UserPage() {

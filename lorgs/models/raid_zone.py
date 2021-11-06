@@ -1,8 +1,10 @@
 """Defines a Raid in the Game."""
 # pylint: disable=too-few-public-methods
 
-# IMPORT LOCAL LIBRARIES
+# IMPORT STANDARD LIBRARIES
 import typing
+
+# IMPORT LOCAL LIBRARIES
 from lorgs import utils
 from lorgs.models import base
 from lorgs.models.raid_boss import RaidBoss
@@ -30,6 +32,7 @@ class RaidZone(base.Model):
         }
 
     def add_boss(self, **kwargs) -> RaidBoss:
+        """Add a new RaidBoss to this zone."""
         boss = RaidBoss(zone=self, **kwargs)
         self.bosses.append(boss)
         return boss

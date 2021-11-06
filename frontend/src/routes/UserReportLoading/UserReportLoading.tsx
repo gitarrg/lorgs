@@ -1,11 +1,8 @@
-import { useHistory, useLocation } from "react-router";
-import {useInterval} from 'react-use';
-import { fetch_data } from "../../api";
-import { Fragment } from "react";
-
-
-// @ts-ignore
 import styles from "./UserReportLoading.scss"
+import { Fragment } from "react";
+import { fetch_data } from "../../api";
+import { useHistory, useLocation } from "react-router";
+import { useInterval } from 'react-use';
 
 
 /** Frequency in ms how often to check for task status updates */
@@ -24,9 +21,9 @@ async function get_task_status(task_name : string) {
 }
 
 
-function InfoBlock({params}) {
+function InfoBlock({ params }) {
 
-    const found_keys = [] // keeps track of keys we already had
+    const found_keys: string[] = [] // keeps track of keys we already had
     const info_elements: JSX.Element[] = [] // keeps track of keys we already had
     for (const key of params.keys()) {
 
@@ -67,6 +64,9 @@ export default function UserReportLoading() {
     ////////////////////////////
     // Callback
     async function update_status() {
+
+        if (!task_name) { return }
+
         const info = await get_task_status(task_name)
         console.log("checking task status", info)
 

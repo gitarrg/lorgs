@@ -1,14 +1,14 @@
+import ButtonGroup from "../shared/ButtonGroup";
+import RaidCDButton from "./RaidCDButton";
+import SpellButton from "./SpellButton";
+import type Boss from "../../../types/boss";
+import type Class from "../../../types/class";
+import type Spec from "../../../types/spec";
 import { get_boss } from "../../../store/bosses";
 import { get_class } from "../../../store/classes";
 import { get_spec } from "../../../store/specs";
 import { get_spells_for_type, get_used_spells } from "../../../store/spells";
 import { useAppSelector } from "../../../store/store_hooks";
-import type Boss from "../../../types/boss";
-import type Class from "../../../types/class";
-import type Spec from "../../../types/spec";
-import ButtonGroup from "../shared/ButtonGroup";
-import SpellButton from "./SpellButton";
-import RaidCDButton from "./RaidCDButton";
 
 
 export type SpellTypeGroupProps = {

@@ -2,8 +2,6 @@ import {PlayerName, BossName} from "./PlayerName"
 import type Fight from "../../types/fight";
 import type Actor from "../../types/actor";
 import { FightInfo } from "./FightInfo";
-
-// @ts-ignore
 import styles from "./PlayerName.scss"
 
 

@@ -97,8 +97,11 @@ jobs:
           command: >
             gcloud --quiet app deploy
             --project lorrgs
-            --version=user-reports
             <<^ parameters.promote >> --no-promote<</ parameters.promote >>
+
+          # TODO:
+          # add "--version=user-reports"
+          # maybe as parameters for master/develop
 
       # 3) deploy the cloud functions
       # Note: this does not have a promote yes/no flag
@@ -152,4 +155,3 @@ workflows:
             branches:
               only:
                 - develop
-                - feature/user_reports

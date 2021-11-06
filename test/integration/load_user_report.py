@@ -1,5 +1,6 @@
 
 import dotenv
+from lorgs.logger import timeit
 dotenv.load_dotenv() # pylint: disable=wrong-import-position
 
 import asyncio
@@ -69,6 +70,13 @@ async def test_load_multiple_fights():
         fight_ids=ids,
         player_ids=[9]
     )
+
+    @timeit
+    async def save():
+        user_report.save()
+
+    await save()
+
 
 
 async def test_load():

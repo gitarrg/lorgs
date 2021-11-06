@@ -20,13 +20,6 @@ from lorgs.models.warcraftlogs_boss import Boss
 from lorgs.models.warcraftlogs_fight import Fight
 
 
-def guess_spec_slug_from_icon(icon: str):
-    """Guess a spec based on the icon name."""
-    if "-" in icon:
-        return icon.lower()
-    return ""
-
-
 class Report(warcraftlogs_base.EmbeddedDocument):
     """Defines a Report read from WarcraftLogs.com and stores in our DB."""
 

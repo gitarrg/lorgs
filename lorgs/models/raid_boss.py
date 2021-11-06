@@ -31,8 +31,6 @@ class RaidBoss(base.Model):
         self.spells: typing.List["WowSpell"] = []
         self.buffs: typing.List["WowSpell"] = []
         self.event_spells: typing.List["WowSpell"] = []
-        # alias to match the Spec Interface
-        # self.role = "boss"
 
     def __repr__(self):
         return f"<RaidBoss(id={self.id} name={self.name})>"

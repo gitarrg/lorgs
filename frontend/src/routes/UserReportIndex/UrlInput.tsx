@@ -75,7 +75,10 @@ export default function UrlInput({input_name="report_url"}) {
 
     /** Allow users to submit their URL by pressing enter */
     function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-        if (event.key == "Enter") { onClick() }
+        if (event.key == "Enter") {
+            event.preventDefault()
+            onClick()
+        }
     }
 
 

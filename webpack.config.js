@@ -151,7 +151,7 @@ module.exports = {
         usedExports: true,  // tree shacking
 
         // fix some dev server issues
-        runtimeChunk: 'single',
+        runtimeChunk: DEBUG ? 'single' : "false",
 
         minimize: !DEBUG,
         minimizer: [new TerserPlugin({

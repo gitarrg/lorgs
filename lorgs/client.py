@@ -12,16 +12,9 @@ import aiohttp
 from lorgs.logger import logger, timeit
 
 
-def query_name(query):
-    """str: short version of the query, used to logging."""
-    query = query.replace("\n", "")
-    query = query.replace(" ", "")
-    query = query.replace("{", "/")
-    query = query[:32] + "..."
-    return query
-
 # error text we get from Warcraftlogs if a report does not exist.
 ERROR_MESSAGE_INVALID_REPORT = "This report does not exist."
+
 
 class InvalidReport(ValueError):
     """Exception raised when a report was not found"""
@@ -32,8 +25,8 @@ class WarcraftlogsClient:
     URL_API = "https://www.warcraftlogs.com/api/v2/client"
     URL_AUTH = "https://www.warcraftlogs.com/oauth/token"
 
+    # reference used to provide a singelton interface.
     _instance: typing.Optional["WarcraftlogsClient"] = None
-    # <WarcraftlogsClient> or None: reference used to provide a singelton interface.
 
     @classmethod
     def get_instance(cls, *args, **kwargs) -> "WarcraftlogsClient":
@@ -55,13 +48,13 @@ class WarcraftlogsClient:
             cls._instance = cls(*args, **kwargs)
         return cls._instance
 
-    def __init__(self, client_id="", client_secret=""):
+    def __init__(self, client_id: str = "", client_secret: str = ""):
         super().__init__()
 
         # credentials
         self.client_id = client_id or os.getenv("WCL_CLIENT_ID")
         self.client_secret = client_secret or os.getenv("WCL_CLIENT_SECRET")
-        self.headers = {}
+        self.headers: typing.Dict[str, str] = {}
 
         logger.info("NEW CLIENT: %s", self.client_id)
         self._num_queries = 0
