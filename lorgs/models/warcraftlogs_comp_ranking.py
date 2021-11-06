@@ -155,7 +155,6 @@ class CompRanking(warcraftlogs_base.Document):
                     fightRankings(
                         metric: {metric}
                         page: {page}
-                        partition: 1
                     )
                 }}
             }}
