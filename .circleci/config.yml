@@ -72,6 +72,7 @@ jobs:
         default: false
 
       version:
+        # Note: May only contain lowercase letters, digits, and hyphens. Must begin and end with a letter or digit. Must not exceed 63 characters.
         description: version name for the App Engine Deploy
         type: string
         default: dev
@@ -139,7 +140,7 @@ workflows:
       # deploy for /master
       - deploy:
           promote: true
-          version: v0.2.1
+          version: v0-2-1
           requires:
             - build
           filters:
