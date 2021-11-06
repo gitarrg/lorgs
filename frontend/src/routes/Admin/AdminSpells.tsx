@@ -5,7 +5,7 @@ import { NavLink, useRouteMatch, Route, useParams } from 'react-router-dom';
 import { get_spell } from "../../store/spells";
 import Spec from "../../types/spec";
 import { useDispatch } from 'react-redux'
-import { get_is_loading, sort_spell_types } from "../../store/ui";
+import { get_is_loading } from "../../store/ui";
 
 import styles from "./AdminSpells.scss"
 

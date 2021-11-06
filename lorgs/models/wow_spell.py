@@ -1,5 +1,8 @@
 """A Spell/Ability in the Game."""
 
+# IMPORT STANDARD LIBRARIES
+import typing
+
 # IMPORT LOCAL LIBRARIES
 from lorgs.models import base
 
@@ -8,7 +11,7 @@ class WowSpell(base.Model):
     """Container to define a spell."""
 
     # TODO: those should be constants somewhere
-    TYPE_RAID = "raid"
+    TYPE_RAID = "other-raid"
     TYPE_PERSONAL = "personal"
     TYPE_EXTERNAL = "external"
 
@@ -19,6 +22,36 @@ class WowSpell(base.Model):
     # tags to indicate special properties
     TAG_DYNAMIC_CD = "dynamic_cd"
 
+    # map to track spell varations and their "master"-spells
+    spell_variations : typing.Dict[int, int]= {}
+
+    @staticmethod
+    def spell_ids(spells: typing.List["WowSpell"]) -> typing.List[int]:
+        """Converts a list of Spells to their spell_ids."""
+        ids = [] # [spell.spell_id for spell in spells]
+        for spell in spells:
+            ids += [spell.spell_id] + spell.variations
+        ids += []
+        ids = sorted(list(set(ids)))
+        return ids
+
+    @classmethod
+    def spell_ids_str(cls, spells: typing.List["WowSpell"]) -> str:
+        """Converts a list of Spells into a string of spell ids.
+
+        Used to construct queries
+
+        Example:
+            spell_ids_str([Spell100, Spell200, Spell300])
+            >>> "100,200,300
+        """
+        spell_ids = cls.spell_ids(spells)
+        return ",".join(str(spell_id) for spell_id in spell_ids)
+
+    @classmethod
+    def resolve_spell_id(cls, spell_id) -> int:
+        """Resolve a Spell ID for a spell variation to its main-spell."""
+        return cls.spell_variations.get(spell_id) or spell_id
 
     def __init__(self, spell_id: int, cooldown: int = 0, duration: int = 0, show: bool = True, **kwargs):
         self.spell_id = spell_id
@@ -29,6 +62,15 @@ class WowSpell(base.Model):
         self.name = kwargs.get("name") or ""
         self.show = show
         self.color = kwargs.get("color") or ""
+
+        # additional spell ids for the "same" spell.
+        # eg.: glyphed versions of the spell
+        # or sometimes boss abiltieis use different spells in
+        # differnet phases for the same mechanic
+        self.variations: typing.List[int] = kwargs.get("variations") or []
+
+        for variation_spell_id in self.variations:
+            self.spell_variations[variation_spell_id] = self.spell_id
 
         # str: type/category of spell
         self.spell_type = kwargs.get("spell_type") or ""

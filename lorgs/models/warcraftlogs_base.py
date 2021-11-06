@@ -1,7 +1,13 @@
+
+# for semi concrete classes
+# pylint: disable=abstract-method
+
 # IMPORT STANRD LIBRARIES
 import abc
 import re
 import json
+from typing import Type, TypeVar
+import typing
 
 # IMPORT THIRD PARTY LIBRARIES
 import mongoengine as me
@@ -78,10 +84,27 @@ class wclclient_mixin:
         return WarcraftlogsClient.get_instance()
 
     @abc.abstractmethod
-    def get_query(self, filters=None):
+    def get_query(self):
         """Get the Query string to fetch all information for this object."""
         return ""
 
+    @staticmethod
+    def combine_queries(*queries, op="or"):
+        """Combine multiple queries.
+
+        Example:
+            >>> combine_queries("foo", "bar or baz", op="and")
+            ((foo) and ("bar" or "baz"))
+
+        """
+        # combine all filters
+        queries = [q for q in queries if q]   # filter out empty statements
+        queries = [f"({q})" for q in queries] # wrap each into bracers
+
+        queries_combined = f" {op} ".join(queries)
+        return f"({queries_combined})"
+
+    @abc.abstractmethod
     def process_query_result(self, query_result: dict):
         """Implement some custom logic here to process our results from the query."""
 
@@ -94,16 +117,23 @@ class wclclient_mixin:
             chunks_size[int, optional]: load in chunks of this size.
 
         """
-        if not objects:
+        filters = filters or []
+
+        # Generate the queries,
+        # and filter out objects that generted no query (ussualy an indication that the item is already loaded)
+        items = [(obj, obj.get_query()) for obj in objects]
+        items = [(obj, q) for (obj, q) in items if q]
+        if not items:
             return
 
-        for chunk in utils.chunks(objects, chunk_size):
+        for chunk in utils.chunks(items, chunk_size):
+            chunk_queries = [q for (_, q) in chunk]
+            chunk_items = [o for (o, _) in chunk]
 
-            queries = [obj.get_query(filters or []) for obj in chunk]
-            query_result = await self.client.multiquery(queries)
+            query_results = await self.client.multiquery(chunk_queries)
 
-            for obj, obj_data in zip(chunk, query_result):
-                obj.process_query_result(obj_data)
+            for obj, result in zip(chunk_items, query_results):
+                obj.process_query_result(result)
 
     async def load(self, *args, **kwargs):
         return await self.load_many([self], *args, **kwargs)
@@ -117,6 +147,9 @@ class EmbeddedDocument(me.EmbeddedDocument, wclclient_mixin):
     }
 
 
+T = TypeVar('T', bound="Document")
+
+
 class Document(me.Document, wclclient_mixin):
     """docstring for Document"""
 
@@ -125,8 +158,12 @@ class Document(me.Document, wclclient_mixin):
         "strict": False # ignore non existing properties
     }
 
+    # insert generated fields
+    if typing.TYPE_CHECKING:
+        objects: "me.queryset.QuerySetManager"
+
     @classmethod
-    def get_or_create(cls, **kwargs):
+    def get_or_create(cls: Type[T], **kwargs) -> T:
         obj = cls.objects(**kwargs).first()
         obj = obj or cls(**kwargs)
         return obj

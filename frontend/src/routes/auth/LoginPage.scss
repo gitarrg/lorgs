@@ -1,0 +1,21 @@
+
+
+.container {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    margin-top: 10rem;
+}
+
+
+/* Temp class to "hide" the login button, for now */
+.loginLink {
+    opacity: 0;
+
+    &:hover {
+        opacity: 1.0;
+    }
+}

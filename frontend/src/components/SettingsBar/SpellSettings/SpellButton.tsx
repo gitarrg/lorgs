@@ -1,13 +1,13 @@
 import { MouseEvent, useContext, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
-import { get_spell, set_spell_visible, get_spell_visible } from '../../../store/spells'
-import { ButtonGroupContext } from '../shared/ButtonGroup'
-import type Spec from '../../../types/spec'
-import type Boss from '../../../types/boss'
-import { useAppSelector } from '../../../store/store_hooks'
-
 import styles from "./SpellButton.scss"
+import type Boss from '../../../types/boss'
+import type Class from '../../../types/class'
+import type Spec from '../../../types/spec'
+import { ButtonGroupContext } from '../shared/ButtonGroup'
+import { get_spell, set_spell_visible, get_spell_visible } from '../../../store/spells'
+import { useAppSelector } from '../../../store/store_hooks'
 
 
 /* to avoid react rerenders when clicking the <a> tags */
@@ -24,25 +24,22 @@ const DYNAMIC_CD_WARNING = (
     >{WARNING_SIGN}</div>
 )
 
-export default function SpellButton({spec, spell_id, onClick} : { spec: Spec|Boss, spell_id: number, onClick?: Function } ) {
+export default function SpellButton({spec, spell_id, onClick} : { spec: Spec|Boss|Class, spell_id: number, onClick?: Function } ) {
 
     ////////////////////////////////////////////////////////////////////////////
     // Hooks
     //
     const dispatch = useDispatch()
     const spell = useAppSelector(state => get_spell(state, spell_id))
-    const visible = useAppSelector(state => get_spell_visible(state, spell?.spell_id))
+    const visible = useAppSelector(state => get_spell_visible(state, spell_id))
     const group_context = useContext(ButtonGroupContext)
-
-    if (!spell) { return null}
-    if (!spec) { return null}
 
     ////////////////////////////////////////////////////////////////////////////
     // Vars
     //
-    let wow_class = spec.class.name_slug
+    let wow_class = spec.class?.name_slug || spec.name_slug
     const disabled = visible ? "" : "disabled"
-    const dynamic_cd = spell.tags?.includes("dynamic_cd")// ? "dynamic_cd" : "";
+    const dynamic_cd = spell.tags?.includes("dynamic_cd")
 
     ////////////////////////////////////////////////////////////////////////////
 
@@ -87,6 +84,9 @@ export default function SpellButton({spec, spell_id, onClick} : { spec: Spec|Bos
         onClick && onClick(group_context.active)
 
     }, [group_context.active])
+
+    if (!spell) { return null }
+    if (!spec) { return null }
 
     ////////////////////////////////
     // Render

@@ -26,7 +26,7 @@ PRIEST_SHADOW     = WowSpec(role=RDPS, wow_class=PRIEST, name="Shadow")
 ################################################################################
 # Class
 #
-PRIEST_POWER_INFUSION = PRIEST.add_spell(              spell_id=10060,  cooldown=120, duration=20, color="#f7c625", name="Power Infusion",        icon="spell_holy_powerinfusion.jpg",    show=False)
+PRIEST_POWER_INFUSION = PRIEST.add_spell(spell_id=10060,  cooldown=120, duration=20, color="#f7c625", name="Power Infusion",        icon="spell_holy_powerinfusion.jpg",    show=False)
 PRIEST.add_spell(              spell_id=325013, cooldown=180, duration=10, color=COL_KYR,   name="Boon of the Ascended",  icon="ability_bastion_priest.jpg")
 PRIEST.add_spell(              spell_id=324724, cooldown=60,               color=COL_NECRO, name="Unholy Nova",           icon="ability_maldraxxus_priest.jpg")
 PRIEST.add_spell(              spell_id=323673, cooldown=45,  duration=5,  color=COL_VENTR, name="Mindgames",             icon="ability_revendreth_priest.jpg",   show=False)
@@ -49,5 +49,4 @@ PRIEST_SHADOW.add_spell(       spell_id=263165, cooldown=30,  duration=3,       
 # Shadowfiend/Mindbeder Variations (with different glyphs etc)
 for spec in (PRIEST_SHADOW, PRIEST_DISCIPLINE):
     spec.add_spell(spell_id=200174, cooldown=60,  duration=15, color="#58db97", name="Mindbender", icon="spell_shadow_soulleech_3.jpg")
-    for spell_id in (34433, 254232, 254224, 132603):
-        spec.add_spell(spell_id=spell_id, cooldown=180, duration=15, color="#58db97", name="Shadowfiend", icon="spell_shadow_shadowfiend.jpg")
+    spec.add_spell(spell_id=132603, cooldown=180, duration=15, color="#58db97", name="Shadowfiend", icon="spell_shadow_shadowfiend.jpg", variations=[34433, 254232, 254224])

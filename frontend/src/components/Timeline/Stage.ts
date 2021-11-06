@@ -82,13 +82,16 @@ export default class Stage extends Konva.Stage{
 
     layout_children() {
 
-        let y = this.ruler.height() - 1;
+        let y = this.ruler.height()
 
         this.rows.forEach(row => {
             row.y(y)
-            y += row.height() + this.FIGHT_SPACE  // TODO: add FightRow that can have subrows
-        })
 
+            const row_height = row.height()
+            if (row_height > 0) {
+                y += row.height() + this.FIGHT_SPACE + 1 // 1px for border
+            }
+        })
         this.height(y+1) // 1 extra to show the border
     }
 
@@ -193,7 +196,6 @@ export default class Stage extends Konva.Stage{
 
         // create fresh instances
         new_fights.forEach((fight) => {
-
             const row = new FightRow(fight)
             this.back_layer.add(row.background)
             this.main_layer.add(row.foreground)

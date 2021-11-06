@@ -121,12 +121,13 @@ export function load_boss_spells(boss_slug: string) {
 
     return async (dispatch: AppDispatch) => {
 
-        dispatch({type: "ui/set_loading", payload: {key: "boss_spells", value: true}})
+        const load_key = `boss/${boss_slug}`
+        dispatch({type: "ui/set_loading", payload: {key: load_key, value: true}})
 
         // Request
         const spells: RaidZoneAPIResponse = await fetch_data(`/api/bosses/${boss_slug}/spells`);
 
         dispatch(SLICE.actions.set_boss_spells({boss_slug, spells}))
-        dispatch({type: "ui/set_loading", payload: {key: "boss_spells", value: false}})
+        dispatch({type: "ui/set_loading", payload: {key: load_key, value: false}})
     }
 }

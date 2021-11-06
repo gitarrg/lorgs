@@ -16,3 +16,6 @@ export const LINE_HEIGHT = 28
 
 export const DEFAULT_ZOOM = 4
 
+
+export const DISCORD_CLIENT_ID = "903080290925293628"
+export const DISCORD_LOGIN_URL = "https://discord.com/oauth2/authorize"

@@ -7,8 +7,11 @@
 
 # str[]: name of the functions. (One per line)
 FUNCTIONS="
+load_comp_rankings
 load_spec_rankings
+load_user_report
 "
+
 src_dir="_src"
 
 # these should be read from the CI or .env file

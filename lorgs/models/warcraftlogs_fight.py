@@ -6,23 +6,24 @@ import typing
 # IMPORT THIRD PARTY LIBRARIES
 import arrow
 import mongoengine as me
+from lorgs import utils
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.lib import mongoengine_arrow
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
 from lorgs.models.raid_boss import RaidBoss
-from lorgs.models.warcraftlogs_actor import Boss
+from lorgs.models.warcraftlogs_boss import Boss
 from lorgs.models.warcraftlogs_actor import Player
 from lorgs.models.wow_spec import WowSpec
-from lorgs.models.wow_spell import WowSpell
+
 
 
 def get_composition(players: typing.List[Player]) -> dict:
     """Generate a Composition Dict from a list of Players."""
     players = players or []
 
-    comp = {
+    comp: typing.Dict[str, dict] = {
         "roles": defaultdict(int),
         "specs": defaultdict(int),
         "classes": defaultdict(int),
@@ -39,85 +40,82 @@ def get_composition(players: typing.List[Player]) -> dict:
     return comp
 
 
-class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
+class Fight(warcraftlogs_base.EmbeddedDocument):
 
     fight_id = me.IntField(primary_key=True)
 
     start_time: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField()
-    duration = me.IntField(default=0)
+
+    # fight duration in milliseconds
+    duration: int = me.IntField(default=0)
 
     # deprecated in favor of "duration".
     end_time_old: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField(db_field="end_time")
 
     boss_id = me.IntField()
-    players = me.ListField(me.EmbeddedDocumentField(Player))
-    boss = me.EmbeddedDocumentField(Boss)
+    players: typing.Dict[str, Player] = me.MapField(me.EmbeddedDocumentField(Player))
+    boss: Boss = me.EmbeddedDocumentField(Boss)
 
     composition = me.DictField()
     deaths = me.IntField(default=0)
     ilvl = me.FloatField(default=0)
     damage_taken = me.IntField(default=0)
 
-    meta = {
-        "strict": False # ignore non existing properties
-    }
+    # boss percentage at the end. (its 0.01 for kills)
+    percent = me.FloatField(default=0)
+    kill = me.BooleanField(default=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.report = None
-
         if self.boss:
             self.boss.fight = self
-
-        for player in self.players:
+        for player in self.players.values():
             player.fight = self
 
     def __str__(self):
         return f"{self.__class__.__name__}(id={self.fight_id}, players={len(self.players)})"
 
-    def as_dict(self) -> dict:
-        players = sorted(self.players, key=lambda player: (player.spec.role, player.spec, player.total))
-
+    def summary(self):
         return {
-            "fight_id": self.fight_id,
             "report_id": self.report.report_id,
-            "duration": self.duration_fix,
+            "fight_id": self.fight_id,
+            "percent": self.percent,
+            "kill": self.kill,
+            "duration": self.duration,
+            "boss": {"name": self.boss.raid_boss.full_name_slug} if self.boss else {},
+        }
+
+    def as_dict(self, player_ids: typing.List[int] = None) -> dict:
+
+        # Get players
+        players = list(self.players.values())
+        if player_ids:
+            players = [player for player in players if player.source_id in player_ids]
+        players = sorted(players, key=lambda player: (player.spec.role, player.spec, player.total))
+
+        # Return
+        return {
+            **self.summary(),
             "players": [player.as_dict() for player in players],
             "boss": self.boss.as_dict() if self.boss else {},
         }
 
     ##########################
     # Attributes
-
-    @property
-    def duration_fix(self) -> int:
-        # fix for old report, that have no "duration"-field
-        if self.duration:
-            return self.duration
-        duration = self.end_time_old - self.start_time
-        return duration.total_seconds()
-
     @property
     def end_time(self) -> arrow.Arrow:
-        return self.start_time.shift(seconds=self.duration_fix)
+        return self.start_time.shift(seconds=self.duration / 1000)
 
     @property
     def start_time_rel(self) -> int:
-        """Fight start time, relative to its parent report (in milliseconds)."""
-        start_time = self.start_time.timestamp() - self.report.start_time.timestamp()
-        start_time = start_time * 1000
-        return int(start_time)
+        """Fight start time, relative the parent report (in milliseconds)."""
+        return 1000 * int(self.start_time.timestamp() - self.report.start_time.timestamp())
 
     @property
     def end_time_rel(self) -> int:
-        """fight end time, relative to its parent report (in milliseconds)."""
-        end_time = self.end_time.timestamp() -  self.report.start_time.timestamp()
-        end_time = end_time * 1000
-        return int(end_time)
-
-    @property
-    def report_url(self) -> str:
-        return f"{self.report.report_url}#fight={self.fight_id}"
+        """fight end time, relative to the report (in milliseconds)."""
+        return 1000 * int(self.end_time.timestamp() -  self.report.start_time.timestamp())
 
     @property
     def raid_boss(self) -> RaidBoss:
@@ -126,12 +124,17 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
     #################################
     # Methods
     #
+    def get_player(self, **kwargs) -> Player:
+        """Returns a single Player based on the kwargs."""
+        return utils.get(self.players.values(), **kwargs)
 
-    def add_player(self, **kwargs) -> Player:
-        player = Player(**kwargs)
-        player.fight = self
-        self.players.append(player)
-        return player
+    def get_players(self, source_ids: typing.List[int] = None):
+        """Gets multiple players based on source id."""
+        players = list(self.players.values())
+        if source_ids:
+            players = [player for player in players if player.source_id in source_ids]
+
+        return [player for player in players if player]
 
     def add_boss(self, boss_id) -> RaidBoss:
         self.boss_id = boss_id
@@ -139,82 +142,32 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
         self.boss.fight = self
         return self.boss
 
-    #################################
+    ############################################################################
     # Query
     #
-
     @property
     def table_query_args(self) -> str:
         return f"fightIDs: {self.fight_id}, startTime: {self.start_time_rel}, endTime: {self.end_time_rel}"
 
-    def _build_cast_query(self, filters: typing.List[str] = None, cast_limit=1000) -> str:
-        """
-        Args:
-            cast_limit (int): maximum number of casts to query.
-            (not sure if we need to loop trough pages..)
-
-        """
-        if not filters:
-            # we gonna query for all spells
-            spell_ids = [spell.spell_id for spell in WowSpell.all]  # TODO: do we ever do this?
-            spell_ids = sorted(list(set(spell_ids)))
-            spell_ids = ",".join(str(spell_id) for spell_id in spell_ids)
-            filters = ["type='cast'", f"ability.id in ({spell_ids})"]
-
-        filters = " and ".join(filters)
-
-        return f"""\
-            casts: events(
-                limit: {cast_limit}
-                {self.table_query_args},
-                dataType: Casts,
-                filterExpression: "{filters}")
-            {{data}}
-        """
-
-    def get_query(self, filters: typing.List[str] = None) -> str:
-
-        filters = list(filters or [])
-
-        ################
-        #   PLAYERS    #
-        ################
-        player_query = ""
-        cast_query = ""
+    ############################################################################
+    #   Summary
+    #
+    def get_summary_query(self):
+        """Get the Query to load the fights summary."""
         if self.players:
-
-            players_to_load = [player for player in self.players if not player.casts]
-            if players_to_load:
-                cast_query = "casts: "
-                # TODO: this probl doesn't work with multiple players
-                for player in self.players:
-                    cast_query += player.get_sub_query()
-
-        else:
-            player_query = f"players: table({self.table_query_args}, dataType: Summary)"
-            cast_query = self._build_cast_query(filters)
-
-        ################
-        #     BOSS     #
-        ################
-        boss_query = ""
-        if self.boss:
-            boss_query = self.boss.get_sub_query()
-            boss_query = f"boss: {boss_query}" if boss_query else ""
+            return ""
 
         return textwrap.dedent(f"""\
             reportData
             {{
                 report(code: "{self.report.report_id}")
                 {{
-                    {player_query}
-                    {cast_query}
-                    {boss_query}
+                    summary: table({self.table_query_args}, dataType: Summary)
                 }}
             }}
         """)
 
-    def process_fight_players(self, players_data):
+    def process_players(self, players_data):
         if not players_data:
             logger.warning("players_data is empty")
             return
@@ -249,37 +202,67 @@ class Fight(me.EmbeddedDocument, warcraftlogs_base.wclclient_mixin):
                 total = 0
 
             # create and return yield player object
-            player = self.add_player()
+            player = Player()
+            player.fight = self
             player.spec_slug = spec.full_name_slug
             player.source_id = composition_data.get("id")
             player.name = composition_data.get("name")
-            player.total = total
+            player.total = int(total)
+            self.players[str(player.source_id)] = player
 
-    def process_query_result(self, query_result):
-        logger.debug("start")
-        report_data = query_result.get("report") or {}
 
-        if self.boss:
-            boss_casts = report_data.get("boss", {})
-            self.boss.process_query_result(boss_casts)
+        # call this before filtering to always get the full comp
+        self.composition = get_composition(self.players.values())
 
-        # load players
-        if not self.players: # only if they arn't loaded yet
-            logger.debug("create players")
-            players_data = report_data.get("players", {}).get("data", {})
-            self.process_fight_players(players_data)
+    def process_overview(self, data):
+        """Process the data retured from an Overview-Query."""
+        data = data.get("reportData") or data
+        summary_data = utils.get_nested_value(data, "report", "summary", "data") or {}
+        self.duration = self.duration or summary_data.get("totalTime", 0)
+        self.process_players(summary_data)
 
-            # call this before filtering to always get the full comp
-            self.composition = get_composition(self.players)
+    async def load_summary(self, force=False):
+        """Load this fights Summary.
 
-        # load player casts
+        Args:
+            force(boolean, optional): load even if its already loaded
+
+        """
+        if force:
+            self.players = {}
+
         if self.players:
-            logger.debug("create player casts")
-            casts_data = report_data.get("casts", {})
-            logger.debug("num casts: %d", len(casts_data.get("data", [])))
+            return ""
 
-            for player in self.players:
-                player.process_query_result(casts_data)
+        query = self.get_summary_query()
+        result = await self.client.query(query)
+        self.process_overview(result)
 
-        # filter out players with no casts
-        self.players = [player for player in self.players if player.casts]
+    # alias to set the default "load"-behaviour
+    process_query_result = process_overview
+    get_query = get_summary_query
+
+    ############################################################################
+    #   Load Player:
+    #
+    async def load_players(self, player_ids: typing.List[int] = None):
+
+        if not self.players:
+            await self.load_summary()
+
+        # Get Players to load
+        players_to_load = self.get_players(player_ids)
+        players_to_load = [player for player in players_to_load if not player.casts]
+
+        # see if we need to load the boss
+        boss = [] if (self.boss and self.boss.casts) else [self.boss]
+
+        if not (players_to_load or boss):
+            return
+
+        # load
+        await self.load_many(players_to_load + boss)
+
+        # re-add them to the dict, as otherwise we get some mongodb issues
+        for actor in players_to_load:
+            self.players[str(actor.source_id)] = actor

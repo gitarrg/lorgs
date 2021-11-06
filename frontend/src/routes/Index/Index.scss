@@ -1,4 +1,10 @@
 
+
+
+/**
+    Layout
+*/
+
 .container {
     display: flex;
     justify-content: center;
@@ -20,5 +26,20 @@
 
 
 .col_left {
-    max-width: 510px
+    max-width: 510px;
+    justify-content: space-between;
 }
+
+
+
+.user_report_link {
+
+    // border: 1px solid hsl(49, 97%, 59%);
+
+    a:hover span {
+        color: var(--wow-artifact);
+    }
+
+
+}
+

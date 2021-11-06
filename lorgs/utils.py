@@ -1,8 +1,10 @@
 
-from functools import wraps
 from operator import attrgetter
-import itertools
+import asyncio
 import datetime
+import functools
+import itertools
+import typing
 
 import arrow
 
@@ -17,13 +19,22 @@ def chunks(lst, n):
         yield lst[i:i + n]
 
 
-def format_time(timestamp):
+def format_time(timestamp: int):
+    """Format a time/duration.
 
-    t = datetime.timedelta(milliseconds=timestamp)
+    Args:
+        timestamp: time in milliseconds
 
-    t = str(t) # "0:05:12.00000"
-    t = t[2:7]
-    return t
+    Example:
+        >>> format_time(272000)
+        "4:32"
+
+    """
+    duration = datetime.timedelta(milliseconds=timestamp)
+
+    duration_str = str(duration) # "0:05:12.00000"
+    duration_str = duration_str[2:7]
+    return duration_str
 
 
 def format_timestamp(timestamp):
@@ -51,6 +62,27 @@ def slug(text, space=""):
     return text
 
 
+def str_int_list(string, sep="."):
+    """Converts string-list of intergers into an actual list."""
+    if not string:
+        return []
+
+    return [int(v) for v in string.split(sep)]
+
+
+def get_nested_value(dct: typing.Dict[str, typing.Any], *keys: str, default=None):
+
+    data = dct
+    for key in keys:
+        data = data or {}
+        try:
+            data = data[key]
+        except KeyError:
+            return default
+
+    return data
+
+
 def flatten(l):
     """Flattens a list of lists into a single large list.
 
@@ -61,7 +93,7 @@ def flatten(l):
 
 def as_list(func):
     """Wrap a Generator to return a list."""
-    @wraps(func)
+    @functools.wraps(func)
     def wrapped(*args, **kwargs):
         return list(func(*args, **kwargs))
 
@@ -164,3 +196,19 @@ def get(iterable, **attrs):
         if _all(pred(elem) == value for pred, value in converted):
             return elem
     return None
+
+
+def run_in_executor(_func):
+    """Wraps a function to run inside the asyncio default executor.
+
+    We can use this to make blocking functions async (more or less)
+
+    """
+    @functools.wraps(_func)
+    def wrapped(*args, **kwargs):
+        loop = asyncio.get_event_loop()
+        func = functools.partial(_func, *args, **kwargs)
+        return loop.run_in_executor(executor=None, func=func)
+
+    return wrapped
+
