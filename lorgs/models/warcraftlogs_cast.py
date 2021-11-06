@@ -24,13 +24,13 @@ class Cast(me.EmbeddedDocument):
         return f"Cast({self.spell_id}, at={time_fmt})"
 
     def as_dict(self):
-        dict = {
+        info = {
             "ts": self.timestamp,
             "id": self.spell_id,
         }
         if self.duration:
-            dict["d"] = self.duration
-        return dict
+            info["d"] = self.duration
+        return info
 
     ##########################
     # Attributes
