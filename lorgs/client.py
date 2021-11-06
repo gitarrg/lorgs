@@ -3,12 +3,13 @@
 
 # IMPORT STANDARD LIBRARIES
 import os
+import typing
 
 # IMPORT THIRD PARTY LIBRARIES
 import aiohttp
 
 # IMPORT LOCAL LIBRARIES
-from lorgs.logger import logger
+from lorgs.logger import logger, timeit
 
 
 def query_name(query):
@@ -31,11 +32,11 @@ class WarcraftlogsClient:
     URL_API = "https://www.warcraftlogs.com/api/v2/client"
     URL_AUTH = "https://www.warcraftlogs.com/oauth/token"
 
-    _instance = None
+    _instance: typing.Optional["WarcraftlogsClient"] = None
     # <WarcraftlogsClient> or None: reference used to provide a singelton interface.
 
     @classmethod
-    def get_instance(cls, *args, **kwargs):
+    def get_instance(cls, *args, **kwargs) -> "WarcraftlogsClient":
         """Get an instance of the Client.
 
         This is a singleton-style wrapper,
@@ -89,6 +90,11 @@ class WarcraftlogsClient:
         token = data.get("access_token", "")
         self.headers["Authorization"] = "Bearer " + token
 
+    async def ensure_auth(self):
+        if self.headers:
+            return
+        await self.update_auth_token()
+
     async def get_points_left(self):
         """Points left until we hit the rate limit."""
         query = """
@@ -103,6 +109,7 @@ class WarcraftlogsClient:
         info = result.get("rateLimitData", {})
         return info.get("limitPerHour", 0) - info.get("pointsSpentThisHour", 0)
 
+    @timeit
     async def query(self, query):
         self._num_queries += 1
         logger.debug("Num Queries: %d", self._num_queries)
@@ -112,9 +119,7 @@ class WarcraftlogsClient:
             {query}
         }}"""
 
-        # auth
-        if not self.headers:
-            await self.update_auth_token()
+        await self.ensure_auth()
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url=self.URL_API, json={"query": query}, headers=self.headers) as resp:
@@ -152,7 +157,6 @@ class WarcraftlogsClient:
                         raise ValueError(msg)
 
                 return result.get("data", {})
-
 
     async def multiquery(self, queries):
         """Execute a list of queries as a batch.

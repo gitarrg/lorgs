@@ -3,26 +3,25 @@
 # IMPORT STANRD LIBRARIES
 import typing
 import textwrap
+import asyncio
 
 # IMPORT THIRD PARTY LIBRARIES
 import arrow
 import mongoengine as me
 
 # IMPORT LOCAL LIBRARIES
+from lorgs import utils
 from lorgs.lib import mongoengine_arrow
+from lorgs.logger import logger
 from lorgs.models import warcraftlogs_actor
-from lorgs.models.warcraftlogs_actor import Player
 from lorgs.models import warcraftlogs_base
+from lorgs.models.warcraftlogs_actor import Player
 from lorgs.models.warcraftlogs_boss import Boss
 from lorgs.models.warcraftlogs_fight import Fight
 
 
 def guess_spec_slug_from_icon(icon: str):
-    """Guess a spec based on the icon name.
-
-
-
-    """
+    """Guess a spec based on the icon name."""
     if "-" in icon:
         return icon.lower()
     return ""
@@ -226,9 +225,12 @@ class Report(warcraftlogs_base.EmbeddedDocument):
         await fight.load_players(player_ids=player_ids)
 
     async def load_fights(self, fight_ids: typing.List[int], player_ids: typing.List[int]):
+        await self.client.ensure_auth()
 
         if not self.fights:
             await self.load_summary()
 
-        for fight_id in fight_ids:
-            await self.load_fight(fight_id=fight_id, player_ids=player_ids)
+        for ids in utils.chunks(fight_ids, 10):
+            logger.info(f"loading fights: {ids}")
+            tasks = [self.load_fight(fight_id=fight_id, player_ids=player_ids) for fight_id in ids]
+            await asyncio.gather(*tasks)

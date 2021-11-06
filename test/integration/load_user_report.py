@@ -62,28 +62,23 @@ async def test_load_multiple_players():
 
 async def test_load_multiple_fights():
 
+    ids = range(1, 20)
+
     user_report = UserReport.from_report_id(report_id=REPORT_ID)
-
-    fights = user_report.report.get_fights(2, 4, 8)
-
-    for fight in fights:
-        print(fight)
-
-    await user_report.report.load_many(fights)
-
-    for fight in fights:
-        print(fight)
-
+    await user_report.report.load_fights(
+        fight_ids=ids,
+        player_ids=[9]
+    )
 
 
 async def test_load():
 
     user_report = UserReport.from_report_id(report_id=REPORT_ID, create=True)
-
-
-    await user_report.report.load_fights(fight_ids=[18], player_ids=[9])
+    await user_report.report.load_fights(
+        fight_ids=[18],
+        player_ids=[9]
+    )
     user_report.save()
-
 
 
 async def main():
@@ -91,8 +86,8 @@ async def main():
     # await test_load_fight_summary()
     # await test_load_single_player()
     # await test_load_multiple_players()
-    # await test_load_multiple_fights()
-    await test_load()
+    await test_load_multiple_fights()
+    # await test_load()
 
 
 if __name__ == "__main__":
