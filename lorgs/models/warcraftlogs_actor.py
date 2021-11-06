@@ -168,7 +168,7 @@ class Player(BaseActor):
     deaths = me.ListField(me.DictField())
 
     def __str__(self):
-        return f"Player(id={self.source_id} name={self.name} spec={self.spec})" # casts={len(self.casts)})"
+        return f"Player(id={self.source_id} name={self.name} spec={self.spec})"
 
     def summary(self):
 

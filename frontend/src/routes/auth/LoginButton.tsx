@@ -1,9 +1,7 @@
-import { Link } from "react-router-dom"
-import { DISCORD_LOGIN_URL, DISCORD_CLIENT_ID } from "../../constants"
-import useUser from "./useUser"
 import style from "./LoginPage.scss"
-
-
+import useUser from "./useUser"
+import { DISCORD_LOGIN_URL, DISCORD_CLIENT_ID } from "../../constants"
+import { Link } from "react-router-dom"
 
 
 function get_login_url() {

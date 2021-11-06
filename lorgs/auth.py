@@ -4,9 +4,13 @@ We use Discords OAuuth2 Endpoints, to allow users to sign in via discord:
 Docs: https://discord.com/developers/docs/topics/oauth2
 
 """
+# IMPORT STANDARD LIBRARIES
 import os
 import typing
+
+# IMPORT THIRD PARTY LIBRARIES
 import aiohttp
+
 
 ################################################################################
 #   Settings
@@ -22,16 +26,14 @@ REDIRECT_URI = os.getenv("REDIRECT_URI") or "http://127.0.0.1:9001/login"
 # int: server ID for the lorgs disocrd.
 LORRGS_SERVER_ID  = 885638678607708172
 
-# Role IDs:
-# used to check what features a logged-in user can access
-ROLE_ID_ADMIN     = "885660648510455839"  # Arrgmin
-ROLE_ID_MOD       = "885660390120362024"  # Morrgerator
-ROLE_ID_PATREON   = "886595672525119538"  # Investorrg
 
+# Role IDs -> Permissions
+# simple map to control who can access which modules
 ROLE_PERMISSIONS = {
-    ROLE_ID_ADMIN:   ["user_reports", "mod", "admin"],
-    ROLE_ID_MOD:     ["user_reports", "mod"],
-    ROLE_ID_PATREON: ["ser_reports"],
+    "885660648510455839": ["user_reports", "mod", "admin"],  # Arrgmin
+    "885660390120362024": ["user_reports", "mod"],           # Morrgerator
+    "886595672525119538": ["user_reports"],                  # Investorrg
+    "887397111975518288": ["user_reports"],                  # Contributorrg
 }
 
 

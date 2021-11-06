@@ -20,8 +20,6 @@ function SpellTypeGroup({spell_type}: {spell_type: string}  ) {
     if (!spec) { return null }
     if (spells.length === 0) { return null }
 
-    console.log("spec", spec)
-
     const extra_class = "wow-" + spec.class.name_slug
 
     // Build a nice Group Name: either the Spec- or Class Name

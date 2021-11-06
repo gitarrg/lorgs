@@ -1,13 +1,11 @@
-
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { createSelector } from 'reselect'
 import type Fight from '../types/fight'
-import type Spell from '../types/spell'
+import type { SpellDict } from '../types/spell'
 import { RootState } from './store'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { set_boss_spells } from './bosses'
 import { set_fights } from './fights'
 import { set_spec_spells } from './specs'
-import type { SpellDict } from '../types/spell'
+
 
 const ICON_ROOT = "https://wow.zamimg.com/images/wow/icons/small"
 
@@ -28,9 +26,6 @@ export interface SpellSliceState {
     spell_types: string[],
     spells_by_type: {[key: string]: number[]}
 }
-
-// interface SpellMap { [key: number]: Spell }
-
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -1,15 +1,13 @@
 import { MouseEvent, useContext, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
-import { get_spell, set_spell_visible, get_spell_visible } from '../../../store/spells'
-import { ButtonGroupContext } from '../shared/ButtonGroup'
-import type Spec from '../../../types/spec'
-import type Boss from '../../../types/boss'
-import { useAppSelector } from '../../../store/store_hooks'
-
 import styles from "./SpellButton.scss"
-import Class from '../../../types/class'
-import { get_spec_for_spell_id } from '../../../store/specs'
+import type Boss from '../../../types/boss'
+import type Class from '../../../types/class'
+import type Spec from '../../../types/spec'
+import { ButtonGroupContext } from '../shared/ButtonGroup'
+import { get_spell, set_spell_visible, get_spell_visible } from '../../../store/spells'
+import { useAppSelector } from '../../../store/store_hooks'
 
 
 /* to avoid react rerenders when clicking the <a> tags */
@@ -36,19 +34,12 @@ export default function SpellButton({spec, spell_id, onClick} : { spec: Spec|Bos
     const visible = useAppSelector(state => get_spell_visible(state, spell_id))
     const group_context = useContext(ButtonGroupContext)
 
-    // hack for raid cd's, which are listed as 
-    // const spec2 = useAppSelector(state => get_spec_for_spell_id(state, spell_id))
-    // console.log({spec})
-    // if (spec.full_name_slug == "other-raid") {
-    //     spec = spec2
-    // }
-
     ////////////////////////////////////////////////////////////////////////////
     // Vars
     //
     let wow_class = spec.class?.name_slug || spec.name_slug
     const disabled = visible ? "" : "disabled"
-    const dynamic_cd = spell.tags?.includes("dynamic_cd")// ? "dynamic_cd" : "";
+    const dynamic_cd = spell.tags?.includes("dynamic_cd")
 
     ////////////////////////////////////////////////////////////////////////////
 

@@ -1,8 +1,13 @@
+
+# for semi concrete classes
+# pylint: disable=abstract-method
+
 # IMPORT STANRD LIBRARIES
 import abc
 import re
 import json
 from typing import Type, TypeVar
+import typing
 
 # IMPORT THIRD PARTY LIBRARIES
 import mongoengine as me
@@ -152,6 +157,10 @@ class Document(me.Document, wclclient_mixin):
         'abstract': True,
         "strict": False # ignore non existing properties
     }
+
+    # insert generated fields
+    if typing.TYPE_CHECKING:
+        objects: "me.queryset.QuerySetManager"
 
     @classmethod
     def get_or_create(cls: Type[T], **kwargs) -> T:

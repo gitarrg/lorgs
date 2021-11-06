@@ -1,9 +1,7 @@
-import { Link } from 'react-router-dom'
-import { useAppSelector } from '../../store/store_hooks'
-import { get_report_id } from '../../store/user_reports'
-
-// @ts-ignore
 import styles from "./UserReportNavbar.scss"
+import { Link } from 'react-router-dom'
+import { get_report_id } from '../../store/user_reports'
+import { useAppSelector } from '../../store/store_hooks'
 
 
 export default function UserReportNavbar() {

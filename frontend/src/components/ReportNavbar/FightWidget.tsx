@@ -15,8 +15,6 @@ function get_pull_color(percent: number) {
 
 interface FightWidgetProps {
     fight: Fight
-    selected? : boolean
-    onClick?: Function
 }
 
 

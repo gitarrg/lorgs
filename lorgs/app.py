@@ -15,7 +15,6 @@ from lorgs import db  # pylint: disable=unused-import
 from lorgs.routes import api
 
 
-
 def get_config(name=""):
     name = name or os.getenv("LORGS_CONFIG_NAME") or "lorgs.config.DevelopmentConfig"
     if name == "lorgs.config.ProductionConfig":

@@ -17,6 +17,7 @@ export function get_classes(state: RootState) {
     return state.classes.classes
 }
 
+
 export function get_class(state: RootState, class_name_slug: string) {
     return state.classes.classes[class_name_slug]
 }

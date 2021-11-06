@@ -1,8 +1,8 @@
+import style from "./LoginPage.scss"
 import { get_current_user, login } from "../../store/user"
 import { useAppDispatch, useAppSelector } from "../../store/store_hooks"
 import { useEffect } from "react"
 import { useHistory, useLocation } from "react-router"
-import style from "./LoginPage.scss"
 
 
 /** Page where users get redirected to, after login in. */

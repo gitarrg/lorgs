@@ -14,6 +14,8 @@ export const MODES = {
 export type Mode = "none" | "spec_ranking" | "comp_ranking"
 
 
+// TODO: ModeSettings should be in some "constants"-file
+
 interface ModeSetting {
     /** space in pixels between each fight row */
     fight_space: number
@@ -54,9 +56,6 @@ export function get_filters(state: RootState) {
 }
 
 
-
-
-
 export const get_is_loading = createSelector(
     (state: RootState) => state.ui._loading, // dependency
     (loading_state) => {
@@ -68,7 +67,6 @@ export const get_is_loading = createSelector(
 export function get_tooltip(state: RootState) {
     return state.ui.tooltip
 }
-
 
 
 ////////////////////////////////////////////////////////////////////////////////
