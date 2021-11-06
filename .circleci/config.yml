@@ -71,6 +71,11 @@ jobs:
         type: boolean
         default: false
 
+      version:
+        description: version name for the App Engine Deploy
+        type: string
+        default: dev
+
     docker:
       - image: google/cloud-sdk:alpine
 
@@ -97,11 +102,8 @@ jobs:
           command: >
             gcloud --quiet app deploy
             --project lorrgs
+            --version=<< parameters.version >>
             <<^ parameters.promote >> --no-promote<</ parameters.promote >>
-
-          # TODO:
-          # add "--version=user-reports"
-          # maybe as parameters for master/develop
 
       # 3) deploy the cloud functions
       # Note: this does not have a promote yes/no flag
@@ -137,6 +139,7 @@ workflows:
       # deploy for /master
       - deploy:
           promote: true
+          version: v0.2.1
           requires:
             - build
           filters:
