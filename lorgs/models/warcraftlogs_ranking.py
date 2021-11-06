@@ -86,9 +86,6 @@ class SpecRanking(warcraftlogs_base.Document):
                     specName: "{self.spec.name_slug_cap}"
                     metric: {self.spec.role.metric}
                     includeCombatantInfo: false
-
-                    partition: 1    # only for today
-
                 )
             }}
         }}
@@ -172,9 +169,6 @@ class SpecRanking(warcraftlogs_base.Document):
         query = self.get_query()
         query_result = await self.client.query(query)
         self.process_query_result(query_result)
-        # query_result = query_result.get("worldData", {}).get("encounter", {}).get("characterRankings", {})
-        # rankings = query_result.get("rankings", [])
-        # return rankings
 
     ############################################################################
     # Query: Fights
