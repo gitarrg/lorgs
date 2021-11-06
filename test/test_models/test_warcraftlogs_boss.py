@@ -25,19 +25,3 @@ class TestBoss(unittest.TestCase):
         with mock.patch("lorgs.models.raid_boss.RaidBoss.get") as get_boss_mock:
             get_boss_mock.return_value = None
             assert self.boss.get_sub_query() == ""
-
-    def test_get_sub_query(self):
-
-        with mock.patch("lorgs.models.raid_boss.RaidBoss.get") as get_boss_mock:
-            get_boss_mock.return_value = self.example_boss
-
-            query = self.boss.get_sub_query()
-
-        expected = "("
-        expected += "(type='cast' and ability.id in (101,102))" # casts
-        expected += " or "
-        expected += "(type in ('applybuff', 'removebuff') and ability.id in (201,202))" # buffs
-        expected += ")"
-
-        assert query == expected
-
