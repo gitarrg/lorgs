@@ -42,7 +42,7 @@ def timeit(func):
 
         end = time.time()
         ms = (end-start) * 1000
-        logger.debug(f"{func.__name__}: done | time: {ms:0.3f}ms")
+        logger.info(f"{func.__name__}: done | time: {ms:0.3f}ms")
 
         return r
     return wrapped
