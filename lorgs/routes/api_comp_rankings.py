@@ -52,7 +52,7 @@ async def get_comp_ranking(
     search["fights.0.composition.specs"] = spec or []
     search["fights.0.composition.classes"] = []  # implement this, if needed
 
-    search["fights"] = []
+    search["fights.0"] = []
     if killtime_min:
         search["fights.0"] += [f"duration.gt.{killtime_min * 1000}"]
     if killtime_max:
