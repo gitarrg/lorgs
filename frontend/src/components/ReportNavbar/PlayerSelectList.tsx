@@ -24,11 +24,10 @@ function RoleGroup({role, players} : {role: Role, players: Actor[]}) {
 export default function PlayerSelectList() {
 
     const players = useAppSelector(get_user_report_players)
-    const players_by_role = group_by(players, (player: Actor) => player.role)
+    const players_by_role = group_by(players, (player: Actor) => player.role || "mix")
     const roles = useAppSelector(get_roles)
 
     if (players.length == 0) { return null }
-
 
     // Render
     return (

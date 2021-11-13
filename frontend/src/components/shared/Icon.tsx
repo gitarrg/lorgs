@@ -1,6 +1,7 @@
 import type Boss from '../../types/boss'
 import type Role from '../../types/role'
 import type Spec from '../../types/spec'
+import type Class from '../../types/class'
 
 
 export default function Icon({
@@ -9,14 +10,14 @@ export default function Icon({
     size="m",
     alt=""
 } : {
-    spec: Spec | Role | Boss
+    spec: Spec | Class | Role | Boss
     className?: string,
     size?: "xs" | "s" | "m" | "l",
     alt?: string,
 } ) {
 
     // @ts-ignore
-    const name_slug = spec.code ?? spec.class.name_slug
+    const name_slug = spec.code ?? spec.class?.name_slug ?? spec.name_slug
 
 
     return (

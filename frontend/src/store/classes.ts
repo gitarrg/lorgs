@@ -39,7 +39,16 @@ const SLICE = createSlice({
 
     reducers: {
         set_classes: (state, action: PayloadAction<{[key: string]: Class}>) => {
-            state.classes = action.payload
+
+            state.classes = {}
+            state.class_names = []
+            
+            Object.values(action.payload).forEach(wow_class => {
+                wow_class.icon_path = `/static/img/classes/${wow_class.name_slug}.webp`
+
+                state.class_names.push(wow_class.name_slug)
+                state.classes[wow_class.name_slug] = wow_class
+            });
             return state
         },
     }, // reducers
