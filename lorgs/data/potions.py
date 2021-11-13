@@ -10,18 +10,18 @@ from lorgs.models.wow_spell import WowSpell
 # alias
 TYPE_POTION = WowSpell.TYPE_POTION
 TYPE_BUFFS = WowSpell.TYPE_BUFFS
+TYPE_HERO = WowSpell.TYPE_HERO
 
 
 ################################################################################
 # Buffs
 
 color_hero = "#5465ff"
-BLOODLUST =      OTHER_BUFFS.add_spell(spell_type=TYPE_BUFFS, color=color_hero, spell_id=2825,  duration=40, name="Bloodlust", icon="spell_nature_bloodlust.jpg")
-HEROISM =        OTHER_BUFFS.add_spell(spell_type=TYPE_BUFFS, color=color_hero, spell_id=32182, duration=40, name="Heroism",   icon="ability_shaman_heroism.jpg")
-TIMEWARP =       OTHER_BUFFS.add_spell(spell_type=TYPE_BUFFS, color=color_hero, spell_id=80353, duration=40, name="Time Warp", icon="ability_mage_timewarp.jpg")
-
-PRIMAL_RAGE_1 =  OTHER_BUFFS.add_spell(spell_type=TYPE_BUFFS, color=color_hero, spell_id=264667, duration=40, name="Primal Rage", icon="spell_shadow_unholyfrenzy.jpg")
-PRIMAL_RAGE_2 =  OTHER_BUFFS.add_spell(spell_type=TYPE_BUFFS, color=color_hero, spell_id=272678, duration=40, name="Primal Rage", icon="spell_shadow_unholyfrenzy.jpg")
+BLOODLUST =      OTHER_BUFFS.add_spell(spell_type=TYPE_HERO, color=color_hero, spell_id=2825,  duration=40, name="Bloodlust",    icon="spell_nature_bloodlust.jpg")
+HEROISM =        OTHER_BUFFS.add_spell(spell_type=TYPE_HERO, color=color_hero, spell_id=32182, duration=40, name="Heroism",      icon="ability_shaman_heroism.jpg")
+TIMEWARP =       OTHER_BUFFS.add_spell(spell_type=TYPE_HERO, color=color_hero, spell_id=80353, duration=40, name="Time Warp",    icon="ability_mage_timewarp.jpg")
+PRIMAL_RAGE_1 =  OTHER_BUFFS.add_spell(spell_type=TYPE_HERO, color=color_hero, spell_id=264667, duration=40, name="Primal Rage", icon="spell_shadow_unholyfrenzy.jpg")
+PRIMAL_RAGE_2 =  OTHER_BUFFS.add_spell(spell_type=TYPE_HERO, color=color_hero, spell_id=272678, duration=40, name="Primal Rage", icon="spell_shadow_unholyfrenzy.jpg")
 
 
 POWER_INFUSION = OTHER_BUFFS.add_spell(spell_type=TYPE_BUFFS, color="#f7c625",  spell_id=10060, cooldown=120, duration=20, name="Power Infusion", icon="spell_holy_powerinfusion.jpg")

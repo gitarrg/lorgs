@@ -242,14 +242,11 @@ class Player(BaseActor):
 
         # for spec rankings we don't know the source ID upfront..
         # but we can fill that gap here
-        print("1", "process_query_result", self._has_source_id)
         if not self._has_source_id:
             casts = utils.get_nested_value(query_result, "report", "events", "data") or []
-            print("CASTS", casts)
             for cast in casts:
                 if cast.get("type") == "cast":
                     self.source_id = cast.get("sourceID")
-                    print("2", "process_query_result", self.source_id)
                     break
 
     def process_death_events(self, death_events):

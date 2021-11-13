@@ -130,6 +130,15 @@ class CompRanking(warcraftlogs_base.Document):
         return utils.uniqify(spells, key=lambda spell: spell.spell_id)
 
     @staticmethod
+    def _get_raid_buffs() -> typing.List[WowSpell]:
+        """All spells of type RAID_CD.
+
+            eg.: Darkness, RallyCry, AMZ
+        """
+        spells = [spell for spell in WowSpell.all if spell.spell_type == spell.TYPE_HERO]
+        return utils.uniqify(spells, key=lambda spell: spell.spell_id)
+
+    @staticmethod
     def _spell_id_filter(spells):
         spell_ids = sorted([spell.spell_id for spell in spells])
         spell_ids = ",".join(str(spell_id) for spell_id in spell_ids)
@@ -142,9 +151,14 @@ class CompRanking(warcraftlogs_base.Document):
         filter_healing_cds = " and ".join([healer_filter, self._spell_id_filter(healing_cds)])
 
         raid_cds = self._get_raid_cds()
-        raid_cds_filter = self._spell_id_filter(raid_cds)
+        raid_cds_str = WowSpell.spell_ids_str(raid_cds)
+        raid_cds_filter = f"type='cast' and ability.id in ({raid_cds_str})"
 
-        return f"({filter_healing_cds}) or ({raid_cds_filter})"
+        raid_buffs = self._get_raid_buffs()
+        raid_buffs_str = WowSpell.spell_ids_str(raid_buffs)
+        raid_cds_filter = f"type in ('applybuff', 'removebuff') and ability.id in ({raid_buffs_str})"
+
+        return self.combine_queries(filter_healing_cds, raid_cds_filter, raid_cds_filter)
 
     def get_query(self, metric="execution", page=0) -> str:
         return f"""
