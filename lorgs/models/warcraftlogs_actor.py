@@ -47,6 +47,16 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
     def _has_source_id(self):
         return self.source_id >= 0
 
+    @property
+    def has_own_casts(self):
+        """Return true if a player has own casts (eg.: exclude raid wide buffs like bloodlust)."""
+        for cast in self.casts:
+            spell = WowSpell.get(spell_id=cast.spell_id)
+
+            if spell.spell_type != WowSpell.TYPE_BUFFS:
+                return True
+        return False
+
     #################################
     # Query
     #
@@ -110,7 +120,7 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
             cast_type: str = cast_data.get("type") or "unknown"
 
             cast_actor_id = cast_data.get("sourceID")
-            if cast_type == "applybuff":
+            if cast_type in ("applybuff", "removebuff"):
                 cast_actor_id = cast_data.get("targetID")
 
             if self._has_source_id and (cast_actor_id != self.source_id):

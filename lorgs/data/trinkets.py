@@ -1,6 +1,5 @@
 """Define Consumeables/Potions players can use."""
 # pylint: disable=line-too-long
-# pylint: disable=bad-whitespace
 # pylint: disable=wildcard-import
 # pylint: disable=unused-wildcard-import
 # from lorgs.data.classes import *

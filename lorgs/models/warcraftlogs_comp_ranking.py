@@ -135,7 +135,7 @@ class CompRanking(warcraftlogs_base.Document):
 
             eg.: Darkness, RallyCry, AMZ
         """
-        spells = [spell for spell in WowSpell.all if spell.spell_type == spell.TYPE_HERO]
+        spells = [spell for spell in WowSpell.all if spell.spell_type == spell.TYPE_BUFFS]
         return utils.uniqify(spells, key=lambda spell: spell.spell_id)
 
     @staticmethod
@@ -156,9 +156,9 @@ class CompRanking(warcraftlogs_base.Document):
 
         raid_buffs = self._get_raid_buffs()
         raid_buffs_str = WowSpell.spell_ids_str(raid_buffs)
-        raid_cds_filter = f"type in ('applybuff', 'removebuff') and ability.id in ({raid_buffs_str})"
+        raid_buffs_filter = f"type in ('applybuff', 'removebuff') and ability.id in ({raid_buffs_str})"
 
-        return self.combine_queries(filter_healing_cds, raid_cds_filter, raid_cds_filter)
+        return self.combine_queries(filter_healing_cds, raid_cds_filter, raid_buffs_filter)
 
     def get_query(self, metric="execution", page=0) -> str:
         return f"""
@@ -255,7 +255,7 @@ class CompRanking(warcraftlogs_base.Document):
 
         await fight.boss.load()
 
-        fight.players = {k: player for k, player in fight.players.items() if player.casts}
+        fight.players = {k: player for k, player in fight.players.items() if player.has_own_casts}
 
     async def load(self, limit=50, clear_old=False):
         """Fetch reports for this BossRanking.
