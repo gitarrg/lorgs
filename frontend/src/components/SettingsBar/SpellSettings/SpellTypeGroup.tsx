@@ -30,7 +30,7 @@ function create_spell_button(name_slug: string, spec: Spec|Boss|Class, spell_id:
 
     const key = `${name_slug}/${spell_id}`
 
-    if (spec.full_name_slug && spec.full_name_slug === "other-raid") {
+    if (spec?.full_name_slug && spec.full_name_slug === "other-raid") {
         return <RaidCDButton key={key} spell_id={spell_id} />
     }
     return <SpellButton key={key} spell_id={spell_id} spec={spec} />
@@ -59,11 +59,9 @@ export function SpellTypeGroup({ spell_type }: SpellTypeGroupProps) {
     const name_slug = type.class?.name_slug || type.full_name_slug || type.name_slug
     const className=`wow-${name_slug}`
 
-
     return (
         <ButtonGroup name={type.name} side="left" className={className}>
             {used_type_spells.map(spell_id => create_spell_button(name_slug, type, spell_id))}
-
         </ButtonGroup>
     );
 }
