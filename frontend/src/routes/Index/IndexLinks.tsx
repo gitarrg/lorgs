@@ -1,6 +1,7 @@
 import DiscordLogo from '../../assets/DiscordLogo'
 import PatreonLogo from '../../assets/PatreonLogo'
-import { DISCORD_LINK, PATREON_LINK } from '../../constants'
+import BuyMeACoffeeLogo from '../../assets/BuyMeACoffeeLogo'
+import { DISCORD_LINK, PATREON_LINK, BUYMEACOFFEE_LINK } from '../../constants'
 
 import style from "./IndexLink.scss"
 
@@ -36,6 +37,11 @@ export default function IndexLinks() {
                 <LinkButton url={PATREON_LINK}>
                     <PatreonLogo />
                     <span>Patreon</span>
+                </LinkButton>
+
+                <LinkButton url={BUYMEACOFFEE_LINK}>
+                    <BuyMeACoffeeLogo />
+                    <span>Buy me a Coffee</span>
                 </LinkButton>
 
             </div>
