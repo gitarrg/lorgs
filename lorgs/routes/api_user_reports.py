@@ -53,7 +53,7 @@ async def get_fights(report_id: str, fight: str, player: str):
 
 
 @router.get("/{report_id}/load_overview")
-async def load_user_report_overview(report_id: str, refresh=False):
+async def load_user_report_overview(report_id: str, refresh: bool = False):
     """Load a Report's Overview/Masterdata."""
     user_report = UserReport.from_report_id(report_id=report_id, create=True)
     if not user_report:
