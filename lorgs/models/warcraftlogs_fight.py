@@ -77,13 +77,16 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
         return f"{self.__class__.__name__}(id={self.fight_id}, players={len(self.players)})"
 
     def summary(self):
+
+        raid_boss_name = self.boss and self.boss.raid_boss and self.boss.raid_boss.full_name_slug
+
         return {
             "report_id": self.report.report_id,
             "fight_id": self.fight_id,
             "percent": self.percent,
             "kill": self.kill,
             "duration": self.duration,
-            "boss": {"name": self.boss.raid_boss.full_name_slug} if self.boss else {},
+            "boss": {"name": raid_boss_name},
         }
 
     def as_dict(self, player_ids: typing.List[int] = None) -> dict:
