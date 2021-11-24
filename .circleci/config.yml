@@ -140,13 +140,14 @@ workflows:
       # deploy for /master
       - deploy:
           promote: true
-          version: v0-2-1
+          version: v0-2-2
           requires:
             - build
           filters:
             branches:
               only:
                 - master
+                - user_report_fixes
 
       # deploy for /devlop and similar branches
       - deploy:
