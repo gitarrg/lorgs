@@ -69,7 +69,11 @@ export default function UrlInput({input_name="report_url"}) {
     /** Update the stored report code */
     function onClick() {
         setValue("report_code", report_id)
-        dispatch(load_report_overview(report_id))
+        dispatch(load_report_overview(report_id, false))
+    }
+    
+    function onClickReload() {
+        dispatch(load_report_overview(report_id, true))
     }
 
 
@@ -107,6 +111,14 @@ export default function UrlInput({input_name="report_url"}) {
                     disabled={!is_valid || is_loading}
                     onClick={onClick}>
                     load ▶
+                </button>
+
+                <button
+                    type="button"
+                    className="button"
+                    disabled={!is_valid || is_loading}
+                    onClick={onClickReload}>
+                        <i className="fas fa-sync-alt"></i>
                 </button>
 
             </div>

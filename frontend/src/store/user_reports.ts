@@ -129,7 +129,7 @@ export const {
 // Extra Actions
 
 /** Load a given user report */
-export function load_report_overview(report_id: string) {
+export function load_report_overview(report_id: string, refresh?: boolean) {
 
     return async (dispatch: AppDispatch) => {
 
@@ -139,7 +139,7 @@ export function load_report_overview(report_id: string) {
         // Try to get existing one
         const url = `/api/user_reports/${report_id}/load_overview`;
 
-        const report_data = await fetch_data(url);
+        const report_data = await fetch_data(url, {refresh: refresh});
 
         // store result
         dispatch(SLICE.actions.report_overview_loaded(report_data))
