@@ -20,7 +20,7 @@ DISCORD_CLIENT_ID = os.getenv("DISCORD_CLIENT_ID")
 DISCORD_CLIENT_SECRET = os.getenv("DISCORD_CLIENT_SECRET")
 DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 DISCORD_API = "https://discordapp.com/api"
-REDIRECT_URI = os.getenv("REDIRECT_URI") or "http://127.0.0.1:9001/login"
+REDIRECT_URI = os.getenv("REDIRECT_URI") or "http://localhost:9001/login"
 
 
 # int: server ID for the lorgs disocrd.
@@ -34,7 +34,7 @@ ROLE_PERMISSIONS = {
     "885660390120362024": ["user_reports", "mod"],           # Morrgerator
     "886595672525119538": ["user_reports"],                  # Investorrg
     "887397111975518288": ["user_reports"],                  # Contributorrg
-    "913179016930926592": ["user_reports"],                  # User Reports Alpha Tester
+    "908726333369110571": ["user_reports"],                  # User Reports Alpha Tester
 }
 
 
