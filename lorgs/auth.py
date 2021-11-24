@@ -34,7 +34,7 @@ ROLE_PERMISSIONS = {
     "885660390120362024": ["user_reports", "mod"],           # Morrgerator
     "886595672525119538": ["user_reports"],                  # Investorrg
     "887397111975518288": ["user_reports"],                  # Contributorrg
-    "908726505486561390": ["user_reports"],                  # User Reports Alpha Tester
+    "913179016930926592": ["user_reports"],                  # User Reports Alpha Tester
 }
 
 
