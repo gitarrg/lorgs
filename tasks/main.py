@@ -19,6 +19,10 @@ from lorgs.models.warcraftlogs_user_report import UserReport
 from lorgs.models.warcraftlogs_comp_ranking import CompRanking
 
 
+def to_bool(s):
+    return s.lower() in ["true", "1", "y", "yes"]
+
+
 def load_spec_rankings(request):
     """Load the Spec Ranking Data from Warcraftlogs and save it to the Database.
 
@@ -35,7 +39,8 @@ def load_spec_rankings(request):
     boss_slug = request.args.get("boss_slug", type=str)
     spec_slug = request.args.get("spec_slug", type=str)
     limit = request.args.get("limit", type=int, default=50)
-    clear = request.args.get("clear", default=False, type=json.loads)
+
+    clear = request.args.get("clear", default=False, type=to_bool)
     print(f"loading: {boss_slug} vs {spec_slug} | (limit={limit} / clear={clear})")
     if boss_slug is None or spec_slug is None:
         return f"missing boss or spec ({boss_slug} / {spec_slug})"
@@ -70,7 +75,7 @@ def load_comp_rankings(request):
     # Get inputs
     boss_slug = request.args.get("boss_slug", type=str)
     limit = request.args.get("limit", type=int, default=200)
-    clear = request.args.get("clear", default=False, type=json.loads)
+    clear = request.args.get("clear", default=False, type=to_bool)
 
     ################################
     # get comp ranking object
