@@ -4,7 +4,7 @@ import useUser from "./../auth/useUser"
 
 function UserReportIcon() {
 
-    const icon_path = "./static/img/inv_scroll_08.webp"
+    const icon_path = "./static/img/inv_inscription_80_scroll.jpg"
 
     return <img
     className={`${styles.user_report_icon} wow-border-artifact icon-l rounded`}
@@ -23,7 +23,7 @@ export default function IndexUserReport() {
     return (
         <IndexModuleLink title="Custom Report:" url="/user_report" className={styles.user_report_link}>
             <UserReportIcon />
-            <span className="h2">load your own log</span>
+            <span className="h2">Load Log</span>
         </IndexModuleLink>
     )
 }
