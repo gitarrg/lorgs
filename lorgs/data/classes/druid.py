@@ -47,6 +47,5 @@ DRUID_GUARDIAN.add_spell(    spell_id=102558, cooldown=180, duration=30,        
 DRUID_GUARDIAN.add_spell(    spell_id=22812,  cooldown=60,  duration=8,                   name="Barkskin",                       icon="spell_nature_stoneclawtotem.jpg",           show=False)
 
 DRUID_RESTORATION.add_spell( spell_id=197721, cooldown=90,  duration=8,  color="#7ec44d", name="Flourish",                       icon="spell_druid_wildburst.jpg",                 show=False)
-DRUID_RESTORATION.add_spell( spell_id=29166,  cooldown=180, duration=10, color="#3b97ed", name="Innervate",                      icon="spell_nature_lightning.jpg",                show=False)
 DRUID_RESTORATION.add_spell( spell_id=740,    cooldown=180, duration=6,  color="#6cbfd9", name="Tranquility",                    icon="/static/img/spells/spell_nature_tranquility.webp")
-DRUID_RESTORATION.add_spell( spell_id=33891,  cooldown=180, duration=30,                  name="Incarnation: Tree of Life",      icon="ability_druid_improvedtreeform.jpg")
+DRUID_RESTORATION.add_buff(  spell_id=117679, cooldown=180, duration=30,                  name="Incarnation: Tree of Life",      icon="ability_druid_improvedtreeform.jpg", wowhead_data="spell=33891")

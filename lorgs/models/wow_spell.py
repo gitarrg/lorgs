@@ -16,6 +16,7 @@ class WowSpell(base.Model):
     TYPE_EXTERNAL = "external"
 
     TYPE_BUFFS = "other-buffs"
+    TYPE_HERO = "other-hero"
     TYPE_TRINKET = "other-trinkets"
     TYPE_POTION = "other-potions"
 

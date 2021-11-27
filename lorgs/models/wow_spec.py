@@ -93,5 +93,11 @@ class WowSpec(base.Model):
         self.spells.append(spell)  # Important to keep a ref in memory
         return spell
 
-    def add_buff(self, spell: WowSpell):
+    def add_buff(self, spell: WowSpell = None, **kwargs):
+
+        if not spell:
+            kwargs.setdefault("color", self.wow_class.color)
+            kwargs.setdefault("spell_type", self.full_name_slug)
+            spell = WowSpell(**kwargs)
+
         self.buffs.append(spell)
