@@ -10,8 +10,14 @@ import PlayerRow from "./PlayerRow";
 import filter_logic from "../../filter_logic";
 import type Actor from "../../types/actor";
 import type Fight from "../../types/fight";
-import type { FilterValues } from "../../store/ui";
+import { FilterValues, MODES } from "../../store/ui";
 import { toMMSS } from "../../utils";
+import store from "../../store/store";
+
+
+// same as in "_wow.scss"
+const COLOR_KILL = "#80e666"
+const COLOR_WIPE = "#e65c39"
 
 
 export default class FightRow {
@@ -27,7 +33,6 @@ export default class FightRow {
     background: Konva.Group
     rows: PlayerRow[]
     killtime_text: Konva.Text
-
 
 
     constructor(fight_data: Fight) {
@@ -66,10 +71,35 @@ export default class FightRow {
         this.background.add(row.background)
     }
 
+    _get_killtime_text_options() {
+
+        const state = store.getState()
+        const mode = state.ui.mode
+
+        if (mode !== MODES.USER_REPORT) { return {}; }
+
+        const kill = this._fight_data.kill
+        const fill = kill ? COLOR_KILL : COLOR_WIPE
+        return {
+            fill,
+            icon: kill ? "⚑ " : "⨉ ",
+            fontStyle: kill ? "bold" : "",
+            }
+    }
+
     create_killtime_text() {
+
+        // const kill = this._fight_data.kill
+        // const icon = kill ? "⚑ " : "⨉ "
+
+        const options = this._get_killtime_text_options()
+
+        let label = toMMSS(this.duration)
+        label = (options.icon || "") + label
+
         return new Konva.Text({
             name: "cast_text",
-            text: toMMSS(this.duration),
+            text: label,
             x: this.KILLTIME_MARGIN + (this.duration * constants.DEFAULT_ZOOM) ,
             y: 0,
             fontSize: 14,
@@ -81,6 +111,9 @@ export default class FightRow {
             fill: "#999",
             listening: false,
             transformsEnabled: "position",
+
+            ...options
+
         })
     }
 
