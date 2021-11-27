@@ -94,6 +94,7 @@ const INITIAL_STATE: UserReportData = {
     players: {},
     task_id: "",
     is_loading: false,
+    date: 0,
 }
 
 

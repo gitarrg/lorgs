@@ -47,7 +47,6 @@ class Report(warcraftlogs_base.EmbeddedDocument):
     #   Note: not every player might participate in every fight.
     players: typing.Dict[str, Player] = me.MapField(me.EmbeddedDocumentField(Player), default={})
 
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
