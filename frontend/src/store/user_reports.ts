@@ -16,6 +16,15 @@ export interface UserReportData {
 
     /**id of the task when loading the data */
     task_id?: string
+
+    /**unix timestamp, when the report was created */
+    date: number
+
+    /** name of the guild this report belongs to */
+    guild?: string
+
+    /** user who logged this report */
+    owner: string
 }
 
 
