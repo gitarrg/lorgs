@@ -14,7 +14,7 @@ export default function UserReportNavbar() {
     return (
         <Link to={url}>
             <button className={`${styles.button} button grow-when-touched`} >
-                <span>Select different Pulls/Players</span>
+                <span>Change Selection</span>
             </button>
         </Link>
     )

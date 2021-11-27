@@ -91,7 +91,7 @@ export default function UrlInput({input_name="report_url"}) {
     return (
 
         <div className="bg-dark rounded p-2">
-            <div className={`${styles.url_input} input-group`}>
+            <div className={`${styles.url_input} input-group gap-2`}>
 
                 {/* Input */}
                 <input
@@ -104,19 +104,22 @@ export default function UrlInput({input_name="report_url"}) {
                     placeholder={PLACEHOLDER}
                 />
 
-                {/* Button */}
+                {/* Button: Load */}
                 <button
                     type="button"
                     className="button"
                     disabled={!is_valid || is_loading}
+                    data-tooltip="Load Report"
                     onClick={onClick}>
-                    load ▶
+                        <i className="fas fa-chevron-right"></i>
                 </button>
 
+                {/* Button: Reload */}
                 <button
                     type="button"
                     className="button"
                     disabled={!is_valid || is_loading}
+                    data-tooltip="Reload"
                     onClick={onClickReload}>
                         <i className="fas fa-sync-alt"></i>
                 </button>
