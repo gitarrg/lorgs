@@ -36,6 +36,7 @@ SHAMAN_ELEMENTAL.add_spell(    spell_id=192249, cooldown=150, duration=30, color
 
 SHAMAN_ENHANCEMENT.add_spell(  spell_id=114051, cooldown=180,                               name="Ascendance",                 icon="spell_fire_elementaldevastation.jpg")
 SHAMAN_ENHANCEMENT.add_spell(  spell_id=51533,  cooldown=120,                               name="Feral Spirit",               icon="spell_shaman_feralspirit.jpg")
+SHAMAN_ENHANCEMENT.add_buff(   spell_id=335903, cooldown=60,  duration=12, color="#42bff5", name="Doom Winds",                 icon="ability_ironmaidens_swirlingvortex.jpg")
 
 SHAMAN_RESTORATION.add_spell(  spell_id=108280, cooldown=180, duration=10,                  name="Healing Tide Totem",         icon="ability_shaman_healingtide.jpg")
 SHAMAN_RESTORATION.add_spell(  spell_id=98008,  cooldown=180, duration=6,  color="#24b385", name="Spirit Link Totem",          icon="spell_shaman_spiritlink.jpg")
