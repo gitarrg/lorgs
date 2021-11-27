@@ -40,7 +40,7 @@ async def test_load_report():
     user_report = UserReport.from_report_id(TEST_REPORT_ID, create=True)
     print("user_report", user_report)
 
-    await user_report.load_fights(fight_ids=fight_ids, player_ids=player_ids)
+    await user_report.report.load_fights(fight_ids=fight_ids, player_ids=player_ids)
     for fight in user_report.report.fights.values():
         print("Fight:", fight)
         for player in fight.players:
