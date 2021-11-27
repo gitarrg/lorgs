@@ -139,7 +139,7 @@ export function load_report_overview(report_id: string, refresh?: boolean) {
         // Try to get existing one
         const url = `/api/user_reports/${report_id}/load_overview`;
 
-        const report_data = await fetch_data(url, {refresh: refresh});
+        const report_data = await fetch_data(url, {refresh: refresh || false});
 
         // store result
         dispatch(SLICE.actions.report_overview_loaded(report_data))
