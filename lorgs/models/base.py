@@ -1,4 +1,5 @@
 
+from typing import Type, TypeVar
 import weakref
 
 # IMPORT THIRD PARTY LIBRARIES
@@ -33,6 +34,9 @@ class IconPathMixin:
         return f"/static/images/{self.icon}"
 
 
+T = TypeVar('T', bound="Model")
+
+
 class Model(IconPathMixin, metaclass=MetaInstanceRegistry):
     """
 
@@ -41,5 +45,5 @@ class Model(IconPathMixin, metaclass=MetaInstanceRegistry):
     """
 
     @classmethod
-    def get(cls, **kwargs):
+    def get(cls: Type[T], **kwargs) -> T:
         return utils.get(cls.all, **kwargs)
