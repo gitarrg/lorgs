@@ -44,13 +44,13 @@ export default function UserReportIndex() {
 
                 {/* URL Input */}
                 <div>
-                    <h4 className="mb-1">Report URL:</h4>
+                    <h4 className="mb-1">URL:</h4>
                     <UrlInput />
                 </div>
 
                 {is_loading && <LoadingOverlay />}
 
-                <div className={`d-flex gap-2 justify-content-center  ${is_loading ? "loading_trans" : ""} `}>
+                <div className={`d-flex gap-4 justify-content-center  ${is_loading ? "loading_trans" : ""} `}>
                     <FightSelectGrid />
                     <PlayerSelectGrid />
                 </div>

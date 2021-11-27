@@ -72,7 +72,7 @@ export default function UserReport() {
     return (
         <div className={mode}>
 
-            <div className="mt-3 flex-row justify-content-space-between d-flex">
+            <div className="mt-3 flex-row justify-content-space-between d-flex align-items-center">
                 <ReportHeader />
                 <UserReportNavbar />
             </div>
