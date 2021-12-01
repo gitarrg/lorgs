@@ -41,7 +41,7 @@ export function seconds_to_time(seconds: number, {padding=true}) {
  * @returns string
  */
 // based on: https://stackoverflow.com/a/9461657
-export function kFormatter(n: number, digits=2) {
+export function kFormatter(n: number, digits=1) {
 
     if (n > 999) {
         return(n/1000).toFixed(digits) + "k"
