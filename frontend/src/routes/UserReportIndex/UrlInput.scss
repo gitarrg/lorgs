@@ -4,7 +4,7 @@
 
     display: flex;
     flex-wrap: nowrap;  // input-group sets it to wrap
-
+    gap: 0.4rem;
 
     input {
         font-size: large;
