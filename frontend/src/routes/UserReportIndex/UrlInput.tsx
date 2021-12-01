@@ -91,7 +91,7 @@ export default function UrlInput({input_name="report_url"}) {
     return (
 
         <div className="bg-dark rounded p-2">
-            <div className={`${styles.url_input} input-group gap-2`}>
+            <div className={`${styles.url_input} input-group`}>
 
                 {/* Input */}
                 <input
