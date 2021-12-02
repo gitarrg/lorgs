@@ -1,5 +1,20 @@
 
 
+.icon {
+
+    // causes issues with some z-index overlap in the player widget
+    // cba fixing it now.
+    // --hover-scale: 1.3;
+
+    &__selected {
+
+        img {
+            border: 1.5px solid white;
+         }
+    }
+}
+
+
 // container for the items for each row
 .row__items__container {
     --item-width: 6rem;
