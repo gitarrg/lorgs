@@ -140,7 +140,7 @@ workflows:
       # deploy for /master
       - deploy:
           promote: true
-          version: v0-2-5
+          version: v0-2-6
           requires:
             - build
           filters:
