@@ -153,7 +153,9 @@ export default class Cast extends Konva.Group {
         });
         this.add(this.mouse_event_bbox)
 
-        this.visible(this.spell.show)
+        let show = state.spells.spell_display[this.spell_id]
+        show = (show === undefined) ? this.spell.show : show
+        this.visible(show)
         this.y(1); // for the background stroke
 
         ////////////////////////////

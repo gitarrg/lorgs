@@ -146,10 +146,11 @@ function _add_spells_to_state(state: SpellSliceState , new_spells: SpellDict ) {
 
     state.spells_by_type = {} // reset the list
     Object.values(state.all_spells).forEach(spell => {
-        state.spell_display[spell.spell_id] = spell.show;
         state.spells_by_type[spell.spell_type] = [...(state.spells_by_type[spell.spell_type] || []), spell.spell_id]
-    })
 
+        const prev = state.spell_display[spell.spell_id]
+        state.spell_display[spell.spell_id] = (prev === undefined) ? spell.show : prev // keep prev. value
+    })
 
     state.spell_types = sort_spell_types(Object.keys(state.spells_by_type))
 
