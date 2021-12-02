@@ -68,20 +68,24 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
         cast_filter = f"type='cast' and ability.id in ({spell_ids})"
         return cast_filter
 
-    def get_buff_query(self, spells=typing.List[WowSpell]):
+    @staticmethod
+    def _build_buff_query(spells: typing.List[WowSpell], event_types: typing.List[str]):
         if not spells:
             return ""
-        # we check for "removebuff" as this allows us to also catch buffs
-        # that get used prepull (eg.: lust)
         spell_ids = WowSpell.spell_ids_str(spells)
 
-        # TODO: split buffs/debuffs for performance?
-        event_types = ["applybuff", "removebuff", "applydebuff", "removedebuff"]
-        event_types = [f"'{event}'" for event in event_types]
-        event_types = ",".join(event_types)
+        event_types = [f"'{event}'" for event in event_types] # wrap each into single quotes
+        event_types_combined = ",".join(event_types)
 
-        buffs_query = f"type in ({event_types}) and ability.id in ({spell_ids})"
-        return buffs_query
+        return f"type in ({event_types_combined}) and ability.id in ({spell_ids})"
+
+    @classmethod
+    def get_buff_query(cls, spells: typing.List[WowSpell]):
+        return cls._build_buff_query(spells, ["applybuff", "removebuff"])
+
+    @classmethod
+    def get_debuff_query(cls, spells: typing.List[WowSpell]):
+        return cls._build_buff_query(spells, ["applydebuff", "removedebuff"])
 
     @abc.abstractmethod
     def get_sub_query(self):
@@ -112,6 +116,7 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
             logger.warning("casts_data is empty")
             return
 
+        # track buffs/debuff: spell id -> start cast
         active_buffs: typing.Dict[int, Cast] = {}
 
         fight_start = self.fight.start_time_rel if self.fight else 0
@@ -126,34 +131,46 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
             if self._has_source_id and (cast_actor_id != self.source_id):
                 continue
 
-            # Add the Cast Object
+            # Create the Cast Object
             cast = Cast()
             cast.spell_id = cast_data.get("abilityGameID")
             cast.spell_id = WowSpell.resolve_spell_id(cast.spell_id)
             cast.timestamp = cast_data.get("timestamp", 0) - fight_start
             cast.duration = cast_data.get("duration")
-            if cast.duration:
-                cast.duration *= 0.001
 
-            # we check if the buff was applied before..
-            if cast_type == "removebuff":
+            if cast_type in ("cast"):
+                cast.stacks = 1
+
+            # new buff, or buff stack
+            if cast_type in ("applybuff", "applydebuff"):
+                # check if the buff/debuff is already active.
+                cast = active_buffs.get(cast.spell_id) or cast
+                cast.stacks += 1
+
+            if cast_type in ("removebuff", "removedebuff"):
+
                 start_cast = active_buffs.get(cast.spell_id)
 
                 # special case for buffs that are applied pre pull
                 # meaning.. the buff was already present at the start of the fight,
                 if not start_cast:
+                    start_cast = cast
                     spell = WowSpell.get(spell_id=cast.spell_id) # get the duration from the spell defintion
-                    cast.timestamp -= (spell.duration * 1000) # and calculate back the start time
+                    start_cast.timestamp -= (spell.duration * 1000) # and calculate back the start time
+                    continue
 
-                # if we have a start cast, we can calculate the correct duration
-                else:
-                    start_cast.duration = (cast.timestamp - start_cast.timestamp) / 1000
-                    continue # stop the loop here
+                start_cast.stacks -= 1
 
-            self.casts.append(cast)
+                # no stacks left --> buff/debuff ends
+                if start_cast.stacks == 0:
+                    start_cast.duration = (cast.timestamp - start_cast.timestamp)
+                    start_cast.duration *= 0.001
+                    active_buffs[cast.spell_id] = None
 
-            # track applied buffs
-            active_buffs[cast.spell_id] = cast
+            if cast.stacks == 1:  # only add new buffs on their first application
+                # track applied buffs
+                active_buffs[cast.spell_id] = cast
+                self.casts.append(cast)
 
         # Filter out same event at the same time (eg.: raid wide debuff apply)
         self.casts = utils.uniqify(self.casts, key=lambda cast: (cast.spell_id, math.floor(cast.timestamp / 1000)))
@@ -219,15 +236,21 @@ class Player(BaseActor):
     #
     def get_cast_query(self, spells=typing.List[WowSpell]):
         cast_query = super().get_cast_query(spells=spells)
-        if self.name:
+        if cast_query and self.name:
             cast_query = f"source.name='{self.name}' and {cast_query}"
         return cast_query
 
     def get_buff_query(self, spells=typing.List[WowSpell]):
         buffs_query = super().get_buff_query(spells=spells)
-        if self.name:
+        if buffs_query and self.name:
             buffs_query = f"target.name='{self.name}' and {buffs_query}"
         return buffs_query
+
+    def get_debuff_query(self, spells=typing.List[WowSpell]):
+        debuffs_query = super().get_debuff_query(spells=spells)
+        if debuffs_query and self.name:
+            debuffs_query = f"source.name='{self.name}' and {debuffs_query}"
+        return debuffs_query
 
     def get_sub_query(self) -> str:
         """Get the Query for fetch all relevant data for this player."""
@@ -238,6 +261,9 @@ class Player(BaseActor):
 
         buffs_query = self.get_buff_query(self.spec.all_buffs)
         filters.append(buffs_query)
+
+        debuff_query = self.get_debuff_query(self.spec.all_debuffs)
+        filters.append(debuff_query)
 
         # combine all filters
         filters = [f for f in filters if f]   # filter the filters
