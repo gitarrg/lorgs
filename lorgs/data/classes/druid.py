@@ -27,7 +27,7 @@ DRUID_RESTORATION = WowSpec(role=HEAL, wow_class=DRUID, name="Restoration", shor
 ################################################################################
 # Spells
 #
-DRUID.add_spell(             spell_id=323764, cooldown=60,  duration=4,  color=COL_NF,    name="Convoke the Spirits",            icon="ability_ardenweald_druid.jpg",              show=False)
+DRUID.add_spell(             spell_id=323764, cooldown=60,  duration=4,  color=COL_NF,    name="Convoke the Spirits",            icon="ability_ardenweald_druid.jpg")
 DRUID.add_spell(             spell_id=323546, cooldown=180, duration=20, color=COL_VENTR, name="Ravenous Frenzy",                icon="ability_revendreth_druid.jpg",              show=False)
 
 DRUID_BALANCE.add_spell(     spell_id=194223, cooldown=180, duration=20,                  name="Celestial Alignment",            icon="spell_nature_natureguardian.jpg")
@@ -36,9 +36,9 @@ DRUID_BALANCE.add_spell(     spell_id=205636, cooldown=60,  duration=10,        
 DRUID_BALANCE.add_spell(     spell_id=202770, cooldown=60,  duration=8,                   name="Fury of Elune",                  icon="ability_druid_dreamstate.jpg",              show=False)
 
 DRUID_FERAL.add_spell(       spell_id=106951, cooldown=180, duration=15,                  name="Berserk",                        icon="ability_druid_berserk.jpg")
-DRUID_FERAL.add_spell(       spell_id=58984,  cooldown=120,              color="#999999", name="Shadowmeld ",                    icon="ability_ambush.jpg")
+DRUID_FERAL.add_spell(       spell_id=58984,  cooldown=120,              color="#999999", name="Shadowmeld ",                    icon="ability_ambush.jpg",                        show=False)
 DRUID_FERAL.add_spell(       spell_id=108291, cooldown=300, duration=45, color="#fcdf03", name="Hearth of the Wild ",            icon="spell_holy_blessingofagility.jpg")
-DRUID_FERAL.add_spell(       spell_id=197625,                            color="#11cff5", name="Moonkin Form ",                  icon="spell_nature_forceofnature.jpg")
+DRUID_FERAL.add_buff(        spell_id=197625,                            color="#11cff5", name="Moonkin Form ",                  icon="spell_nature_forceofnature.jpg")
 
 DRUID_GUARDIAN.add_spell(    spell_id=108292, cooldown=300, duration=45, color="#fcdf03", name="Heart of the Wild",              icon="spell_holy_blessingofagility.jpg",          show=False)
 DRUID_GUARDIAN.add_spell(    spell_id=61336,  cooldown=180, duration=6,                   name="Survival Instincts",             icon="ability_druid_tigersroar.jpg")
