@@ -82,7 +82,7 @@ async def get_spec_spells(spec_slug: str):
     if not spec:
         return "Invalid Spec.", 404
 
-    abilities = spec.all_spells + spec.all_buffs
+    abilities = spec.all_spells + spec.all_buffs + spec.all_debuffs
     return {spell.spell_id: spell.as_dict() for spell in abilities}
 
 

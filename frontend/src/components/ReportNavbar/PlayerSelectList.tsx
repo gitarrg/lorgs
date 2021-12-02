@@ -15,7 +15,7 @@ function RoleGroup({role, players} : {role: Role, players: Actor[]}) {
     players = players.sort((a, b) => a.spec > b.spec ? -1 : 1)
 
     // Render
-    const icon = <Icon spec={role} size="m"  />
+    const icon = <Icon spec={role} size="m" className="button grow-when-touched" />
     const items = players.map(player => <PlayerWidget key={player.source_id} player={player}/>)
     return <SelectGroup icon={icon} items={items} />
 }

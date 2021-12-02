@@ -1,5 +1,7 @@
 import styles from "./SelectGrid.scss"
 import { useFormContext, useWatch } from 'react-hook-form'
+import { useContext, useEffect } from "react";
+import { SelectGroupContext } from "./SelectGroup";
 
 
 type SelectGridItemProps = {
@@ -17,7 +19,7 @@ export default function SelectGridItem({field_name, className="", children}: Sel
     // Hooks
     const selected = useWatch({ name: field_name });
     const { setValue } = useFormContext();
-
+    const group_selected = useContext(SelectGroupContext)
 
     ////////////////////////////////
     // Callbacks
@@ -25,6 +27,10 @@ export default function SelectGridItem({field_name, className="", children}: Sel
         setValue(field_name, !selected)
     }
 
+    // pass values when the group itself gets selected
+    useEffect(() => {
+        setValue(field_name, group_selected)
+    }, [group_selected])
 
     ////////////////////////////////
     // Render

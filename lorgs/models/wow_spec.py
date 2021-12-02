@@ -28,6 +28,7 @@ class WowSpec(base.Model):
 
         self.spells: typing.List[WowSpell] = []
         self.buffs: typing.List[WowSpell] = []
+        self.debuffs: typing.List[WowSpell] = []
 
         self.role = role
         self.role.specs.append(self)
@@ -81,6 +82,11 @@ class WowSpec(base.Model):
         """Get all buffs that are relavent for this spec."""
         return self.wow_class.buffs + self.buffs
 
+    @property
+    def all_debuffs(self):
+        """Get all debuffs that are relavent for this spec."""
+        return self.wow_class.debuffs + self.debuffs
+
     ##########################
     # Methods
     #
@@ -101,3 +107,12 @@ class WowSpec(base.Model):
             spell = WowSpell(**kwargs)
 
         self.buffs.append(spell)
+
+    def add_debuff(self, spell: WowSpell = None, **kwargs):
+
+        if not spell:
+            kwargs.setdefault("color", self.wow_class.color)
+            kwargs.setdefault("spell_type", self.full_name_slug)
+            spell = WowSpell(**kwargs)
+
+        self.debuffs.append(spell)
