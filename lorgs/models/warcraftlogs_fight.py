@@ -86,6 +86,7 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
             "percent": self.percent,
             "kill": self.kill,
             "duration": self.duration,
+            "time": self.start_time.timestamp(),
             "boss": {"name": raid_boss_name},
         }
 

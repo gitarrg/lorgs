@@ -26,9 +26,8 @@ export default function PlayerNamesFight( {i, fight} : {i: number, fight: Fight}
 
     return (
         <div className={styles.fight}>
-            <FightInfo fight={fight} />
-
             <div className={styles.names_container}>
+                <FightInfo fight={fight} />
                 {create_boss(fight)}
                 {create_players(fight)}
             </div>

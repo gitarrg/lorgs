@@ -7,3 +7,11 @@
 
     margin-top: var(--timeline-ruler-height);
 }
+
+:global .user_report {
+    :local {
+        .player_names_list {
+            margin-top: 0px;
+        }
+    }
+}

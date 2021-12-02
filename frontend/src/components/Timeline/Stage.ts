@@ -78,7 +78,7 @@ export default class Stage extends Konva.Stage{
         // distance between fights in pixels
         if (this.MODE == MODES.SPEC_RANKING ) { return -1; }
         if (this.MODE == MODES.COMP_RANKING ) { return 10; }
-        if (this.MODE == MODES.USER_REPORT ) { return 10; }
+        if (this.MODE == MODES.USER_REPORT ) { return 38; } // 1 row + 10px gap
 
         return -1;
     }
