@@ -35,7 +35,6 @@ INNERVATE         = OTHER_BUFFS.add_spell(color="#3b97ed", spell_id=29166,  cool
 
 
 # generic pots for all specs
-"""
 for s in ALL_SPECS:
     s.add_spell(spell_type=TYPE_POTION, spell_id=6262,                              color="#63cf48", name="Healthstone",                  icon="warlock_-healthstone.jpg", wowhead_data="item=5512")
     s.add_spell(spell_type=TYPE_POTION, spell_id=307192, cooldown=300,              color="#e35f5f", name="Spiritual Healing Potion",     icon="inv_alchemy_70_red.jpg",   wowhead_data="item=171267")
@@ -74,4 +73,3 @@ for s in HEAL.specs:
 for spell in WowSpell.all:
     if spell.spell_type in (TYPE_POTION, TYPE_BUFFS):
         spell.show = False
-"""
