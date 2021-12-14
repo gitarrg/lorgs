@@ -218,6 +218,7 @@ class Player(BaseActor):
             "total": int(self.total),
             "covenant": self.covenant.name_slug,
             "casts": [cast.as_dict() for cast in self.casts],
+            "deaths": self.deaths,
         }
 
     ##########################
@@ -273,6 +274,32 @@ class Player(BaseActor):
         queries_combined = " and ".join(filters)
         return f"({queries_combined})"
 
+    def process_death_events(self, death_events):
+        """Add the Death Events the the Players.
+
+        Args:
+            death_events[list[dict]]
+
+        """
+        ABILITY_OVERWRITES = {}
+        ABILITY_OVERWRITES[1] = {"name": "Melee", "guid": 260421, "abilityIcon": "ability_meleedamage.jpg"}
+        ABILITY_OVERWRITES[3] = {"name": "Fall Damage"}
+
+        for death_event in death_events:
+            target_id = death_event.get("id", 0)
+            if self._has_source_id and (target_id != self.source_id):
+                continue
+
+            death_ability = death_event.get("ability", {})
+            death_ability_id = death_ability.get("guid", -1)
+            death_ability = ABILITY_OVERWRITES.get(death_ability_id) or death_ability
+
+            death_data = {}
+            death_data["ts"] = int((death_event.get("deathTime") or 0) / 1000)
+            death_data["name"] = death_ability.get("name", "")
+            death_data["icon"] = death_ability.get("abilityIcon", "")
+            self.deaths.append(death_data)
+ 
     def process_query_result(self, query_result):
         super().process_query_result(query_result)
 
@@ -284,24 +311,3 @@ class Player(BaseActor):
                 if cast.get("type") == "cast":
                     self.source_id = cast.get("sourceID")
                     break
-
-    def process_death_events(self, death_events):
-        ability_overwrites = {}
-        ability_overwrites[1] = {"name": "Melee", "guid": 260421, "abilityIcon": "ability_meleedamage.jpg"}
-        ability_overwrites[3] = {"name": "Fall Damage"}
-
-        for death_event in death_events:
-
-            if death_event.get("id") != self.source_id:
-                continue
-
-            death_data = {}
-            death_data["deathTime"] = death_event.get("deathTime")
-            death_data["ability"] = death_event.get("ability", {})
-
-            # Ability Overwrites
-            ability_id = death_data["ability"].get("guid")
-            if ability_id in ability_overwrites:
-                death_data["ability"] = ability_overwrites[ability_id]
-
-            self.deaths.append(death_data)
