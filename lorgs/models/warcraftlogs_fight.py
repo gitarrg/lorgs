@@ -212,6 +212,7 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
             player.source_id = composition_data.get("id")
             player.name = composition_data.get("name")
             player.total = int(total)
+            player.process_death_events(players_data.get("deathEvents", []))
             self.players[str(player.source_id)] = player
 
 
