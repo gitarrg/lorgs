@@ -1,5 +1,6 @@
 import * as constants from "./constants"
 import Cast from "./Cast"
+import Death from "./Death"
 import Konva from "konva"
 import type Actor from "../../types/actor"
 import type PlayerRow from "./PlayerRow"
@@ -9,6 +10,7 @@ export default class Player extends Konva.Group {
 
     row : PlayerRow
     casts: Cast[]
+    deaths: Death[]
     player_data: Actor
 
     constructor(row: PlayerRow, player_data: Actor) {
@@ -28,7 +30,7 @@ export default class Player extends Konva.Group {
         // load casts
         this.casts = (player_data.casts || []).map(cast_data => new Cast(cast_data))
         this.casts = this.casts.filter(cast => cast.spell)
-
+        this.deaths = (player_data.deaths || []).map(death_data => new Death(player_data, death_data))
         this.layout_children()
     }
 
@@ -54,6 +56,10 @@ export default class Player extends Konva.Group {
                     cast.remove()
                 }
             }
+        })
+
+        this.deaths.forEach(death => {
+            this.add(death)
         })
     }
 
@@ -81,6 +87,7 @@ export default class Player extends Konva.Group {
     handle_event(event_name: string, payload: any) {
         if (event_name === constants.EVENT_ZOOM_CHANGE) { this._handle_zoom_change(payload)}
         this.casts.forEach(cast => cast.handle_event(event_name, payload))
+        this.deaths.forEach(death => death.handle_event(event_name, payload))
 
         // after cast update, so we can handle the cast visibility in there
         if (event_name === constants.EVENT_SPELL_DISPLAY) {this._handle_spell_display()}
