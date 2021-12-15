@@ -63,5 +63,6 @@ handlers:
     static_files: index.html
     upload: index.html
     expiration: 10m # don't cache the html, as it would cache the old chunk-id's
+    secure: always
     http_headers:
       lorrgs_route: app
