@@ -12,6 +12,12 @@ import { useForm, FormProvider } from "react-hook-form";
 import { useHistory } from "react-router"
 
 
+import ReCAPTCHA from "react-google-recaptcha";
+
+
+const CAPTCHA_KEY = "6LexHqEdAAAAAOaPtZQEBRwUejX-rn7rfk6pWkGZ"
+
+
 export default function UserReportIndex() {
 
     ////////////////////////////////
@@ -25,6 +31,11 @@ export default function UserReportIndex() {
     const history = useHistory()
     if (!user.permissions.includes("user_reports")) {
         history.push("/")
+    }
+
+
+    function onCaptchaChange(value) {
+        console.log("Captcha value:", value);
     }
 
     ////////////////////////////////
@@ -56,6 +67,14 @@ export default function UserReportIndex() {
                 </div>
 
                 <div className="mt-3 ml-auto">
+                    <ReCAPTCHA
+                        sitekey={CAPTCHA_KEY}
+                        onChange={onCaptchaChange}
+                        theme="dark"
+                        // size="compact"
+                        badge="bottomleft"
+                    />
+
                     <SubmitButton />
                 </div>
 
