@@ -86,7 +86,7 @@
         border-width: 0;
         padding-left: 2px;
 
-        ::after {
+        span::after {
             content: " •";
         }
 

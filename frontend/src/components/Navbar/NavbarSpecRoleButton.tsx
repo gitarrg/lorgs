@@ -3,6 +3,7 @@ import { useAppSelector } from '../../store/store_hooks';
 import type Role from '../../types/role';
 import NavbarSpecsDropdown from './NavbarSpecsDropdown';
 import styles from "./Navbar.scss"
+import WebpImg from "../WebpImg";
 
 /*
     Button for a single role.
@@ -21,7 +22,7 @@ export default function NavbarSpecRoleButton({ role } : { role: Role} ) {
 
             {/* The Button itself */}
             <div className={`${styles.button} ${has_active_child ? "active" : ""}`} >
-                <img
+                <WebpImg
                     className={`icon-spec icon-m border-black rounded wow-border-${role.code}`}
                     src={role.icon_path}
                     alt={role.name}

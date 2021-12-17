@@ -1,11 +1,11 @@
 /* Component to select which boss to display */
 
-
-import { useFormContext, useWatch } from "react-hook-form";
-import { get_bosses } from '../../store/bosses';
 import FormGroup from './FormGroup';
+import WebpImg from "../../components/WebpImg";
 import type Boss from '../../types/boss';
+import { get_bosses } from '../../store/bosses';
 import { useAppSelector } from '../../store/store_hooks';
+import { useFormContext, useWatch } from "react-hook-form";
 
 
 
@@ -26,7 +26,7 @@ function BossButton({boss} : {boss: Boss}) {
     // Render
     return (
         <div data-tooltip={boss.full_name}>
-            <img
+            <WebpImg
                 className={`boss-button icon-spec icon-m border-black rounded ${is_selected}`}
                 src={boss.icon_path}
                 alt={boss.name}
