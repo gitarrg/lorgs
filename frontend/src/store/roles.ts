@@ -64,7 +64,7 @@ const SLICE = createSlice({
         set_roles: (state, action: PayloadAction<Role[]>) => {
 
             action.payload.forEach(role => {
-                role.icon_path = `/static/img/roles/${role.code}.webp`
+                role.icon_path = `/static/img/roles/${role.code}.jpg`
                 state[role.code] = role
             })
             return state

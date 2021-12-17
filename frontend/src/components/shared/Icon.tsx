@@ -2,6 +2,7 @@ import type Boss from '../../types/boss'
 import type Role from '../../types/role'
 import type Spec from '../../types/spec'
 import type Class from '../../types/class'
+import WebpImg from "../WebpImg"
 
 
 export default function Icon({
@@ -21,7 +22,7 @@ export default function Icon({
 
 
     return (
-        <img
+        <WebpImg
             className={`icon-${size} rounded wow-border-${name_slug} ${className}`}
             src={spec.icon_path}
             alt={alt}

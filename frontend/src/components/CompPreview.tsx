@@ -6,6 +6,7 @@
 
 */
 import styles from "./CompPreview.scss"
+import WebpImg from "./WebpImg"
 
 
 export interface CompCountType {
@@ -49,7 +50,7 @@ function create_icon(prefix: string, name: string, count: string, op: string) {
 
     return (
         <div key={name} className={`${styles.icon} rounded border-mid wow-${class_name} wow-border-${class_name} ${excluded ? "excluded" : ""}`}>
-            <img className="icon-l" src={icon_path}/>
+            <WebpImg className="icon-l" src={icon_path}/>
             {!excluded && <div className={`${styles.label} wow-${class_name}`}>{label}</div>}
             {excluded && <div className={styles.label}>X</div>}
         </div>
