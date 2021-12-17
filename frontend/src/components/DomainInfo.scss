@@ -1,0 +1,19 @@
+
+.container {
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+
+    font-size: larger;
+    background: hsl(150, 40%, 50%);
+
+    text-align: center;
+    padding: 0.5rem;
+    color: black;
+
+    strong {
+        color: hsl(0, 0%, 10%);
+    }
+}
