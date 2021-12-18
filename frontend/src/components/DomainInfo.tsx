@@ -7,7 +7,7 @@ import styles from "./DomainInfo.scss"
 export default function DomainInfo() {
 
     const hostname = window.location.hostname
-    if (hostname === "lorrgs.io") {
+    if (hostname.includes("lorrgs.io")) {
         return null;
     }
 
