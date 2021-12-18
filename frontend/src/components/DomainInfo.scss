@@ -7,13 +7,13 @@
     top: 0;
 
     font-size: larger;
-    background: hsl(150, 40%, 50%);
+    background: hsl(150, 40%, 40%);
 
     text-align: center;
     padding: 0.5rem;
     color: black;
 
     strong {
-        color: hsl(0, 0%, 10%);
+        font-weight: 900;
     }
 }
