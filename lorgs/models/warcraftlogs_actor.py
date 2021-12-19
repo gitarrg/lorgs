@@ -229,6 +229,7 @@ class Player(BaseActor):
             "covenant": self.covenant.name_slug,
             "casts": [cast.as_dict() for cast in self.casts],
             "deaths": self.deaths,
+            "resurrects": self.resurrects,
         }
 
     ##########################
@@ -310,9 +311,9 @@ class Player(BaseActor):
             death_ability = ABILITY_OVERWRITES.get(death_ability_id) or death_ability
 
             death_data = {}
-            death_data["ts"] = int((death_event.get("deathTime") or 0) / 1000)
-            death_data["name"] = death_ability.get("name", "")
-            death_data["icon"] = death_ability.get("abilityIcon", "")
+            death_data["ts"] = death_event.get("deathTime", 0)
+            death_data["spell_name"] = death_ability.get("name", "")
+            death_data["spell_icon"] = death_ability.get("abilityIcon", "")
             self.deaths.append(death_data)
  
     def process_event_resurrect(self, event):
@@ -320,8 +321,19 @@ class Player(BaseActor):
 
         data = {}
         data["ts"] = event.get("timestamp", 0) - fight_start
-        data["id"] = event.get("abilityGameID", -1)
-        data["source"] = event.get("sourceID", 0)
+
+        spell_id = event.get("abilityGameID", -1)
+        spell = WowSpell.get(spell_id=spell_id)
+        if spell:
+            data["spell_name"] = spell.name
+            data["spell_icon"] = spell.icon
+
+        source_id = event.get("sourceID", 0)
+        source_player: Player = self.fight.report.players.get(str(source_id))
+        if source_player:
+            data["source_name"] = source_player.name
+            data["source_class"] = source_player.class_slug
+
         self.resurrects.append(data)
 
     def process_event(self, event):
