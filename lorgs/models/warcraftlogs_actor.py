@@ -125,6 +125,8 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
         fight_start = self.fight.start_time_rel if self.fight else 0
 
         for cast_data in casts_data:
+            self.process_event(cast_data)
+
             cast_type: str = cast_data.get("type") or "unknown"
 
             cast_actor_id = cast_data.get("sourceID")
@@ -134,7 +136,6 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
             if self._has_source_id and (cast_actor_id != self.source_id):
                 continue
 
-            self.process_event(cast_data)
 
             # resurrect are dealt with in `process_event`
             if cast_type == "resurrect":
@@ -338,6 +339,12 @@ class Player(BaseActor):
 
     def process_event(self, event):
         super().process_event(event)
+
+        # Ankh doesn't shows as a regular spell
+        spell_id = event.get("abilityGameID", -1)
+        if spell_id in (21169,): # Ankh
+            event["type"] = "resurrect"
+
         event_type = event.get("type")
 
         if event_type == "resurrect":
