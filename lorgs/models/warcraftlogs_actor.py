@@ -103,6 +103,9 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
             }}
         """)
 
+    def process_event(self, event):
+        pass
+
     def process_query_result(self, query_result):
         """Process the result of a casts-query to create Cast objects."""
 
@@ -122,13 +125,20 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
         fight_start = self.fight.start_time_rel if self.fight else 0
 
         for cast_data in casts_data:
+            self.process_event(cast_data)
+
             cast_type: str = cast_data.get("type") or "unknown"
 
             cast_actor_id = cast_data.get("sourceID")
-            if cast_type in ("applybuff", "removebuff"):
+            if cast_type in ("applybuff", "removebuff", "resurrect"):
                 cast_actor_id = cast_data.get("targetID")
 
             if self._has_source_id and (cast_actor_id != self.source_id):
+                continue
+
+
+            # resurrect are dealt with in `process_event`
+            if cast_type == "resurrect":
                 continue
 
             # Create the Cast Object
@@ -195,6 +205,7 @@ class Player(BaseActor):
     soulbind_id: int = me.IntField(default=0)
 
     deaths = me.ListField(me.DictField())
+    resurrects = me.ListField(me.DictField())
 
     def __str__(self):
         return f"Player(id={self.source_id} name={self.name} spec={self.spec})"
@@ -218,6 +229,8 @@ class Player(BaseActor):
             "total": int(self.total),
             "covenant": self.covenant.name_slug,
             "casts": [cast.as_dict() for cast in self.casts],
+            "deaths": self.deaths,
+            "resurrects": self.resurrects,
         }
 
     ##########################
@@ -265,6 +278,11 @@ class Player(BaseActor):
         debuff_query = self.get_debuff_query(self.spec.all_debuffs)
         filters.append(debuff_query)
 
+        # Resurrections
+        if self.name:
+            resurect_query = f"target.name='{self.name}' and type='resurrect'"
+            filters.append(resurect_query)
+
         # combine all filters
         filters = [f for f in filters if f]   # filter the filters
         filters = [f"({f})" for f in filters] # wrap each filter into bracers
@@ -272,6 +290,65 @@ class Player(BaseActor):
 
         queries_combined = " and ".join(filters)
         return f"({queries_combined})"
+
+    def process_death_events(self, death_events):
+        """Add the Death Events the the Players.
+
+        Args:
+            death_events[list[dict]]
+
+        """
+        ABILITY_OVERWRITES = {}
+        ABILITY_OVERWRITES[1] = {"name": "Melee", "guid": 260421, "abilityIcon": "ability_meleedamage.jpg"}
+        ABILITY_OVERWRITES[3] = {"name": "Fall Damage"}
+
+        for death_event in death_events:
+            target_id = death_event.get("id", 0)
+            if self._has_source_id and (target_id != self.source_id):
+                continue
+
+            death_ability = death_event.get("ability", {})
+            death_ability_id = death_ability.get("guid", -1)
+            death_ability = ABILITY_OVERWRITES.get(death_ability_id) or death_ability
+
+            death_data = {}
+            death_data["ts"] = death_event.get("deathTime", 0)
+            death_data["spell_name"] = death_ability.get("name", "")
+            death_data["spell_icon"] = death_ability.get("abilityIcon", "")
+            self.deaths.append(death_data)
+ 
+    def process_event_resurrect(self, event):
+        fight_start = self.fight.start_time_rel if self.fight else 0
+
+        data = {}
+        data["ts"] = event.get("timestamp", 0) - fight_start
+
+        spell_id = event.get("abilityGameID", -1)
+        spell = WowSpell.get(spell_id=spell_id)
+        if spell:
+            data["spell_name"] = spell.name
+            data["spell_icon"] = spell.icon
+
+        source_id = event.get("sourceID", 0)
+        source_player: Player = self.fight.report.players.get(str(source_id))
+        if source_player:
+            data["source_name"] = source_player.name
+            data["source_class"] = source_player.class_slug
+
+        self.resurrects.append(data)
+
+    def process_event(self, event):
+        super().process_event(event)
+
+        # Ankh doesn't shows as a regular spell
+        spell_id = event.get("abilityGameID", -1)
+        if spell_id in (21169,): # Ankh
+            event["type"] = "resurrect"
+
+        event_type = event.get("type")
+
+        if event_type == "resurrect":
+            self.process_event_resurrect(event)
 
     def process_query_result(self, query_result):
         super().process_query_result(query_result)
@@ -281,27 +358,7 @@ class Player(BaseActor):
         if not self._has_source_id:
             casts = utils.get_nested_value(query_result, "report", "events", "data") or []
             for cast in casts:
-                if cast.get("type") == "cast":
+                cast_type = cast.get("type")
+                if cast_type == "cast":
                     self.source_id = cast.get("sourceID")
                     break
-
-    def process_death_events(self, death_events):
-        ability_overwrites = {}
-        ability_overwrites[1] = {"name": "Melee", "guid": 260421, "abilityIcon": "ability_meleedamage.jpg"}
-        ability_overwrites[3] = {"name": "Fall Damage"}
-
-        for death_event in death_events:
-
-            if death_event.get("id") != self.source_id:
-                continue
-
-            death_data = {}
-            death_data["deathTime"] = death_event.get("deathTime")
-            death_data["ability"] = death_event.get("ability", {})
-
-            # Ability Overwrites
-            ability_id = death_data["ability"].get("guid")
-            if ability_id in ability_overwrites:
-                death_data["ability"] = ability_overwrites[ability_id]
-
-            self.deaths.append(death_data)

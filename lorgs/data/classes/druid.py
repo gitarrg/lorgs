@@ -9,6 +9,7 @@ from lorgs.data.constants import *
 from lorgs.data.roles import *
 from lorgs.models.wow_class import WowClass
 from lorgs.models.wow_spec import WowSpec
+from lorgs.models.wow_spell import WowSpell
 
 
 ################################################################################
@@ -49,3 +50,7 @@ DRUID_GUARDIAN.add_spell(    spell_id=22812,  cooldown=60,  duration=8,         
 DRUID_RESTORATION.add_spell( spell_id=197721, cooldown=90,  duration=8,  color="#7ec44d", name="Flourish",                       icon="spell_druid_wildburst.jpg",                 show=False)
 DRUID_RESTORATION.add_spell( spell_id=740,    cooldown=180, duration=6,  color="#6cbfd9", name="Tranquility",                    icon="/static/img/spells/spell_nature_tranquility.webp")
 DRUID_RESTORATION.add_buff(  spell_id=117679, cooldown=180, duration=30,                  name="Incarnation: Tree of Life",      icon="ability_druid_improvedtreeform.jpg", wowhead_data="spell=33891")
+
+
+# Additional Spells (not tracked)
+REBIRTH = WowSpell(spell_id=20484, name="Rebirth", icon="spell_nature_reincarnation.jpg")
