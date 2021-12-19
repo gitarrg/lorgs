@@ -9,6 +9,7 @@ from lorgs.data.constants import *
 from lorgs.data.roles import *
 from lorgs.models.wow_class import WowClass
 from lorgs.models.wow_spec import WowSpec
+from lorgs.models.wow_spell import WowSpell
 
 
 ################################################################################
@@ -39,3 +40,6 @@ WARLOCK_DEMONOLOGY.add_spell(  spell_id=267217, cooldown=180, duration=15,      
 
 WARLOCK_DESTRUCTION.add_spell( spell_id=1122,   cooldown=180, duration=30, color="#91c45a", name="Summon Infernal",        icon="spell_shadow_summoninfernal.jpg")
 WARLOCK_DESTRUCTION.add_spell( spell_id=113858, cooldown=120, duration=20, color="#c35ec4", name="Dark Soul: Instability", icon="spell_warlock_soulburn.jpg")
+
+# Additional Spells (not tracked)
+SOULSTONE_RESURRECTION = WowSpell(spell_id=95750, name="Soulstone", icon="spell_shadow_soulgem.jpg")

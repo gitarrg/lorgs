@@ -9,6 +9,7 @@ from lorgs.data.constants import *
 from lorgs.data.roles import *
 from lorgs.models.wow_class import WowClass
 from lorgs.models.wow_spec import WowSpec
+from lorgs.models.wow_spell import WowSpell
 
 
 ################################################################################
@@ -47,3 +48,6 @@ DEATHKNIGHT_FROST.add_spell(   spell_id=46585,  cooldown=120, duration=60, color
 DEATHKNIGHT_FROST.add_spell(   spell_id=47568,  cooldown=120, duration=20, color="#88e8f2", name="Empower Rune Weapon",   icon="inv_sword_62.jpg")
 DEATHKNIGHT_FROST.add_spell(   spell_id=152279, cooldown=120, duration=30, color="#52abff", name="Breath of Sindragosa",  icon="spell_deathknight_breathofsindragosa.jpg")
 DEATHKNIGHT_FROST.add_spell(   spell_id=279302, cooldown=180,                               name="Frostwyrm's Fury",      icon="achievement_boss_sindragosa.jpg")
+
+# Additional Spells (not tracked)
+RAISE_ALLY = WowSpell(spell_id=61999, name="Raise Ally", icon="spell_shadow_deadofnight.jpg")
