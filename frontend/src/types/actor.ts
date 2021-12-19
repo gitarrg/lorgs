@@ -1,5 +1,5 @@
 import type Cast from "./cast";
-import type Death from "./death";
+import type Event from "./event";
 
 
 export default interface Actor {
@@ -21,7 +21,8 @@ export default interface Actor {
 
     casts: Cast[]
 
-    deaths: Death[]
+    deaths: Event[]
+    resurrects: Event[]
 
     pinned?: boolean
 
