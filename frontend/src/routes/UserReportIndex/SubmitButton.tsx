@@ -61,7 +61,7 @@ export function SubmitButton() {
             report_id,
             selected_fights,
             selected_players,
-            user.id,
+            user.permissions.includes("user_reports") ? user.id : "",
         ));
 
         // Redirect to the next page.
