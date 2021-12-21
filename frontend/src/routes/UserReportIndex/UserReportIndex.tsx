@@ -4,18 +4,10 @@ import LoadingOverlay from "../../components/shared/LoadingOverlay"
 import PlayerSelectGrid from "../../components/ReportNavbar/PlayerSelectList"
 import UrlInput from "./UrlInput"
 import styles from "./UserReportIndex.scss"
-import useUser from "../auth/useUser"
 import { SubmitButton } from "./SubmitButton";
 import { get_is_loading } from "../../store/user_reports"
 import { useAppSelector } from "../../store/store_hooks"
 import { useForm, FormProvider } from "react-hook-form";
-import { useHistory } from "react-router"
-
-
-import ReCAPTCHA from "react-google-recaptcha";
-
-
-const CAPTCHA_KEY = "6LexHqEdAAAAAOaPtZQEBRwUejX-rn7rfk6pWkGZ"
 
 
 export default function UserReportIndex() {
@@ -25,18 +17,6 @@ export default function UserReportIndex() {
     //
     const is_loading = useAppSelector(get_is_loading)
     const form_methods  = useForm();
-
-
-    const user = useUser()
-    const history = useHistory()
-    if (!user.permissions.includes("user_reports")) {
-        history.push("/")
-    }
-
-
-    function onCaptchaChange(value) {
-        console.log("Captcha value:", value);
-    }
 
     ////////////////////////////////
     // Render
@@ -67,14 +47,6 @@ export default function UserReportIndex() {
                 </div>
 
                 <div className="mt-3 ml-auto">
-                    <ReCAPTCHA
-                        sitekey={CAPTCHA_KEY}
-                        onChange={onCaptchaChange}
-                        theme="dark"
-                        // size="compact"
-                        badge="bottomleft"
-                    />
-
                     <SubmitButton />
                 </div>
 
