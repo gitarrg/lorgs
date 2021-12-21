@@ -157,12 +157,15 @@ export function load_report_overview(report_id: string, refresh?: boolean) {
 }
 
 
-export function load_report(report_id: string, fight_ids: number[], player_ids: number[]) {
+export function load_report(report_id: string, fight_ids: number[], player_ids: number[], user_id?: string) {
 
     return async (dispatch: AppDispatch) => {
 
         const search_string = build_url_search_string({fight_ids, player_ids})
-        const url = `/api/user_reports/${report_id}/load?${search_string}`;
+        let url = `/api/user_reports/${report_id}/load?${search_string}`;
+        if (user_id) {
+            url = `${url}&user_id=${user_id}`
+        }
         let response = await fetch_data(url);
         return response
     }

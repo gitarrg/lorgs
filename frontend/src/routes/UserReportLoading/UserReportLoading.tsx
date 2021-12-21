@@ -15,9 +15,9 @@ const TASK_CHECK_INVERVAL = 1000 // 500
 const TASK_STATUS_PENDING = "pending"
 
 
-async function get_task_status(task_name : string) {
+async function get_task_status(queue: string, task_name : string) {
     if (task_name === "done") { return "done" }
-    return fetch_data(`/api/tasks/${task_name}`)
+    return fetch_data(`/api/tasks/${queue}/${task_name}`)
 }
 
 
@@ -59,6 +59,7 @@ export default function UserReportLoading() {
     const params = new URLSearchParams(search)
     const report_id = params.get("report_id")
     const task_name = params.get("task")
+    const queue = params.get("queue")
 
 
     ////////////////////////////
@@ -67,7 +68,7 @@ export default function UserReportLoading() {
 
         if (!task_name) { return }
 
-        const info = await get_task_status(task_name)
+        const info = await get_task_status(queue, task_name)
         console.log("checking task status", info)
 
         // still waiting
@@ -78,6 +79,7 @@ export default function UserReportLoading() {
 
         params.delete("report_id")
         params.delete("task")
+        params.delete("queue")
         const rest_search = params.toString()
         const url = `/user_report/${report_id}?${rest_search}`
         history.push(url)
