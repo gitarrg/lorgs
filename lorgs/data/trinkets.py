@@ -21,6 +21,9 @@ for s in ALL_SPECS:
     s.add_spell(spell_type=TYPE_TRINKET, spell_id=330323, cooldown=180,                 name="Inscrutable Quantum Device",  icon="inv_trinket_80_titan02a.jpg", wowhead_data=f"item=179350{mythic}{maxilvl}")
     s.add_spell(spell_type=TYPE_TRINKET, spell_id=345539, cooldown=180, duration=35,    name="Empyreal Ordnance",           icon="spell_animabastion_nova.jpg", wowhead_data=f"item=180117{mythic}{maxilvl}")
 
+    # pvp badge
+    s.add_spell(spell_type=TYPE_TRINKET, spell_id=345228, cooldown=60,  duration=15,    name="Gladiator's Badge",           icon="spell_holy_championsbond.jpg", wowhead_data=f"item=185197&bonus=7315:1518:6646")
+
     # Other Trinkets
     s.add_spell(spell_type=TYPE_TRINKET, spell_id=348139, cooldown=90,  duration=9,     name="Instructor's Divine Bell",    icon="inv_misc_bell_01.jpg",        wowhead_data="item=184842&&bonus=1472:5894:6646")
 
