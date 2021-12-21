@@ -3,6 +3,7 @@ import { Fragment } from "react";
 import { fetch_data } from "../../api";
 import { useHistory, useLocation } from "react-router";
 import { useInterval } from 'react-use';
+import { PATREON_LINK } from "../../constants";
 
 
 /** Frequency in ms how often to check for task status updates */
@@ -59,7 +60,7 @@ export default function UserReportLoading() {
     const params = new URLSearchParams(search)
     const report_id = params.get("report_id")
     const task_name = params.get("task")
-    const queue = params.get("queue")
+    const queue = params.get("queue") || ""
 
 
     ////////////////////////////
@@ -77,6 +78,7 @@ export default function UserReportLoading() {
         // go next!
         console.log("task completed!")
 
+        // cleanup the url
         params.delete("report_id")
         params.delete("task")
         params.delete("queue")
@@ -99,6 +101,15 @@ export default function UserReportLoading() {
             <div className={styles.info}>
                 <InfoBlock params={params} />
             </div>
+
+
+            { queue == "free" && 
+                <div className="bg-dark mt-4 p-2 border rounded wow-border-druid">
+                    <span>
+                        Become a <a href={PATREON_LINK} target="_blank" className="wow-legendary"><strong>Patreon</strong></a> and get acces to the premium queue!
+                    </span>
+                </div>
+            }
         </div>
     )
 }
