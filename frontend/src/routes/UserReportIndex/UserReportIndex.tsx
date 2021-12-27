@@ -9,6 +9,7 @@ import { get_is_loading } from "../../store/user_reports"
 import { useAppSelector } from "../../store/store_hooks"
 import { useForm, FormProvider } from "react-hook-form";
 import { PATREON_LINK } from "../../constants"
+import useUser from "../auth/useUser"
 
 
 export default function UserReportIndex() {
@@ -16,8 +17,11 @@ export default function UserReportIndex() {
     ////////////////////////////////
     // Hooks
     //
+    const user = useUser()
     const is_loading = useAppSelector(get_is_loading)
     const form_methods  = useForm();
+
+    const user_reports_perm = user.permissions.includes("user_reports")
 
     ////////////////////////////////
     // Render
@@ -49,10 +53,10 @@ export default function UserReportIndex() {
 
                 <div className="mt-3 d-flex ">
 
-                    <div>
+                    { !user_reports_perm && <div>
                         <i className="fas fa-info-circle mr-1"></i>
                         <span><a href={PATREON_LINK} target="_blank">Patrons can load multiple pulls and players at once!</a></span>
-                    </div>
+                    </div>}
 
 
                     <div className="ml-auto">
