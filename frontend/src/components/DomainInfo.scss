@@ -1,13 +1,11 @@
 
 .container {
 
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
+    margin: 0 -15px;  // counter padding from container
 
     font-size: larger;
     background: hsl(150, 40%, 40%);
+    background: hsl(175, 50%, 60%);
 
     text-align: center;
     padding: 0.5rem;
