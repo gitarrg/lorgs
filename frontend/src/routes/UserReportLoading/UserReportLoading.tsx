@@ -22,7 +22,7 @@ async function get_task_status(queue: string, task_name : string) {
 }
 
 
-function InfoBlock({ params }) {
+function InfoBlock({ params } : { params: any }) {
 
     const found_keys: string[] = [] // keeps track of keys we already had
     const info_elements: JSX.Element[] = [] // keeps track of keys we already had
@@ -92,24 +92,26 @@ export default function UserReportLoading() {
     ////////////////////////////
     // Render
     return (
-        <div className={styles.container}>
-            <h1>
-                <i className="fas fa-circle-notch fa-spin mr-2"></i>
-                loading...
-            </h1>
+        <div className={styles.wrapper}>
+            <div className={styles.container}>
+                <h1>
+                    <i className="fas fa-circle-notch fa-spin mr-2"></i>
+                    loading...
+                </h1>
 
-            <div className={styles.info}>
-                <InfoBlock params={params} />
-            </div>
-
-
-            { queue == "free" && 
-                <div className="bg-dark mt-4 p-2 border rounded wow-border-druid">
-                    <span>
-                        Become a <a href={PATREON_LINK} target="_blank" className="wow-legendary"><strong>Patreon</strong></a> and get acces to the premium queue!
-                    </span>
+                <div className={styles.info}>
+                    <InfoBlock params={params} />
                 </div>
-            }
+
+
+                { queue == "free" && 
+                    <div className={styles.advert + " bg-dark mt-4 p-2 border rounded wow-border-druid"}>
+                        <span>
+                            Become a <a href={PATREON_LINK} target="_blank" className="wow-legendary"><strong>Patreon</strong></a> and get acces to the premium queue!
+                        </span>
+                    </div>
+                }
+            </div>
         </div>
     )
 }
