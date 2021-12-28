@@ -40,10 +40,7 @@ function create_spell_button(name_slug: string, spec: Spec|Boss|Class, spell_id:
 
 export function SpellTypeGroup({ spell_type }: SpellTypeGroupProps) {
 
-    // the spell type can be a Spec, Boss or Class
-
     const type = get_spell_type(spell_type)
-
     const type_spells = useAppSelector(state => get_spells_for_type(state, spell_type));
     const used_spells = useAppSelector(get_used_spells)
     const used_type_spells = type_spells.filter(spell_id => used_spells.includes(spell_id))

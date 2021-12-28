@@ -52,6 +52,14 @@ export function get_spells_for_type(state: RootState, spell_type: string) {
 }
 
 
+export function get_type_has_used_spells(state: RootState, spell_type: string) {
+
+    const spell_ids = state.spells.spells_by_type[spell_type] || []
+    const used_spells = state.spells.used_spell_ids
+    return spell_ids.some(spell_id => used_spells.includes(spell_id))
+}
+
+
 export function get_spell_visible(state: RootState, spell_id: number) : boolean {
     // undefined is considered true in this case
     return state.spells.spell_display[spell_id] !== false;
