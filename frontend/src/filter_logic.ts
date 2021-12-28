@@ -11,7 +11,7 @@ function is_fight_visible(fight: Fight, filters: FilterValues) {
     if (filters.killtime.min && filters.killtime.min > fight_duration) { return false }
     if (filters.killtime.max && filters.killtime.max < fight_duration) { return false }
 
-    return true
+    return fight.players.some(player => is_player_visible(player, filters))
 }
 
 
