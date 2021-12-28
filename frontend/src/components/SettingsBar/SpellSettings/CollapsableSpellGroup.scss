@@ -1,0 +1,47 @@
+
+
+.group {
+
+    display: flex;
+    align-items: flex-end;
+
+    // highlight the group / child groups on hover
+    &:hover {
+        :global .border {
+            border-color: var(--wow-color);
+        }
+    }
+}
+
+
+.button {
+
+    width: 34px;
+    height: 34px;
+
+    // expanded
+    &:global.open {
+        border-top-right-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+    }
+
+    &:global.closed {
+        margin-right: 0.5rem;
+    }
+}
+
+
+.children {
+    display: flex;
+
+    // align group title with the expand icon
+    & > div:first-child > small {
+        margin-left: -32px;
+    }
+
+    & > div:first-child > div > div {
+        border-top-left-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+        border-left: none;
+    }
+}
