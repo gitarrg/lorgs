@@ -19,6 +19,11 @@ export default function IndexUserReport() {
         <IndexModuleLink title="Custom Report:" url="/user_report" className={styles.user_report_link}>
             <UserReportIcon />
             <span className="h2">Load Log</span>
+
+            <div className={styles.new_container}>
+                <span className={styles.new}>NEW!</span>
+            </div>
+
         </IndexModuleLink>
     )
 }
