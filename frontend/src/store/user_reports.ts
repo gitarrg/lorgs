@@ -8,6 +8,10 @@ import { fetch_data } from '../api'
 
 export interface UserReportData {
     is_loading: boolean
+
+    /** optional error message */
+    error?: string,
+
     title: string
     report_id: string
 
@@ -93,8 +97,11 @@ const INITIAL_STATE: UserReportData = {
     fights: {},
     players: {},
     task_id: "",
+    owner: "",
     is_loading: false,
     date: 0,
+
+    error: "",
 }
 
 

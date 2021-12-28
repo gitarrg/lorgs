@@ -63,7 +63,9 @@ async def load_user_report_overview(report_id: str, refresh: bool = False):
         try:
             await user_report.report.load_summary()
         except InvalidReport:
-            return "invalid report", 404
+            return {"error": "Invalid URL."}
+        except PermissionError:
+            return {"error": "No permission to view this report."}
         else:
             user_report.save()
 
