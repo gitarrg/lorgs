@@ -1,47 +1,55 @@
-
-
-import { useContext, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import ButtonGroup, { ButtonGroupContext } from './shared/ButtonGroup'
+import ButtonGroup from './shared/ButtonGroup'
+import FaButton from './shared/FaButton'
+import ClassSpecFilterMenu from "./ClassSpecFilterMenu"
+import { ControlledMenu, MenuItem, applyStatics, MenuState } from '@szhsin/react-menu';
 import { update_settings } from '../../store/ui'
 import { useAppSelector } from '../../store/store_hooks'
-import FaButton from './shared/FaButton'
+import { ReactNode, useRef, useState } from 'react'
+import { useDispatch } from 'react-redux'
 
 
-function Button({attr_name, icon_name, tooltip=""} : {attr_name: string, icon_name: string, tooltip?: string}) {
+function DisplayToggleItem({attr_name, children, ...props} : {attr_name : string, children : ReactNode}) {
 
-    ////////////////////////
-    // Hooks
-    //
-    const attr_value = useAppSelector(state => state.ui.settings[attr_name])
+    const value = useAppSelector(state => state.ui.settings[attr_name])
     const dispatch = useDispatch()
-    const group_context = useContext(ButtonGroupContext)
 
     function onClick() {
-        const new_value = !attr_value
-
-        dispatch(update_settings({
-            [attr_name]: new_value
-        }))
-
-        if (new_value && group_context.setter) {
-            group_context.setter({active: new_value, source: "child"})
-        }
+        dispatch(update_settings({[attr_name]: !value}))
     }
 
-    // see SpellButton,jsx
-    useEffect(() => {
-        if (group_context.source !== "group") { return}
-        dispatch(update_settings({
-            [attr_name]: group_context.active
-        }))
-    }, [group_context.active])
-
-    ////////////////////////
-    // Render
-    //
-    return <FaButton icon_name={icon_name} onClick={onClick} tooltip={tooltip} disabled={!attr_value} />
+    return (
+        <MenuItem type="checkbox" checked={value} onClick={onClick} {...props}>
+            {children}
+        </MenuItem>
+    )
 }
+applyStatics(MenuItem)(DisplayToggleItem)
+
+
+function SettingsDropdown() {
+
+    const ref = useRef(null);
+    const [state, setState] = useState<MenuState>("closed");
+
+    return <>
+        <div ref={ref} onMouseEnter={() => setState('open')}>
+            <FaButton icon_name="fas fa-cog"/>
+        </div>
+
+        <ControlledMenu
+            state={state} anchorRef={ref}
+            onMouseLeave={() => setState('closed')}
+            submenuCloseDelay={0} submenuOpenDelay={0}
+        >
+
+            <DisplayToggleItem attr_name="show_cooldown"><i className="fas fa-image mr-1"/>show cooldown durations</DisplayToggleItem>
+            <DisplayToggleItem attr_name="show_casticon"><i className="fas fa-clock mr-1"/>show spell icons</DisplayToggleItem>
+            <DisplayToggleItem attr_name="show_casttime"><i className="fas fa-stream mr-1"/>show cast time</DisplayToggleItem>
+            <DisplayToggleItem attr_name="show_duration"><i className="fas fa-hourglass mr-1"/>show active duration</DisplayToggleItem>
+        </ControlledMenu>
+    </>
+}
+
 
 
 export default function DisplaySettings() {
@@ -49,10 +57,8 @@ export default function DisplaySettings() {
     return (
         <>
             <ButtonGroup name="Display" side="left">
-                <Button attr_name="show_casticon" icon_name="fas fa-image" tooltip="spell icon" />
-                <Button attr_name="show_casttime" icon_name="fas fa-clock" tooltip="cast time" />
-                <Button attr_name="show_duration" icon_name="fas fa-stream" tooltip="duration" />
-                <Button attr_name="show_cooldown" icon_name="fas fa-hourglass" tooltip="cooldown" />
+                <SettingsDropdown />
+                <ClassSpecFilterMenu />
             </ButtonGroup>
         </>
     )
