@@ -1,0 +1,73 @@
+// Styles/Overwrites for the (Dropdown)-Menues
+
+
+.szh-menu {
+
+    user-select: none;
+    padding: 0.25rem 0;
+    background-color: hsl(0, 0%, 15%);
+    border-radius: 0.25rem;
+    border: 1px solid hsl(0, 0%, 26%);
+
+
+    &__item {
+        padding: 0.25rem 0.5rem;
+
+        // align text with icon
+        display: flex;
+        align-items: center;
+
+        &--hover {
+            background-color: hsl(0, 0%, 30%);
+        }
+
+        &--checked span {
+            color:hsl(0, 0%, 30%) !important;
+        }
+
+        &--submenu {
+            position: relative;
+
+            padding-right: 1.5rem;
+
+            &::after {
+                content: "❯";
+                position: absolute;
+                right: 0.5rem;
+            }
+        } // --submenu
+    } // &__item
+
+    // Menu inside a Submenu
+    &__submenu > & {
+        // border: 1px solid lime;
+
+        transform:
+            translateX(-5px) // small overlap
+            translateY(calc(-0.25rem - 1px)) // padding + 1px border
+        ;
+    }
+} // szh-menu
+
+
+
+// Rules for the Class/Spec Filter Menu
+.szh-menu {
+    &__item {
+
+        &--checked {
+            span {}
+            img {
+                opacity: 0.3;
+            }
+
+            
+
+
+        }
+    }
+}
+
+
+
+
