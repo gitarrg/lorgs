@@ -66,7 +66,7 @@ export function TabGroup({children, initial_tab=0} : {children : ReactElement[],
     context.setter = setContext
 
     return (
-        <div className="group">
+        <div>
             <TabGroupContext.Provider value={context}>
 
                 <div className="d-flex gap-2">

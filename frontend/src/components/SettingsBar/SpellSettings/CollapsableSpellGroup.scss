@@ -15,14 +15,23 @@
 
 
 .button {
+    --hover-scale: 1.1;
 
+    // size of a Button Group
     width: 34px;
     height: 34px;
 
     // expanded
     &:global.open {
-        border-top-right-radius: 0 !important;
-        border-bottom-right-radius: 0 !important;
+        margin-right: 0.25rem;
+    }
+
+    &:global.closed {
+        border-color: grey;
+
+        &:hover {
+            border-color: var(--wow-color);
+        }
     }
 }
 
@@ -33,12 +42,6 @@
 
     // align group title with the expand icon
     & > div:first-child > small {
-        margin-left: -32px;
-    }
-
-    & > div:first-child > div > div {
-        border-top-left-radius: 0 !important;
-        border-bottom-left-radius: 0 !important;
-        border-left: none;
+        margin-left: -38px;
     }
 }

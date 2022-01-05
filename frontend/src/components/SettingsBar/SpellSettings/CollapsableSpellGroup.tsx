@@ -35,7 +35,7 @@ export default function CollapsableSpellGroup({spec, children} : CollapsableSpel
         <div className={`${style.group} wow-${wow_class}`}>
 
             <div onClick={onClick}>
-                <Icon spec={spec} className={`${style.button} ${collapsed ? "closed" : "open"} button`}/>
+                <Icon spec={spec} className={`${style.button} ${collapsed ? "closed" : "open"} button grow-when-touched`}/>
             </div>
 
             {!collapsed && <div className={`${style.children} `}>

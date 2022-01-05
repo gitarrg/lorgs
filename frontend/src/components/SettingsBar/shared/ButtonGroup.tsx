@@ -55,7 +55,6 @@ export default function ButtonGroup({name, extra_class, className, children} : B
     return (
         <div>
             {name && <small className={`${styles.header} ${extra_class} ${active ? "" : "disabled"}`} onClick={onClick}>{name}</small>}
-
             <div className="d-flex">  {/* wraper to shrink the child div */}
                 <div className={`${styles.group} bg-dark p-1 rounded border`}>
                     <ButtonGroupContext.Provider value={group_context}>
