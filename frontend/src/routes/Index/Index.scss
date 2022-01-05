@@ -34,12 +34,39 @@
 
 .user_report_link {
 
-    // border: 1px solid hsl(49, 97%, 59%);
-
-    a:hover span {
+    a:hover {
         color: var(--wow-artifact);
     }
+}
 
+
+.new_container {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
 
 }
 
+// overlay to indicate its new
+.new {
+
+    position: absolute;
+    padding: 2px 30px;
+    color: black;
+
+    left: 0px;
+    top: 0px;
+    font-size: small;
+
+    background: hsl(175, 85%, 45%);
+
+    transform-origin: center;
+
+    transform:
+        rotate(-45deg)
+        translateX(-30%)  // eye balled the values
+        translateY(-75%);
+}

@@ -8,6 +8,10 @@
 
     cursor: pointer;
 
+    // for the "new"-overlay
+    position: relative;
+    overflow: hidden;
+
     :global .icon-l {
         border-width: 1.5px;
     }

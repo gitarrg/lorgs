@@ -1,6 +1,5 @@
 import IndexModuleLink from "./IndexModuleLink";
 import styles from "./Index.scss"
-import useUser from "./../auth/useUser"
 
 function UserReportIcon() {
 
@@ -16,14 +15,15 @@ function UserReportIcon() {
 
 export default function IndexUserReport() {
 
-    const user = useUser()
-    if (!user.permissions.includes("user_reports")) { return null}
-
-
     return (
         <IndexModuleLink title="Custom Report:" url="/user_report" className={styles.user_report_link}>
             <UserReportIcon />
             <span className="h2">Load Log</span>
+
+            <div className={styles.new_container}>
+                <span className={styles.new}>NEW!</span>
+            </div>
+
         </IndexModuleLink>
     )
 }

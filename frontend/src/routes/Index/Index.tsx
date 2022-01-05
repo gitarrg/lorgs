@@ -51,11 +51,11 @@ export default function Index() {
 
     return <>
 
+        <DomainInfo />
+
         <div className="mt-1 d-flex justify-content-end">
             <LoginButton />
         </div>
-
-        <DomainInfo />
 
         <div className={`${styles.container} mt-4`}>
             <div className={styles.col_left}>

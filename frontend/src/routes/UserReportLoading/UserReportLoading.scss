@@ -1,10 +1,14 @@
 
 
-.container {
-
+// outer container to center everything on the page
+.wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
+
+}
+
+.container {
 
     margin-top: 10rem;
 
@@ -18,5 +22,9 @@
         pre {
             margin: 0;
         }
+    }
+
+    .advert {
+        width: 100%;
     }
 }
