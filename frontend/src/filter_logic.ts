@@ -11,7 +11,8 @@ function is_fight_visible(fight: Fight, filters: FilterValues) {
     if (filters.killtime.min && filters.killtime.min > fight_duration) { return false }
     if (filters.killtime.max && filters.killtime.max < fight_duration) { return false }
 
-    return true
+    const has_boss = fight.boss && is_player_visible(fight.boss, filters)
+    return has_boss || fight.players.some(player => is_player_visible(player, filters))
 }
 
 
@@ -25,7 +26,6 @@ function is_player_visible(player: Actor , filters: FilterValues) {
     if (filters["covenant"][player.covenant ?? ""] === false ) { return false}
     return true
 }
-
 
 
 const FILTERS = {

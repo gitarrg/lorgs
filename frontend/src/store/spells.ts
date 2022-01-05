@@ -7,7 +7,7 @@ import { set_fights } from './fights'
 import { set_spec_spells } from './specs'
 
 
-const ICON_ROOT = "https://wow.zamimg.com/images/wow/icons/small"
+const ICON_ROOT = "https://wow.zamimg.com/images/wow/icons/medium"
 
 
 export interface SpellSliceState {
@@ -49,6 +49,14 @@ export function get_spell_types(state: RootState) {
 
 export function get_spells_for_type(state: RootState, spell_type: string) {
     return state.spells.spells_by_type[spell_type] || []
+}
+
+
+export function get_type_has_used_spells(state: RootState, spell_type: string) {
+
+    const spell_ids = state.spells.spells_by_type[spell_type] || []
+    const used_spells = state.spells.used_spell_ids
+    return spell_ids.some(spell_id => used_spells.includes(spell_id))
 }
 
 

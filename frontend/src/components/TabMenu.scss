@@ -1,0 +1,37 @@
+
+
+.title {
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+
+    color: grey;
+    margin-bottom: 0.125rem;
+    padding: 0 0.25rem 0.25rem 0.25rem;
+
+    &:hover {
+        color: inherit;
+    }
+
+    &:global.selected {
+        color: var(--wow-artifact);
+
+        &:after {
+            border-width: 1.5px;
+            opacity: 1.0;
+        }
+    }
+
+    &:after {
+        content: "";
+        position: absolute;
+
+        // left/right is based on the gap between the tabs
+        left: -0.25rem;
+        right: -0.25rem;
+        bottom: 0;
+
+        opacity: 0.25;
+        border-bottom: 0.5px solid var(--wow-artifact);
+    }
+}

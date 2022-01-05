@@ -139,9 +139,9 @@ class WarcraftlogsClient:
                         if message == ERROR_MESSAGE_INVALID_REPORT:
                             raise InvalidReport()
 
-                        # this sometimes happens.. just skip those
+                        # TODO: find a way to not hardcode the error message
                         if message == "You do not have permission to view this report.":
-                            continue
+                            raise PermissionError("Private Report!")
 
                         msg += "\n" + error.get("message") + " path:" + "/".join(error.get("path", []))
 

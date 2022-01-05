@@ -1,0 +1,47 @@
+
+
+.group {
+
+    display: flex;
+    align-items: flex-end;
+
+    // highlight the group / child groups on hover
+    &:hover {
+        :global .border {
+            border-color: var(--wow-color);
+        }
+    }
+}
+
+
+.button {
+    --hover-scale: 1.1;
+
+    // size of a Button Group
+    width: 34px;
+    height: 34px;
+
+    // expanded
+    &:global.open {
+        margin-right: 0.25rem;
+    }
+
+    &:global.closed {
+        border-color: grey;
+
+        &:hover {
+            border-color: var(--wow-color);
+        }
+    }
+}
+
+
+.children {
+    display: flex;
+    gap: 0.25rem;
+
+    // align group title with the expand icon
+    & > div:first-child > small {
+        margin-left: -38px;
+    }
+}

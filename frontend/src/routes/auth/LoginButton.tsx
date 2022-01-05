@@ -26,9 +26,6 @@ export default function LoginButton() {
         </div>
     }
 
-    // tmp: completely  hide the login button
-    return null
-
     const url = get_login_url()
     return <a className={style.loginLink} href={url.toString()}>Login</a>
 }
