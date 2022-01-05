@@ -99,6 +99,7 @@ function _process_fight(fight: Fight) {
     if (fight.boss) {
         fight.boss = _process_actor(fight.boss)
         fight.boss.class = "boss"
+        fight.boss.spec = fight.boss.name
     }
     fight.players = fight.players.map(actor => _process_actor(actor))
     return fight

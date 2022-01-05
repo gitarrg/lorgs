@@ -47,6 +47,11 @@ function ClassSpells() {
 
     let class_names = useAppSelector(get_class_names)
     class_names = class_names.filter(name => name != "other")
+
+    // apply filters
+    const class_filters = useAppSelector(state => state.ui.filters.class)
+    class_names = class_names.filter(name => class_filters[name] !== false )
+
     return <>{class_names.map(name => <SpellGroupSpecs key={name} icon_name={name} />)}</>
 }
 
@@ -60,9 +65,11 @@ function OtherSpells() {
 
 export default function SpellSettings() {
 
-    return <>
-        <BossSpells />
-        <ClassSpells />
-        <OtherSpells />
-    </>
+    return (
+        <>
+            <BossSpells />
+            <ClassSpells />
+            <OtherSpells />
+        </>
+    )
 }

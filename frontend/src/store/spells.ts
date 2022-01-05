@@ -7,7 +7,7 @@ import { set_fights } from './fights'
 import { set_spec_spells } from './specs'
 
 
-const ICON_ROOT = "https://wow.zamimg.com/images/wow/icons/small"
+const ICON_ROOT = "https://wow.zamimg.com/images/wow/icons/medium"
 
 
 export interface SpellSliceState {
