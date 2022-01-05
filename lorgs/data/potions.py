@@ -28,6 +28,8 @@ KYRIAN_BOND       = OTHER_BUFFS.add_spell(color=COL_KYR,   spell_id=327139,     
 BENEVOLENT_FAERIE = OTHER_BUFFS.add_spell(color=COL_NF,    spell_id=327710,               duration=20, name="Benevolent Faerie",   icon="spell_animaardenweald_orb.jpg")
 INNERVATE         = OTHER_BUFFS.add_spell(color="#3b97ed", spell_id=29166,  cooldown=180, duration=10, name="Innervate",           icon="spell_nature_lightning.jpg")
 
+UNHOLY_BONUS = OTHER_BUFFS.add_spell(color="#6c34ba", spell_id=356043, duration=15, name="Chaos Bane",  icon="spell_fire_twilightflamestrike.jpg")
+
 
 ################################################################################
 # Potions
@@ -49,6 +51,8 @@ for s in ALL_SPECS:
     s.add_buff(HEROISM)         # 32182
     s.add_buff(PRIMAL_RAGE_1)
     s.add_buff(PRIMAL_RAGE_2)
+
+    s.add_buff(UNHOLY_BONUS)
 
 
 # Intellect users
