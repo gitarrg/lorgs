@@ -22,9 +22,6 @@ interface UserSliceState {
     id: string
     permissions: string[],
 
-    /* the client users ip addr */
-    ip: string,
-
     error?: string
     error_message?: string
 }
