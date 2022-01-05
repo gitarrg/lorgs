@@ -62,8 +62,8 @@ async def get_task(task_id: str, queue: str = DEFAULT_QUEUE):
 @utils.run_in_executor
 def submit_task(task):
     """Submit a task to the queue"""
-    task_name = task.get("name")
-    parent = task_name.split("/tasks/")[0]
+    task_name = task.get("name") or get_task_full_name("name")
+    parent = task_name.split("/tasks/")[0] or DEFAULT_QUEUE
     return TASK_CLIENT.create_task(request={"parent": parent, "task": task})
 
 
