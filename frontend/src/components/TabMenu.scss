@@ -1,0 +1,18 @@
+
+.title {
+    cursor: pointer;
+    user-select: none;
+
+    color: grey;
+    margin-bottom: 0.25rem;
+
+
+    &:hover {
+        color: inherit;
+    }
+
+    &:global.selected {
+        color: white;
+        border-bottom: 1px solid white;
+    }
+}

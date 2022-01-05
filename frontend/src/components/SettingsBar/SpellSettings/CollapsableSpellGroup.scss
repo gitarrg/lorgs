@@ -24,15 +24,12 @@
         border-top-right-radius: 0 !important;
         border-bottom-right-radius: 0 !important;
     }
-
-    &:global.closed {
-        margin-right: 0.5rem;
-    }
 }
 
 
 .children {
     display: flex;
+    gap: 0.25rem;
 
     // align group title with the expand icon
     & > div:first-child > small {

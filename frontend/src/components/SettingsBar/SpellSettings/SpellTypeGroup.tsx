@@ -45,6 +45,11 @@ export function SpellTypeGroup({ spell_type }: SpellTypeGroupProps) {
     const used_spells = useAppSelector(get_used_spells)
     const used_type_spells = type_spells.filter(spell_id => used_spells.includes(spell_id))
 
+    // apply filters
+    const filters = useAppSelector(state => state.ui.filters)
+    if (filters.class[spell_type] === false || filters.spec[spell_type] === false) { return null }
+
+
     if (!type) {
         console.warn("unknown type:", type)
         return null;
@@ -52,6 +57,7 @@ export function SpellTypeGroup({ spell_type }: SpellTypeGroupProps) {
     if (used_type_spells.length === 0) {
         return null;
     }
+
 
     const name_slug = type.class?.name_slug || type.full_name_slug || type.name_slug
     const className=`wow-${name_slug}`
