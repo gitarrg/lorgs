@@ -37,6 +37,8 @@ DEATHKNIGHT.add_spell(         spell_id=49039,  cooldown=120, duration=10, color
 
 DEATHKNIGHT_BLOOD.add_spell(   spell_id=49028,  cooldown=120, duration=8,  color="#ffbd24", name="Dancing Rune Weapon",   icon="inv_sword_07.jpg")
 DEATHKNIGHT_BLOOD.add_spell(   spell_id=55233,  cooldown=90,  duration=10,                  name="Vampiric Blood",        icon="spell_shadow_lifedrain.jpg")
+DEATHKNIGHT_BLOOD.add_spell(   spell_id=206931, cooldown=30,  duration=3,  color="#c43025", name="Blooddrinker",          icon="ability_animusdraw.jpg",                  show=False)
+DEATHKNIGHT_BLOOD.add_spell(   spell_id=194679, cooldown=25,  duration=4,  color="#ff9169", name="Rune Tap",              icon="spell_deathknight_runetap.jpg",           show=False)
 
 DEATHKNIGHT_UNHOLY.add_spell(  spell_id=42650,  cooldown=240, duration=30,                  name="Army of the Dead",      icon="spell_deathknight_armyofthedead.jpg",                 tags=[TAG_DYNAMIC_CD])
 DEATHKNIGHT_UNHOLY.add_spell(  spell_id=275699, cooldown=45,  duration=15,                  name="Apocalypse",            icon="artifactability_unholydeathknight_deathsembrace.jpg", tags=[TAG_DYNAMIC_CD])
