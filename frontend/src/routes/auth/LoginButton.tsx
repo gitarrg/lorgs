@@ -5,7 +5,11 @@ import { Link } from "react-router-dom"
 
 
 function get_login_url() {
+
     const login_url = new URL("/login", document.baseURI)
+    login_url.protocol = "https:"
+    login_url.hostname = login_url.hostname.replace("www.", "")
+
     const url = new URL(DISCORD_LOGIN_URL)
     url.searchParams.set("client_id", DISCORD_CLIENT_ID)
     url.searchParams.set("response_type", "code")
