@@ -55,9 +55,8 @@ export default function UserReportIndex() {
 
                     { !user_reports_perm && <div>
                         <i className="fas fa-info-circle mr-1"></i>
-                        <span><a href={PATREON_LINK} target="_blank">Patrons can load multiple pulls and players at once!</a></span>
+                        <span><a href={PATREON_LINK} target="_blank"><span className="wow-legendary">Legendary Patrons</span> can load multiple pulls and players at once!</a></span>
                     </div>}
-
 
                     <div className="ml-auto">
                         <SubmitButton />
