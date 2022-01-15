@@ -1,18 +1,16 @@
-import { applyStatics, ControlledMenu, MenuItem, MenuState } from '@szhsin/react-menu';
-import { useEffect, useRef, useState } from 'react'
-import { get_difficulty, get_mode } from '../../store/ui';
+import DropdownMenu from "../DropdownMenu";
 import NavbarGroup from './NavbarGroup';
-
 import styles from "./NavbarDifficulty.scss"
-import { useAppSelector } from '../../store/store_hooks';
 import { NavLink } from 'react-router-dom';
-import WebpImg from '../WebpImg';
-import Icon from '../shared/Icon';
+import { applyStatics, MenuItem } from '@szhsin/react-menu';
+import { get_difficulty, get_mode } from '../../store/ui';
+import { useAppSelector } from '../../store/store_hooks';
 
 
+// matched to Raider.io's colors for CE and AOTC
 const DIFFICULTY_COLOR = {
-    mythic: "wow-epic",
-    heroic: "wow-rare",
+    mythic: "wow-legendary",
+    heroic: "wow-epic",
 }
 
 
@@ -21,7 +19,11 @@ function DifficultyIcon({difficulty} : {difficulty : string}) {
     const class_name = DIFFICULTY_COLOR[difficulty] || ""
 
     const label = difficulty[0].toUpperCase()
-    return <span className={`${styles.icon} ${class_name} icon-m shadow`}>{label}</span>
+    return (
+        <span className={`${styles.icon} ${class_name} icon-m shadow`}>
+            <div className={styles.icon_label}>{label}</div>
+        </span>
+    )
 
 }
 
@@ -40,7 +42,7 @@ function NavbarDifficultyOption({difficulty, className, ...props} : {difficulty:
         <NavLink to={link} className={`${className} ${styles.option}`} activeClassName="active">
             <MenuItem {...props}>
                 <DifficultyIcon difficulty={difficulty}/>
-                <span className={`${class_name} ml-1`}>{difficulty}</span>
+                <span className={`${styles.label} ${class_name} ml-1`}>{difficulty}</span>
             </MenuItem>
         </NavLink>
     )
@@ -50,34 +52,16 @@ applyStatics(MenuItem)(NavbarDifficultyOption)
 
 export default function NavbarDifficulty() {
 
-    const ref = useRef(null);
-    const [state, setState] = useState<MenuState>("closed");
-
-    // const [difficulty, setDifficulty] = useState("mythic");
     const difficulty = useAppSelector(get_difficulty)
 
-
-    useEffect(() => setState("open"), [])
-
-
-
+    // Render
+    const button = <DifficultyIcon difficulty={difficulty} />
     return (
         <NavbarGroup>
-
-            <div ref={ref} onMouseEnter={() => setState('open')} className="active">
-                <DifficultyIcon difficulty={difficulty}/>
-            </div>
-
-            <ControlledMenu
-                state={state} anchorRef={ref}
-                onMouseLeave={() => setState('closed')}
-                submenuCloseDelay={10} submenuOpenDelay={0}
-            >
+            <DropdownMenu button={button}>
                 <NavbarDifficultyOption difficulty="mythic" className="wow-epic" />
                 <NavbarDifficultyOption difficulty="heroic" className="wow-rare" />
-            </ControlledMenu>
+            </DropdownMenu>
         </NavbarGroup>
     )
 }
-
-

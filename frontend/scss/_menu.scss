@@ -9,7 +9,6 @@
     border-radius: 0.25rem;
     border: 1px solid hsl(0, 0%, 26%);
 
-
     &__item {
         padding: 0.25rem 0.5rem;
 
@@ -48,26 +47,3 @@
         ;
     }
 } // szh-menu
-
-
-
-// Rules for the Class/Spec Filter Menu
-.szh-menu {
-    &__item {
-
-        &--checked {
-            span {}
-            img {
-                opacity: 0.3;
-            }
-
-            
-
-
-        }
-    }
-}
-
-
-
-
