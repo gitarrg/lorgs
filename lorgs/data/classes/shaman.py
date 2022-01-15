@@ -30,6 +30,8 @@ SHAMAN.add_spell(              spell_id=320674, cooldown=90,               color
 SHAMAN.add_spell(              spell_id=328923, cooldown=120, duration=3,  color=COL_NF,    name="Fae Transfusion",            icon="ability_ardenweald_shaman.jpg",             show=True)
 SHAMAN.add_spell(              spell_id=326059, cooldown=45,               color=COL_NECRO, name="Primordial Wave",            icon="ability_maldraxxus_shaman.jpg",             show=False)
 
+SHAMAN.add_spell(              spell_id=21169, name="Reincarnation", icon="spell_shaman_improvedreincarnation.jpg", show=False)
+
 SHAMAN_ELEMENTAL.add_spell(    spell_id=191634, cooldown=60,               color="#00bfff", name="Stormkeeper",                icon="ability_thunderking_lightningwhip.jpg")
 SHAMAN_ELEMENTAL.add_spell(    spell_id=198067, cooldown=150, duration=30, color="#ffa500", name="Fire Elemental",             icon="spell_fire_elemental_totem.jpg")
 SHAMAN_ELEMENTAL.add_spell(    spell_id=192249, cooldown=150, duration=30, color="#64b8d9", name="Storm Elemental",            icon="inv_stormelemental.jpg")

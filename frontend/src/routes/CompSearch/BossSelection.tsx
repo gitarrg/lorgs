@@ -2,9 +2,10 @@
     Component to show the currently selected Boss
 */
 
-import { useWatch } from "react-hook-form";
+import WebpImg from "../../components/WebpImg";
 import { get_boss } from '../../store/bosses';
 import { useAppSelector } from '../../store/store_hooks';
+import { useWatch } from "react-hook-form";
 
 
 export default function BossSelection() {
@@ -19,7 +20,7 @@ export default function BossSelection() {
     return (
         <>
             <h1 className="">{header_content}</h1>
-            {have_boss && <img className="icon-l rounded shadow wow-border-boss ml-2" src={boss.icon_path} alt={boss.name}></img>}
+            {have_boss && <WebpImg className="icon-l rounded shadow wow-border-boss ml-2" src={boss.icon_path} alt={boss.name} /> }
         </>
     )
 }

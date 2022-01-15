@@ -8,9 +8,10 @@ import { get_role } from "../../store/roles";
 import { get_spec } from "../../store/specs";
 import { kFormatter } from "../../utils"
 import { useAppSelector } from "../../store/store_hooks";
-
-// @ts-ignore
 import styles from "./PlayerName.scss"
+import WebpImg from "../WebpImg";
+
+const MAX_CHAR_NAME = 6;
 
 
 function spec_ranking_color(i = 0) {
@@ -40,7 +41,7 @@ export function BossName({fight, boss} : {fight: Fight, boss: Actor}) {
     return (
         <div className={styles.boss_name}>
             <a target="_blank" href={fight.report_url}>
-                <img className={styles.boss_name__spec_icon} src={boss_type.icon_path}></img>
+                <WebpImg className={styles.boss_name__spec_icon} src={boss_type.icon_path} />
                 <span className={styles.boss_name__name}>{boss_type.name}</span>
             </a>
         </div>
@@ -81,9 +82,9 @@ export function PlayerName({fight, player} : {fight: Fight, player: Actor}) {
 
             <a target="_blank" href={report_url}>
                 {mode_comp && <img className={styles.player_name__role_icon} src={role.icon_path}></img>}
-                <img className={styles.player_name__spec_icon} src={spec.icon_path}></img>
+                <WebpImg className={styles.player_name__spec_icon} src={spec.icon_path} />
 
-                <span className={`${styles.player_name__name}`}>{player.name}</span>
+                <span className={`${styles.player_name__name}`}>{player.name.substring(0, MAX_CHAR_NAME)}</span>
                 {mode_spec && player.rank && <span className={styles.player_name__rank}>#{player.rank}</span>}
                 {player.total && <span className={styles.player_name__total}>{kFormatter(player.total)}</span>}
             </a>

@@ -30,7 +30,7 @@ export function get_boss(state: RootState, boss_slug?: string) {
 
 function _post_process_boss(zone: RaidZone, boss: Boss) {
     boss.loaded = false
-    boss.icon_path = `/static/img/bosses/${zone.name_slug}/${boss.full_name_slug}.webp`
+    boss.icon_path = `/static/img/bosses/${zone.name_slug}/${boss.full_name_slug}.jpg`
 
     // insert some static data
     boss.role = "boss"

@@ -2,6 +2,7 @@ import type Class from "../types/class"
 import { AppDispatch, RootState } from "./store"
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { fetch_data } from "../api"
+import { sort_spell_types } from "./spells"
 
 
 type ClassesSlice = {
@@ -13,8 +14,8 @@ type ClassesSlice = {
 ////////////////////////////////////////////////////////////////////////////////
 // Selectors
 
-export function get_classes(state: RootState) {
-    return state.classes.classes
+export function get_class_names(state: RootState) {
+    return state.classes.class_names
 }
 
 
@@ -49,6 +50,7 @@ const SLICE = createSlice({
                 state.class_names.push(wow_class.name_slug)
                 state.classes[wow_class.name_slug] = wow_class
             });
+            state.class_names = sort_spell_types(state.class_names)
             return state
         },
     }, // reducers

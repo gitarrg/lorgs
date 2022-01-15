@@ -26,7 +26,7 @@ export function get_fight_is_loaded(state: RootState, fight_id: number) {
 }
 
 
-export const get_fights = createSelector<RootState, {[key: number]: Fight}, Fight[]>(
+export const get_fights = createSelector(
     get_all_fights,
     ( fights_by_id ) => {
         return Object.values(fights_by_id)
@@ -35,7 +35,7 @@ export const get_fights = createSelector<RootState, {[key: number]: Fight}, Figh
 
 
 /** Get all specs that occur in any of the fights */
-export const get_occuring_specs = createSelector<RootState, Fight[], string[]>(
+export const get_occuring_specs = createSelector(
     get_fights,
     ( fights ) => {
 
@@ -51,7 +51,7 @@ export const get_occuring_specs = createSelector<RootState, Fight[], string[]>(
 )
 
 
-export const get_occuring_bosses = createSelector<RootState, Fight[], string[]>(
+export const get_occuring_bosses = createSelector(
     get_fights,
     ( fights ) => {
 
@@ -99,6 +99,7 @@ function _process_fight(fight: Fight) {
     if (fight.boss) {
         fight.boss = _process_actor(fight.boss)
         fight.boss.class = "boss"
+        fight.boss.spec = fight.boss.name
     }
     fight.players = fight.players.map(actor => _process_actor(actor))
     return fight

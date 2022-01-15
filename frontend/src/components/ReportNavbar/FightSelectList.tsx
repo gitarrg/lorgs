@@ -15,7 +15,7 @@ function BossGroup({boss_slug, fights} : {boss_slug: string, fights: Fight[]}) {
     if (!boss) { return null }
 
     // Render
-    const icon = <Icon spec={boss} size="m"  />
+    const icon = <Icon spec={boss} size="m" className="button grow-when-touched" />
     const items = fights.map(fight => <FightWidget key={fight.fight_id} fight={fight} />)
     return <SelectGroup icon={icon} items={items} />
 }

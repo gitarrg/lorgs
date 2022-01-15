@@ -6,6 +6,7 @@ import * as constants from "./constants";
 import FightRow from "./FightRow";
 import type Fight from "../../types/fight";
 import { IMAGES } from "./Cast";
+import { MODES } from "../../store/ui";
 
 
 // for performance
@@ -19,7 +20,7 @@ export default class Stage extends Konva.Stage{
 
     static THROTTLE = 200 // max update rate in ms
 
-    FIGHT_SPACE = 10 // distance between fights in pixels
+    MODE = ""
 
     scale_x: number
     private rows: FightRow[] = []
@@ -72,6 +73,16 @@ export default class Stage extends Konva.Stage{
         window.addEventListener("resize", () => {this.update_width()})
         this.update_width() // initial update
     }
+
+    get FIGHT_SPACE() {
+        // distance between fights in pixels
+        if (this.MODE == MODES.SPEC_RANKING ) { return -1; }
+        if (this.MODE == MODES.COMP_RANKING ) { return 10; }
+        if (this.MODE == MODES.USER_REPORT ) { return 38; } // 1 row + 10px gap
+
+        return -1;
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     // CREATION AND DRAW
     //

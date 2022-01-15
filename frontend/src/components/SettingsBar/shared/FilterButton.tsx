@@ -1,6 +1,7 @@
 
 
 import { useState, useEffect, useContext } from 'react'
+import WebpImg from '../../WebpImg'
 
 import { ButtonGroupContext } from '../shared/ButtonGroup'
 
@@ -13,7 +14,7 @@ export default function FilterButton(
     const group_context = useContext(ButtonGroupContext)
 
     full_name = full_name || name
-    const icon_path = `/static/img/${icon_name}.webp`
+    const icon_path = `/static/img/${icon_name}.jpg`
     const disabled = show ? "" : "disabled"
 
     function toggle_button() {
@@ -46,7 +47,7 @@ export default function FilterButton(
     // Render
     return (
         <div data-tooltip={full_name}>
-            <img
+            <WebpImg
                 className={`button icon-s rounded wow-border-${name} ${disabled}`}
                 src={icon_path}
                 alt={full_name}

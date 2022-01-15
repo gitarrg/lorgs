@@ -19,5 +19,8 @@ export default interface Fight {
     percent?: number
 
     kill?: boolean
+
+    /** unix timestamp of the pull */
+    time?: number
 }
 

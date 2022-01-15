@@ -77,13 +77,17 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
         return f"{self.__class__.__name__}(id={self.fight_id}, players={len(self.players)})"
 
     def summary(self):
+
+        raid_boss_name = self.boss and self.boss.raid_boss and self.boss.raid_boss.full_name_slug
+
         return {
             "report_id": self.report.report_id,
             "fight_id": self.fight_id,
             "percent": self.percent,
             "kill": self.kill,
             "duration": self.duration,
-            "boss": {"name": self.boss.raid_boss.full_name_slug} if self.boss else {},
+            "time": self.start_time.timestamp(),
+            "boss": {"name": raid_boss_name},
         }
 
     def as_dict(self, player_ids: typing.List[int] = None) -> dict:
@@ -208,6 +212,7 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
             player.source_id = composition_data.get("id")
             player.name = composition_data.get("name")
             player.total = int(total)
+            player.process_death_events(players_data.get("deathEvents", []))
             self.players[str(player.source_id)] = player
 
 

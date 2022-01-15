@@ -4,6 +4,7 @@ import { build_url_search_string, get_user_report_fights, load_report } from "..
 import { useAppDispatch, useAppSelector } from '../../store/store_hooks'
 import { useHistory } from "react-router"
 import styles from "./UserReportIndex.scss";
+import useUser from "../auth/useUser";
 
 
 
@@ -28,6 +29,7 @@ export function SubmitButton() {
     const dispatch = useAppDispatch();
 
     let history = useHistory();
+    const user = useUser()
 
     // Form
     const { handleSubmit } = useFormContext();
@@ -55,12 +57,17 @@ export function SubmitButton() {
 
         // submit task
         const search = build_url_search_string({ fight_ids: selected_fights, player_ids: selected_players });
-        const response = await dispatch(load_report(report_id, selected_fights, selected_players));
+        const response = await dispatch(load_report(
+            report_id,
+            selected_fights,
+            selected_players,
+            user.permissions.includes("user_reports") ? user.id : "",
+        ));
 
         // Redirect to the next page.
         // if we get a task id, we go via the loading page
         if (response.task_id) {
-            const url = `/user_report/load?task=${response.task_id}&report_id=${report_id}&${search}`;
+            const url = `/user_report/load?task=${response.task_id}&queue=${response.queue}&report_id=${report_id}&${search}`;
             history.push(url);
         }
 

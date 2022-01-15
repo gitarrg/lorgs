@@ -7,7 +7,7 @@ import { set_fights } from './fights'
 import { set_spec_spells } from './specs'
 
 
-const ICON_ROOT = "https://wow.zamimg.com/images/wow/icons/small"
+const ICON_ROOT = "https://wow.zamimg.com/images/wow/icons/medium"
 
 
 export interface SpellSliceState {
@@ -49,6 +49,14 @@ export function get_spell_types(state: RootState) {
 
 export function get_spells_for_type(state: RootState, spell_type: string) {
     return state.spells.spells_by_type[spell_type] || []
+}
+
+
+export function get_type_has_used_spells(state: RootState, spell_type: string) {
+
+    const spell_ids = state.spells.spells_by_type[spell_type] || []
+    const used_spells = state.spells.used_spell_ids
+    return spell_ids.some(spell_id => used_spells.includes(spell_id))
 }
 
 
@@ -146,10 +154,11 @@ function _add_spells_to_state(state: SpellSliceState , new_spells: SpellDict ) {
 
     state.spells_by_type = {} // reset the list
     Object.values(state.all_spells).forEach(spell => {
-        state.spell_display[spell.spell_id] = spell.show;
         state.spells_by_type[spell.spell_type] = [...(state.spells_by_type[spell.spell_type] || []), spell.spell_id]
-    })
 
+        const prev = state.spell_display[spell.spell_id]
+        state.spell_display[spell.spell_id] = (prev === undefined) ? spell.show : prev // keep prev. value
+    })
 
     state.spell_types = sort_spell_types(Object.keys(state.spells_by_type))
 

@@ -10,7 +10,7 @@ import PlayerRow from "./PlayerRow";
 import filter_logic from "../../filter_logic";
 import type Actor from "../../types/actor";
 import type Fight from "../../types/fight";
-import type { FilterValues } from "../../store/ui";
+import { FilterValues } from "../../store/ui";
 import { toMMSS } from "../../utils";
 
 
@@ -27,7 +27,6 @@ export default class FightRow {
     background: Konva.Group
     rows: PlayerRow[]
     killtime_text: Konva.Text
-
 
 
     constructor(fight_data: Fight) {
@@ -67,6 +66,7 @@ export default class FightRow {
     }
 
     create_killtime_text() {
+
         return new Konva.Text({
             name: "cast_text",
             text: toMMSS(this.duration),

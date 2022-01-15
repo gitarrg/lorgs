@@ -1,6 +1,5 @@
 
 
-
 .container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -8,33 +7,77 @@
 
 
     &:global.selected {
-        background: hsl(175, 20%, 40%);
-        border-color: var(--wow-boss);
+        border-color: white;
+        background: hsl(0, 0%, 30%);
+
+        :local {
+            .label_pull, .label_duration {
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            }
+
+            .label_pull {
+                font-weight: bold;
+            }
+
+            .label_duration {
+                opacity: 1.0;
+            }
+        }
     }
 
+
+    &:hover {
+        .label_pull,
+        .label_duration {
+            display: none;
+        }
+        .label_percent,
+        .label_time {
+            display: initial;
+        }
+    }
 }
 
 
-.label_duration {
-    color:white;
-    opacity: 0.5;
+.label_duration, .label_time {
     text-align: right;
+}
+
+
+.label_percent, .label_time {
+    display: none;
+}
+
+
+:global .wow-wipe {
+    :local {
+        .label_duration, .label_time {
+            color:white;
+            opacity: 0.5;
+        }
+
+    }
 }
 
 
 .pbar_outer {
     background: rgba(0, 0, 0, 0.3);
+
     border: 1px solid black;
     border-radius: 0.125rem;
-    position: relative;
 
+    position: relative;
     grid-column: 1 / -1;
+
+    overflow: hidden;
 }
+
 
 .pbar_inner {
     background: var(--wow-color);
-    height: 3px;
+    height: 2px;
 }
+
 
 .pbar_label {
     color:hsl(0, 0%, 50%);
@@ -43,6 +86,3 @@
     right: 0;
     bottom: 0;
 }
-
-
-

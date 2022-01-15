@@ -1,5 +1,5 @@
-import FilterButton from '../shared/FilterButton'
 import ButtonGroup from '../shared/ButtonGroup'
+import FilterButton from '../shared/FilterButton'
 import { set_filter } from '../../../store/ui'
 import { useAppDispatch } from '../../../store/store_hooks'
 
@@ -29,7 +29,7 @@ function FilterCovenantButton({covenant} : {covenant: string}) {
 
 export default function FilterCovenantGroup() {
     return (
-        <ButtonGroup side="right" name="Covenant">
+        <ButtonGroup name="Covenant">
             <FilterCovenantButton covenant="Kyrian" />
             <FilterCovenantButton covenant="Venthyr" />
             <FilterCovenantButton covenant="Nightfae" />

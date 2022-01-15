@@ -13,7 +13,7 @@
 
 /* Temp class to "hide" the login button, for now */
 .loginLink {
-    opacity: 0;
+    opacity: 0.5;
 
     &:hover {
         opacity: 1.0;

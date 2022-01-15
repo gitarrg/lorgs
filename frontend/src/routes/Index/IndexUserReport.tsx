@@ -1,10 +1,9 @@
 import IndexModuleLink from "./IndexModuleLink";
 import styles from "./Index.scss"
-import useUser from "./../auth/useUser"
 
 function UserReportIcon() {
 
-    const icon_path = "./static/img/inv_scroll_08.webp"
+    const icon_path = "./static/img/inv_inscription_80_scroll.jpg"
 
     return <img
     className={`${styles.user_report_icon} wow-border-artifact icon-l rounded`}
@@ -16,14 +15,15 @@ function UserReportIcon() {
 
 export default function IndexUserReport() {
 
-    const user = useUser()
-    if (!user.permissions.includes("user_reports")) { return null}
-
-
     return (
         <IndexModuleLink title="Custom Report:" url="/user_report" className={styles.user_report_link}>
             <UserReportIcon />
-            <span className="h2">load your own log</span>
+            <span className="h2">Load Log</span>
+
+            <div className={styles.new_container}>
+                <span className={styles.new}>NEW!</span>
+            </div>
+
         </IndexModuleLink>
     )
 }

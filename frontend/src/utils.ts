@@ -34,6 +34,20 @@ export function seconds_to_time(seconds: number, {padding=true}) {
     return text;
 }
 
+
+/**
+ * Format a unix timetamp in seconds to HH:MM
+ */
+export function timetamp_to_time(timestamp: number) {
+
+    const date =  new Date(timestamp * 1000)
+    const text = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+
+    // let text = new Date(timestamp * 1000).toISOString().substr(11, 5);
+    return text;
+}
+
+
 /**
  * Format a large number using "k" for thousands
  * @param n the number to format
@@ -41,7 +55,7 @@ export function seconds_to_time(seconds: number, {padding=true}) {
  * @returns string
  */
 // based on: https://stackoverflow.com/a/9461657
-export function kFormatter(n: number, digits=2) {
+export function kFormatter(n: number, digits=1) {
 
     if (n > 999) {
         return(n/1000).toFixed(digits) + "k"
@@ -56,6 +70,17 @@ export function slug(str: string) {
         .replace(/[^a-z0-9 -]/g, '') // Remove invalid chars
         .replace(/\s+/g, '-')        // Collapse whitespace and replace by -
         .replace(/-+/g, '-');        // Collapse dashes
+}
+
+
+
+export function get_pull_color(percent: number) {
+    if ( percent <=  3 ) { return "astounding" }
+    if ( percent <= 10 ) { return "legendary" }
+    if ( percent <= 25 ) { return "epic" }
+    if ( percent <= 50 ) { return "rare" }
+    if ( percent <= 75 ) { return "uncommon" }
+    return "common"
 }
 
 

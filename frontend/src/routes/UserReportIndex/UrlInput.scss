@@ -4,43 +4,45 @@
 
     display: flex;
     flex-wrap: nowrap;  // input-group sets it to wrap
-
+    gap: 0.4rem;
 
     input {
         font-size: large;
-        border-right: none;
+        border-color: var(--wow-artifact);
+        border-radius: var(--border-radius);
     }
 
-
     button {
-        font-size: large;
 
-        border: 1px solid black;
+        --color: var(--wow-artifact);
 
-        padding: 0.5rem 1rem;
-        background-color: var(--wow-boss);
+        border: 1px solid var(--color);
+
+        width: 41px;
+        height: 41px;
+        flex-shrink: 0;
+
+        background-color: var(--bg-dark);
+        color: var(--color);
+        border-color: var(--color);
+
+        border-radius: var(--border-radius);
+
+        i {
+            font-size: 1.75em;
+        }
+
 
         &:disabled,
         &:disabled:hover {
             cursor: default;
-            background-color: hsl(175, 5%, 50%);
-            opacity: 0.3;
-            border-color: black;
+            --color: hsl(0, 0%, 40%);
+            border-color: var(--color);
         }
 
         &:not(:disabled):hover {
-            color: white;
+            --color: white;
+            background-color: var(--bg-dark-hover);
         }
     }
-
-    button + button {
-        border-left: None !important;
-    }
-
-    button:last-child  {
-        border-top-right-radius: var(--border-radius);
-        border-bottom-right-radius: var(--border-radius);
-    }
-
-
 }

@@ -1,11 +1,9 @@
-
-
-import { useContext, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
 import ButtonGroup, { ButtonGroupContext } from './shared/ButtonGroup'
+import FaButton from './shared/FaButton'
 import { update_settings } from '../../store/ui'
 import { useAppSelector } from '../../store/store_hooks'
-import FaButton from './shared/FaButton'
+import { useContext, useEffect } from 'react'
+import { useDispatch } from 'react-redux'
 
 
 function Button({attr_name, icon_name, tooltip=""} : {attr_name: string, icon_name: string, tooltip?: string}) {
@@ -47,13 +45,11 @@ function Button({attr_name, icon_name, tooltip=""} : {attr_name: string, icon_na
 export default function DisplaySettings() {
 
     return (
-        <>
-            <ButtonGroup name="Display" side="left">
-                <Button attr_name="show_casticon" icon_name="fas fa-image" tooltip="spell icon" />
-                <Button attr_name="show_casttime" icon_name="fas fa-clock" tooltip="cast time" />
-                <Button attr_name="show_duration" icon_name="fas fa-stream" tooltip="duration" />
-                <Button attr_name="show_cooldown" icon_name="fas fa-hourglass" tooltip="cooldown" />
-            </ButtonGroup>
-        </>
+        <ButtonGroup name="Timeline">
+            <Button attr_name="show_casticon" icon_name="fas fa-image" tooltip="spell icon" />
+            <Button attr_name="show_casttime" icon_name="fas fa-clock" tooltip="cast time" />
+            <Button attr_name="show_duration" icon_name="fas fa-stream" tooltip="duration" />
+            <Button attr_name="show_cooldown" icon_name="fas fa-hourglass" tooltip="cooldown" />
+        </ButtonGroup>
     )
 }

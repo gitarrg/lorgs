@@ -1,10 +1,80 @@
 
 .container {
 
-    width: 3rem;
+    cursor: pointer;
     background: #222;
 
-    padding: 0.25rem;
-    font-size: large;
+    padding: 3px;
+    height: 28px; // fixed height for saftey
 
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-content: space-between;
+
+    border: 1px solid black;
+    border-top-left-radius: 0.25rem;
+
+    &:hover {
+        border-color: white;
+        background-color: hsl(0, 0%, 30%);
+        
+        .label_pull, .label_duration {
+            display: none;
+        }
+        
+        .label_percent, .label_time {
+            display: initial;
+        }
+    }
+}
+
+
+.link {
+    &:hover {
+        text-decoration: none;
+    }
+}
+
+
+.label_percent, .label_time {
+    display: none;
+}
+
+
+.label_time, .label_duration {
+    text-align: right;
+}
+
+
+:global .wow-wipe {
+    :local {
+        .label_duration {
+            color:white;
+            opacity: 0.5;
+        }
+    }
+}
+
+
+
+.pbar_outer {
+    background: rgba(0, 0, 0, 0.3);
+
+    border: 1px solid black;
+    border-radius: 0.125rem;
+
+    position: relative;
+    grid-column: 1 / -1;
+
+    overflow: hidden;
+    height: 4px;
+
+    transform: translateY(-2px);
+
+}
+
+
+.pbar_inner {
+    background: var(--wow-color);
+    height: 4px;
 }

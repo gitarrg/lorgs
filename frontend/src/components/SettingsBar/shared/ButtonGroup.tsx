@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react'
+import { createContext, ReactNode, useState } from 'react'
 import styles from "./ButtonGroup.scss"
 
 
@@ -23,11 +23,15 @@ const DEFAULT_CONTEXT: ButtonGroupContextType = {
 export const ButtonGroupContext = createContext<ButtonGroupContextType>(DEFAULT_CONTEXT)
 
 
-export default function ButtonGroup(
-    {name, extra_class, className, side="left", children} :
-    {name: string, extra_class?: string, className?: string, side?: "left"|"right", children?: JSX.Element[] | JSX.Element }
-    ) {
+type ButtonGroupProps = {
 
+    name?: string,
+    extra_class?: string,
+    className?: string,
+    children?: ReactNode
+}
+
+export default function ButtonGroup({name, extra_class, className, children} : ButtonGroupProps) {
     ///////////////////////
     // Hooks
 
@@ -39,7 +43,6 @@ export default function ButtonGroup(
 
     // Vars
     extra_class = extra_class || className || ""
-    const m = side == "left" ? "mr-2" : "ml-2"
 
     function onClick() {
         // toggle the group state and pass "group" as the source,
@@ -50,15 +53,14 @@ export default function ButtonGroup(
     ////////////////////////
     // Render
     return (
-
-        <div className={m}>
-
+        <div>
             {name && <small className={`${styles.header} ${extra_class} ${active ? "" : "disabled"}`} onClick={onClick}>{name}</small>}
-
-            <div className={`${styles.group} bg-dark p-1 rounded border`}>
-                <ButtonGroupContext.Provider value={group_context}>
-                {children}
-                </ButtonGroupContext.Provider>
+            <div className="d-flex">  {/* wraper to shrink the child div */}
+                <div className={`${styles.group} bg-dark p-1 rounded border`}>
+                    <ButtonGroupContext.Provider value={group_context}>
+                    {children}
+                    </ButtonGroupContext.Provider>
+                </div>
             </div>
         </div>
     )

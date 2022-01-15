@@ -22,6 +22,7 @@ class WowClass(base.Model):
         self.specs: typing.List[WowSpec] = []
         self.spells: typing.List[WowSpell] = []
         self.buffs: typing.List[WowSpell] = []
+        self.debuffs: typing.List[WowSpell] = []
 
         self.name_slug_cap = self.name.replace(" ", "")
         self.name_slug = utils.slug(self.name)
@@ -39,6 +40,7 @@ class WowClass(base.Model):
         return {
             "name": self.name,
             "name_slug": self.name_slug,
+            "specs": [spec.full_name_slug for spec in self.specs]
         }
 
     ##########################
@@ -51,3 +53,21 @@ class WowClass(base.Model):
         spell = WowSpell(**kwargs)
         self.spells.append(spell)
         return spell
+
+    def add_buff(self, spell: WowSpell = None, **kwargs):
+
+        if not spell:
+            kwargs.setdefault("color", self.color)
+            kwargs.setdefault("spell_type", self.name_slug)
+            spell = WowSpell(**kwargs)
+
+        self.buffs.append(spell)
+
+    def add_debuff(self, spell: WowSpell = None, **kwargs):
+
+        if not spell:
+            kwargs.setdefault("color", self.color)
+            kwargs.setdefault("spell_type", self.name_slug)
+            spell = WowSpell(**kwargs)
+
+        self.debuffs.append(spell)

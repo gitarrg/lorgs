@@ -96,10 +96,6 @@
 }
 
 
-
-
-
-
 /********************************
         Mode Overwrites
 *********************************/
@@ -144,15 +140,22 @@
 }}
 
 
-:global .comp_ranking,
-:global .user_report {
+:global .comp_ranking {
     :local {
-
     // Hover Blur
     .player_name:not(:hover) .player_name__total,
     .player_name:hover .player_name__name {
         @include blur;
     }
-
-
 }}
+
+
+:global .user_report {
+    :local {
+
+        // hide top border to compensate for "fight info"-box
+        .boss_name {
+            border-top: none;
+        }
+    }
+}

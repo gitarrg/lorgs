@@ -8,6 +8,10 @@ import { fetch_data } from '../api'
 
 export interface UserReportData {
     is_loading: boolean
+
+    /** optional error message */
+    error?: string,
+
     title: string
     report_id: string
 
@@ -16,6 +20,15 @@ export interface UserReportData {
 
     /**id of the task when loading the data */
     task_id?: string
+
+    /**unix timestamp, when the report was created */
+    date: number
+
+    /** name of the guild this report belongs to */
+    guild?: string
+
+    /** user who logged this report */
+    owner: string
 }
 
 
@@ -84,7 +97,11 @@ const INITIAL_STATE: UserReportData = {
     fights: {},
     players: {},
     task_id: "",
+    owner: "",
     is_loading: false,
+    date: 0,
+
+    error: "",
 }
 
 
@@ -139,7 +156,7 @@ export function load_report_overview(report_id: string, refresh?: boolean) {
         // Try to get existing one
         const url = `/api/user_reports/${report_id}/load_overview`;
 
-        const report_data = await fetch_data(url, {refresh: refresh});
+        const report_data = await fetch_data(url, {refresh: refresh || false});
 
         // store result
         dispatch(SLICE.actions.report_overview_loaded(report_data))
@@ -147,12 +164,15 @@ export function load_report_overview(report_id: string, refresh?: boolean) {
 }
 
 
-export function load_report(report_id: string, fight_ids: number[], player_ids: number[]) {
+export function load_report(report_id: string, fight_ids: number[], player_ids: number[], user_id?: string) {
 
     return async (dispatch: AppDispatch) => {
 
         const search_string = build_url_search_string({fight_ids, player_ids})
-        const url = `/api/user_reports/${report_id}/load?${search_string}`;
+        let url = `/api/user_reports/${report_id}/load?${search_string}`;
+        if (user_id) {
+            url = `${url}&user_id=${user_id}`
+        }
         let response = await fetch_data(url);
         return response
     }

@@ -1,9 +1,8 @@
 import { KeyboardEvent, useEffect } from 'react'
-import { load_report_overview, get_is_loading } from "../../store/user_reports";
+import { load_report_overview, get_is_loading, get_user_report } from "../../store/user_reports";
 import { useAppDispatch, useAppSelector } from '../../store/store_hooks'
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useLocation } from 'react-router';
-// @ts-ignore
 import styles from "./UrlInput.scss"
 
 
@@ -27,7 +26,7 @@ function report_id_from_url(url="") {
     const match = url.match(URL_REGEX);
     if (!match) { return "" }
 
-    return match.groups.code ?? ""
+    return match.groups?.code ?? ""
 }
 
 
@@ -40,6 +39,7 @@ export default function UrlInput({input_name="report_url"}) {
     // Hooks: Redux
     const dispatch = useAppDispatch()
     const is_loading = useAppSelector(state => get_is_loading(state))
+    const user_report = useAppSelector(get_user_report)
     // Hooks: Router
     const { search } = useLocation();
     // Hooks: Form
@@ -50,8 +50,7 @@ export default function UrlInput({input_name="report_url"}) {
     ////////////////////////////////
     // Vars
     const report_id = report_id_from_url(url)
-    const is_valid = report_id != ""
-
+    const is_valid = report_id != "" && user_report.error == ""
 
     ////////////////////////////////
     // Handlers
@@ -71,7 +70,7 @@ export default function UrlInput({input_name="report_url"}) {
         setValue("report_code", report_id)
         dispatch(load_report_overview(report_id, false))
     }
-    
+
     function onClickReload() {
         dispatch(load_report_overview(report_id, true))
     }
@@ -89,9 +88,8 @@ export default function UrlInput({input_name="report_url"}) {
     ////////////////////////////////
     // Render
     return (
-
-        <div className="bg-dark rounded p-2">
-            <div className={`${styles.url_input} input-group`}>
+        <div>
+            <div className={`${styles.url_input} bg-dark rounded p-2 input-group`}>
 
                 {/* Input */}
                 <input
@@ -104,19 +102,22 @@ export default function UrlInput({input_name="report_url"}) {
                     placeholder={PLACEHOLDER}
                 />
 
-                {/* Button */}
+                {/* Button: Load */}
                 <button
                     type="button"
                     className="button"
                     disabled={!is_valid || is_loading}
+                    data-tooltip="Load Report"
                     onClick={onClick}>
-                    load ▶
+                        <i className="fas fa-chevron-right"></i>
                 </button>
 
+                {/* Button: Reload */}
                 <button
                     type="button"
                     className="button"
                     disabled={!is_valid || is_loading}
+                    data-tooltip="Reload"
                     onClick={onClickReload}>
                         <i className="fas fa-sync-alt"></i>
                 </button>
@@ -125,8 +126,9 @@ export default function UrlInput({input_name="report_url"}) {
 
             {/* Error Messages */}
             {url && !is_valid &&  (
-                <span className="text-danger mt-1 small">
+                <span className="text-danger mt-1">
                     {errors[input_name]?.message}
+                    {user_report.error ?? ""}
                 </span>
             )}
         </div>

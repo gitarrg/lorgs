@@ -6,6 +6,7 @@ import { MODES } from '../../store/ui';
 import { get_spec } from "../../store/specs"
 import { useAppSelector } from '../../store/store_hooks';
 import styles from "./Navbar.scss"
+import WebpImg from '../WebpImg';
 
 
 function get_link(mode : string, boss: Boss, spec?: Spec) {
@@ -29,7 +30,7 @@ export default function NavbarBossButton({boss} : {boss: Boss}) {
     // Render
     return (
         <NavLink to={full_link} className={styles.button} activeClassName="active" data-tooltip={boss.full_name} data-tooltip-dir="down">
-            <img
+            <WebpImg
                 className="icon-m wow-border-boss rounded grow-when-touched"
                 src={boss.icon_path}
                 alt={boss.full_name}
