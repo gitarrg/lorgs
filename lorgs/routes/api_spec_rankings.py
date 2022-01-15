@@ -15,10 +15,15 @@ router = fastapi.APIRouter(tags=["spec_rankings"])
 
 
 @router.get("/spec_ranking/{spec_slug}/{boss_slug}")
+@router.get("/spec_ranking/{spec_slug}/{boss_slug}/{difficulty}")
 @cache()
-async def get_spec_ranking(spec_slug, boss_slug, limit: int = 0):
+async def get_spec_ranking(spec_slug, boss_slug, difficulty: str = "mythic", limit: int = 0):
 
-    spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(boss_slug=boss_slug, spec_slug=spec_slug)
+    spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(
+        boss_slug=boss_slug,
+        spec_slug=spec_slug,
+        difficulty=difficulty,
+    )
     fights = spec_ranking.fights or []
 
     if limit:

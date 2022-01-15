@@ -45,18 +45,6 @@ export function get_spec_for_spell_id(state: RootState, spell_id : number) {
 // Slice
 //
 
-const PLACEHOLDER_SPEC = {
-    role: "",
-    name: "placeholder",
-    full_name: "loading...",
-    full_name_slug: "placeholder",
-    spells_by_type: {},
-    loaded: false,
-    class: {name: "", name_slug: "other"},
-    icon_path: LOGO_URL,
-}
-
-
 function _process_spec(spec: Spec) {
     spec.loaded = false
     spec.icon_path = `/static/img/specs/${spec.full_name_slug}.jpg`

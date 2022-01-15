@@ -25,7 +25,7 @@ export default function SpecRankings() {
 
     ////////////////////////////////////////////////////////////////////////////
     // Hooks
-    const { spec_slug, boss_slug } = useParams<{spec_slug: string, boss_slug: string}>();
+    const { spec_slug, boss_slug, difficulty="mythic" } = useParams<{spec_slug: string, boss_slug: string, difficulty: string}>();
     const dispatch = useDispatch()
     const is_loading = useAppSelector(state => ui_store.get_is_loading(state))
     const boss = useAppSelector(state => get_boss(state, boss_slug))
@@ -43,6 +43,7 @@ export default function SpecRankings() {
     useEffect(() => { dispatch(ui_store.set_mode(mode)) }, [])
     useEffect(() => { dispatch(ui_store.set_boss_slug(boss_slug)) }, [boss_slug])
     useEffect(() => { dispatch(ui_store.set_spec_slug(spec_slug)) }, [spec_slug])
+    useEffect(() => { dispatch(ui_store.set_difficulty(difficulty)) }, [difficulty])
 
     useEffect(() => {
         if (!spec) { return }
@@ -58,7 +59,7 @@ export default function SpecRankings() {
 
     // load fights
     useEffect(() => {
-        dispatch(load_fights(mode, {spec_slug, boss_slug}))
+        dispatch(load_fights(mode, {spec_slug, boss_slug, difficulty}))
     }, [spec_slug, boss_slug])
 
 

@@ -162,9 +162,9 @@ function _pin_first_fight(fights: Fight[]) {
 }
 
 
-async function _load_spec_rankings(spec_slug : string, boss_slug: string) {
+async function _load_spec_rankings(spec_slug : string, boss_slug: string, difficulty: string) {
 
-    const url = `/api/spec_ranking/${spec_slug}/${boss_slug}?limit=100`;
+    const url = `/api/spec_ranking/${spec_slug}/${boss_slug}/${difficulty}?limit=100`;
     const fight_data: {fights: Fight[]} = await fetch_data(url);
 
     // post process
@@ -185,7 +185,7 @@ async function _load_comp_rankings(boss_slug : string, search="") {
 }
 
 
-export function load_fights(mode: string, {boss_slug, spec_slug="", search=""} : {boss_slug: string, spec_slug?: string, search?: string} ) {
+export function load_fights(mode: string, {boss_slug, spec_slug="", difficulty="mythic", search=""} : {boss_slug: string, spec_slug?: string, difficulty?: string, search?: string} ) {
 
     return async (dispatch: AppDispatch) => {
 
@@ -195,7 +195,7 @@ export function load_fights(mode: string, {boss_slug, spec_slug="", search=""} :
         let fights = []
         switch (mode) {
             case MODES.SPEC_RANKING:
-                fights = await _load_spec_rankings(spec_slug, boss_slug)
+                fights = await _load_spec_rankings(spec_slug, boss_slug, difficulty)
                 fights = _pin_first_fight(fights)
                 break;
                 case MODES.COMP_RANKING:

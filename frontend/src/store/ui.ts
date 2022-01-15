@@ -51,6 +51,12 @@ export function get_mode_setting(state: RootState) {
     return MODE_SETTINGS[state.ui.mode] || default_setting
 }
 
+
+export function get_difficulty(state: RootState) {
+    return state.ui.difficulty
+}
+
+
 export function get_filters(state: RootState) {
     return state.ui.filters
 }
@@ -107,6 +113,9 @@ export interface UiSliceState {
     /** currently selected boss */
     boss_slug: string
 
+    /** selected difficulty */
+    difficulty: string
+
     // Timeline Options
     settings: { [key: string]: boolean}
 
@@ -128,6 +137,7 @@ const INITIAL_STATE: UiSliceState = {
 
     spec_slug: "", // currently selected spec
     boss_slug: "", // currently selected boss
+    difficulty: "mythic", // currently selected difficulty
 
     // Timeline Options
     settings: {
@@ -174,6 +184,11 @@ const SLICE = createSlice({
             return state
         },
 
+        set_difficulty: (state, action: PayloadAction<string>) => {
+            state.difficulty = action.payload
+            return state
+        },
+
         update_settings: (state, action) => {
             state.settings = {...state.settings, ...action.payload}
             return state
@@ -215,6 +230,7 @@ const SLICE = createSlice({
 
 export const {
     set_boss_slug,
+    set_difficulty,
     set_filter,
     set_filters,
     set_mode,
