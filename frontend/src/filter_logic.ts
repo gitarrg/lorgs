@@ -24,7 +24,9 @@ function is_player_visible(player: Actor , filters: FilterValues) {
     if (filters["class"][player.class] === false ) { return false}
     if (filters["spec"][player.spec] === false ) { return false}
     if (filters["covenant"][player.covenant ?? ""] === false ) { return false}
-    return true
+
+    const casts = player.casts
+    return casts.length > 0
 }
 
 
