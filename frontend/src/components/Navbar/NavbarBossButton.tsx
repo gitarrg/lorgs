@@ -2,26 +2,27 @@ import { NavLink, useLocation } from 'react-router-dom';
 
 import type Boss from "../../types/boss"
 import type Spec from "../../types/spec"
-import { MODES } from '../../store/ui';
+import { get_difficulty, get_mode, MODES } from '../../store/ui';
 import { get_spec } from "../../store/specs"
 import { useAppSelector } from '../../store/store_hooks';
 import styles from "./Navbar.scss"
 import WebpImg from '../WebpImg';
 
 
-function get_link(mode : string, boss: Boss, spec?: Spec) {
+function get_link(mode : string, boss: Boss, spec?: Spec, difficulty?: string) {
     // is this the time to rename "mode" ?
     if (mode == MODES.COMP_RANKING) { return `/${mode}/${boss.full_name_slug}` }
-    if (mode == MODES.SPEC_RANKING) { return `/${mode}/${spec?.full_name_slug}/${boss.full_name_slug}` }
+    if (mode == MODES.SPEC_RANKING) { return `/${mode}/${spec?.full_name_slug}/${boss.full_name_slug}/${difficulty}` }
     return "/"
 }
 
 
 export default function NavbarBossButton({boss} : {boss: Boss}) {
 
-    const mode = useAppSelector(state => state.ui.mode)
+    const mode = useAppSelector(get_mode)
     const spec = useAppSelector(state => get_spec(state))
-    const link = get_link(mode, boss, spec)
+    const diff = useAppSelector(get_difficulty)
+    const link = get_link(mode, boss, spec, diff)
 
     // preserve query string
     const { search } = useLocation();

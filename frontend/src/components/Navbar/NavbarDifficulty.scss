@@ -1,0 +1,43 @@
+
+
+
+.option {
+    text-transform: capitalize;
+    color: var(--wow-color);
+
+    &:global.active {
+        font-weight: bold;
+    }
+}
+
+
+.icon {
+
+    color: var(--wow-color);
+    font-size: 26px;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+
+    border: 1px solid var(--wow-color);
+    border-radius: 0.25rem;
+
+    background: hsl(0, 0, 20%);
+
+    &:hover {
+        text-decoration: none !important;
+    }
+
+}
+
+
+:global .active :local  {
+
+    .icon {
+        border-width: 2px;
+    }
+}
+
+
+
+

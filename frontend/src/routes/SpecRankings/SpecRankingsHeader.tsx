@@ -3,9 +3,9 @@ import type Boss from '../../types/boss'
 import type Spec from '../../types/spec'
 import { WCL_URL } from '../../constants'
 import { get_boss } from '../../store/bosses'
+import { get_difficulty } from '../../store/ui'
 import { get_spec } from '../../store/specs'
 import { useAppSelector } from '../../store/store_hooks'
-import { get_difficulty } from '../../store/ui'
 
 
 const DIFFICULTY_IDS : {[key: string]: number} = {}
