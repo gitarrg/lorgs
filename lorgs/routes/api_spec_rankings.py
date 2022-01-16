@@ -40,9 +40,9 @@ async def get_spec_ranking(spec_slug, boss_slug, difficulty: str = "mythic", lim
     }
 
 
-@router.get("/load_spec_ranking/{spec_slug}/{boss_slug}")
-async def load_spec_ranking(spec_slug, boss_slug, limit: int =50, clear: bool = False):
-    logger.info("START | spec=%s | boss=%s | limit=%d | clear=%s", spec_slug, boss_slug, limit, clear)
+@router.get("/load_spec_ranking/{spec_slug}/{boss_slug}/{difficulty}")
+async def load_spec_ranking(spec_slug: str, boss_slug: str, difficulty: str, limit: int =50, clear: bool = False):
+    logger.info("START | %s | spec=%s | boss=%s | limit=%d | clear=%s", difficulty, spec_slug, boss_slug, limit, clear)
 
     spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(boss_slug=boss_slug, spec_slug=spec_slug)
     await spec_ranking.load(limit=limit, clear_old=clear)
@@ -69,16 +69,17 @@ async def status():
 # Tasks
 #
 
-@router.get("/task/load_spec_ranking/{spec_slug}/{boss_slug}")
-async def task_load_spec_rankings_multi(spec_slug="all", boss_slug="all", limit: int = 50, clear: bool = False):
+@router.get("/task/load_spec_ranking/{spec_slug}/{boss_slug}/{difficulty}")
+async def task_load_spec_rankings_multi(spec_slug="all", boss_slug="all", difficulty="all", limit: int = 50, clear: bool = False):
 
-    def message(specs, bosses):
+    def message(specs, bosses, difficulties):
         # return some status info
         return {
             "message": "tasks queued",
             "num_tasks": len(specs)*len(bosses),
             "specs": specs,
             "bosses": bosses,
+            "difficulties": difficulties,
         }
 
     kwargs = {"limit": limit, "clear": clear}
@@ -87,23 +88,32 @@ async def task_load_spec_rankings_multi(spec_slug="all", boss_slug="all", limit:
     if spec_slug == "all":
         specs = [spec.full_name_slug for spec in WowSpec.all if spec.role.id < 1000] # filter out "other" and "boss"
         for spec_slug in specs:
-            url = f"/api/task/load_spec_ranking/{spec_slug}/{boss_slug}"
+            url = f"/api/task/load_spec_ranking/{spec_slug}/{boss_slug}/{difficulty}"
             await api_tasks.create_app_engine_task(url, **kwargs)
-        return message(specs, [boss_slug])
+        return message(specs, [boss_slug], [difficulty])
 
     # expand bosses
     if boss_slug == "all":
         bosses = [boss.full_name_slug for boss in data.CURRENT_ZONE.bosses]
         for boss_slug in bosses:
-            url = f"/api/task/load_spec_ranking/{spec_slug}/{boss_slug}"
+            url = f"/api/task/load_spec_ranking/{spec_slug}/{boss_slug}/{difficulty}"
             await api_tasks.create_app_engine_task(url, **kwargs)
-        return message([spec_slug], bosses)
+        return message([spec_slug], bosses, [difficulty])
+
+    # expand difficulty
+    if difficulty == "all":
+        difficulties = ["heroic", "mythic"]
+        for difficulty in difficulties:
+            url = f"/api/task/load_spec_ranking/{spec_slug}/{boss_slug}/{difficulty}"
+            await api_tasks.create_app_engine_task(url, **kwargs)
+        return message([spec_slug], [boss_slug], difficulties)
 
     # create the actual task
     await api_tasks.create_cloud_function_task(
         function_name="load_spec_rankings",
         spec_slug=spec_slug,
         boss_slug=boss_slug,
+        difficulty=difficulty,
         **kwargs
     )
-    return message([spec_slug], [boss_slug])
+    return message([spec_slug], [boss_slug], [difficulty])
