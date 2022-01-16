@@ -31,7 +31,7 @@ class SpecRanking(warcraftlogs_base.Document):
 
     spec_slug: str = me.StringField(required=True)
     boss_slug: str = me.StringField(required=True)
-    difficulty: str = me.StringField(default="mythic")
+    difficulty: str = me.StringField(default="")
 
     updated = me.DateTimeField(default=datetime.datetime.utcnow)
 
