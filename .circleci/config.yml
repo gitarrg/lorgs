@@ -152,6 +152,7 @@ workflows:
       # deploy for /devlop and similar branches
       - deploy:
           promote: false
+          version: v0-4-0-beta-1
 
           requires:
             - build
@@ -160,3 +161,4 @@ workflows:
             branches:
               only:
                 - develop
+                - heroic
