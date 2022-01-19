@@ -43,10 +43,11 @@ env_variables:
 
 handlers:
 
+  # TODO: re-enable?
   # serve robots.txt
-  - url: /robots.txt
-    static_files: static/robots.txt
-    upload: static/robots.txt
+  # - url: /robots.txt
+  #   static_files: static/robots.txt
+  #   upload: static/robots.txt
 
   # all API-Requests go to the flask backend
   - url: /.*
