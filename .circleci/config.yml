@@ -108,9 +108,9 @@ jobs:
 
       # 3) deploy the cloud functions
       # Note: this does not have a promote yes/no flag
-      - run:
-          name: Deploy Cloud Funtions
-          command: ./scripts/deploy_functions
+      # - run:
+      #     name: Deploy Cloud Funtions
+      #     command: ./scripts/deploy_functions
 
       ####################################
       # Discrd Notification
@@ -140,7 +140,7 @@ workflows:
       # deploy for /master
       - deploy:
           promote: true
-          version: v0-3-0
+          version: v0-4-0
           requires:
             - build
           filters:
@@ -151,6 +151,7 @@ workflows:
 
       # deploy for /devlop and similar branches
       - deploy:
+          version: "dev"
           promote: false
 
           requires:
@@ -159,4 +160,5 @@ workflows:
           filters:
             branches:
               only:
+                - split
                 - develop
