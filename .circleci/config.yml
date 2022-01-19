@@ -102,10 +102,10 @@ jobs:
             <<^ parameters.promote >> --no-promote<</ parameters.promote >>
 
       # 3) deploy the cloud functions
-      # Note: this does not have a promote yes/no flag
-      # - run:
-      #     name: Deploy Cloud Funtions
-      #     command: ./scripts/deploy_functions
+      Note: this does not have a promote yes/no flag
+      - run:
+          name: Deploy Cloud Funtions
+          command: ./scripts/deploy_functions
 
       ####################################
       # Discrd Notification
