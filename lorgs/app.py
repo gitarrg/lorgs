@@ -45,8 +45,14 @@ def create_app():
         openapi_url="/api/openapi.json",  # must be in "/api" so the AppEngine route works
     )
     cache.init(config_obj)
-    app.include_router(api.router, prefix="")
-    app.include_router(api.router, prefix="/api")  # <-- legacy
+    app.include_router(api.router, prefix="/api")
+
+    @app.get("/")
+    @app.get("/{path:path}")
+    async def frontend_redirect(path=""):
+        URL = "https://lorrgs.io"
+        url = os.path.join(URL, path)
+        return fastapi.responses.RedirectResponse(url, status_code=301) # 301: Moved Permanently
 
     # Apply Cors Headers
     # if config_obj.LORRGS_DEBUG:

@@ -36,12 +36,6 @@ def page_not_found(*args, **kwargs):
     return "Invalid Route", 404
 
 
-@router.get("/")
-def frontend_redirect():
-    # 301: Moved Permanently
-    return fastapi.responses.RedirectResponse("https://lorrgs.io", status_code=301)
-
-
 @router.get("/ping")
 def ping():
     return {"reply": "Hi!", "time": datetime.datetime.utcnow().isoformat()}
