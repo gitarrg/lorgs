@@ -38,7 +38,8 @@ def page_not_found(*args, **kwargs):
 
 @router.get("/")
 def frontend_redirect():
-    return fastapi.responses.RedirectResponse("https://lorrgs.io")
+    # 301: Moved Permanently
+    return fastapi.responses.RedirectResponse("https://lorrgs.io", status_code=301)
 
 
 @router.get("/ping")
