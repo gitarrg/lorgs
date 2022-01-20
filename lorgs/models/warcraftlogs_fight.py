@@ -96,7 +96,7 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
         players = list(self.players.values())
         if player_ids:
             players = [player for player in players if player.source_id in player_ids]
-        players = sorted(players, key=lambda player: (player.spec.role, player.spec, player.total))
+        players = sorted(players, key=lambda player: (player.spec.role, player.spec, player.name))
 
         # Return
         return {
