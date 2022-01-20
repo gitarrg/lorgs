@@ -157,8 +157,6 @@ async def task_load_spec_rankings_multi(
         function_name="load_spec_rankings",
         spec_slug=spec_slug,
         boss_slug=boss_slug,
-        difficulty=difficulty,
-        metric=metric,
         **kwargs
     )
     return message([spec_slug], [boss_slug], [difficulty], [metric])
