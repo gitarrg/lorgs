@@ -18,7 +18,14 @@ async def test__load_rankings():
     # spec_ranking = SpecRanking.get_or_create(spec_slug="warlock-demonology", boss_slug="guardian-of-the-first-ones")
     spec_ranking = SpecRanking.get_or_create(spec_slug="paladin-holy", boss_slug="the-nine")
 
-    await spec_ranking.load(limit=20, clear_old=True)
+    spec_ranking = SpecRanking.get_or_create(
+        spec_slug="druid-restoration",
+        boss_slug="the-nine",
+        difficulty="mythic",
+        metric="dps",
+    )
+
+    await spec_ranking.load(limit=5, clear_old=True)
     spec_ranking.save()
 
 

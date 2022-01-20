@@ -9,7 +9,8 @@ from lorgs import db
 from lorgs.models.warcraftlogs_user_report import UserReport
 
 
-REPORT_ID = "J3tFdPDjaQnWVHfN"
+REPORT_ID = "N3FyfmBCcbqXVk2h"
+# https://www.warcraftlogs.com/reports/PHjzrwW6Y2vTdbMJ#fight=11&type=damage-done
 
 
 async def test_load_summary():
@@ -84,8 +85,8 @@ async def test_load():
     user_report = UserReport.from_report_id(report_id=REPORT_ID, create=True)
     user_report.report.fights = []
     await user_report.report.load_fights(
-        fight_ids=[35, 36],
-        player_ids=[7, 8, 50, 53]
+        fight_ids=[42, 43, 44, 45, 46],
+        player_ids=[3, 4, 5, 100]
     )
     user_report.save()
 
