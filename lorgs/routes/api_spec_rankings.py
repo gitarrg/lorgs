@@ -16,11 +16,24 @@ router = fastapi.APIRouter(tags=["spec_rankings"])
 
 @router.get("/spec_ranking/{spec_slug}/{boss_slug}")
 @cache()
-async def get_spec_ranking(spec_slug, boss_slug, limit: int = 0):
+async def get_spec_ranking(
+    spec_slug,
+    boss_slug,
+    difficulty: str = "mythic",
+    metric: str = "",
+    limit: int = 0
+):
+    if not metric:
+        spec = WowSpec.get(full_name_slug=spec_slug)
+        metric = spec.role.metric
 
-    spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(boss_slug=boss_slug, spec_slug=spec_slug)
+    spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(
+        boss_slug=boss_slug,
+        spec_slug=spec_slug,
+        difficulty=difficulty,
+        metric=metric,
+    )
     fights = spec_ranking.fights or []
-
     if limit:
         fights = fights[:limit]
 
@@ -32,18 +45,32 @@ async def get_spec_ranking(spec_slug, boss_slug, limit: int = 0):
     return {
         "fights": [fight.as_dict() for fight in fights],
         "updated": int(spec_ranking.updated.timestamp()),
+        "difficulty": difficulty,
+        "metric": metric,
     }
 
 
 @router.get("/load_spec_ranking/{spec_slug}/{boss_slug}")
-async def load_spec_ranking(spec_slug, boss_slug, limit: int =50, clear: bool = False):
-    logger.info("START | spec=%s | boss=%s | limit=%d | clear=%s", spec_slug, boss_slug, limit, clear)
+async def load_spec_ranking(
+    spec_slug: str,
+    boss_slug: str,
+    difficulty: str = "mythic",
+    metric: str = "",
+    limit: int = 50,
+    clear: bool = False
+):
+    logger.info("START | %s | spec=%s | boss=%s | limit=%d | clear=%s", difficulty, spec_slug, boss_slug, limit, clear)
 
-    spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(boss_slug=boss_slug, spec_slug=spec_slug)
+    spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(
+        boss_slug=boss_slug,
+        spec_slug=spec_slug,
+        difficulty=difficulty,
+        metric=metric,
+    )
     await spec_ranking.load(limit=limit, clear_old=clear)
     spec_ranking.save()
 
-    logger.info("DONE | spec=%s | boss=%s | limit=%d", spec_slug, boss_slug, limit)
+    logger.info("DONE | %s | spec=%s | boss=%s | limit=%d | clear=%s", difficulty, spec_slug, boss_slug, limit)
     return "done"
 
 
@@ -65,18 +92,32 @@ async def status():
 #
 
 @router.get("/task/load_spec_ranking/{spec_slug}/{boss_slug}")
-async def task_load_spec_rankings_multi(spec_slug="all", boss_slug="all", limit: int = 50, clear: bool = False):
+async def task_load_spec_rankings_multi(
+    spec_slug="all",
+    boss_slug="all",
 
-    def message(specs, bosses):
+    difficulty="all",
+    metric="all",
+    limit: int = 50,
+    clear: bool = False
+):
+    def message(specs, bosses, difficulties, metrics):
         # return some status info
         return {
             "message": "tasks queued",
             "num_tasks": len(specs)*len(bosses),
             "specs": specs,
             "bosses": bosses,
+            "difficulties": difficulties,
+            "metrics": metrics,
         }
 
-    kwargs = {"limit": limit, "clear": clear}
+    kwargs = {
+        "limit": limit,
+        "clear": clear,
+        "difficulty": difficulty,
+        "metric": metric,
+    }
 
     # expand specs
     if spec_slug == "all":
@@ -84,7 +125,7 @@ async def task_load_spec_rankings_multi(spec_slug="all", boss_slug="all", limit:
         for spec_slug in specs:
             url = f"/api/task/load_spec_ranking/{spec_slug}/{boss_slug}"
             await api_tasks.create_app_engine_task(url, **kwargs)
-        return message(specs, [boss_slug])
+        return message(specs, [boss_slug], [difficulty], [metric])
 
     # expand bosses
     if boss_slug == "all":
@@ -92,13 +133,32 @@ async def task_load_spec_rankings_multi(spec_slug="all", boss_slug="all", limit:
         for boss_slug in bosses:
             url = f"/api/task/load_spec_ranking/{spec_slug}/{boss_slug}"
             await api_tasks.create_app_engine_task(url, **kwargs)
-        return message([spec_slug], bosses)
+        return message([spec_slug], bosses, [difficulty], [metric])
+
+    # expand difficulty
+    if difficulty == "all":
+        difficulties = ["heroic", "mythic"]
+        for difficulty in difficulties:
+            kwargs["difficulty"] = difficulty
+            url = f"/api/task/load_spec_ranking/{spec_slug}/{boss_slug}"
+            await api_tasks.create_app_engine_task(url, **kwargs)
+        return message([spec_slug], [boss_slug], difficulties, [metric])
+
+    if metric == "all":
+        metrics = ["dps", "hps", "bossdps"]
+        for metric in metrics:
+            kwargs["metric"] = metric
+            url = f"/api/task/load_spec_ranking/{spec_slug}/{boss_slug}"
+            await api_tasks.create_app_engine_task(url, **kwargs)
+        return message([spec_slug], [boss_slug], metrics, [metric])
 
     # create the actual task
     await api_tasks.create_cloud_function_task(
         function_name="load_spec_rankings",
         spec_slug=spec_slug,
         boss_slug=boss_slug,
+        difficulty=difficulty,
+        metric=metric,
         **kwargs
     )
-    return message([spec_slug], [boss_slug])
+    return message([spec_slug], [boss_slug], [difficulty], [metric])
