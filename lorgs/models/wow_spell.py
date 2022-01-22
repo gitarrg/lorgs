@@ -64,14 +64,9 @@ class WowSpell(base.Model):
         self.show = show
         self.color = kwargs.get("color") or ""
 
-        # additional spell ids for the "same" spell.
-        # eg.: glyphed versions of the spell
-        # or sometimes boss abiltieis use different spells in
-        # differnet phases for the same mechanic
-        self.variations: typing.List[int] = kwargs.get("variations") or []
+        self.variations: typing.List[int] = []
 
-        for variation_spell_id in self.variations:
-            self.spell_variations[variation_spell_id] = self.spell_id
+        self.add_variations(*kwargs.get("variations", []))
 
         # str: type/category of spell
         self.spell_type = kwargs.get("spell_type") or ""
@@ -116,3 +111,17 @@ class WowSpell(base.Model):
 
             "tags": self.tags,
         }
+
+    def add_variation(self, spell_id: int):
+        """Add an additional spell ids for the "same" spell.
+
+            eg.: glyphed versions of the spell
+            or sometimes boss abiltieis use different spells in
+            differnet phases for the same mechanic
+        """
+        self.variations.append(spell_id)
+        self.spell_variations[spell_id] = self.spell_id
+
+    def add_variations(self, *spell_ids: int):
+        for spell_id in spell_ids:
+            self.add_variation(spell_id)

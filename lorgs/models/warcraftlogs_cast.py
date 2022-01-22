@@ -19,6 +19,12 @@ class Cast(me.EmbeddedDocument):
     # time the spell/buff was active in milliseconds
     duration: int = me.IntField()
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # int: track the number
+        self.stacks = 0
+
     def __str__(self):
         time_fmt = utils.format_time(self.timestamp)
         return f"Cast({self.spell_id}, at={time_fmt})"

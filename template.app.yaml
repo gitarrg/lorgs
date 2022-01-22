@@ -43,25 +43,12 @@ env_variables:
 
 handlers:
 
-  # all API-Requests go to the flask backend
-  - url: /api/.*
-    script: auto
-
-  # serve all files in /static as they are
-  - url: /static
-    static_dir: static
-    http_headers:
-      lorrgs_route: static_files
-
+  # TODO: re-enable?
   # serve robots.txt
-  - url: /robots.txt
-    static_files: static/robots.txt
-    upload: static/robots.txt
+  # - url: /robots.txt
+  #   static_files: static/robots.txt
+  #   upload: static/robots.txt
 
-  # all other requests redirect to the index.html
+  # all API-Requests go to the flask backend
   - url: /.*
-    static_files: index.html
-    upload: index.html
-    expiration: 10m # don't cache the html, as it would cache the old chunk-id's
-    http_headers:
-      lorrgs_route: app
+    script: auto

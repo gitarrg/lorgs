@@ -26,7 +26,7 @@ DEMONHUNTER_VENGEANCE = WowSpec(role=TANK, wow_class=DEMONHUNTER, name="Vengeanc
 #
 DEMONHUNTER.add_spell(         spell_id=306830, cooldown=60,                color=COL_KYR,   name="Elysian Decree",  icon="ability_bastion_demonhunter.jpg",           show=False)
 DEMONHUNTER.add_spell(         spell_id=323639, cooldown=90,   duration=6,  color=COL_NF,    name="The Hunt",        icon="ability_ardenweald_demonhunter.jpg")
-DEMONHUNTER.add_spell(         spell_id=317009, cooldown=60,                color=COL_VENTR, name="Sinful Brand",    icon="ability_revendreth_demonhunter.jpg")
+DEMONHUNTER.add_debuff(        spell_id=317009,                             color=COL_VENTR, name="Sinful Brand",    icon="ability_revendreth_demonhunter.jpg")
 
 DEMONHUNTER_HAVOC.add_spell(   spell_id=200166, cooldown=240,  duration=30, color="#348540", name="Metamorphosis",   icon="ability_demonhunter_metamorphasisdps.jpg")
 DEMONHUNTER_HAVOC.add_spell(   spell_id=196718, cooldown=180,  duration=8,                   name="Darkness",        icon="ability_demonhunter_darkness.jpg",          show=False, spell_type=SPELL_TYPE_RAID)

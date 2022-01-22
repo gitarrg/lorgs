@@ -36,12 +36,7 @@ jobs:
       - checkout
 
       - run: npm install
-      - run: npm run build
       - run: npm run format_app_yaml
-
-      # move index page up, to simplfy routing
-      - run: mv static/index.html .
-      - run: mv static/robots.txt .
 
       # save build dir
       - persist_to_workspace:
@@ -135,12 +130,12 @@ workflows:
       # always execute "build"
       - build
 
-      - sonarscan
+      # - sonarscan
 
       # deploy for /master
       - deploy:
           promote: true
-          version: v0-2-3
+          version: v0-4-2
           requires:
             - build
           filters:
@@ -151,6 +146,7 @@ workflows:
 
       # deploy for /devlop and similar branches
       - deploy:
+          version: "dev"
           promote: false
 
           requires:
@@ -159,4 +155,5 @@ workflows:
           filters:
             branches:
               only:
+                - split
                 - develop

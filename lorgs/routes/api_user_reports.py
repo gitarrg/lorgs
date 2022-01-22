@@ -5,7 +5,6 @@ from fastapi_cache.decorator import cache
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
 from lorgs.client import InvalidReport
-from lorgs.logger import logger
 from lorgs.models.warcraftlogs_user_report import UserReport
 from lorgs.routes.api_tasks import create_cloud_function_task
 
@@ -64,7 +63,9 @@ async def load_user_report_overview(report_id: str, refresh: bool = False):
         try:
             await user_report.report.load_summary()
         except InvalidReport:
-            return "invalid report", 404
+            return {"error": "Invalid URL."}
+        except PermissionError:
+            return {"error": "No permission to view this report."}
         else:
             user_report.save()
 
@@ -72,15 +73,19 @@ async def load_user_report_overview(report_id: str, refresh: bool = False):
 
 
 @router.get("/{report_id}/load")
-async def load_user_report(report_id: str, fight: str, player: str):
+async def load_user_report(report_id: str, fight: str, player: str, user_id: int = 0):
     """Load a Report
 
     Args:
         report_id(str): the report to load
         fight (str): dot separeted list of fight ids (eg.: 2.4.15)
         player (str): dot separeted list of player ids (eg.: 1.5.20)
+        user_id (int, optional): user id to identify logged in users
 
     """
+    # any logged in user gets to use the "premium"-queue
+    queue = "premium" if user_id > 0 else "free"
+
     # Note:
     #   fight and player-inputs are kept as str,
     #   as we just pass them trough
@@ -89,5 +94,9 @@ async def load_user_report(report_id: str, fight: str, player: str):
         report_id=report_id,
         fight=fight,
         player=player,
+        queue=queue,
     )
-    return {"task_id": task_id}
+    return {
+        "task_id": task_id,
+        "queue": queue
+    }
