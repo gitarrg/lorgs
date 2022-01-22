@@ -29,7 +29,7 @@ WARLOCK_DESTRUCTION = WowSpec(role=RDPS, wow_class=WARLOCK, name="Destruction", 
 #
 WARLOCK.add_spell(             spell_id=325640, cooldown=60,  duration=8,  color=COL_NF,    name="Soul Rot",               icon="ability_ardenweald_warlock.jpg", show=False)
 
-WARLOCK_AFFLICTION.add_spell(  spell_id=205180, cooldown=180, duration=8,  color="#49ad6e", name="Summon Darkglare",       icon="inv_beholderwarlock.jpg")
+WARLOCK_AFFLICTION.add_spell(  spell_id=205180, cooldown=120, duration=8,  color="#49ad6e", name="Summon Darkglare",       icon="inv_beholderwarlock.jpg")
 WARLOCK_AFFLICTION.add_spell(  spell_id=113860, cooldown=120, duration=20, color="#c35ec4", name="Dark Soul: Misery",      icon="spell_warlock_soulburn.jpg")
 WARLOCK_AFFLICTION.add_spell(  spell_id=205179, cooldown=45,  duration=16, color="#7833b0", name="Phantom Singularity",    icon="inv_enchant_voidsphere.jpg")
 
