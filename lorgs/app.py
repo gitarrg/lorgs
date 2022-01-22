@@ -6,6 +6,7 @@ import os
 
 # IMPORT THIRD PARTY LIBRARIES
 import fastapi
+from fastapi.middleware.cors import CORSMiddleware
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import cache
@@ -15,17 +16,18 @@ from lorgs import db  # pylint: disable=unused-import
 from lorgs.routes import api
 
 
+CORS_ORIGINS = [
+    "*",  # fixme later
+    "https://*.lorrgs-frontend.pages.dev",
+]
+
+
 def get_config(name=""):
     name = name or os.getenv("LORGS_CONFIG_NAME") or "lorgs.config.DevelopmentConfig"
     if name == "lorgs.config.ProductionConfig":
         return config.ProductionConfig
 
     return config.DevelopmentConfig
-
-
-def allow_cors(app):
-    from fastapi.middleware.cors import CORSMiddleware
-    app.add_middleware(CORSMiddleware, allow_origins="*")
 
 
 def create_app():
@@ -45,8 +47,24 @@ def create_app():
     cache.init(config_obj)
     app.include_router(api.router, prefix="/api")
 
+    @app.get("/")
+    @app.get("/{path:path}")
+    async def frontend_redirect(path=""):
+        URL = "https://lorrgs.io"
+        url = os.path.join(URL, path)
+        return fastapi.responses.RedirectResponse(url, status_code=301) # 301: Moved Permanently
 
-    if config_obj.LORRGS_DEBUG:
-        allow_cors(app)
+    # Apply Cors Headers
+    # if config_obj.LORRGS_DEBUG:
+    #     CORS_ORIGINS.append("*")
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=CORS_ORIGINS,
+        allow_credentials=True,
+        allow_methods=["POST", "GET"],
+		allow_headers=["*"],
+        max_age=3600,
+    )
 
     return app

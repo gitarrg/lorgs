@@ -68,20 +68,24 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
         cast_filter = f"type='cast' and ability.id in ({spell_ids})"
         return cast_filter
 
-    def get_buff_query(self, spells=typing.List[WowSpell]):
+    @staticmethod
+    def _build_buff_query(spells: typing.List[WowSpell], event_types: typing.List[str]):
         if not spells:
             return ""
-        # we check for "removebuff" as this allows us to also catch buffs
-        # that get used prepull (eg.: lust)
         spell_ids = WowSpell.spell_ids_str(spells)
 
-        # TODO: split buffs/debuffs for performance?
-        event_types = ["applybuff", "removebuff", "applydebuff", "removedebuff"]
-        event_types = [f"'{event}'" for event in event_types]
-        event_types = ",".join(event_types)
+        event_types = [f"'{event}'" for event in event_types] # wrap each into single quotes
+        event_types_combined = ",".join(event_types)
 
-        buffs_query = f"type in ({event_types}) and ability.id in ({spell_ids})"
-        return buffs_query
+        return f"type in ({event_types_combined}) and ability.id in ({spell_ids})"
+
+    @classmethod
+    def get_buff_query(cls, spells: typing.List[WowSpell]):
+        return cls._build_buff_query(spells, ["applybuff", "removebuff"])
+
+    @classmethod
+    def get_debuff_query(cls, spells: typing.List[WowSpell]):
+        return cls._build_buff_query(spells, ["applydebuff", "removedebuff"])
 
     @abc.abstractmethod
     def get_sub_query(self):
@@ -99,6 +103,9 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
             }}
         """)
 
+    def process_event(self, event):
+        pass
+
     def process_query_result(self, query_result):
         """Process the result of a casts-query to create Cast objects."""
 
@@ -112,48 +119,68 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
             logger.warning("casts_data is empty")
             return
 
+        # track buffs/debuff: spell id -> start cast
         active_buffs: typing.Dict[int, Cast] = {}
 
         fight_start = self.fight.start_time_rel if self.fight else 0
 
         for cast_data in casts_data:
+            self.process_event(cast_data)
+
             cast_type: str = cast_data.get("type") or "unknown"
 
             cast_actor_id = cast_data.get("sourceID")
-            if cast_type in ("applybuff", "removebuff"):
+            if cast_type in ("applybuff", "removebuff", "resurrect"):
                 cast_actor_id = cast_data.get("targetID")
 
             if self._has_source_id and (cast_actor_id != self.source_id):
                 continue
 
-            # Add the Cast Object
+
+            # resurrect are dealt with in `process_event`
+            if cast_type == "resurrect":
+                continue
+
+            # Create the Cast Object
             cast = Cast()
             cast.spell_id = cast_data.get("abilityGameID")
             cast.spell_id = WowSpell.resolve_spell_id(cast.spell_id)
             cast.timestamp = cast_data.get("timestamp", 0) - fight_start
             cast.duration = cast_data.get("duration")
-            if cast.duration:
-                cast.duration *= 0.001
 
-            # we check if the buff was applied before..
-            if cast_type == "removebuff":
+            if cast_type in ("cast"):
+                cast.stacks = 1
+
+            # new buff, or buff stack
+            if cast_type in ("applybuff", "applydebuff"):
+                # check if the buff/debuff is already active.
+                cast = active_buffs.get(cast.spell_id) or cast
+                cast.stacks += 1
+
+            if cast_type in ("removebuff", "removedebuff"):
+
                 start_cast = active_buffs.get(cast.spell_id)
 
                 # special case for buffs that are applied pre pull
                 # meaning.. the buff was already present at the start of the fight,
                 if not start_cast:
+                    start_cast = cast
                     spell = WowSpell.get(spell_id=cast.spell_id) # get the duration from the spell defintion
-                    cast.timestamp -= (spell.duration * 1000) # and calculate back the start time
+                    start_cast.timestamp -= (spell.duration * 1000) # and calculate back the start time
+                    continue
 
-                # if we have a start cast, we can calculate the correct duration
-                else:
-                    start_cast.duration = (cast.timestamp - start_cast.timestamp) / 1000
-                    continue # stop the loop here
+                start_cast.stacks -= 1
 
-            self.casts.append(cast)
+                # no stacks left --> buff/debuff ends
+                if start_cast.stacks == 0:
+                    start_cast.duration = (cast.timestamp - start_cast.timestamp)
+                    start_cast.duration *= 0.001
+                    active_buffs[cast.spell_id] = None
 
-            # track applied buffs
-            active_buffs[cast.spell_id] = cast
+            if cast.stacks == 1:  # only add new buffs on their first application
+                # track applied buffs
+                active_buffs[cast.spell_id] = cast
+                self.casts.append(cast)
 
         # Filter out same event at the same time (eg.: raid wide debuff apply)
         self.casts = utils.uniqify(self.casts, key=lambda cast: (cast.spell_id, math.floor(cast.timestamp / 1000)))
@@ -178,6 +205,7 @@ class Player(BaseActor):
     soulbind_id: int = me.IntField(default=0)
 
     deaths = me.ListField(me.DictField())
+    resurrects = me.ListField(me.DictField())
 
     def __str__(self):
         return f"Player(id={self.source_id} name={self.name} spec={self.spec})"
@@ -201,6 +229,8 @@ class Player(BaseActor):
             "total": int(self.total),
             "covenant": self.covenant.name_slug,
             "casts": [cast.as_dict() for cast in self.casts],
+            "deaths": self.deaths,
+            "resurrects": self.resurrects,
         }
 
     ##########################
@@ -219,15 +249,21 @@ class Player(BaseActor):
     #
     def get_cast_query(self, spells=typing.List[WowSpell]):
         cast_query = super().get_cast_query(spells=spells)
-        if self.name:
+        if cast_query and self.name:
             cast_query = f"source.name='{self.name}' and {cast_query}"
         return cast_query
 
     def get_buff_query(self, spells=typing.List[WowSpell]):
         buffs_query = super().get_buff_query(spells=spells)
-        if self.name:
+        if buffs_query and self.name:
             buffs_query = f"target.name='{self.name}' and {buffs_query}"
         return buffs_query
+
+    def get_debuff_query(self, spells=typing.List[WowSpell]):
+        debuffs_query = super().get_debuff_query(spells=spells)
+        if debuffs_query and self.name:
+            debuffs_query = f"source.name='{self.name}' and {debuffs_query}"
+        return debuffs_query
 
     def get_sub_query(self) -> str:
         """Get the Query for fetch all relevant data for this player."""
@@ -239,6 +275,14 @@ class Player(BaseActor):
         buffs_query = self.get_buff_query(self.spec.all_buffs)
         filters.append(buffs_query)
 
+        debuff_query = self.get_debuff_query(self.spec.all_debuffs)
+        filters.append(debuff_query)
+
+        # Resurrections
+        if self.name:
+            resurect_query = f"target.name='{self.name}' and type='resurrect'"
+            filters.append(resurect_query)
+
         # combine all filters
         filters = [f for f in filters if f]   # filter the filters
         filters = [f"({f})" for f in filters] # wrap each filter into bracers
@@ -246,6 +290,65 @@ class Player(BaseActor):
 
         queries_combined = " and ".join(filters)
         return f"({queries_combined})"
+
+    def process_death_events(self, death_events):
+        """Add the Death Events the the Players.
+
+        Args:
+            death_events[list[dict]]
+
+        """
+        ABILITY_OVERWRITES = {}
+        ABILITY_OVERWRITES[1] = {"name": "Melee", "guid": 260421, "abilityIcon": "ability_meleedamage.jpg"}
+        ABILITY_OVERWRITES[3] = {"name": "Fall Damage"}
+
+        for death_event in death_events:
+            target_id = death_event.get("id", 0)
+            if self._has_source_id and (target_id != self.source_id):
+                continue
+
+            death_ability = death_event.get("ability", {})
+            death_ability_id = death_ability.get("guid", -1)
+            death_ability = ABILITY_OVERWRITES.get(death_ability_id) or death_ability
+
+            death_data = {}
+            death_data["ts"] = death_event.get("deathTime", 0)
+            death_data["spell_name"] = death_ability.get("name", "")
+            death_data["spell_icon"] = death_ability.get("abilityIcon", "")
+            self.deaths.append(death_data)
+ 
+    def process_event_resurrect(self, event):
+        fight_start = self.fight.start_time_rel if self.fight else 0
+
+        data = {}
+        data["ts"] = event.get("timestamp", 0) - fight_start
+
+        spell_id = event.get("abilityGameID", -1)
+        spell = WowSpell.get(spell_id=spell_id)
+        if spell:
+            data["spell_name"] = spell.name
+            data["spell_icon"] = spell.icon
+
+        source_id = event.get("sourceID", 0)
+        source_player: Player = self.fight.report.players.get(str(source_id))
+        if source_player:
+            data["source_name"] = source_player.name
+            data["source_class"] = source_player.class_slug
+
+        self.resurrects.append(data)
+
+    def process_event(self, event):
+        super().process_event(event)
+
+        # Ankh doesn't shows as a regular spell
+        spell_id = event.get("abilityGameID", -1)
+        if spell_id in (21169,): # Ankh
+            event["type"] = "resurrect"
+
+        event_type = event.get("type")
+
+        if event_type == "resurrect":
+            self.process_event_resurrect(event)
 
     def process_query_result(self, query_result):
         super().process_query_result(query_result)
@@ -255,27 +358,7 @@ class Player(BaseActor):
         if not self._has_source_id:
             casts = utils.get_nested_value(query_result, "report", "events", "data") or []
             for cast in casts:
-                if cast.get("type") == "cast":
+                cast_type = cast.get("type")
+                if cast_type == "cast":
                     self.source_id = cast.get("sourceID")
                     break
-
-    def process_death_events(self, death_events):
-        ability_overwrites = {}
-        ability_overwrites[1] = {"name": "Melee", "guid": 260421, "abilityIcon": "ability_meleedamage.jpg"}
-        ability_overwrites[3] = {"name": "Fall Damage"}
-
-        for death_event in death_events:
-
-            if death_event.get("id") != self.source_id:
-                continue
-
-            death_data = {}
-            death_data["deathTime"] = death_event.get("deathTime")
-            death_data["ability"] = death_event.get("ability", {})
-
-            # Ability Overwrites
-            ability_id = death_data["ability"].get("guid")
-            if ability_id in ability_overwrites:
-                death_data["ability"] = ability_overwrites[ability_id]
-
-            self.deaths.append(death_data)

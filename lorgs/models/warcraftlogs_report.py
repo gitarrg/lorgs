@@ -34,13 +34,18 @@ class Report(warcraftlogs_base.EmbeddedDocument):
 
     zone_id: int = me.IntField(default=0)
 
+    # The guild that the report belongs to. None if it was a logged as a personal report
+    guild: str = me.StringField(default="")
+
+    # The user that uploaded the report.
+    owner: str = me.StringField(default="")
+
     # fights in this report keyed by fight_id. (they may or may not be loaded)
     fights: typing.Dict[str, Fight] = me.MapField(me.EmbeddedDocumentField(Fight), default={})
 
     # players in this report.
     #   Note: not every player might participate in every fight.
     players: typing.Dict[str, Player] = me.MapField(me.EmbeddedDocumentField(Player), default={})
-
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -65,6 +70,8 @@ class Report(warcraftlogs_base.EmbeddedDocument):
             "report_id": self.report_id,
             "date": int(self.start_time.timestamp()),
             "zone_id": self.zone_id,
+            "guild": self.guild,
+            "owner": self.owner,
         }
 
         # for players and fights we only include essential data
@@ -150,6 +157,13 @@ class Report(warcraftlogs_base.EmbeddedDocument):
                 zone {{name id}}
                 startTime
 
+                owner {{ name }}
+
+                guild {{
+                    name
+                    server {{ name }}
+                }}
+
                 masterData
                 {{
                     actors(type: "Player")
@@ -202,6 +216,11 @@ class Report(warcraftlogs_base.EmbeddedDocument):
         self.title = report_data.get("title", "")
         self.start_time = arrow.get(report_data.get("startTime", 0))
         self.zone_id = report_data.get("zone", {}).get("id", -1)
+
+        self.owner = report_data.get("owner", {}).get("name", "")
+
+        guild_info: typing.Dict = report_data.get("guild") or {}
+        self.guild = guild_info.get("name") or ""
 
         self.process_master_data(report_data.get("masterData"))
         self.process_report_fights(report_data.get("fights"))

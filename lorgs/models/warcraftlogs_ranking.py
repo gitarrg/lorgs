@@ -20,20 +20,31 @@ from lorgs.models.warcraftlogs_report import Report
 from lorgs.models.wow_spec import WowSpec
 
 
+# Map Difficulty Names to Integers used in WCL
+DIFFICULTY_IDS: typing.Dict[str, int] = {}
+DIFFICULTY_IDS["normal"] = 3
+DIFFICULTY_IDS["heroic"] = 4
+DIFFICULTY_IDS["mythic"] = 5
+
+
+
 class SpecRanking(warcraftlogs_base.Document):
 
     spec_slug: str = me.StringField(required=True)
     boss_slug: str = me.StringField(required=True)
-
+    difficulty: str = me.StringField(default="")
+    metric: str = me.StringField(default="")
     updated = me.DateTimeField(default=datetime.datetime.utcnow)
 
     reports: typing.List[Report] = me.EmbeddedDocumentListField(Report)
 
     meta = {
         'indexes': [  # type: ignore
-            ("boss_slug", "spec_slug"),
+            ("boss_slug", "spec_slug", "difficulty", "metric"),
             "spec_slug",
             "boss_slug",
+            "difficulty",
+            "metric",
         ],
         "strict": False # ignore non existing properties
     }
@@ -76,6 +87,8 @@ class SpecRanking(warcraftlogs_base.Document):
     #
     def get_query(self):
         """Return the Query to load the rankings for this Spec & Boss."""
+        difficulty_id = DIFFICULTY_IDS.get(self.difficulty, 5)
+
         return textwrap.dedent(f"""\
         worldData
         {{
@@ -84,7 +97,8 @@ class SpecRanking(warcraftlogs_base.Document):
                 characterRankings(
                     className: "{self.spec.wow_class.name_slug_cap}"
                     specName: "{self.spec.name_slug_cap}"
-                    metric: {self.spec.role.metric}
+                    metric: {self.metric}
+                    difficulty: {difficulty_id}
                     includeCombatantInfo: false
                 )
             }}

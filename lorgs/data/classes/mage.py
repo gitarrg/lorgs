@@ -34,6 +34,7 @@ MAGE.add_spell(        spell_id=116011, cooldown=45,  duration=12,              
 
 MAGE_FIRE.add_spell(   spell_id=190319, cooldown=60,  duration=10, color="#e3b02d", name="Combustion",         icon="spell_fire_sealoffire.jpg",      tags=[TAG_DYNAMIC_CD])
 MAGE_FIRE.add_spell(   spell_id=153561, cooldown=45,                                name="Meteor",             icon="spell_mage_meteor.jpg",                     show=False)
+MAGE_FIRE.add_buff(    spell_id=333315,                                             name="Sun King's Blessing",icon="ability_mage_firestarter.jpg",              show=True)
 
 MAGE_ARCANE.add_spell( spell_id=12042,  cooldown=100, duration=10,                  name="Arcane Power",       icon="spell_nature_lightning.jpg")  # 2min base cd / reduced by conduit
 MAGE_ARCANE.add_spell( spell_id=321507, cooldown=45,  duration=8,                   name="Touch of the Magi",  icon="spell_mage_icenova.jpg")
