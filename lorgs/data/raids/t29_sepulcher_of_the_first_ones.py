@@ -19,7 +19,13 @@ SEPULCHER_OF_THE_FIRST_ONES.add_boss(id=2512, name="Vigilant Guardian")
 
 ################################################################################
 # 02: Skolex, the Insatiable Ravener
-SEPULCHER_OF_THE_FIRST_ONES.add_boss(id=2542, name="Skolex, the Insatiable Ravener", nick="Skolex")
+SKOLEX = SEPULCHER_OF_THE_FIRST_ONES.add_boss(id=2542, name="Skolex, the Insatiable Ravener", nick="Skolex")
+SKOLEX.add_cast(spell_id=359770, duration=7.0, color="#19d9e3", name="Ravening Burrow", icon="ability_argus_soulburst.jpg") # Phase Trigger
+SKOLEX.add_cast(spell_id=360451, duration=6.5, color="#9919e3", name="Retch", icon="spell_nature_acid_01.jpg")              # Frontal
+SKOLEX.add_cast(spell_id=359829, duration=2.5, color="#e3ad19", name="Dust Flail", icon="ability_butcher_whirl.jpg")        # Debuff Stacks
+SKOLEX.add_cast(spell_id=359975, duration=2.5, color="", name="Riftmaw", icon="inv_netherportal.jpg", show=False)
+SKOLEX.add_cast(spell_id=359979, duration=2.5, color="", name="Rend", icon="inv_sword_2h_artifactsoulrend_d_06.jpg", show=False)
+SKOLEX.add_cast(spell_id=364622, duration=0.0, color="", name="Final Consumption", icon="spell_shadow_unholyfrenzy.jpg")
 
 ################################################################################
 # 03: Artificer Xy'mox
