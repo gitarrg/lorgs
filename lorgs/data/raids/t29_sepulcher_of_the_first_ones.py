@@ -48,7 +48,13 @@ SEPULCHER_OF_THE_FIRST_ONES.add_boss(id=2544, name="Prototype Pantheon")
 
 ################################################################################
 # 06: Lihuvim, Principal Architect
-SEPULCHER_OF_THE_FIRST_ONES.add_boss(id=2539, name="Lihuvim, Principal Architect", nick="Lihuvim")
+LIHUVIM = SEPULCHER_OF_THE_FIRST_ONES.add_boss(id=2539, name="Lihuvim, Principal Architect", nick="Lihuvim")
+LIHUVIM.add_cast(spell_id=364652, duration=1.9, color="#e61919", name="Protoform Cascade (Frontal)",      icon="spell_progenitor_debuff.jpg")
+LIHUVIM.add_cast(spell_id=362601, duration=1.9, color="#00ffea", name="Unstable Mote (Mines)",            icon="spell_progenitor_orb.jpg")
+LIHUVIM.add_cast(spell_id=363088, duration=3.0, color="#ffc800", name="Cosmic Shift (Knock)",             icon="spell_progenitor_areadenial.jpg")
+LIHUVIM.add_cast(spell_id=363130, duration=4,   color="#00ff00", name="Synthesize (Intermission start)",  icon="spell_progenitor_beam.jpg")
+LIHUVIM.add_cast(spell_id=361200, duration=20,  color="#00ff00", name="Recharge (intermission / mythic)", icon="spell_progenitor_buff.jpg")
+
 
 ################################################################################
 # 07: Halondrus the Reclaimer
