@@ -57,6 +57,7 @@ def format_big_number(num):
 def slug(text, space=""):
     text = text.lower()
     text = text.replace("'", "")
+    text = text.replace(",", "")
     text = text.replace("-", "")
     text = text.replace(" ", space)
     return text
