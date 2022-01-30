@@ -27,9 +27,16 @@ SKOLEX.add_cast(spell_id=359975, duration=2.5, color="", name="Riftmaw", icon="i
 SKOLEX.add_cast(spell_id=359979, duration=2.5, color="", name="Rend", icon="inv_sword_2h_artifactsoulrend_d_06.jpg", show=False)
 SKOLEX.add_cast(spell_id=364622, duration=0.0, color="", name="Final Consumption", icon="spell_shadow_unholyfrenzy.jpg")
 
+
 ################################################################################
 # 03: Artificer Xy'mox
-SEPULCHER_OF_THE_FIRST_ONES.add_boss(id=2553, name="Artificer Xy'mox", nick="Xy'mox")
+XYMOX = SEPULCHER_OF_THE_FIRST_ONES.add_boss(id=2553, name="Artificer Xy'mox", nick="Xy'mox")
+XYMOX.add_cast(spell_id=362801, duration=5.5, color="#e61919", name="Glyph of Relocation", icon="inv_axe_2h_broker_c_01.jpg") # Tank Grip
+XYMOX.add_cast(spell_id=364465,               color="", name="Forerunner Rings",    icon="spell_broker_groundstate.jpg") # Rings
+XYMOX.add_cast(spell_id=362721, duration=8.0, color="#ffc800", name="Dimensional Tear",    icon="spell_arcane_portalironforge.jpg") # Portals
+XYMOX.add_buff(spell_id=367573,               color="#00ff00", name="Genesis Bulwark",     icon="inv_progenitor_runevessel.jpg") # Intermission
+XYMOX.add_cast(spell_id=362885, duration=2.0, color="#00ffea", name="Stasis Trap",         icon="spell_broker_buff.jpg")
+
 
 ################################################################################
 # 04: Dausegne, the Fallen Oracle
