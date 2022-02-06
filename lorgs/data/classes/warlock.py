@@ -27,7 +27,9 @@ WARLOCK_DESTRUCTION = WowSpec(role=RDPS, wow_class=WARLOCK, name="Destruction", 
 ################################################################################
 # Spells
 #
-WARLOCK.add_spell(             spell_id=325640, cooldown=60,  duration=8,  color=COL_NF,    name="Soul Rot",               icon="ability_ardenweald_warlock.jpg", show=False)
+WARLOCK.add_spell(             spell_id=325640, cooldown=60,  duration=8,  color=COL_NF,    name="Soul Rot",               icon="ability_ardenweald_warlock.jpg",  show=False)
+WARLOCK.add_spell(             spell_id=104773, cooldown=300, duration=8,                   name="Unending Resolve",       icon="spell_shadow_demonictactics.jpg", show=False)
+WARLOCK.add_buff(              spell_id=108416, cooldown=60,                                name="Dark Pact",              icon="spell_shadow_deathpact.jpg",      show=False) # auto duration
 
 WARLOCK_AFFLICTION.add_spell(  spell_id=205180, cooldown=120, duration=8,  color="#49ad6e", name="Summon Darkglare",       icon="inv_beholderwarlock.jpg")
 WARLOCK_AFFLICTION.add_spell(  spell_id=113860, cooldown=120, duration=20, color="#c35ec4", name="Dark Soul: Misery",      icon="spell_warlock_soulburn.jpg")
