@@ -35,7 +35,7 @@ WARRIOR_ARMS.add_spell(        spell_id=107574, cooldown=90,  duration=20,      
 WARRIOR_ARMS.add_spell(        spell_id=227847, cooldown=90,  duration=6,                   name="Bladestorm",          icon="ability_warrior_bladestorm.jpg")
 WARRIOR_ARMS.add_spell(        spell_id=262161, cooldown=45,  duration=10,                  name="Warbreaker",          icon="inv_warbreaker.jpg",                        show=False)
 WARRIOR_ARMS.add_spell(        spell_id=772,    cooldown=15,                                name="Rend",                icon="ability_gouge.jpg",                         show=False)
-WARRIOR_ARMS.add_spell(        spell_id=118038, cooldown=180, duration=8,                   name="Die by the Sword",    icon="ability_warrior_challange.jpg",              show=False)
+WARRIOR_ARMS.add_spell(        spell_id=118038, cooldown=120, duration=8,                   name="Die by the Sword",    icon="ability_warrior_challange.jpg",             show=False)
 
 WARRIOR_FURY.add_spell(        spell_id=1719,   cooldown=60,  duration=10,                  name="Recklessness",        icon="warrior_talent_icon_innerrage.jpg")
 WARRIOR_FURY.add_spell(        spell_id=46924,  cooldown=60,  duration=4,                   name="Bladestorm",          icon="ability_warrior_bladestorm.jpg")
