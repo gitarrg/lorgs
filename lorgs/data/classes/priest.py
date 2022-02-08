@@ -31,6 +31,10 @@ PRIEST.add_spell(              spell_id=324724, cooldown=60,               color
 PRIEST.add_spell(              spell_id=323673, cooldown=45,  duration=5,  color=COL_VENTR, name="Mindgames",             icon="ability_revendreth_priest.jpg")
 PRIEST.add_spell(              spell_id=327661, cooldown=90,  duration=20, color=COL_NF,    name="Fae Guardians",         icon="ability_ardenweald_priest.jpg")
 
+# Defensive
+PRIEST.add_spell(              spell_id=19236, cooldown=90,  duration=10,     name="Desperate Prayer",         icon="spell_holy_testoffaith.jpg", show=False)
+
+# Offensive
 PRIEST_DISCIPLINE.add_spell(   spell_id=62618,  cooldown=180, duration=10, color="#b3ad91", name="Power Word: Barrier",   icon="spell_holy_powerwordbarrier.jpg")
 PRIEST_DISCIPLINE.add_spell(   spell_id=109964, cooldown=60,  duration=10, color="#d7abdb", name="Spirit Shell",          icon="ability_shaman_astralshift.jpg")
 PRIEST_DISCIPLINE.add_spell(   spell_id=47536,  cooldown=90,  duration=8,                   name="Rapture",               icon="spell_holy_rapture.jpg",          show=False)
@@ -45,6 +49,7 @@ PRIEST_HOLY.add_spell(         spell_id=64901, cooldown=300, duration=5,   color
 
 PRIEST_SHADOW.add_spell(       spell_id=228260, cooldown=90,  duration=15, color="#b330e3", name="Voidform",              icon="spell_priest_voidform.jpg")  # tooltip: 228264
 PRIEST_SHADOW.add_spell(       spell_id=263165, cooldown=30,  duration=3,                   name="Void Torrent",          icon="spell_priest_voidsear.jpg",       show=False)
+PRIEST_SHADOW.add_spell(       spell_id=47585, cooldown=120,  duration=6,                   name="Dispersion",            icon="spell_shadow_dispersion.jpg",    show=False)
 
 
 # Shadowfiend/Mindbeder Variations (with different glyphs etc)
