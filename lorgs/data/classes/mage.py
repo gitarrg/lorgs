@@ -26,10 +26,27 @@ MAGE_FROST  = WowSpec(role=RDPS, wow_class=MAGE, name="Frost")
 ################################################################################
 # Spells
 #
+
+# Covenant & Shared
 MAGE.add_spell(        spell_id=314793, cooldown=90,  duration=25, color=COL_VENTR, name="Mirrors of Torment", icon="ability_revendreth_mage.jpg")
 MAGE.add_spell(        spell_id=314791, cooldown=60,  duration=3,  color=COL_NF,    name="Shifting Power",     icon="ability_ardenweald_mage.jpg",               show=False)
 MAGE.add_spell(        spell_id=307443, cooldown=30,  duration=10, color=COL_KYR,   name="Radiant Spark",      icon="ability_bastion_mage.jpg",                  show=False)
 MAGE.add_spell(        spell_id=324220, cooldown=180, duration=25, color=COL_NECRO, name="Deathborne",         icon="ability_maldraxxus_mage.jpg")
+
+
+# Defensives
+MAGE.add_buff(         spell_id=45438,  cooldown=240,                               name="Ice Block",          icon="spell_frost_frost.jpg",                     show=False)
+MAGE.add_buff(         spell_id=55342,  cooldown=120,                               name="Mirror Image",       icon="spell_magic_lesserinvisibilty.jpg",         show=False)
+MAGE.add_buff(         spell_id=108978, cooldown=60,                                name="Alter Time",         icon="spell_mage_altertime.jpg",                  show=False)
+
+MAGE_ARCANE.add_buff(  spell_id=113862, cooldown=120,                               name="Greater Invisibility",icon="ability_mage_greaterinvisibility.jpg",     show=False)
+MAGE_ARCANE.add_buff(  spell_id=235450, cooldown=25,                                name="Prismatic Barrier",  icon="spell_magearmor.jpg",                       show=False)
+MAGE_FIRE.add_buff(    spell_id=235313, cooldown=25,                                name="Blazing Barrier",    icon="ability_mage_moltenarmor.jpg",              show=False)
+MAGE_FIRE.add_debuff(  spell_id=235313, cooldown=25,                                name="Blazing Barrier",    icon="ability_mage_moltenarmor.jpg",              show=False)
+MAGE_FROST.add_buff(   spell_id=87023,  cooldown=300, duration=6,                   name="Cauterize",          icon="spell_fire_rune.jpg",                       show=False)
+
+
+# Offensive
 MAGE.add_spell(        spell_id=116011, cooldown=45,  duration=12,                  name="Rune of Power",      icon="spell_mage_runeofpower.jpg",                show=False)
 
 MAGE_FIRE.add_spell(   spell_id=190319, cooldown=60,  duration=10, color="#e3b02d", name="Combustion",         icon="spell_fire_sealoffire.jpg",      tags=[TAG_DYNAMIC_CD])

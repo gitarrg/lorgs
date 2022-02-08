@@ -34,6 +34,8 @@ ROGUE.add_spell(               spell_id=328305, cooldown=90,               color
 ROGUE.add_spell(               spell_id=31224,  cooldown=60,  duration=5,                   name="Cloak of Shadows",    icon="spell_shadow_nethercloak.jpg",             show=False)
 ROGUE.add_buff(                spell_id=45182,  cooldown=360, duration=3,                   name="Cheating Death",      icon="ability_rogue_cheatdeath.jpg",             show=False)
 ROGUE.add_spell(               spell_id=5277,   cooldown=120, duration=10,                  name="Evasion",             icon="spell_shadow_shadowward.jpg",              show=False)
+ROGUE.add_spell(               spell_id=185311, cooldown=30,  duration=4,                   name="Crimson Vial",        icon="ability_rogue_crimsonvial.jpg",            show=False)
+ROGUE.add_spell(               spell_id=1966,   cooldown=15,  duration=6,                   name="Feint",               icon="ability_rogue_feint.jpg",                  show=False)
 
 ROGUE_ASSASSINATION.add_spell( spell_id=703,    cooldown=6,   duration=18,                  name="Garrote",             icon="ability_rogue_garrote.jpg",                show=False)
 ROGUE_ASSASSINATION.add_spell( spell_id=1943,                                               name="Rupture",             icon="ability_rogue_rupture.jpg",                show=False)

@@ -30,6 +30,7 @@ WARRIOR.add_spell(             spell_id=324143, cooldown=120, duration=15, color
 WARRIOR.add_spell(             spell_id=325886, cooldown=75,  duration=12, color=COL_NF,    name="Ancient Aftershock",  icon="ability_ardenweald_warrior.jpg")  # 15sec CD reduction with Conduit
 WARRIOR.add_spell(             spell_id=307865, cooldown=60,               color=COL_KYR,   name="Spear of Bastion",    icon="ability_bastion_warrior.jpg")
 WARRIOR.add_spell(             spell_id=97462,  cooldown=180, duration=10,                  name="Rallying Cry",        icon="ability_warrior_rallyingcry.jpg",           show=False, spell_type=SPELL_TYPE_RAID)
+WARRIOR.add_spell(             spell_id=23920,  cooldown=10,  duration=5,                   name="Spell Reflection",    icon="ability_warrior_shieldreflection.jpg",      show=False)
 
 WARRIOR_ARMS.add_spell(        spell_id=107574, cooldown=90,  duration=20,                  name="Avatar",              icon="warrior_talent_icon_avatar.jpg")
 WARRIOR_ARMS.add_spell(        spell_id=227847, cooldown=90,  duration=6,                   name="Bladestorm",          icon="ability_warrior_bladestorm.jpg")

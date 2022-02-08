@@ -36,3 +36,4 @@ DEMONHUNTER_HAVOC.add_spell(   spell_id=196555, cooldown=180,  duration=5,      
 DEMONHUNTER_VENGEANCE.add_spell(spell_id=204021, cooldown=60,  duration=8,  color="#7aeb34", name="Fiery Brand",     icon="ability_demonhunter_fierybrand.jpg")
 DEMONHUNTER_VENGEANCE.add_spell(spell_id=212084, cooldown=60,  duration=2,  color="#34ebe1", name="Fel Devastation", icon="ability_demonhunter_feldevastation.jpg",    show=False)
 DEMONHUNTER_VENGEANCE.add_spell(spell_id=187827, cooldown=180, duration=15, color="#348540", name="Metamorphosis",   icon="ability_demonhunter_metamorphasistank.jpg")
+DEMONHUNTER_VENGEANCE.add_debuff(spell_id=209261, cooldown=480, duration=15, color="#348540", name="Last Resort",   icon="inv_glaive_1h_artifactaldorchi_d_06.jpg")

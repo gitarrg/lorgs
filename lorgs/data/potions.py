@@ -26,9 +26,16 @@ POWER_INFUSION    = OTHER_BUFFS.add_spell(color="#f7c625", spell_id=10060,  cool
 KYRIAN_BOND       = OTHER_BUFFS.add_spell(color=COL_KYR,   spell_id=327139,               duration=0,  name="Kindred Empowerment", icon="spell_animabastion_beam.jpg")
 BENEVOLENT_FAERIE = OTHER_BUFFS.add_spell(color=COL_NF,    spell_id=327710,               duration=20, name="Benevolent Faerie",   icon="spell_animaardenweald_orb.jpg")
 INNERVATE         = OTHER_BUFFS.add_spell(color="#3b97ed", spell_id=29166,  cooldown=180, duration=10, name="Innervate",           icon="spell_nature_lightning.jpg")
+FLESHCRAFT        = OTHER_BUFFS.add_buff(color=COL_NECRO,  spell_id=324867, duration=15, name="Fleshcraft",  icon="ability_necrolord_fleshcraft.jpg")
 
 UNHOLY_BONUS = OTHER_BUFFS.add_spell(color="#6c34ba", spell_id=356043, duration=15, name="Chaos Bane",  icon="spell_fire_twilightflamestrike.jpg")
 
+IRONBARK = OTHER_BUFFS.add_buff(color=DRUID.color,   spell_id=102342, cooldown=90,  duration=12, name="Ironbark",                icon="spell_druid_ironbark.jpg")
+PAINSUP  = OTHER_BUFFS.add_buff(color=PRIEST.color,  spell_id=33206,  cooldown=180, duration=8,  name="Pain Suppression",        icon="spell_holy_painsupression.jpg")
+GUARDIAN = OTHER_BUFFS.add_buff(color=PRIEST.color,  spell_id=47788,  cooldown=180,              name="Guardian Spirit",         icon="spell_holy_guardianspirit.jpg")
+SAC      = OTHER_BUFFS.add_buff(color=PALADIN.color, spell_id=1022,   cooldown=300, duration=10, name="Blessing of Protection",  icon="spell_holy_sealofprotection.jpg")
+COCOON   = OTHER_BUFFS.add_buff(color=MONK.color,    spell_id=116849, cooldown=120,              name="Life Cocoon",             icon="ability_monk_chicocoon.jpg")
+EXTERNALS = [IRONBARK, PAINSUP, GUARDIAN, SAC, COCOON]
 
 ################################################################################
 # Potions
@@ -46,8 +53,9 @@ for s in ALL_SPECS:
 
     s.add_buff(BLOODLUST)       # 2825
 
-
     s.add_buff(UNHOLY_BONUS)
+    s.add_buff(FLESHCRAFT)
+    s.add_buffs(*EXTERNALS)
 
 
 # Intellect users
