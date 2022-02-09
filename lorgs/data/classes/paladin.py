@@ -32,11 +32,8 @@ PALADIN.add_spell(             spell_id=31884,  cooldown=120, duration=20, color
 PALADIN.add_spell(             spell_id=6940,   cooldown=120, duration=12,                  name="Blessing of Sacrifice",           icon="spell_holy_sealofsacrifice.jpg", show=False)
 
 # Defensive
-PALADIN.add_spell(             spell_id=642,    cooldown=300, duration=8,                   name="Divine Shield",           icon="spell_holy_divineshield.jpg",     show=False)
-
-DIVINE_PROT = WowSpell(spell_id=498, cooldown=60, duration=8, name="Divine Protection", icon="spell_holy_divineprotection", show=False)
-PALADIN_HOLY.add_spell(DIVINE_PROT)
-PALADIN_PROTECTION.add_spell(DIVINE_PROT)
+PALADIN.add_spell(             spell_id=642,    cooldown=300, duration=8,                   name="Divine Shield",                   icon="spell_holy_divineshield.jpg",     show=False)
+PALADIN_HOLY.add_spell(        spell_id=498,    cooldown=60,  duration=8,                   name="Divine Protection",               icon="spell_holy_divineprotection.jpg", show=False)
 
 
 # Offensive
