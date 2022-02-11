@@ -215,7 +215,9 @@ class Report(warcraftlogs_base.EmbeddedDocument):
         # Update the Report itself
         self.title = report_data.get("title", "")
         self.start_time = arrow.get(report_data.get("startTime", 0))
-        self.zone_id = report_data.get("zone", {}).get("id", -1)
+
+        zone = report_data.get("zone") or {}  # might contain a "None" in the results
+        self.zone_id = zone.get("id") or -1
 
         self.owner = report_data.get("owner", {}).get("name", "")
 
