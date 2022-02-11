@@ -29,6 +29,11 @@ HUNTER_SURVIVAL       = WowSpec(role=MDPS, wow_class=HUNTER,       name="Surviva
 HUNTER.add_spell(              spell_id=328231, cooldown=120, duration=15, color=COL_NF,    name="Wild Spirits",        icon="ability_ardenweald_hunter.jpg")
 HUNTER.add_spell(              spell_id=308491, cooldown=60,  duration=10, color=COL_KYR,   name="Resonating Arrow",    icon="ability_bastion_hunter.jpg")
 
+HUNTER.add_spell(              spell_id=109304, cooldown=120,                               name="Exhilaration",        icon="ability_hunter_onewithnature.jpg", show=False)
+HUNTER.add_buff(               spell_id=186265, cooldown=120,                               name="Aspect of the Turtle",icon="ability_hunter_pet_turtle.jpg", show=False)
+HUNTER.add_spell(              spell_id=272679, cooldown=180, duration=6,                   name="Survival of the Fittest", icon="spell_nature_spiritarmor.jpg", show=False, variations=[281195])
+
+
 HUNTER_BEASTMASTERY.add_spell( spell_id=193530, cooldown=180, duration=20,                  name="Aspect of the Wild",  icon="spell_nature_protectionformnature.jpg")
 HUNTER_BEASTMASTERY.add_spell( spell_id=19574,  cooldown=30,  duration=15, color="#e6960f", name="Bestial Wrath",       icon="ability_druid_ferociousbite.jpg",        show=False)
 HUNTER_MARKSMANSHIP.add_spell( spell_id=288613, cooldown=120, duration=15,                  name="Trueshot",            icon="ability_trueshot.jpg",                   show=False)
