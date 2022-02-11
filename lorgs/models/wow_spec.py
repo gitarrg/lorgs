@@ -90,14 +90,18 @@ class WowSpec(base.Model):
     ##########################
     # Methods
     #
-    def add_spell(self, **kwargs):
+    def add_spell(self, spell: WowSpell = None, **kwargs):
 
-        kwargs.setdefault("color", self.wow_class.color)
-        kwargs.setdefault("spell_type", self.full_name_slug)
+        if not spell:
+            kwargs.setdefault("color", self.wow_class.color)
+            kwargs.setdefault("spell_type", self.full_name_slug)
+            spell = WowSpell(**kwargs)
 
-        spell = WowSpell(**kwargs)
         self.spells.append(spell)  # Important to keep a ref in memory
         return spell
+
+    def add_spells(self, *spells: WowSpell):
+        self.spells.extend(spells)
 
     def add_buff(self, spell: WowSpell = None, **kwargs):
 
@@ -107,6 +111,10 @@ class WowSpec(base.Model):
             spell = WowSpell(**kwargs)
 
         self.buffs.append(spell)
+        return spell
+
+    def add_buffs(self, *spells: WowSpell):
+        self.buffs.extend(spells)
 
     def add_debuff(self, spell: WowSpell = None, **kwargs):
 
@@ -116,3 +124,7 @@ class WowSpec(base.Model):
             spell = WowSpell(**kwargs)
 
         self.debuffs.append(spell)
+        return spell
+
+    def add_debuffs(self, *spells: WowSpell):
+        self.debuffs.extend(spells)

@@ -31,6 +31,18 @@ DRUID_RESTORATION = WowSpec(role=HEAL, wow_class=DRUID, name="Restoration", shor
 DRUID.add_spell(             spell_id=323764, cooldown=60,  duration=4,  color=COL_NF,    name="Convoke the Spirits",            icon="ability_ardenweald_druid.jpg")
 DRUID.add_spell(             spell_id=323546, cooldown=180, duration=20, color=COL_VENTR, name="Ravenous Frenzy",                icon="ability_revendreth_druid.jpg",              show=False)
 
+# Defensives
+DRUID.add_spell(             spell_id=22812, cooldown=60, duration=12, name="Barkskin",                icon="spell_nature_stoneclawtotem.jpg",              show=False)
+
+BEAR_FORM = WowSpell(spell_id=5487, name="Bear Form", icon="ability_racial_bearform.jpg")
+BEAR_FORM.spell_type = DRUID.name_slug
+BEAR_FORM.color = DRUID.color
+DRUID_BALANCE.add_buff(BEAR_FORM)
+DRUID_FERAL.add_buff(BEAR_FORM)
+DRUID_RESTORATION.add_buff(BEAR_FORM)
+
+
+# Offensive
 DRUID_BALANCE.add_spell(     spell_id=194223, cooldown=180, duration=20,                  name="Celestial Alignment",            icon="spell_nature_natureguardian.jpg")
 DRUID_BALANCE.add_spell(     spell_id=102560, cooldown=180, duration=30,                  name="Incarnation: Chosen of Elune",   icon="spell_druid_incarnation.jpg")
 DRUID_BALANCE.add_spell(     spell_id=205636, cooldown=60,  duration=10,                  name="Force of Nature",                icon="ability_druid_forceofnature.jpg",           show=False)

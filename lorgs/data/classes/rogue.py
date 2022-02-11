@@ -31,6 +31,12 @@ ROGUE.add_spell(               spell_id=323654, cooldown=90, duration=12,  color
 ROGUE.add_spell(               spell_id=328547, cooldown=30,               color=COL_NECRO, name="Serrated Bone Spike", icon="ability_maldraxxus_rogue.jpg",             show=False)
 ROGUE.add_spell(               spell_id=328305, cooldown=90,               color=COL_NF,    name="Sepsis",              icon="ability_ardenweald_rogue.jpg",             show=False)
 
+ROGUE.add_spell(               spell_id=31224,  cooldown=60,  duration=5,                   name="Cloak of Shadows",    icon="spell_shadow_nethercloak.jpg",             show=False)
+ROGUE.add_buff(                spell_id=45182,  cooldown=360, duration=3,                   name="Cheating Death",      icon="ability_rogue_cheatdeath.jpg",             show=False)
+ROGUE.add_spell(               spell_id=5277,   cooldown=120, duration=10,                  name="Evasion",             icon="spell_shadow_shadowward.jpg",              show=False)
+ROGUE.add_spell(               spell_id=185311, cooldown=30,  duration=4,                   name="Crimson Vial",        icon="ability_rogue_crimsonvial.jpg",            show=False)
+ROGUE.add_spell(               spell_id=1966,   cooldown=15,  duration=6,                   name="Feint",               icon="ability_rogue_feint.jpg",                  show=False)
+
 ROGUE_ASSASSINATION.add_spell( spell_id=703,    cooldown=6,   duration=18,                  name="Garrote",             icon="ability_rogue_garrote.jpg",                show=False)
 ROGUE_ASSASSINATION.add_spell( spell_id=1943,                                               name="Rupture",             icon="ability_rogue_rupture.jpg",                show=False)
 ROGUE_ASSASSINATION.add_spell( spell_id=121411,                                             name="Crimson Tempest",     icon="inv_knife_1h_cataclysm_c_05.jpg",          show=False)

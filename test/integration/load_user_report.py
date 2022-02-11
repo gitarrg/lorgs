@@ -82,13 +82,26 @@ async def test_load_multiple_fights():
 
 async def test_load():
 
+    REPORT_ID = "7T893K6tL4mZpFgD"
+    fight_ids = [32]
+    player_ids = [5]
+
     user_report = UserReport.from_report_id(report_id=REPORT_ID, create=True)
     user_report.report.fights = []
-    await user_report.report.load_fights(
-        fight_ids=[42, 43, 44, 45, 46],
-        player_ids=[3, 4, 5, 100]
-    )
+    await user_report.report.load_fights(fight_ids=fight_ids, player_ids=player_ids)
     user_report.save()
+
+    ############################
+    # Print Result
+    #
+    def f(l, j="."):
+        l = [str(i) for i in l]
+        return j.join(l)
+
+    fight_ids = f(fight_ids)
+    player_ids = f(player_ids)
+    print(f"http://localhost:9001/user_report/{REPORT_ID}?fight={fight_ids}&player={player_ids}")
+
 
 
 async def main():
