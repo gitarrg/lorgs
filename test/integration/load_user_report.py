@@ -82,9 +82,9 @@ async def test_load_multiple_fights():
 
 async def test_load():
 
-    REPORT_ID = "7T893K6tL4mZpFgD"
-    fight_ids = [32]
-    player_ids = [5]
+    REPORT_ID = "9gCLdqX6PWm3frMK"
+    fight_ids = [43]
+    player_ids = [1, 12]
 
     user_report = UserReport.from_report_id(report_id=REPORT_ID, create=True)
     user_report.report.fights = []
