@@ -16,14 +16,17 @@ provider:
 package:
   individually: true # package each module (eg.: "backend") individually
   patterns:
+    - "!*/**"
     - "lorgs/**"
-    - "!venv/**"
+    - google_creds.json
 
 plugins:
   - serverless-python-requirements
   # - serverless-dotenv-plugin  # to read ".env"-files
 
-# custom:
+custom:
+  pythonRequirements:
+    layer: true
 #   ####################################
 #   # Custom Config
 #   config:
@@ -42,6 +45,8 @@ plugins:
 functions:
   main:  # main function for "all" endpoints
     runtime: python3.8
+    memorySize: 128 # optional, in MB, default is 1024
+    timeout: 6 # optional, in seconds, default is 6
     # module: lorgs
     handler: lorgs.app.create_handler
     environment:
@@ -57,9 +62,8 @@ functions:
       # DISCORD_CLIENT_SECRET: ${opt:DISCORD_CLIENT_SECRET}
       # DISCORD_BOT_TOKEN: ${opt:DISCORD_BOT_TOKEN}
       GOOGLE_APPLICATION_CREDENTIALS: "./google_creds.json"
-
     events:
       - http: GET /
       - http: GET /{proxy+}
-    memorySize: 256 # optional, in MB, default is 1024
-    timeout: 30 # optional, in seconds, default is 6
+    layers:
+      - Ref: PythonRequirementsLambdaLayer
