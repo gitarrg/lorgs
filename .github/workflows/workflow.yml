@@ -26,7 +26,9 @@ jobs:
           restore-keys: npm-
 
       - name: Setup Google Credentials
-        run: echo ${{secrets.MONGO_URI}} > ./google_creds.json
+        run: |
+          touch google_creds.json
+          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" >> google_creds.json
 
       - name: NPM Install
         run: npm ci --ignore-scripts
