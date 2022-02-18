@@ -25,14 +25,17 @@ jobs:
           key: npm-${{ hashFiles('package-lock.json') }}
           restore-keys: npm-
 
+      - name: Setup Google Credentials
+        run: echo ${{secrets.MONGO_URI}} > ./google_creds.json
+
       - name: NPM Install
         run: npm ci --ignore-scripts
-
-      - name: Build
-        run: npm run build
 
       - name: Serverless Authentication
         run: npx serverless config credentials --provider aws --key ${{secrets.AWS_ACCESS_KEY_ID}} --secret ${{secrets.AWS_SECRET_ACCESS_KEY}}
 
       - name: serverless deploy
         run: npx serverless deploy --verbose --stage ${GITHUB_REF##*/}
+        env:
+          MONGO_URI: ${{secrets.MONGO_URI}}
+          SECRET_KEY: ${{secrets.SECRET_KEY}}
