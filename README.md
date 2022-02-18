@@ -14,3 +14,14 @@ Please make sure to update tests as appropriate.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
+
+
+
+# CI Setup
+
+Store GH Secret
+```
+    base64 -i google_creds.json -o google_creds_base64.json
+    gh secret set GOOGLE_APPLICATION_CREDENTIALS_BASE64 < google_creds_base64.json
+    rm google_creds_base64.json
+```
