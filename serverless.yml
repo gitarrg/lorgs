@@ -1,0 +1,64 @@
+app: lorrgs
+service: lorrgs-api
+frameworkVersion: '3'
+
+useDotenv: true
+
+provider:
+  name: aws
+  region: eu-west-1
+  stage: ${opt:stage, "dev"}
+  runtime: python3.8
+
+
+################################################################################
+# package:
+package:
+  individually: true # package each module (eg.: "backend") individually
+  patterns:
+    - "lorgs/**"
+    - "!venv/**"
+
+plugins:
+  - serverless-python-requirements
+  # - serverless-dotenv-plugin  # to read ".env"-files
+
+# custom:
+#   ####################################
+#   # Custom Config
+#   config:
+#     LORGS_CONFIG_NAME: ${opt:LORGS_CONFIG_NAME, lorgs.config.ProductionConfig}
+#     SECRET_KEY: ${opt:SECRET_KEY}
+#     # Third Party Credentials
+#     MONGO_URI: ${opt:MONGO_URI}
+#     WCL_CLIENT_ID: ${opt:WCL_CLIENT_ID}
+#     WCL_CLIENT_SECRET: ${opt:WCL_CLIENT_SECRET}
+#     # Discord Auth
+#     DISCORD_CLIENT_ID: ${opt:DISCORD_CLIENT_ID}
+#     DISCORD_CLIENT_SECRET: ${opt:DISCORD_CLIENT_SECRET}
+#     DISCORD_BOT_TOKEN: ${opt:DISCORD_BOT_TOKEN}
+
+
+functions:
+  main:  # main function for "all" endpoints
+    runtime: python3.8
+    # module: lorgs
+    handler: lorgs.app.create_handler
+    environment:
+      LORGS_CONFIG_NAME: lorgs.config.ProductionConfig
+      SECRET_KEY: ${env:SECRET_KEY}
+
+      # Third Party Credentials
+      MONGO_URI: ${env:MONGO_URI}
+      # WCL_CLIENT_ID: ${opt:WCL_CLIENT_ID}
+      # WCL_CLIENT_SECRET: ${opt:WCL_CLIENT_SECRET}
+
+      # DISCORD_CLIENT_ID: ${opt:DISCORD_CLIENT_ID}
+      # DISCORD_CLIENT_SECRET: ${opt:DISCORD_CLIENT_SECRET}
+      # DISCORD_BOT_TOKEN: ${opt:DISCORD_BOT_TOKEN}
+
+    events:
+      - http: GET /
+      - http: GET /{proxy+}
+    memorySize: 256 # optional, in MB, default is 1024
+    timeout: 30 # optional, in seconds, default is 6

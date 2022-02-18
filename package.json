@@ -12,7 +12,7 @@
     "format_app_yaml": "envsub --syntax handlebars template.app.yaml app.yaml"
   },
   "devDependencies": {
-    "envsub": "^4.0.7"
-  },
-  "dependencies": {}
+    "envsub": "^4.0.7",
+    "serverless-python-requirements": "^5.3.1"
+  }
 }
