@@ -6,6 +6,7 @@ import os
 
 # IMPORT THIRD PARTY LIBRARIES
 import fastapi
+import mangum
 from fastapi.middleware.cors import CORSMiddleware
 
 # IMPORT LOCAL LIBRARIES
@@ -39,24 +40,30 @@ def create_app():
     cache.init(config_obj)
     app.include_router(api.router, prefix="/api")
 
-    @app.get("/")
-    @app.get("/{path:path}")
-    async def frontend_redirect(path=""):
-        URL = "https://lorrgs.io"
-        url = os.path.join(URL, path)
-        return fastapi.responses.RedirectResponse(url, status_code=301) # 301: Moved Permanently
+    # @app.get("/")
+    # @app.get("/{path:path}")
+    # async def frontend_redirect(path=""):
+    #     URL = "https://lorrgs.io"
+    #     url = os.path.join(URL, path)
+    #     return fastapi.responses.RedirectResponse(url, status_code=301) # 301: Moved Permanently
 
     # Apply Cors Headers
     if config_obj.LORRGS_DEBUG:
         CORS_ORIGINS.append("*")
 
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=True,
-        allow_methods=["POST", "GET"],
-		allow_headers=["*"],
-        max_age=3600,
-    )
-
+    # app.add_middleware(
+    #     CORSMiddleware,
+    #     allow_origins=CORS_ORIGINS,
+    #     allow_credentials=True,
+    #     allow_methods=["POST", "GET"],
+	# 	allow_headers=["*"],
+    #     max_age=3600,
+    # )
     return app
+
+
+def create_handler(*args, **kwargs):
+
+    app = create_app()
+    handler = mangum.Mangum(app)
+    return handler(*args, **kwargs)
