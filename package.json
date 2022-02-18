@@ -8,13 +8,10 @@
     "type": "git",
     "url": "git+https://github.com/gitarrg/lorgs.git"
   },
-  "scripts": {
-
-  },
+  "scripts": {},
   "devDependencies": {
     "serverless": "^3.2.1",
+    "serverless-layers": "^2.5.4-beta.1",
     "serverless-python-requirements": "^5.3.1"
-  },
-  "dependencies": {
   }
 }

@@ -26,9 +26,11 @@ jobs:
           restore-keys: npm-
 
       - name: Setup Google Credentials
-        run: |
-          touch google_creds.json
-          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" >> google_creds.json
+        uses: timheuer/base64-to-file@v1.1
+        with:
+          fileName: google_creds.json
+          fileDir: ${{ github.workspace }}
+          encodedString: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
 
       - name: NPM Install
         run: npm ci --ignore-scripts
