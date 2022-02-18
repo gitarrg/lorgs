@@ -1,5 +1,5 @@
 {
-  "name": "lorgs",
+  "name": "lorrgs",
   "description": "website to compare top logs in wow",
   "version": "0.2.0",
   "author": "arrg",
@@ -9,10 +9,12 @@
     "url": "git+https://github.com/gitarrg/lorgs.git"
   },
   "scripts": {
-    "format_app_yaml": "envsub --syntax handlebars template.app.yaml app.yaml"
+
   },
   "devDependencies": {
-    "envsub": "^4.0.7",
+    "serverless": "^3.2.1",
     "serverless-python-requirements": "^5.3.1"
+  },
+  "dependencies": {
   }
 }
