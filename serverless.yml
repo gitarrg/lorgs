@@ -21,12 +21,20 @@ package:
     - google_creds.json
 
 plugins:
-  - serverless-python-requirements
-  # - serverless-dotenv-plugin  # to read ".env"-files
+  # - serverless-python-requirements
+  - serverless-layers
+
 
 custom:
-  pythonRequirements:
-    layer: true
+  # pythonRequirements:
+  #   layer: true
+  serverless-layers:
+    # applies for all lambdas 
+    - base-layer:
+        dependenciesPath: ./requirements.txt
+        functions:
+          - main
+
 #   ####################################
 #   # Custom Config
 #   config:
@@ -65,5 +73,5 @@ functions:
     events:
       - http: GET /
       - http: GET /{proxy+}
-    layers:
-      - Ref: PythonRequirementsLambdaLayer
+    # layers:
+    #   - Ref: PythonRequirementsLambdaLayer
