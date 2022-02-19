@@ -11,7 +11,8 @@
   "scripts": {},
   "devDependencies": {
     "serverless": "^3.2.1",
-    "serverless-layers": "^2.5.4-beta.1",
+    "serverless-deployment-bucket": "^1.5.2",
+    "serverless-layers": "2.5.2",
     "serverless-python-requirements": "^5.3.1"
   }
 }
