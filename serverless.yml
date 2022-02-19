@@ -10,6 +10,8 @@ provider:
   stage: ${opt:stage, "dev"}
   runtime: python3.8
 
+  deploymentBucket:
+    name: lorrgs-serverless-deployments
 
 ################################################################################
 # package:
@@ -17,23 +19,26 @@ package:
   individually: true # package each module (eg.: "backend") individually
   patterns:
     - "!*/**"
-    - "lorgs/**"
-    - google_creds.json
+    # - "lorgs/**"
+    # - google_creds.json
 
 plugins:
   # - serverless-python-requirements
   - serverless-layers
+  - serverless-deployment-bucket
 
 
 custom:
-  # pythonRequirements:
-  #   layer: true
+#   # pythonRequirements:
+#   #   layer: true
   serverless-layers:
-    # applies for all lambdas 
-    - base-layer:
-        dependenciesPath: ./requirements.txt
+    - main_layer:
         functions:
           - main
+        dependenciesPath: ./requirements.txt
+    - auth_layer:
+        functions:
+          - auth
 
 #   ####################################
 #   # Custom Config
@@ -75,3 +80,18 @@ functions:
       - http: GET /{proxy+}
     # layers:
     #   - Ref: PythonRequirementsLambdaLayer
+    package:
+      patterns:
+        - "lorgs/**"
+
+
+  auth:
+    runtime: python3.8
+    memorySize: 128 # optional, in MB, default is 1024
+    timeout: 6 # optional, in seconds, default is 6
+    handler: lorrgs_auth.handler.create_handler
+    package:
+      patterns:
+        - "lorrgs_auth/**"
+    events:
+      - http: GET /auth/{proxy+}
