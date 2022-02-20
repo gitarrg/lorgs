@@ -307,8 +307,15 @@ class CompRanking(warcraftlogs_base.Document):
         fights = [fight for fight in fights if not fight.players]
         fights = fights[:limit] # should already be enforced from the "load_new_reports"... but better safe then sorry
 
-        await self.load_many(fights, chunk_size=5)
+        try:
+            await self.load_many(fights, chunk_size=5)
+        except PermissionError:
+            pass # private report
+
         for fight in fights:
-            await self.load_fight(fight)
+            try:
+                await self.load_fight(fight)
+            except PermissionError:
+                pass # private report
 
         self.reports += new_reports
