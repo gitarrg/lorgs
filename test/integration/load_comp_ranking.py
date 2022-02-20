@@ -15,7 +15,7 @@ async def test__load_rankings():
 
     # x = comp_ranking.get_reports()
     # print(x)
-    await comp_ranking.load(limit=5, clear_old=True)
+    await comp_ranking.load(limit=20, clear_old=True)
     comp_ranking.save()
 
 

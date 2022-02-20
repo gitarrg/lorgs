@@ -108,17 +108,46 @@ class CompRanking(warcraftlogs_base.Document):
     ############################################################################
     # Query
     #
-    @staticmethod
-    def _get_healing_cooldowns() -> typing.List[WowSpell]:
+    def _get_healing_cooldowns(self) -> str: # typing.List[WowSpell]:
         """All Spells that are considered Healing-Cooldowns.
 
         Right now, this simply returns every spell healers have
 
+        TODO:
+            share logic with <BaseActor> ?
+
         """
+        def join(*parts: str):
+            return " and ".join(parts)
+
+        queries: typing.List[str] = []
         healers: typing.List[WowSpec] = [spec for spec in WowSpec.all if spec.role.code == "heal"]
-        spells = utils.flatten(spec.all_spells for spec in healers)
-        spells = [spell for spell in spells if spell.is_healing_cooldown()]
-        return spells
+
+        # Casts
+        casts: typing.List[WowSpell] = utils.flatten(spec.all_spells for spec in healers)
+        casts = [cast for cast in casts if cast.is_healing_cooldown()]
+        if casts:
+            cast_ids = WowSpell.spell_ids_str(casts)
+            buffs_q = join(
+                "source.role='healer'",
+                "type='cast'",
+                f"ability.id in ({cast_ids})"
+            )
+            queries.append(buffs_q)
+
+        # Buffs
+        buffs: typing.List[WowSpell] = utils.flatten(spec.all_buffs for spec in healers)
+        buffs = [buff for buff in buffs if buff.is_healing_cooldown()]
+        if buffs:
+            buffs_ids = WowSpell.spell_ids_str(buffs)
+            buffs_q = join(
+                "target.role='healer'",
+                "type in ('applybuff', 'removebuff')",
+                f"ability.id in ({buffs_ids})"
+            )
+            queries.append(buffs_q)
+
+        return self.combine_queries(*queries)
 
     @staticmethod
     def _get_raid_cds() -> typing.List[WowSpell]:
@@ -138,17 +167,9 @@ class CompRanking(warcraftlogs_base.Document):
         spells = [spell for spell in WowSpell.all if spell.spell_type == spell.TYPE_BUFFS]
         return utils.uniqify(spells, key=lambda spell: spell.spell_id)
 
-    @staticmethod
-    def _spell_id_filter(spells):
-        spell_ids = sorted([spell.spell_id for spell in spells])
-        spell_ids = ",".join(str(spell_id) for spell_id in spell_ids)
-        return f"type='cast' and ability.id in ({spell_ids})"
-
     def get_filter(self) -> str:
         """Filter that is applied to the query."""
-        healing_cds = self._get_healing_cooldowns()
-        healer_filter = "source.role = 'healer'"
-        filter_healing_cds = " and ".join([healer_filter, self._spell_id_filter(healing_cds)])
+        filter_healing_cds = self._get_healing_cooldowns()
 
         raid_cds = self._get_raid_cds()
         raid_cds_str = WowSpell.spell_ids_str(raid_cds)
