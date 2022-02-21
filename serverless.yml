@@ -55,6 +55,9 @@ custom:
 #     DISCORD_BOT_TOKEN: ${opt:DISCORD_BOT_TOKEN}
 
 
+################################################################################
+# Functions:
+
 functions:
   main:  # main function for "all" endpoints
     runtime: python3.8
@@ -118,6 +121,11 @@ resources:
             TargetOriginId: frontend_s3_origin
             CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6  # Managed-CachingOptimized
             ViewerProtocolPolicy: redirect-to-https
+          CacheBehaviors:
+            - PathPattern: "api/*"
+              TargetOriginId: lambda_origin
+              CachePolicyId: !Ref ApiOriginCachePolicy
+              ViewerProtocolPolicy: redirect-to-https
 
           #########################
           # Origins
@@ -126,3 +134,32 @@ resources:
           - Id: frontend_s3_origin
             DomainName: lorrgs-frontend-dev.s3.${self:provider.region}.amazonaws.com  # TODO: use `CF`-Expression
             S3OriginConfig: {}
+          # 2) Lambda Origin
+          - Id: lambda_origin
+            DomainName: !Sub "${ApiGatewayRestApi}.execute-api.${self:provider.region}.amazonaws.com"
+            OriginPath: /${self:provider.stage}
+            CustomOriginConfig:
+              HTTPPort: 80
+              HTTPSPort: 443
+              OriginProtocolPolicy: https-only
+
+    ApiOriginCachePolicy:
+      Type: AWS::CloudFront::CachePolicy
+      Properties:
+        CachePolicyConfig:
+          Name: ${self:service}-${self:provider.stage}-api-cache-policy
+          MinTTL: 10
+          MaxTTL: 3600    # 1 hour
+          DefaultTTL: 300 # 5 minutes
+          ParametersInCacheKeyAndForwardedToOrigin:
+            CookiesConfig:
+              CookieBehavior: none
+            EnableAcceptEncodingGzip: true
+            EnableAcceptEncodingBrotli: true
+            HeadersConfig:
+              HeaderBehavior: whitelist
+              Headers:
+                - Authorization
+                - Content-Type
+            QueryStringsConfig:
+              QueryStringBehavior: all

@@ -6,7 +6,6 @@ import typing
 # IMPORT THIRD PARTY LIBRARIES
 import fastapi
 from fastapi_cache.decorator import cache
-from google.api_core import retry
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import data
