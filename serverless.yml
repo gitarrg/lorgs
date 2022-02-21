@@ -95,3 +95,34 @@ functions:
         - "lorrgs_auth/**"
     events:
       - http: GET /auth/{proxy+}
+
+################################################################################
+# Resources:
+resources:
+  Resources:
+
+    ####################################
+    CloudFrontDistribution:
+      Type: AWS::CloudFront::Distribution
+      Properties:
+        DistributionConfig:
+          Enabled: true
+          Comment: test_2a
+          PriceClass: PriceClass_100
+          DefaultRootObject: "index.html"
+
+          #########################
+          # Behaviours
+          DefaultCacheBehavior:
+            AllowedMethods: [GET, OPTIONS, HEAD]
+            TargetOriginId: frontend_s3_origin
+            CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6  # Managed-CachingOptimized
+            ViewerProtocolPolicy: redirect-to-https
+
+          #########################
+          # Origins
+          Origins:
+          # 1) S3 Origin
+          - Id: frontend_s3_origin
+            DomainName: lorrgs-frontend-dev.s3.${self:provider.region}.amazonaws.com  # TODO: use `CF`-Expression
+            S3OriginConfig: {}
