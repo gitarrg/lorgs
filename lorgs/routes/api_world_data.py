@@ -5,7 +5,6 @@ eg.: spells, classes, specs
 
 # IMPORT THIRD PARTY LIBRARIES
 import fastapi
-from fastapi_cache.decorator import cache
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.models.raid_boss import RaidBoss
@@ -26,7 +25,6 @@ router = fastapi.APIRouter()
 ###############################################################################
 
 @router.get("/roles")
-@cache()
 async def get_roles():
     """Get all roles (tank, heal, mpds, rdps)."""
     return {
@@ -41,7 +39,6 @@ async def get_roles():
 ###############################################################################
 
 @router.get("/classes")
-@cache()
 async def get_classes():
     return {c.name_slug: c.as_dict() for c in WowClass.all}
 
@@ -53,7 +50,6 @@ async def get_classes():
 ###############################################################################
 
 @router.get("/specs", tags=["specs"])
-@cache()
 async def get_specs_all():
     all_specs = sorted(WowSpec.all)
     all_specs = [specs.as_dict() for specs in all_specs]
@@ -61,7 +57,6 @@ async def get_specs_all():
 
 
 @router.get("/specs/{spec_slug}", tags=["specs"])
-@cache()
 async def get_spec(spec_slug: str):
     spec = WowSpec.get(full_name_slug=spec_slug)
     if not spec:
@@ -70,7 +65,6 @@ async def get_spec(spec_slug: str):
 
 
 @router.get("/specs/{spec_slug}/spells", tags=["specs"])
-@cache()
 async def get_spec_spells(spec_slug: str):
     """Get all spells for a given spec.
 
@@ -93,7 +87,6 @@ async def get_spec_spells(spec_slug: str):
 ###############################################################################
 
 @router.get("/spells/{spell_id}", tags=["spells"])
-@cache()
 async def spells_one(spell_id: int):
     """Get a single Spell by spell_id."""
     spell = WowSpell.get(spell_id=spell_id)
@@ -103,7 +96,6 @@ async def spells_one(spell_id: int):
 
 
 @router.get("/spells", tags=["spells"])
-@cache()
 async def spells_all():
     """Get all Spells."""
     spells = WowSpell.all
@@ -117,7 +109,6 @@ async def spells_all():
 ###############################################################################
 
 @router.get("/zones", tags=["raids"])
-@cache()
 async def get_zones():
     """Get all raid-zones."""
     zones = RaidZone.all
@@ -125,7 +116,6 @@ async def get_zones():
 
 
 @router.get("/zones/{zone_id}", tags=["raids"])
-@cache()
 async def get_zone(zone_id: int):
     """Get a specific (raid-)Zone."""
     zone = RaidZone.get(id=zone_id)
@@ -135,7 +125,6 @@ async def get_zone(zone_id: int):
 
 
 @router.get("/zones/{zone_id}/bosses", tags=["raids"])
-@cache()
 async def get_zone_bosses(zone_id: int):
     """Get all Bosses in a given Raid Zone."""
     zone = RaidZone.get(id=zone_id)
@@ -152,7 +141,6 @@ async def get_zone_bosses(zone_id: int):
 
 
 @router.get("/bosses", tags=["raids"])
-@cache()
 async def get_bosses():
     """Gets all Bosses
     Warning:
@@ -165,7 +153,6 @@ async def get_bosses():
 
 
 @router.get("/bosses/{boss_slug}", tags=["raids"])
-@cache()
 async def get_boss(boss_slug: str):
     """Get a single Boss.
 
@@ -180,7 +167,6 @@ async def get_boss(boss_slug: str):
 
 
 @router.get("/bosses/{boss_slug}/spells", tags=["raids"])
-@cache()
 async def get_boss_spells(boss_slug: str):
     """Get Spells for a given Boss.
 
