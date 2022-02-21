@@ -7,7 +7,6 @@ import os
 # IMPORT THIRD PARTY LIBRARIES
 import fastapi
 import mangum
-from fastapi.middleware.cors import CORSMiddleware
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import cache

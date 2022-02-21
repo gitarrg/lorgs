@@ -9,8 +9,8 @@ import urllib
 import uuid
 
 # IMPORT THIRD PARTY LIBRARIES
-from google.api_core.exceptions import NotFound
-from google.cloud import tasks_v2
+# from google.api_core.exceptions import NotFound
+# from google.cloud import tasks_v2
 import fastapi
 
 # IMPORT LOCAL LIBRARIES
@@ -23,7 +23,7 @@ CLOUD_FUNCTIONS_ROOT = os.getenv("CLOUD_FUNCTIONS_ROOT") or "https://europe-west
 DEFAULT_QUEUE = "lorgs-task-queue"
 
 # Google Cloud Tasks Client Instance
-TASK_CLIENT = tasks_v2.CloudTasksClient()
+# TASK_CLIENT = tasks_v2.CloudTasksClient()
 
 
 router = fastapi.APIRouter(tags=["tasks"])
