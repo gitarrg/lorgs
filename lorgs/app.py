@@ -62,8 +62,8 @@ def create_app():
     return app
 
 
-def create_handler(*args, **kwargs):
+def create_handler(event, context):
 
     app = create_app()
     handler = mangum.Mangum(app)
-    return handler(*args, **kwargs)
+    return handler(event, context)
