@@ -1,6 +1,5 @@
 # IMPORT THIRD PARTY LIBRARIES
 import fastapi
-from fastapi_cache.decorator import cache
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import data
@@ -15,7 +14,6 @@ router = fastapi.APIRouter(tags=["spec_rankings"])
 
 
 @router.get("/spec_ranking/{spec_slug}/{boss_slug}")
-@cache()
 async def get_spec_ranking(
     spec_slug,
     boss_slug,

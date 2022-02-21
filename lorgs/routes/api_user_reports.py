@@ -3,7 +3,6 @@ import os
 
 # IMPORT THIRD PARTY LIBRARIES
 import fastapi
-from fastapi_cache.decorator import cache
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
@@ -17,7 +16,6 @@ router = fastapi.APIRouter()
 
 
 @router.get("/{report_id}")
-@cache()
 async def get_user_report(report_id: str):
     """Returns the overview about a user report."""
     user_report = UserReport.from_report_id(report_id=report_id)

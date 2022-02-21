@@ -9,7 +9,6 @@ import fastapi
 import mangum
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import cache
 from lorgs import config
 from lorgs import data   # pylint: disable=unused-import
 from lorgs import db  # pylint: disable=unused-import
@@ -36,7 +35,6 @@ def create_app():
         docs_url="/api/docs",
         openapi_url="/api/openapi.json",  # must be in "/api" so the AppEngine route works
     )
-    cache.init(config_obj)
     app.include_router(api.router, prefix="/api")
 
     # @app.get("/")

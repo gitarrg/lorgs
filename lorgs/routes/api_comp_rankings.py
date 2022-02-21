@@ -5,7 +5,6 @@ import typing
 
 # IMPORT THIRD PARTY LIBRARIES
 import fastapi
-from fastapi_cache.decorator import cache
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import data
@@ -19,7 +18,6 @@ router = fastapi.APIRouter()
 
 
 @router.get("/comp_ranking/{boss_slug}")
-@cache()
 async def get_comp_ranking(
         boss_slug: str,
 
