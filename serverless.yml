@@ -13,6 +13,15 @@ provider:
   deploymentBucket:
     name: lorrgs-serverless-deployments
 
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "sqs:SendMessage"
+      Resource:
+        - !GetAtt [LorrgsMainQueue, "Arn"]
+        - !GetAtt [UserReportsQueue, "Arn"]
+
+
 ################################################################################
 # package:
 package:
@@ -29,12 +38,11 @@ plugins:
 
 
 custom:
-#   # pythonRequirements:
-#   #   layer: true
   serverless-layers:
     - main_layer:
         functions:
           - main
+          - load_user_reports
         dependenciesPath: ./requirements.txt
     - auth_layer:
         functions:
@@ -64,20 +72,22 @@ functions:
     memorySize: 128 # optional, in MB, default is 1024
     timeout: 6 # optional, in seconds, default is 6
     # module: lorgs
-    handler: lorgs.app.create_handler
+    handler: lorgs.handler.handler
     environment:
       LORGS_CONFIG_NAME: lorgs.config.ProductionConfig
       SECRET_KEY: ${env:SECRET_KEY}
 
       # Third Party Credentials
       MONGO_URI: ${env:MONGO_URI}
-      # WCL_CLIENT_ID: ${opt:WCL_CLIENT_ID}
-      # WCL_CLIENT_SECRET: ${opt:WCL_CLIENT_SECRET}
+      WCL_CLIENT_ID: ${env:WCL_CLIENT_ID}
+      WCL_CLIENT_SECRET: ${env:WCL_CLIENT_SECRET}
+
+      USER_REPORTS_QUEUE_URL: !Ref UserReportsQueue  # Ref returns the URL
 
       # DISCORD_CLIENT_ID: ${opt:DISCORD_CLIENT_ID}
       # DISCORD_CLIENT_SECRET: ${opt:DISCORD_CLIENT_SECRET}
       # DISCORD_BOT_TOKEN: ${opt:DISCORD_BOT_TOKEN}
-      GOOGLE_APPLICATION_CREDENTIALS: "./google_creds.json"
+      # GOOGLE_APPLICATION_CREDENTIALS: "./google_creds.json"
     events:
       - http: GET /
       - http: GET /{proxy+}
@@ -86,7 +96,6 @@ functions:
     package:
       patterns:
         - "lorgs/**"
-
 
   auth:
     runtime: python3.8
@@ -98,6 +107,41 @@ functions:
         - "lorrgs_auth/**"
     events:
       - http: GET /auth/{proxy+}
+
+  sqs_handler:
+    runtime: python3.8
+    memorySize: 128 # optional, in MB, default is 1024
+    handler: lorrgs_sqs_handler.handler.handler
+    package:
+      patterns:
+        - "lorrgs_sqs_handler/**"
+    events:
+      - sqs:
+          arn: !GetAtt [LorrgsMainQueue, "Arn"]
+          batchSize: 1
+  
+  load_user_reports:
+    runtime: python3.8
+    memorySize: 256 # optional, in MB, default is 1024
+    handler: lorrgs_sqs_handler.load_user_report.handler
+    package:
+      patterns:
+        - "lorgs/**"
+        - "lorrgs_sqs_handler/**"
+    events:
+      - sqs:
+          arn: !GetAtt [UserReportsQueue, "Arn"]
+          batchSize: 1
+    environment:
+      LORGS_CONFIG_NAME: lorgs.config.ProductionConfig
+      SECRET_KEY: ${env:SECRET_KEY}
+
+      # Third Party Credentials
+      MONGO_URI: ${env:MONGO_URI}
+      WCL_CLIENT_ID: ${env:WCL_CLIENT_ID}
+      WCL_CLIENT_SECRET: ${env:WCL_CLIENT_SECRET}
+
+
 
 ################################################################################
 # Resources:
@@ -112,14 +156,23 @@ resources:
           Enabled: true
           Comment: test_2a
           PriceClass: PriceClass_100
-          DefaultRootObject: "index.html"
+          DefaultRootObject: index.html
+
+          # Add redirects to the index
+          CustomErrorResponses:
+            - ErrorCode: 403  # Forbidden
+              ResponsePagePath: /index.html
+              ResponseCode: 200
+            - ErrorCode: 404  # Not Found
+              ResponsePagePath: /index.html
+              ResponseCode: 200
 
           #########################
           # Behaviours
           DefaultCacheBehavior:
             AllowedMethods: [GET, OPTIONS, HEAD]
             TargetOriginId: frontend_s3_origin
-            CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6  # Managed-CachingOptimized
+            CachePolicyId: !Ref S3CachePolicy
             ViewerProtocolPolicy: redirect-to-https
           CacheBehaviors:
             - PathPattern: "api/*"
@@ -143,6 +196,27 @@ resources:
               HTTPSPort: 443
               OriginProtocolPolicy: https-only
 
+    # Custom Caching Policy for S3 Origins
+    # almost idenatical to AWS's "Managed-CachingOptimized"
+    # but with the addition of Query Strings
+    S3CachePolicy:
+      Type: AWS::CloudFront::CachePolicy
+      Properties:
+        CachePolicyConfig:
+          Name: s3-cache-policy
+          MinTTL: 1
+          MaxTTL: 31536000  # default: 1 year
+          DefaultTTL: 86400 # default: 1 day
+          ParametersInCacheKeyAndForwardedToOrigin:
+            EnableAcceptEncodingGzip: true
+            EnableAcceptEncodingBrotli: true
+            CookiesConfig:
+              CookieBehavior: none
+            HeadersConfig:
+              HeaderBehavior: none
+            QueryStringsConfig:
+              QueryStringBehavior: all
+
     ApiOriginCachePolicy:
       Type: AWS::CloudFront::CachePolicy
       Properties:
@@ -152,10 +226,10 @@ resources:
           MaxTTL: 3600    # 1 hour
           DefaultTTL: 300 # 5 minutes
           ParametersInCacheKeyAndForwardedToOrigin:
-            CookiesConfig:
-              CookieBehavior: none
             EnableAcceptEncodingGzip: true
             EnableAcceptEncodingBrotli: true
+            CookiesConfig:
+              CookieBehavior: none
             HeadersConfig:
               HeaderBehavior: whitelist
               Headers:
@@ -163,3 +237,10 @@ resources:
                 - Content-Type
             QueryStringsConfig:
               QueryStringBehavior: all
+
+    ####################################
+    # SQS Queues
+    LorrgsMainQueue:
+      Type: AWS::SQS::Queue
+    UserReportsQueue:
+      Type: AWS::SQS::Queue

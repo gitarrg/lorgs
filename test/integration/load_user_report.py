@@ -28,6 +28,7 @@ async def test_load_summary():
     user_report.save()
 
 
+@timeit
 async def test_load_fight_summary():
 
     user_report = UserReport.from_report_id(report_id=REPORT_ID)
@@ -104,6 +105,9 @@ async def test_load():
 
 
 async def main():
+
+
+
     # await test_load_summary()
     # await test_load_fight_summary()
     # await test_load_single_player()
