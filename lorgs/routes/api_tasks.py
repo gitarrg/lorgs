@@ -9,8 +9,6 @@ import urllib
 import uuid
 
 # IMPORT THIRD PARTY LIBRARIES
-# from google.api_core.exceptions import NotFound
-# from google.cloud import tasks_v2
 import fastapi
 
 # IMPORT LOCAL LIBRARIES

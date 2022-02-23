@@ -6,10 +6,8 @@ import os
 
 # IMPORT THIRD PARTY LIBRARIES
 import fastapi
-import mangum
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import config
 from lorgs import data   # pylint: disable=unused-import
 from lorgs import db  # pylint: disable=unused-import
 from lorgs.routes import api
@@ -59,8 +57,14 @@ def create_app():
     return app
 
 
-def create_handler(event, context):
+    if os.getenv("LORRGS_DEBUG"):
+        from fastapi.middleware.cors import CORSMiddleware
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=["*"],
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
 
-    app = create_app()
-    handler = mangum.Mangum(app)
-    return handler(event, context)
+    return app

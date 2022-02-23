@@ -2,7 +2,9 @@
 import os
 
 # IMPORT THIRD PARTY LIBRARIES
+import boto3
 import fastapi
+import json
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
@@ -10,6 +12,9 @@ from lorgs.client import InvalidReport
 from lorgs.config import config
 from lorgs.models.warcraftlogs_user_report import UserReport
 from lorgs.routes.api_tasks import create_cloud_function_task
+
+
+USER_REPORTS_QUEUE_URL = os.getenv("USER_REPORTS_QUEUE_URL")
 
 
 router = fastapi.APIRouter()
@@ -54,7 +59,7 @@ async def get_fights(report_id: str, fight: str, player: str = ""):
 
 
 @router.get("/{report_id}/load_overview")
-async def load_user_report_overview(report_id: str, refresh: bool = False):
+async def load_user_report_overview(response: fastapi.Response, report_id: str, refresh: bool = False):
     """Load a Report's Overview/Masterdata."""
     user_report = UserReport.from_report_id(report_id=report_id, create=True)
     if not user_report:
@@ -71,6 +76,7 @@ async def load_user_report_overview(report_id: str, refresh: bool = False):
         else:
             user_report.save()
 
+    response.headers["Cache-Control"] = "no-cache"
     return user_report.as_dict()
 
 
@@ -85,8 +91,12 @@ async def load_user_report(report_id: str, fight: str, player: str, user_id: int
         user_id (int, optional): user id to identify logged in users
 
     """
+    # TODO: disabled for now.
     # any logged in user gets to use the "premium"-queue
-    queue = "premium" if user_id > 0 else "free"
+    # user_type = "premium" if user_id > 0 else "free"
+
+    sqs = boto3.resource('sqs')
+    queue = sqs.Queue(USER_REPORTS_QUEUE_URL)
 
     # load immediate
     if config.LORRGS_DEBUG:
@@ -101,14 +111,18 @@ async def load_user_report(report_id: str, fight: str, player: str, user_id: int
     # Note:
     #   fight and player-inputs are kept as str,
     #   as we just pass them trough
-    task_id = await create_cloud_function_task(
-        function_name="load_user_report",
-        report_id=report_id,
-        fight=fight,
-        player=player,
-        queue=queue,
+    message_payload = {
+        "report_id": report_id,
+        "fight_ids": fight,
+        "player_ids": player,
+        "user_id": user_id,
+    }
+
+    message = queue.send_message(
+        MessageBody=json.dumps(message_payload),
     )
+
     return {
-        "task_id": task_id,
-        "queue": queue
+        "task_id": message.get("MessageId"),
+        "queue": "aws",
     }
