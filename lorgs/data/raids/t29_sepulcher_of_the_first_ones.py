@@ -13,9 +13,23 @@ from lorgs.models.raid_zone import RaidZone
 ################################################################################################################################################################
 SEPULCHER_OF_THE_FIRST_ONES = RaidZone(id=29, name="Sepulcher of the First Ones")
 
+
 ################################################################################
 # 01: Vigilant Guardian
-SEPULCHER_OF_THE_FIRST_ONES.add_boss(id=2512, name="Vigilant Guardian")
+VIGILANT_GUARDIAN = SEPULCHER_OF_THE_FIRST_ONES.add_boss(id=2512, name="Vigilant Guardian")
+VIGILANT_GUARDIAN.add_cast(spell_id=364962, duration=999, name="Core Overload", icon="spell_fire_selfdestruct.jpg")
+VIGILANT_GUARDIAN.add_buff(spell_id=360412, duration=10,  name="Exposed Core", icon="inv_radientazeritecore.jpg")
+VIGILANT_GUARDIAN.add_cast(spell_id=367561,               name="Overlock", icon="inv_misc_pocketwatch_01.jpg")
+VIGILANT_GUARDIAN.add_buff(spell_id=366822,               name="Radiocative Core", icon="inv_achievement_raid_progenitorraid_progenitor_defensewall_boss.jpg")
+VIGILANT_GUARDIAN.add_cast(spell_id=366692,               name="Refracted Blast", icon="6bf_explosive_shard.jpg")
+VIGILANT_GUARDIAN.add_buff(spell_id=360202,               name="Spike of Creation", icon="ability_skyreach_empower.jpg")
+VIGILANT_GUARDIAN.add_cast(spell_id=359608,               name="Deresolution", icon="sha_ability_mage_firestarter_nightmare.jpg")
+VIGILANT_GUARDIAN.add_buff(spell_id=364881, duration=6, name="Matter Dissolution", icon="inv_progenitor_runevessel.jpg")
+VIGILANT_GUARDIAN.add_buff(spell_id=364904, duration=10, name="Anti-Matter", icon="inv_progenitor_runevessel.jpg")
+VIGILANT_GUARDIAN.add_cast(spell_id=360162, name="Split Resolution", icon="spell_fire_ragnaros_splittingblow.jpg")
+VIGILANT_GUARDIAN.add_buff(spell_id=364843, name="Fractured Core", icon="inv_achievement_raid_progenitorraid_progenitor_defensewall_boss.jpg")
+VIGILANT_GUARDIAN.add_buff(spell_id=360414, duration=45, name="Pneumatic Impact", icon="inv_blacksmithing_815_khazgorianhammer.jpg")
+
 
 ################################################################################
 # 02: Skolex, the Insatiable Ravener
