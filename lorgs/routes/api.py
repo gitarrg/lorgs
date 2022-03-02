@@ -31,8 +31,9 @@ router.include_router(auth.router, prefix="/auth")
 ################################################################################
 
 
-@router.route("/<path:path>")
-def page_not_found(*args, **kwargs):
+@router.get("/")
+@router.get("/{path:path}")
+def page_not_found(path=""):
     return "Invalid Route", 404
 
 
