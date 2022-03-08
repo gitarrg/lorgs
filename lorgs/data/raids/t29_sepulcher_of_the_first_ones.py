@@ -117,7 +117,10 @@ ANDUIN.add_cast(spell_id=365805, duration=3.5, color="#17b6e6", name="Empowered 
 
 ################################################################################
 # 09: Lords of Dread
-SEPULCHER_OF_THE_FIRST_ONES.add_boss(id=2543, name="Lords of Dread")
+LORDS = SEPULCHER_OF_THE_FIRST_ONES.add_boss(id=2543, name="Lords of Dread")
+LORDS.add_cast(spell_id=360300, duration=20, name="Swarm of Decay", color="#e62e2e", icon="spell_nature_naturetouchdecay.jpg")
+LORDS.add_cast(spell_id=360300, duration=20, name="Swarm of Decay", color="#e62e2e", icon="spell_nature_naturetouchdecay.jpg")
+
 
 ################################################################################
 # 10: Rygelon
