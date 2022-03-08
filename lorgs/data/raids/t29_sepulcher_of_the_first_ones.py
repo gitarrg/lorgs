@@ -64,7 +64,18 @@ DAUSEGNE.add_cast(spell_id=359483, duration=3.4, name="Domination Core",     col
 
 ################################################################################
 # 05: Prototype Pantheon
-SEPULCHER_OF_THE_FIRST_ONES.add_boss(id=2544, name="Prototype Pantheon")
+PANTHEON = SEPULCHER_OF_THE_FIRST_ONES.add_boss(id=2544, name="Prototype Pantheon")
+# Necro
+PANTHEON.add_cast(spell_id=360295, duration=30, name="Necrotic Ritual", color="#33ffbb", icon="ability_warlock_cremation.jpg")  # Boss Cast
+PANTHEON.add_cast(spell_id=360687, duration=2,  name="Runecarver's Deathtouch", color="#8a2ee6", icon="spell_necro_deathsdoor.jpg", show=False)
+# NF
+PANTHEON.add_cast(spell_id=361568, duration=3,  name="Withering Seeds",     color="#3480eb", icon="ability_ardenweald_mage.jpg")
+# Venthyr
+PANTHEON.add_cast(spell_id=361789, duration=6,  name="Hand of Destruction", color="#e62e2e", icon="spell_shadow_unholystrength.jpg")
+PANTHEON.add_cast(spell_id=365126, duration=2,  name="Wracking Pain",       color="#e6b82e", icon="spell_animarevendreth_wave.jpg", show=False)
+# Kyrian
+PANTHEON.add_cast(spell_id=364941, duration=12,  name="Windswept Wings", color="#2ee6e6", icon="inv_icon_wing06b.jpg")
+
 
 ################################################################################
 # 06: Lihuvim, Principal Architect
