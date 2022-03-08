@@ -5,7 +5,7 @@ cron:
 
 - description: "reload all specs"
   url: /api/task/load_spec_ranking/all/all
-  schedule: every day 04:00
+  schedule: every 6 hours
   timezone: Europe/London
   retry_parameters:
     job_retry_limit: 1
@@ -13,7 +13,7 @@ cron:
 
 - description: "reload all comps"
   url: /api/task/load_comp_ranking/all
-  schedule: every day 05:00
+  schedule: every 6 hours
   timezone: Europe/London
   retry_parameters:
     job_retry_limit: 1
