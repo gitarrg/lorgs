@@ -54,7 +54,13 @@ XYMOX.add_cast(spell_id=362885, duration=2.0, color="#00ffea", name="Stasis Trap
 
 ################################################################################
 # 04: Dausegne, the Fallen Oracle
-SEPULCHER_OF_THE_FIRST_ONES.add_boss(id=2540, name="Dausegne, the Fallen Oracle", nick="Dausegne")
+DAUSEGNE = SEPULCHER_OF_THE_FIRST_ONES.add_boss(id=2540, name="Dausegne, the Fallen Oracle", nick="Dausegne")
+DAUSEGNE.add_cast(spell_id=362805, duration=10,  name="Disintegration Halo", color="#ff3333", icon="spell_progenitor_areadenial.jpg")
+DAUSEGNE.add_buff(spell_id=361651,               name="Siphoned Barrier",    color="#33ff33", icon="inv_inscription_vantusrune_progenitor.jpg")
+DAUSEGNE.add_cast(spell_id=360960, duration=6,   name="Staggering Barrage",  color="#aa33ff", icon="spell_progenitor_beam.jpg")
+DAUSEGNE.add_cast(spell_id=361513, duration=3,   name="Obliteration Arc",    color="#4da6ff", icon="spell_progenitor_missile.jpg")
+DAUSEGNE.add_cast(spell_id=359483, duration=3.4, name="Domination Core",     color="#ffdd33", icon="spell_progenitor_orb2.jpg")
+
 
 ################################################################################
 # 05: Prototype Pantheon
