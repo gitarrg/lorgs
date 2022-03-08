@@ -45,6 +45,8 @@ EXTERNALS = [IRONBARK, PAINSUP, GUARDIAN, SAC, COCOON]
 for s in ALL_SPECS:
     s.add_spell(spell_type=TYPE_POTION, spell_id=6262,                              color="#63cf48", name="Healthstone",                  icon="warlock_-healthstone.jpg", wowhead_data="item=5512")
     s.add_spell(spell_type=TYPE_POTION, spell_id=307192, cooldown=300,              color="#e35f5f", name="Spiritual Healing Potion",     icon="inv_alchemy_70_red.jpg",   wowhead_data="item=171267")
+    s.add_spell(spell_type=TYPE_POTION, spell_id=359867, cooldown=300,              color="#e35f5f", name="Cosmic Healing Potion",        icon="trade_alchemy_potionb5.jpg", wowhead_data="item=187802")
+
     s.add_spell(spell_type=TYPE_POTION, spell_id=307495, cooldown=300, duration=25, color="#57bd8b", name="Potion of Phantom Fire",       icon="inv_alchemy_90_combat1_green.jpg")
     s.add_spell(spell_type=TYPE_POTION, spell_id=323436, cooldown=180,              color=COL_KYR,    name="Purify Soul",                 icon="inv_misc_flaskofvolatility.jpg")
 
