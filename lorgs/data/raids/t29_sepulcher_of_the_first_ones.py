@@ -119,7 +119,19 @@ ANDUIN.add_cast(spell_id=365805, duration=3.5, color="#17b6e6", name="Empowered 
 # 09: Lords of Dread
 LORDS = SEPULCHER_OF_THE_FIRST_ONES.add_boss(id=2543, name="Lords of Dread")
 LORDS.add_cast(spell_id=360300, duration=20, name="Swarm of Decay", color="#e62e2e", icon="spell_nature_naturetouchdecay.jpg")
-LORDS.add_cast(spell_id=360300, duration=20, name="Swarm of Decay", color="#e62e2e", icon="spell_nature_naturetouchdecay.jpg")
+
+LORDS.add_cast(spell_id=360145, duration=2+8, name="Fearful Trepidation", color="#5f29cc", icon="spell_nzinsanity_fearofdeath.jpg", show=False)
+LORDS.add_cast(spell_id=360006, duration=2.5, name="Cloud of Carrion", color="#51cc14", icon="spell_shadow_carrionswarm.jpg", show=False)
+
+# Among Us Intermission
+LORDS.add_event(
+    event_type="applydebuff",
+    spell_id=360418,
+    color="#cc29b1",
+    name="Among Us",
+    icon="spell_nzinsanity_shortsighted.jpg", extra_filter="target.role='tank'",
+    until={"event_type": "removedebuff", "spell_id": 360418}
+)
 
 
 ################################################################################
