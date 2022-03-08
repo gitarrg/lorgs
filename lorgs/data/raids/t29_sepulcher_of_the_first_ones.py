@@ -89,7 +89,15 @@ LIHUVIM.add_cast(spell_id=361200, duration=20,  color="#00ff00", name="Recharge 
 
 ################################################################################
 # 07: Halondrus the Reclaimer
-SEPULCHER_OF_THE_FIRST_ONES.add_boss(id=2529, name="Halondrus the Reclaimer", nick="Halondrus")
+HALONDRUS = SEPULCHER_OF_THE_FIRST_ONES.add_boss(id=2529, name="Halondrus the Reclaimer", nick="Halondrus")
+HALONDRUS.add_buff(spell_id=368684,               name="Reclaim",         color="#ff3333", icon="ability_skyreach_wind.jpg")
+HALONDRUS.add_buff(spell_id=359236,               name="Relocation Form", color="#3f8c49", icon="inv_progenitorbotminemount.jpg")
+HALONDRUS.add_buff(spell_id=361597,               name="Ephemeral Eruption",    color="#33ffff", icon="spell_broker_nova.jpg")
+HALONDRUS.add_cast(spell_id=361676, duration=1.5, name="Earthbreaker Missiles", color="#a1e617", icon="inv_misc_missilesmallcluster_yellow.jpg")
+HALONDRUS.add_cast(spell_id=360977, duration=3,   name="Lightshatter Beam",     color="#fff7cc", icon="spell_progenitor_beam.jpg", show=False)
+HALONDRUS.add_cast(spell_id=367079, duration=3, name="Seismic Tremors", color="#148fcc", icon="spell_sandexplosion.jpg", show=False)  # Lines + spwans Orbs
+HALONDRUS.add_cast(spell_id=364979, duration=5.74, name="Shatter", color="#d517e6", icon="spell_progenitor_nova.jpg")
+
 
 ################################################################################
 # 08: Anduin Wrynn
