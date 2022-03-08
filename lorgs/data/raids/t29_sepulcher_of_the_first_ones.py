@@ -124,7 +124,11 @@ LORDS.add_cast(spell_id=360300, duration=20, name="Swarm of Decay", color="#e62e
 
 ################################################################################
 # 10: Rygelon
-SEPULCHER_OF_THE_FIRST_ONES.add_boss(id=2549, name="Rygelon")
+RYGELON = SEPULCHER_OF_THE_FIRST_ONES.add_boss(id=2549, name="Rygelon")
+RYGELON.add_buff(spell_id=363773, color="#2ee62e", name="The Singularity", icon="ability_argus_blightorb.jpg")  # Phase
+RYGELON.add_cast(spell_id=362275, duration=1.0, color="#2ea9e6", name="Adds", icon="creatureportrait_sc_eyeofacherus_02.jpg")
+RYGELON.add_cast(spell_id=364114, duration=5.0, color="#dd2ee6", name="Shatter Sphere", icon="spell_shadow_focusedpower.jpg")
+
 
 ################################################################################
 # 11: The Jailer, Zovaal
