@@ -144,4 +144,15 @@ RYGELON.add_cast(spell_id=364114, duration=5.0, color="#dd2ee6", name="Shatter S
 
 ################################################################################
 # 11: The Jailer, Zovaal
-SEPULCHER_OF_THE_FIRST_ONES.add_boss(id=2537, name="The Jailer, Zovaal", nick="Jailer")
+JAILER = SEPULCHER_OF_THE_FIRST_ONES.add_boss(id=2537, name="The Jailer, Zovaal", nick="Jailer")
+JAILER.add_cast(spell_id=360279, duration=7,   color="#FFF", name="Rune of Damnation", icon="ability_domination_rune09.jpg")
+JAILER.add_cast(spell_id=363893, duration=3.6, color="#cc7b29", name="Martyrdom", icon="mace_2h_blacksmithing_d_04_icon.jpg")
+JAILER.add_cast(spell_id=365212, duration=1.5, color="#FFF", name="Chains of Anguish", icon="ability_demonhunter_infernalchains.jpg")
+JAILER.add_cast(spell_id=360373, duration=2,   color="#FFF", name="Unholy Attunement", icon="spell_progenitor_buff.jpg")
+JAILER.add_cast(spell_id=365150, duration=6,   color="#2996cc", name="Rune of Domination", icon="ability_domination_rune10.jpg", variations=[366284])
+JAILER.add_cast(spell_id=365169, duration=1.5, color="#FFF", name="Defile", icon="spell_deathknight_defile.jpg")
+
+JAILER.add_cast(spell_id=365033, duration=6,   color="#ccc", name="Desolation", icon="spell_animamaw_missile.jpg")
+JAILER.add_cast(spell_id=362028, duration=6,   color="#ccc", name="Relentless Domination", icon="inv_cape_special_domination_c_01.jpg", variations=[367851])
+JAILER.add_cast(spell_id=362617, duration=6,   color="#ccc", name="Oppression", icon="spell_animamaw_wave.jpg")
+JAILER.add_cast(spell_id=363332, duration=15,  color="#ccc", name="Unbreaking Grasp", icon="ability_demonhunter_illidansgrasp.jpg")
