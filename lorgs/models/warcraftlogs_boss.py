@@ -24,7 +24,7 @@ class Boss(warcraftlogs_actor.BaseActor):
 
     def as_dict(self):
         return {
-            "name": self.raid_boss.full_name_slug,
+            "name": self.raid_boss and self.raid_boss.full_name_slug,
             "casts": [cast.as_dict() for cast in self.casts]
         }
 
