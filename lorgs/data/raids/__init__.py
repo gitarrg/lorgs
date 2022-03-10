@@ -1,5 +1,5 @@
 """Defintions for all supported Raid-Tiers."""
-from lorgs.data.raids.t26_castle_nathria import *
+# from lorgs.data.raids.t26_castle_nathria import *  # commented out to avoid conflict with Xy'mox
 from lorgs.data.raids.t28_sanctum_of_domination import *
 from lorgs.data.raids.t29_sepulcher_of_the_first_ones import *
 
