@@ -4,6 +4,7 @@
 import os
 
 # IMPORT THIRD PARTY LIBARIES
+from fastapi_cache.decorator import cache
 import fastapi
 import jwt
 
@@ -44,3 +45,10 @@ async def get_token(code: str):
 
     # return
     return {"token": token}
+
+
+@router.get("/info/{user_id:int}")
+@cache()
+async def get_user_info(user_id: int):
+    member_info = await auth.get_member_info(user_id)
+    return member_info.get("user") or {}
