@@ -18,23 +18,23 @@ TYPE_TRINKET = WowSpell.TYPE_TRINKET
 
 
 #### Dungeons ####
-RUBY            = WowSpell(spell_type=TYPE_TRINKET, spell_id=345801, cooldown=120, duration=15, name="Soulletting Ruby", icon="inv_jewelcrafting_livingruby_01.jpg", wowhead_data=f"item=178809{mythic}{maxilvl}")
-POWER_CRYSTAL   = WowSpell(spell_type=TYPE_TRINKET, spell_id=329831, cooldown=90,  duration=15, name="Overwhelming Power Crystal", icon="spell_mage_focusingcrystal.jpg", wowhead_data=f"item=179342{mythic}{maxilvl}")
+RUBY            = WowSpell(spell_type=TYPE_TRINKET, spell_id=345801, cooldown=120, duration=15, color="#c23636", name="Soulletting Ruby", icon="inv_jewelcrafting_livingruby_01.jpg", wowhead_data=f"item=178809{mythic}{maxilvl}")
+POWER_CRYSTAL   = WowSpell(spell_type=TYPE_TRINKET, spell_id=329831, cooldown=90,  duration=15, color="#955fc7", name="Overwhelming Power Crystal", icon="spell_mage_focusingcrystal.jpg", wowhead_data=f"item=179342{mythic}{maxilvl}")
 
 # Dungeon
-IQD             = WowSpell(spell_type=TYPE_TRINKET, spell_id=330323, cooldown=180, duration=25, name="Inscrutable Quantum Device", icon="inv_trinket_80_titan02a.jpg", wowhead_data=f"item=179350{mythic}{maxilvl}")
-ORDNANCE        = WowSpell(spell_type=TYPE_TRINKET, spell_id=345539, cooldown=180, duration=35, name="Empyreal Ordnance", icon="spell_animabastion_nova.jpg", wowhead_data=f"item=180117{mythic}{maxilvl}")
+IQD             = WowSpell(spell_type=TYPE_TRINKET, spell_id=330323, cooldown=180, duration=25, color="#cf8e48", name="Inscrutable Quantum Device", icon="inv_trinket_80_titan02a.jpg", wowhead_data=f"item=179350{mythic}{maxilvl}")
+ORDNANCE        = WowSpell(spell_type=TYPE_TRINKET, spell_id=345539, cooldown=180, duration=35, color="#48cfc8", name="Empyreal Ordnance", icon="spell_animabastion_nova.jpg", wowhead_data=f"item=180117{mythic}{maxilvl}")
 
 # s.add_spell(spell_type=TYPE_TRINKET, spell_id=345530, cooldown=90, duration=6, name="Overcharged Anima Battery", icon="inv_battery_01.jpg", wowhead_data=f"item=180116{mythic}{maxilvl}")
 # s.add_spell(spell_type=TYPE_TRINKET, spell_id=355333, cooldown=90, duration=20, name="Salvaged Fusion Amplifier", icon="spell_progenitor_missile.jpg", wowhead_data=f"item=186432{mythic}{maxilvl}")
 
 #### RAID ####
 # T28
-ORB_OF_TORMENT  = WowSpell(spell_type=TYPE_TRINKET, spell_id=355321, cooldown=120, duration=40, name="Shadowed Orb of Torment", icon="spell_animamaw_orb.jpg", wowhead_data=f"item=186428{mythic}&ilvl=252")
+ORB_OF_TORMENT  = WowSpell(spell_type=TYPE_TRINKET, spell_id=355321, cooldown=120, duration=40, color="#8ec6d4", name="Shadowed Orb of Torment", icon="spell_animamaw_orb.jpg", wowhead_data=f"item=186428{mythic}&ilvl=252")
 
 # T29
-THE_FIRST_SIGIL = WowSpell(spell_type=TYPE_TRINKET, spell_id=367241, cooldown=300, duration=9,  name="The First Sigil", icon="inv_legendary_sigilofwisdom.jpg", wowhead_data=f"item=188271{mythic}{maxilvl}")
-EARTHBREAKERS   = WowSpell(spell_type=TYPE_TRINKET, spell_id=367808, cooldown=300, duration=9,  name="Earthbreaker's Impact", icon="inv_legendary_sigilofwisdom.jpg", wowhead_data=f"item=188271{mythic}{maxilvl}")
+THE_FIRST_SIGIL = WowSpell(spell_type=TYPE_TRINKET, spell_id=367241, cooldown=300, duration=9,  color="#cf5225", name="The First Sigil", icon="inv_legendary_sigilofwisdom.jpg", wowhead_data=f"item=188271{mythic}{maxilvl}")
+EARTHBREAKERS   = WowSpell(spell_type=TYPE_TRINKET, spell_id=367808, cooldown=300, duration=9,  color="#bf9228", name="Earthbreaker's Impact", icon="spell_nature_earthquake.jpg", wowhead_data=f"item=188264{mythic}{maxilvl}")
 
 #### OTHER ####
 # pvp badge
