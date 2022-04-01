@@ -42,6 +42,10 @@ EARTHBREAKERS   = WowSpell(spell_type=TYPE_TRINKET, spell_id=367808, cooldown=30
 # Other Trinkets
 # s.add_spell(spell_type=TYPE_TRINKET, spell_id=348139, cooldown=90,  duration=9,  name="Instructor's Divine Bell", icon="inv_misc_bell_01.jpg", wowhead_data="item=184842&&bonus=1472:5894:6646")
 
+# tracking the buff it gives. spell would be 367953 with 4min CD
+JAILER_MACE     = WowSpell(spell_type=TYPE_TRINKET, spell_id=368696, cooldown=0,  duration=60,  color="#7f4af0", name="Gavel of the First Arbiter", icon="inv_mace_2h_jailerpc_d_01.jpg", wowhead_data=f"item=189862{mythic}&ilvl=285")
+
+
 ########################################################################################################################
 
 
@@ -60,6 +64,7 @@ for s in AGI_SPECS:
 # Strength Users
 for s in STR_SPECS:
     s.add_spells(POWER_CRYSTAL, EARTHBREAKERS)
+    s.add_buffs(JAILER_MACE)
 
 for s in [DRUID_FERAL, HUNTER_SURVIVAL, MONK_BREWMASTER, DRUID_GUARDIAN]:
     # 2h Agi on use weapon https://www.wowhead.com/item=186404/jotungeirr-destinys-call?bonus=7757
