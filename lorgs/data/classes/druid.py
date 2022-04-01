@@ -61,7 +61,10 @@ DRUID_GUARDIAN.add_spell(    spell_id=22812,  cooldown=60,  duration=8,         
 
 DRUID_RESTORATION.add_spell( spell_id=197721, cooldown=90,  duration=8,  color="#7ec44d", name="Flourish",                       icon="spell_druid_wildburst.jpg",                 show=False)
 DRUID_RESTORATION.add_spell( spell_id=740,    cooldown=180, duration=6,  color="#6cbfd9", name="Tranquility",                    icon="spell_nature_tranquility.jpg")
-DRUID_RESTORATION.add_buff(  spell_id=117679, cooldown=180, duration=30,                  name="Incarnation: Tree of Life",      icon="ability_druid_improvedtreeform.jpg", wowhead_data="spell=33891")
+
+# DRUID_RESTORATION.add_buff(  spell_id=117679, cooldown=180, duration=30,                  name="Incarnation: Tree of Life",      icon="ability_druid_improvedtreeform.jpg", wowhead_data="spell=33891")
+# adjusted to primarily track the T29's 4set Bonus
+DRUID_RESTORATION.add_buff(  spell_id=117679, cooldown=45,  duration=30,                  name="Incarnation: Tree of Life",      icon="ability_druid_improvedtreeform.jpg", wowhead_data="spell=33891")
 
 
 # Additional Spells (not tracked)
