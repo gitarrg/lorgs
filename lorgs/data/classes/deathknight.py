@@ -30,6 +30,7 @@ DEATHKNIGHT_UNHOLY = WowSpec(role=MDPS, wow_class=DEATHKNIGHT, name="Unholy")
 DEATHKNIGHT.add_spell(         spell_id=312202, cooldown=60,  duration=14, color=COL_KYR,   name="Shackle the Unworthy",  icon="ability_bastion_deathknight.jpg",          show=False)
 DEATHKNIGHT.add_spell(         spell_id=311648, cooldown=60,  duration=8,  color=COL_VENTR, name="Swarming Mist",         icon="ability_revendreth_deathknight.jpg")
 DEATHKNIGHT.add_spell(         spell_id=315443, cooldown=120, duration=12, color=COL_NECRO, name="Abomination Limb",      icon="ability_maldraxxus_deathknight.jpg",       show=False)
+DEATHKNIGHT.add_spell(         spell_id=324128, cooldown=60,  duration=10, color=COL_NF,    name="Death's Due",           icon="ability_ardenweald_deathknight.jpg",       show=False)
 
 # Defensive
 DEATHKNIGHT.add_spell(         spell_id=51052,  cooldown=120, duration=10, color="#d58cff", name="Anti-Magic Zone",       icon="spell_deathknight_antimagiczone.jpg",      show=False, spell_type=SPELL_TYPE_RAID)
