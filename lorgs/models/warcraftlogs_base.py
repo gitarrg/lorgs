@@ -130,10 +130,13 @@ class wclclient_mixin:
             chunk_queries = [q for (_, q) in chunk]
             chunk_items = [o for (o, _) in chunk]
 
-            query_results = await self.client.multiquery(chunk_queries)
-
-            for obj, result in zip(chunk_items, query_results):
-                obj.process_query_result(result)
+            try:
+                query_results = await self.client.multiquery(chunk_queries)
+            except PermissionError:
+                continue
+            else:
+                for obj, result in zip(chunk_items, query_results):
+                    obj.process_query_result(result)
 
     async def load(self, *args, **kwargs):
         return await self.load_many([self], *args, **kwargs)

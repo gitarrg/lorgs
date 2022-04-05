@@ -199,8 +199,10 @@ class SpecRanking(warcraftlogs_base.Document):
         actors_to_load = [actor for actor in actors_to_load if not actor.casts]
 
         logger.info(f"load {len(actors_to_load)} players")
-        if actors_to_load:
-            await self.load_many(actors_to_load)
+        if not actors_to_load:
+            return
+
+        await self.load_many(actors_to_load, chunk_size=5)
 
     ############################################################################
     # Query: Both
