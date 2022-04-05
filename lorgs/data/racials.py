@@ -105,7 +105,7 @@ RACIALS.add_spell(spell_type=SPELL_TYPE, spell_id=26297, cooldown=180, duration=
 # https://www.wowhead.com/spell=312411/bag-of-tricks
 
 
-for spell in RACIALS.spells:
+for spell in (RACIALS.spells + RACIALS.buffs):
     spell.show = False
 
 
