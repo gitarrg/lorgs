@@ -41,15 +41,17 @@ SHAMAN_ELEMENTAL.add_spell(    spell_id=191634, cooldown=60,               color
 SHAMAN_ELEMENTAL.add_spell(    spell_id=198067, cooldown=150, duration=30, color="#ffa500", name="Fire Elemental",             icon="spell_fire_elemental_totem.jpg")
 SHAMAN_ELEMENTAL.add_spell(    spell_id=192249, cooldown=150, duration=30, color="#64b8d9", name="Storm Elemental",            icon="inv_stormelemental.jpg")
 SHAMAN_ELEMENTAL.add_spell(    spell_id=108281, cooldown=120, duration=10, color="#64b8d9", name="Ancestral Guidance",         icon="ability_shaman_ancestralguidance.jpg")
+SHAMAN_ELEMENTAL.add_buff(     spell_id=114050,                                             name="Ascendance",                 icon="spell_fire_elementaldevastation.jpg")  # The Buff
 
 SHAMAN_ENHANCEMENT.add_spell(  spell_id=114051, cooldown=180,                               name="Ascendance",                 icon="spell_fire_elementaldevastation.jpg")
 SHAMAN_ENHANCEMENT.add_spell(  spell_id=51533,  cooldown=120,                               name="Feral Spirit",               icon="spell_shaman_feralspirit.jpg")
 SHAMAN_ENHANCEMENT.add_buff(   spell_id=335903, cooldown=60,  duration=12, color="#42bff5", name="Doom Winds",                 icon="ability_ironmaidens_swirlingvortex.jpg")
+SHAMAN_ENHANCEMENT.add_buff(   spell_id=114051,                                             name="Ascendance",                 icon="spell_fire_elementaldevastation.jpg")  # The Buff
 
 SHAMAN_RESTORATION.add_spell(  spell_id=108280, cooldown=180, duration=10,                  name="Healing Tide Totem",         icon="ability_shaman_healingtide.jpg")
 SHAMAN_RESTORATION.add_spell(  spell_id=98008,  cooldown=180, duration=6,  color="#24b385", name="Spirit Link Totem",          icon="spell_shaman_spiritlink.jpg")
 SHAMAN_RESTORATION.add_spell(  spell_id=16191,  cooldown=180, duration=8,  color=COL_MANA,  name="Mana Tide Totem",            icon="spell_frost_summonwaterelemental.jpg",      show=False)
 SHAMAN_RESTORATION.add_spell(  spell_id=207399, cooldown=300, duration=30, color="#d15a5a", name="Ancestral Protection Totem", icon="spell_nature_reincarnation.jpg")
-SHAMAN_RESTORATION.add_spell(  spell_id=114052, cooldown=180, duration=15,                  name="Ascendance",                 icon="spell_fire_elementaldevastation.jpg")
+SHAMAN_RESTORATION.add_buff(   spell_id=114052,                                             name="Ascendance",                 icon="spell_fire_elementaldevastation.jpg")
 SHAMAN_RESTORATION.add_spell(  spell_id=198838, cooldown=60, duration=15,  color="#a47ea6", name="Earthen Wall Totem",         icon="spell_nature_stoneskintotem.jpg",           show=False)
 SHAMAN_RESTORATION.add_spell(  spell_id=157153, cooldown=30, duration=15,  color="#96d0eb", name="Cloudburst Totem",           icon="ability_shaman_condensationtotem.jpg",      show=False)
