@@ -34,7 +34,7 @@ DRUID.add_spell(             spell_id=323546, cooldown=180, duration=20, color=C
 # Defensives
 DRUID.add_spell(             spell_id=22812, cooldown=60, duration=12, name="Barkskin",                icon="spell_nature_stoneclawtotem.jpg",              show=False)
 
-BEAR_FORM = WowSpell(spell_id=5487, name="Bear Form", icon="ability_racial_bearform.jpg")
+BEAR_FORM = WowSpell(spell_id=5487, name="Bear Form", icon="ability_racial_bearform.jpg", show=False)
 BEAR_FORM.spell_type = DRUID.name_slug
 BEAR_FORM.color = DRUID.color
 DRUID_BALANCE.add_buff(BEAR_FORM)
