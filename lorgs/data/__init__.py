@@ -15,6 +15,7 @@ from lorgs.data.covenants import *
 from lorgs.data.potions import *
 from lorgs.data.trinkets import *
 from lorgs.data.racials import *
+from lorgs.data.externals import *
 
 # Raids
 from lorgs.data.raids import *
