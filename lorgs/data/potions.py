@@ -41,6 +41,7 @@ for s in STR_SPECS:
 for s in HEAL.specs:
     s.add_spell(spell_type=TYPE_POTION, spell_id=307161, cooldown=300, duration=10, color=COL_MANA,  name="Potion of Spiritual Clarity",  icon="inv_alchemy_80_elixir01orange.jpg")
     s.add_spell(spell_type=TYPE_POTION, spell_id=307193, cooldown=300,              color=COL_MANA,  name="Spiritual Mana Potion",        icon="inv_alchemy_70_blue.jpg")
+    s.add_buff( spell_type=TYPE_POTION, spell_id=322302, cooldown=300,              color=COL_MANA,  name="Potion of Sacrificial Anima",  icon="inv_alchemy_90_combat1_red.jpg")
 
 
 # hide all potions by default
