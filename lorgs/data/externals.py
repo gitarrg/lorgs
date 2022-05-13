@@ -11,7 +11,7 @@ from lorgs.models.wow_class import WowClass
 # EXTERNALS = WowClass(id=1004, name="External Buffs")  # dummy container
 
 
-BLOODLUST = OTHER_BUFFS.add_spell(color="#5465ff", spell_id=2825, duration=40, name="Bloodlust", icon="spell_nature_bloodlust.jpg")
+BLOODLUST = OTHER_BUFFS.add_buff(color="#5465ff", spell_id=2825, duration=40, name="Bloodlust", icon="spell_nature_bloodlust.jpg")
 BLOODLUST.add_variation(32182)  # Heroism
 BLOODLUST.add_variation(80353)  # Time Warp
 BLOODLUST.add_variation(264667) # Primal Rage
