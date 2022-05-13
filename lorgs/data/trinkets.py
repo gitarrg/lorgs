@@ -34,7 +34,13 @@ ORB_OF_TORMENT  = WowSpell(spell_type=TYPE_TRINKET, spell_id=355321, cooldown=12
 
 # T29
 THE_FIRST_SIGIL = WowSpell(spell_type=TYPE_TRINKET, spell_id=367241, cooldown=300, duration=9,  color="#cf5225", name="The First Sigil", icon="inv_legendary_sigilofwisdom.jpg", wowhead_data=f"item=188271{mythic}{maxilvl}")
-EARTHBREAKERS   = WowSpell(spell_type=TYPE_TRINKET, spell_id=367808, cooldown=300, duration=9,  color="#bf9228", name="Earthbreaker's Impact", icon="spell_nature_earthquake.jpg", wowhead_data=f"item=188264{mythic}{maxilvl}")
+EARTHBREAKERS   = WowSpell(spell_type=TYPE_TRINKET, spell_id=367808, cooldown=180, duration=12, color="#bf9228", name="Earthbreaker's Impact", icon="spell_nature_earthquake.jpg", wowhead_data=f"item=188264{mythic}{maxilvl}")
+
+CACHE_OF_ACQUIRED_TREASURES = WowSpell(spell_type=TYPE_TRINKET, spell_id=367805, duration=25, cooldown=180, color="#a442f5", name="Cache of Acquired Treasures", icon="achievement_general_stayclassy.jpg", wowhead_data=f"item=188265{mythic}{maxilvl}")
+# related buffs (decided to track the trinket use instead)
+# CACHE_OF_ACQUIRED_TREASURES.add_variation(368649)  # Aquired Sword
+# CACHE_OF_ACQUIRED_TREASURES.add_variation(368650)  # Aquired Axe
+
 
 #### OTHER ####
 # pvp badge
@@ -60,6 +66,7 @@ for s in INT_SPECS:
 # Agility Users
 for s in AGI_SPECS:
     s.add_spells(EARTHBREAKERS)
+    s.add_spells(CACHE_OF_ACQUIRED_TREASURES)
 
 # Strength Users
 for s in STR_SPECS:
