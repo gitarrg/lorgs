@@ -1,10 +1,24 @@
 """A Spell/Ability in the Game."""
 
 # IMPORT STANDARD LIBRARIES
+import enum
 import typing
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.models import base
+
+
+class EventType(enum.Enum):
+    """Event Types used in Warcraftlogs.""" 
+    CAST = "cast"
+    BUFF = "buff"
+    DEBUFF = "debuff"
+    DAMAGE = "damage"
+
+
+class EventSource(enum.Enum):
+    PLAYER = "player"
+    ENEMY = "enemy"
 
 
 class WowSpell(base.Model):
@@ -73,6 +87,12 @@ class WowSpell(base.Model):
 
         # list(str): tags to indicate special properties
         self.tags = kwargs.get("tags") or []
+
+        # type of event (eg.: Spell, Buff, Debuff)
+        self.event_type: EventType = kwargs.get("event_type") or EventType.CAST
+
+        #: origin of the spell. aka: who is casting this spell
+        self.source: EventSource = kwargs.get("source") or EventSource.PLAYER
 
         """str: info used for the wowhead tooltips."""
         self.wowhead_data = kwargs.get("wowhead_data") or  f"spell={self.spell_id}"

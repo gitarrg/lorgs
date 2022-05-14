@@ -5,7 +5,7 @@
 # from lorgs.data.classes import *
 
 from lorgs.data.classes import *
-from lorgs.models.wow_spell import WowSpell
+from lorgs.models.wow_spell import WowSpell, EventType
 
 
 maxilvl = "&ilvl=278"
@@ -33,14 +33,15 @@ ORDNANCE        = WowSpell(spell_type=TYPE_TRINKET, spell_id=345539, cooldown=18
 ORB_OF_TORMENT  = WowSpell(spell_type=TYPE_TRINKET, spell_id=355321, cooldown=120, duration=40, color="#8ec6d4", name="Shadowed Orb of Torment", icon="spell_animamaw_orb.jpg", wowhead_data=f"item=186428{mythic}&ilvl=252")
 
 # T29
-THE_FIRST_SIGIL = WowSpell(spell_type=TYPE_TRINKET, spell_id=367241, cooldown=300, duration=9,  color="#cf5225", name="The First Sigil", icon="inv_legendary_sigilofwisdom.jpg", wowhead_data=f"item=188271{mythic}{maxilvl}")
+THE_FIRST_SIGIL = WowSpell(spell_type=TYPE_TRINKET, spell_id=367241, cooldown=300, duration=20, color="#cf5225", name="The First Sigil", icon="inv_legendary_sigilofwisdom.jpg", wowhead_data=f"item=188271{mythic}{maxilvl}")
 EARTHBREAKERS   = WowSpell(spell_type=TYPE_TRINKET, spell_id=367808, cooldown=180, duration=12, color="#bf9228", name="Earthbreaker's Impact", icon="spell_nature_earthquake.jpg", wowhead_data=f"item=188264{mythic}{maxilvl}")
 
-CACHE_OF_ACQUIRED_TREASURES = WowSpell(spell_type=TYPE_TRINKET, spell_id=367805, duration=25, cooldown=180, color="#a442f5", name="Cache of Acquired Treasures", icon="achievement_general_stayclassy.jpg", wowhead_data=f"item=188265{mythic}{maxilvl}")
-# related buffs (decided to track the trinket use instead)
-# CACHE_OF_ACQUIRED_TREASURES.add_variation(368649)  # Aquired Sword
-# CACHE_OF_ACQUIRED_TREASURES.add_variation(368650)  # Aquired Axe
-
+# Tracked as three different Buffs/Spells
+CACHE_OF_ACQUIRED_TREASURES_AXE   = WowSpell(spell_type=TYPE_TRINKET, spell_id=368650, duration=25, cooldown=180, color="#cc4343", name="Cache of Acquired Treasures (Axe)",   icon="inv_axe_1h_pvp400_c_01.jpg", wowhead_data=f"item=188265{mythic}{maxilvl}")
+CACHE_OF_ACQUIRED_TREASURES_SWORD = WowSpell(spell_type=TYPE_TRINKET, spell_id=368649, duration=25, cooldown=180, color="#cca843", name="Cache of Acquired Treasures (Sword)", icon="inv_sword_1h_draenorcrafted_d_01_c_alliance.jpg", wowhead_data=f"item=188265{mythic}{maxilvl}")
+# track Wand via the "damage" event
+CACHE_OF_ACQUIRED_TREASURES_WAND  = WowSpell(spell_type=TYPE_TRINKET, spell_id=368653,              cooldown=180, color="#43ccb5", name="Cache of Acquired Treasures (Wand)",  icon="inv_wand_25.jpg", wowhead_data=f"item=188265{mythic}{maxilvl}")
+CACHE_OF_ACQUIRED_TREASURES_WAND.event_type = EventType.DAMAGE
 
 #### OTHER ####
 # pvp badge
@@ -66,7 +67,8 @@ for s in INT_SPECS:
 # Agility Users
 for s in AGI_SPECS:
     s.add_spells(EARTHBREAKERS)
-    s.add_spells(CACHE_OF_ACQUIRED_TREASURES)
+    s.add_buffs(CACHE_OF_ACQUIRED_TREASURES_AXE, CACHE_OF_ACQUIRED_TREASURES_SWORD)
+    s.add_events(CACHE_OF_ACQUIRED_TREASURES_WAND)
 
 # Strength Users
 for s in STR_SPECS:
