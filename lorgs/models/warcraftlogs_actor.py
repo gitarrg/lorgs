@@ -15,7 +15,7 @@ from lorgs.models import warcraftlogs_base
 from lorgs.models.warcraftlogs_cast import Cast
 from lorgs.models.wow_covenant import WowCovenant
 from lorgs.models.wow_spec import WowSpec
-from lorgs.models.wow_spell import WowSpell
+from lorgs.models.wow_spell import EventSource, WowSpell
 
 
 
@@ -60,6 +60,21 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
     #################################
     # Query
     #
+    def get_event_query(self, spells=typing.List[WowSpell]):
+        if not spells:
+            return ""
+
+        # TODO: group spells by event_type
+
+        spell_ids = WowSpell.spell_ids_str(spells)
+
+        parts = []
+        for spell in spells:
+            part = f"(type='{spell.event_type.value}' and ability.id in ({spell_ids}))"
+            parts.append(part)
+
+        return " or ".join(parts)
+
     def get_cast_query(self, spells=typing.List[WowSpell]):
         if not spells:
             return ""
@@ -148,7 +163,7 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
             cast.timestamp = cast_data.get("timestamp", 0) - fight_start
             cast.duration = cast_data.get("duration")
 
-            if cast_type in ("cast"):
+            if cast_type in ("cast", "damage"):
                 cast.stacks = 1
 
             # new buff, or buff stack
@@ -265,9 +280,24 @@ class Player(BaseActor):
             debuffs_query = f"source.name='{self.name}' and {debuffs_query}"
         return debuffs_query
 
+    def get_event_query(self, spells=typing.List[WowSpell]):
+
+        # 1) spells used by the player
+        player_query = ""
+        player_spells = [e for e in spells if e.source == EventSource.PLAYER]
+        if player_spells:
+            player_query = super().get_event_query(spells=player_spells)
+            if player_query and self.name:
+                player_query = f"source.name='{self.name}' and {player_query}"
+
+        return player_query or ""
+
     def get_sub_query(self) -> str:
         """Get the Query for fetch all relevant data for this player."""
         filters = []
+
+        event_query = self.get_event_query(self.spec.all_events)
+        filters.append(event_query)
 
         cast_query = self.get_cast_query(self.spec.all_spells)
         filters.append(cast_query)

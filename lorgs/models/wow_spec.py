@@ -29,6 +29,7 @@ class WowSpec(base.Model):
         self.spells: typing.List[WowSpell] = []
         self.buffs: typing.List[WowSpell] = []
         self.debuffs: typing.List[WowSpell] = []
+        self.events: typing.List[WowSpell] = []
 
         self.role = role
         self.role.specs.append(self)
@@ -87,6 +88,11 @@ class WowSpec(base.Model):
         """Get all debuffs that are relavent for this spec."""
         return self.wow_class.debuffs + self.debuffs
 
+    @property
+    def all_events(self):
+        """Get all events that are relavent for this spec."""
+        return self.events
+
     ##########################
     # Methods
     #
@@ -128,3 +134,6 @@ class WowSpec(base.Model):
 
     def add_debuffs(self, *spells: WowSpell):
         self.debuffs.extend(spells)
+
+    def add_events(self, *spells: WowSpell):
+        self.events.extend(spells)
