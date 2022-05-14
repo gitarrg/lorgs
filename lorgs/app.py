@@ -55,12 +55,12 @@ def create_app():
         return fastapi.responses.RedirectResponse(url, status_code=301) # 301: Moved Permanently
 
     # Apply Cors Headers
-    # if config_obj.LORRGS_DEBUG:
-    #     CORS_ORIGINS.append("*")
+    if config_obj.LORRGS_DEBUG:
+        CORS_ORIGINS.append("*")
 
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=CORS_ORIGINS,
+        allow_origins=["*"],
         allow_credentials=True,
         allow_methods=["POST", "GET"],
 		allow_headers=["*"],

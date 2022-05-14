@@ -19,13 +19,13 @@ async def test__load_rankings():
     spec_ranking = SpecRanking.get_or_create(spec_slug="paladin-holy", boss_slug="the-nine")
 
     spec_ranking = SpecRanking.get_or_create(
-        spec_slug="druid-restoration",
-        boss_slug="the-nine",
-        difficulty="mythic",
-        metric="dps",
+        spec_slug="shaman-restoration",
+        boss_slug="lords-of-dread",
+        difficulty="heroic",
+        metric="hps",
     )
 
-    await spec_ranking.load(limit=5, clear_old=True)
+    await spec_ranking.load(limit=40, clear_old=True)
     spec_ranking.save()
 
 
@@ -40,7 +40,8 @@ async def test__load_all_rankings():
 
 
 async def main():
-    await test__load_rankings()
+    pass
+    # await test__load_rankings()
     # await test__load_all_rankings()
 
 

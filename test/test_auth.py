@@ -58,7 +58,11 @@ async def test_get_member_permissions():
 if __name__ == "__main__":
     # asyncio.run(test_exchange_code())
     # asyncio.run(test_get_user_profile())
-    # asyncio.run(test_get_member_info())
+    asyncio.run(test_get_member_info())
     # asyncio.run(test_get_member_info())
     # asyncio.run(test_get_member_info_with_invalid_id())
-    asyncio.run(test_get_member_info_user_who_is_not_in_lorrgs())
+    # asyncio.run(test_get_member_info_user_who_is_not_in_lorrgs())
+
+
+
+
