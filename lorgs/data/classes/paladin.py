@@ -46,7 +46,7 @@ PALADIN_HOLY.add_spell(        spell_id=200025, cooldown=15,  duration=8,  color
 
 
 PALADIN_PROTECTION.add_buff(   spell_id=31850,  cooldown=60,  duration=8,  color="#fcea74", name="Ardent Defender",                 icon="spell_holy_ardentdefender.jpg", tags=[WowSpell.TAG_DYNAMIC_CD])
-PALADIN_PROTECTION.add_spell(  spell_id=212641, cooldown=300, duration=8,                   name="Guardian of Ancient Kings",       icon="spell_holy_heroism.jpg")
+PALADIN_PROTECTION.add_spell(  spell_id=212641, cooldown=300, duration=8,                   name="Guardian of Ancient Kings",       icon="spell_holy_heroism.jpg", variations=[86659])
 PALADIN_PROTECTION.add_spell(  spell_id=152262, cooldown=60,  duration=15, color="#0a60ff", name="Seraphim",                        icon="ability_paladin_seraphim.jpg")
 
 
