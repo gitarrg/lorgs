@@ -32,6 +32,7 @@ HUNTER.add_spell(              spell_id=308491, cooldown=60,  duration=10, color
 HUNTER.add_spell(              spell_id=109304, cooldown=120,                               name="Exhilaration",        icon="ability_hunter_onewithnature.jpg", show=False)
 HUNTER.add_buff(               spell_id=186265, cooldown=120,                               name="Aspect of the Turtle",icon="ability_hunter_pet_turtle.jpg", show=False)
 HUNTER.add_spell(              spell_id=272679, cooldown=180, duration=6,                   name="Survival of the Fittest", icon="spell_nature_spiritarmor.jpg", show=False, variations=[281195])
+HUNTER.add_buff(               spell_id=339461, cooldown=30,                                name="Resilience of the Hunter",icon="spell_nature_spiritarmor.jpg", show=False) # Feint Death Conduit
 
 
 HUNTER_BEASTMASTERY.add_spell( spell_id=193530, cooldown=180, duration=20,                  name="Aspect of the Wild",  icon="spell_nature_protectionformnature.jpg")
