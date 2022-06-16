@@ -37,7 +37,7 @@ MAGE.add_spell(        spell_id=324220, cooldown=180, duration=25, color=COL_NEC
 # Defensives
 MAGE.add_buff(         spell_id=45438,  cooldown=240,                               name="Ice Block",          icon="spell_frost_frost.jpg",                     show=False)
 MAGE.add_buff(         spell_id=55342,  cooldown=120,                               name="Mirror Image",       icon="spell_magic_lesserinvisibilty.jpg",         show=False)
-MAGE.add_buff(         spell_id=342246, cooldown=60,                                name="Alter Time",         icon="spell_mage_altertime.jpg",                  show=False)
+MAGE.add_buff(         spell_id=110909, cooldown=60,                                name="Alter Time",         icon="spell_mage_altertime.jpg",                  show=False, variations=[342246])
 
 MAGE_ARCANE.add_buff(  spell_id=113862, cooldown=120,                               name="Greater Invisibility",icon="ability_mage_greaterinvisibility.jpg",     show=False)
 MAGE_ARCANE.add_buff(  spell_id=235450, cooldown=25,                                name="Prismatic Barrier",  icon="spell_magearmor.jpg",                       show=False)
