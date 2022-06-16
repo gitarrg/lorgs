@@ -31,6 +31,10 @@ DRUID_RESTORATION = WowSpec(role=HEAL, wow_class=DRUID, name="Restoration", shor
 DRUID.add_spell(             spell_id=323764, cooldown=60,  duration=4,  color=COL_NF,    name="Convoke the Spirits",            icon="ability_ardenweald_druid.jpg")
 DRUID.add_spell(             spell_id=323546, cooldown=180, duration=20, color=COL_VENTR, name="Ravenous Frenzy",                icon="ability_revendreth_druid.jpg",              show=False)
 
+# Utils
+DRUID.add_spell(             spell_id=106898, cooldown=120, duration=11,                  name="Stampeding Roar",                icon="spell_druid_stampedingroar_cat.jpg",        show=False, variations=[77764, 77761])   # duration includes Conduit
+
+
 # Defensives
 DRUID.add_spell(             spell_id=22812, cooldown=60, duration=12, name="Barkskin",                icon="spell_nature_stoneclawtotem.jpg",              show=False)
 
