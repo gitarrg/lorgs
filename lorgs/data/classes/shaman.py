@@ -30,6 +30,9 @@ SHAMAN.add_spell(              spell_id=320674, cooldown=90,               color
 SHAMAN.add_spell(              spell_id=328923, cooldown=120, duration=3,  color=COL_NF,    name="Fae Transfusion",            icon="ability_ardenweald_shaman.jpg",             show=True)
 SHAMAN.add_spell(              spell_id=326059, cooldown=45,               color=COL_NECRO, name="Primordial Wave",            icon="ability_maldraxxus_shaman.jpg",             show=False)
 
+# Utils
+SHAMAN.add_spell(              spell_id=192077, cooldown=120, duration=15,                  name="Windrush Totem",             icon="ability_shaman_windwalktotem.jpg",          show=False)
+
 # Defensives
 SHAMAN.add_spell(              spell_id=21169,                                              name="Reincarnation",              icon="spell_shaman_improvedreincarnation.jpg",    show=False)
 SHAMAN.add_spell(              spell_id=108271, cooldown=90,  duration=12,                  name="Astral Shift",               icon="ability_shaman_astralshift.jpg",            show=False)
