@@ -32,6 +32,9 @@ DEATHKNIGHT.add_spell(         spell_id=311648, cooldown=60,  duration=8,  color
 DEATHKNIGHT.add_spell(         spell_id=315443, cooldown=120, duration=12, color=COL_NECRO, name="Abomination Limb",      icon="ability_maldraxxus_deathknight.jpg",       show=False)
 DEATHKNIGHT.add_spell(         spell_id=324128, cooldown=60,  duration=10, color=COL_NF,    name="Death's Due",           icon="ability_ardenweald_deathknight.jpg",       show=False)
 
+# Utility
+DEATHKNIGHT.add_spell(         spell_id=48265,  cooldown=45,  duration=10, color="#b82cbf", name="Death's Advance",       icon="spell_shadow_demonicempathy.jpg",           show=False)
+
 # Defensive
 DEATHKNIGHT.add_spell(         spell_id=51052,  cooldown=120, duration=10, color="#d58cff", name="Anti-Magic Zone",       icon="spell_deathknight_antimagiczone.jpg",      show=False, spell_type=SPELL_TYPE_RAID)
 DEATHKNIGHT.add_spell(         spell_id=48707,  cooldown=60,  duration=5,  color="#8ced53", name="Anti-Magic Shell",      icon="spell_shadow_antimagicshell.jpg",          show=False)
