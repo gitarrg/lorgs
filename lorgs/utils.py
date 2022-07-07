@@ -54,11 +54,10 @@ def format_big_number(num):
     return '%.2f%s' % (num, ['', 'k', 'm', 'g', 't', 'p'][magnitude])
 
 
-def slug(text, space=""):
+def slug(text: str, space="", delete_chars="(),'-"):
     text = text.lower()
-    text = text.replace("'", "")
-    text = text.replace(",", "")
-    text = text.replace("-", "")
+    for c in delete_chars:
+        text = text.replace(c, "")
     text = text.replace(" ", space)
     return text
 
