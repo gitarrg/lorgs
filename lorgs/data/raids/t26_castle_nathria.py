@@ -52,7 +52,7 @@ SUNKING.add_buff(spell_id=337859,             color="#ffbb33", name="Cloak of Fl
 
 ################################################################################
 # 04: Xymox v1
-XYMOX = CASTLE_NATHRIA.add_boss(id=2405, name="Artificer Xy'mox", nick="Xy'mox")
+XYMOX = CASTLE_NATHRIA.add_boss(id=2405, name="Artificer Xy'mox (CN)", nick="Xy'mox")
 XYMOX.add_cast(spell_id=329770, duration=21.5, color="#40bfff", name="Root of Extintion (Seeds)",  icon="inv_wand_1h_ardenweald_d_01.jpg")
 XYMOX.add_cast(spell_id=325361, duration=6.5,  color="#e61919", name="Glyph of Destruction",  icon="ability_mage_incantersabsorbtion.jpg")
 
