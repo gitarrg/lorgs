@@ -151,16 +151,13 @@ async def get_zone_bosses(zone_id: int):
 ###############################################################################
 
 
-
 @router.get("/bosses", tags=["raids"])
 @cache()
 async def get_bosses():
     """Gets all Bosses
-
     Warning:
         this does not filter by raid.
         use "/zone/<zone_id>/bosses" to only get the bosses for a given raid.
-
     """
     return {
         "bosses": [boss.as_dict() for boss in RaidBoss.all]
