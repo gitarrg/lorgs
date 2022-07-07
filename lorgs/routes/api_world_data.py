@@ -134,13 +134,6 @@ async def get_zone(zone_id: int):
     return zone.as_dict()
 
 
-###############################################################################
-#
-#       Bosses
-#
-###############################################################################
-
-
 @router.get("/zones/{zone_id}/bosses", tags=["raids"])
 @cache()
 async def get_zone_bosses(zone_id: int):
@@ -151,33 +144,51 @@ async def get_zone_bosses(zone_id: int):
     return {boss.full_name_slug: boss.as_dict() for boss in zone.bosses}
 
 
-@router.get("/zones/{zone_id}/bosses/{boss_slug}", tags=["raids"])
+###############################################################################
+#
+#       Bosses
+#
+###############################################################################
+
+
+@router.get("/bosses", tags=["raids"])
 @cache()
-async def get_zone_boss(zone_id: int, boss_slug: str):
-    """Get a single Boss wihin the given raid zone.
+async def get_bosses():
+    """Gets all Bosses
+    Warning:
+        this does not filter by raid.
+        use "/zone/<zone_id>/bosses" to only get the bosses for a given raid.
+    """
+    return {
+        "bosses": [boss.as_dict() for boss in RaidBoss.all]
+    }
+
+
+@router.get("/bosses/{boss_slug}", tags=["raids"])
+@cache()
+async def get_boss(boss_slug: str):
+    """Get a single Boss.
 
     Args:
-        zone_id (int): ID of the Raid Zone
         boss_slug (string): name of the boss
 
     """
-    boss = RaidBoss.get(zone__id=zone_id, full_name_slug=boss_slug)
+    boss = RaidBoss.get(full_name_slug=boss_slug)
     if not boss:
         return "Invalid Boss.", 404
     return boss.as_dict()
 
 
-@router.get("/zones/{zone_id}/bosses/{boss_slug}/spells", tags=["raids"])
+@router.get("/bosses/{boss_slug}/spells", tags=["raids"])
 @cache()
-async def get_zone_boss_spells(zone_id: int, boss_slug: str):
+async def get_boss_spells(boss_slug: str):
     """Get Spells for a given Boss.
 
     Args:
-        zone_id (int): ID of the Raid Zone
         boss_slug (string): name of the boss
 
     """
-    boss = RaidBoss.get(zone__id=zone_id, full_name_slug=boss_slug)
+    boss = RaidBoss.get(full_name_slug=boss_slug)
     if not boss:
         return "Invalid Boss.", 404
 
