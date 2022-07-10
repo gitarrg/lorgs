@@ -126,7 +126,28 @@ async def get_user_profile(access_token: str):
 
 
 ################################################################################
-#   User/Member Info
+#   User Member Info
+#
+
+async def get_user_info(user_id):
+    """Get the User Info.
+
+    ref: https://discord.com/developers/docs/resources/user#get-user
+
+    Example (omitted some fields):
+        >>> await get_member_info(248163264)
+        {
+            id: 248163264,
+            username: "Arrg",
+            avatar: "132132323"
+        }
+    """
+    url = f"users/{user_id}"
+    return await _run_bot_request(url)
+
+
+################################################################################
+#   Guild Member Info
 #
 
 
