@@ -102,7 +102,10 @@ class User(me.Document):
 
         # help convert old logins
         if not self.discord_tag:
-            self.discord_tag = "{username}#{discriminator}".format(**user_info)
+            try:
+                self.discord_tag = "{username}#{discriminator}".format(**user_info)
+            except KeyError:
+                pass
 
         self.discord_avatar = member_info.get("avatar") or user_info.get("avatar") or ""
         self.discord_roles = member_info.get("roles") or []
