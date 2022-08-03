@@ -137,7 +137,8 @@ async def task_load_spec_rankings_multi(
 
     # expand difficulty
     if difficulty == "all":
-        difficulties = ["heroic", "mythic"]
+        # difficulties = ["heroic", "mythic"]
+        difficulties = ["mythic"]
         for difficulty in difficulties:
             kwargs["difficulty"] = difficulty
             url = f"/api/task/load_spec_ranking/{spec_slug}/{boss_slug}"
