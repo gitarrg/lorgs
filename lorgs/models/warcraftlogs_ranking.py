@@ -100,6 +100,7 @@ class SpecRanking(warcraftlogs_base.Document):
                     metric: {self.metric}
                     difficulty: {difficulty_id}
                     includeCombatantInfo: false
+                    partition: 4  # Fated
                 )
             }}
         }}

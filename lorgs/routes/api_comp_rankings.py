@@ -82,7 +82,8 @@ async def task_load_comp_rankings(boss_slug: str = "all", limit: int = 50, clear
 
     # expand bosses
     if boss_slug == "all":
-        bosses = [boss.full_name_slug for boss in data.CURRENT_ZONE.bosses]
+        # bosses = [boss.full_name_slug for boss in data.CURRENT_ZONE.bosses]
+        bosses = [boss.full_name_slug for boss in RaidBoss.all]
     else:
         bosses = [boss_slug]
 

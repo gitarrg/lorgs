@@ -129,7 +129,8 @@ async def task_load_spec_rankings_multi(
 
     # expand bosses
     if boss_slug == "all":
-        bosses = [boss.full_name_slug for boss in data.CURRENT_ZONE.bosses]
+        bosses = [boss.full_name_slug for boss in RaidBoss.all]
+        # bosses = [boss.full_name_slug for boss in data.CURRENT_ZONE.bosses]
         for boss_slug in bosses:
             url = f"/api/task/load_spec_ranking/{spec_slug}/{boss_slug}"
             await api_tasks.create_app_engine_task(url, **kwargs)
