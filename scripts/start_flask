@@ -18,6 +18,7 @@ export PYTHONPATH=.  # adds current dir, so we can import
 export APP="lorgs.app:create_app"
 export PORT=5012
 export LORGS_CONFIG_NAME=lorgs.config.DevelopmentConfig
+export DEBUG=1
 
 
 # Dev Servers
