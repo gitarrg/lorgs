@@ -31,7 +31,7 @@ async def get_user_report(report_id: str):
 
 @router.get("/{report_id}/fights")
 @cache()
-async def get_fights(report_id: str, fight: str, player: str):
+async def get_fights(report_id: str, fight: str, player: str = ""):
     """Get Fights in a report.
 
     Args:
