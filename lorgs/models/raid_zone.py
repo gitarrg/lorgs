@@ -13,12 +13,14 @@ from lorgs.models.raid_boss import RaidBoss
 class RaidZone(base.Model):
     """A raid zone in the Game."""
 
-    def __init__(self, id, name):
+    def __init__(self, id, name, bosses: typing.List[RaidBoss] = None):
         self.id: int = id
         self.name: str = name
         self.bosses: typing.List[RaidBoss] = []
-
         self.name_slug = utils.slug(self.name, space="-")
+
+        if bosses:
+            self.add_bosss(*bosses)
 
     def __repr__(self):
         return f"<RaidZone(id={self.id} name={self.name})>"
@@ -31,8 +33,14 @@ class RaidZone(base.Model):
             "bosses": [boss.as_dict() for boss in self.bosses]  # list to preserve the correct order
         }
 
-    def add_boss(self, **kwargs) -> RaidBoss:
+    def add_boss(self, boss: RaidBoss=None, **kwargs) -> RaidBoss:
         """Add a new RaidBoss to this zone."""
-        boss = RaidBoss(zone=self, **kwargs)
+        boss = boss or RaidBoss(zone=self, **kwargs)
+        boss.zone = boss.zone or self
+
         self.bosses.append(boss)
         return boss
+
+    def add_bosss(self, *bosses: typing.List[RaidBoss]):
+        for boss in bosses:
+            self.add_boss(boss=boss)

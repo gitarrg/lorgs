@@ -15,14 +15,11 @@ if typing.TYPE_CHECKING:
 class RaidBoss(base.Model):
     """A raid boss in the Game."""
 
-    def __init__(self, zone: "RaidZone", id: int, name: str, nick=""):
+    def __init__(self, id: int, name: str, nick="", zone: "RaidZone" = None):
         self.id = id
         self.zone = zone
         self.name = nick or name
         self.full_name = name
-
-        self.full_name_slug = utils.slug(self.full_name, space="-")
-        self.icon = f"bosses/{self.zone.name_slug}/{self.full_name_slug}.jpg"
 
         # spells or buffs to track
         self.events: typing.List[typing.Dict[str, str]] = []
@@ -42,6 +39,14 @@ class RaidBoss(base.Model):
             "full_name": self.full_name,
             "full_name_slug": self.full_name_slug,
         }
+
+    @property
+    def full_name_slug(self):
+        return utils.slug(self.full_name, space="-")
+
+    @property
+    def icon(self):
+        return f"bosses/{self.zone.name_slug}/{self.full_name_slug}.jpg"
 
     @property
     def all_abilities(self):
