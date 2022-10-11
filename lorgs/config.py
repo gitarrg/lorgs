@@ -34,9 +34,20 @@ class DevelopmentConfig(BaseConfig):
     CACHE_NO_NULL_WARNING = True
 
 
-################################################################################
-
-
 class ProductionConfig(BaseConfig):
     """Config used in Production."""
     CACHE_DEFAULT_TIMEOUT = 60 * 60  # 1h
+
+
+################################################################################
+
+def get_config(name=""):
+    name = name or os.getenv("LORGS_CONFIG_NAME") or "lorgs.config.DevelopmentConfig"
+    if name == "lorgs.config.ProductionConfig":
+        return ProductionConfig
+
+    return DevelopmentConfig
+
+
+# Shared Config Instance
+config = get_config()
