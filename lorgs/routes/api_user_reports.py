@@ -1,3 +1,6 @@
+# IMPORT STANDARD LIBRARIES
+import os
+
 # IMPORT THIRD PARTY LIBRARIES
 import fastapi
 from fastapi_cache.decorator import cache
@@ -5,6 +8,7 @@ from fastapi_cache.decorator import cache
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
 from lorgs.client import InvalidReport
+from lorgs.config import config
 from lorgs.models.warcraftlogs_user_report import UserReport
 from lorgs.routes.api_tasks import create_cloud_function_task
 
@@ -25,7 +29,7 @@ async def get_user_report(report_id: str):
 
 @router.get("/{report_id}/fights")
 @cache()
-async def get_fights(report_id: str, fight: str, player: str):
+async def get_fights(report_id: str, fight: str, player: str = ""):
     """Get Fights in a report.
 
     Args:
@@ -85,6 +89,16 @@ async def load_user_report(report_id: str, fight: str, player: str, user_id: int
     """
     # any logged in user gets to use the "premium"-queue
     queue = "premium" if user_id > 0 else "free"
+
+    # load immediate
+    if config.LORRGS_DEBUG:
+        user_report = UserReport.from_report_id(report_id=report_id, create=True)
+        fight_ids = utils.str_int_list(fight)
+        player_ids = utils.str_int_list(player)
+
+        await user_report.report.load_fights(fight_ids=fight_ids, player_ids=player_ids)
+        user_report.save()
+        return {"status": "done"}
 
     # Note:
     #   fight and player-inputs are kept as str,
