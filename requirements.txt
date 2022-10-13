@@ -2,18 +2,22 @@ aiofiles==0.6
 aiohttp==3.7.4.post0
 arrow==1.2
 
-fastapi==0.70.0
+fastapi==0.85.0
 # fastapi-cache2==0.1.7
 
 # for user auth
-PyJWT==2.3.0
+# PyJWT==2.3.0
 
 
+# TMP
 mongoengine==0.23.1
 dnspython==2.1.0  # for MongoEngine iirc
 
 # AWS
-mangum==0.12.4
+mangum==0.15.1
+boto3==1.24.90
+boto3-stubs==1.24.90
+
 
 # Dev Only
 # python-dotenv==0.17.1
