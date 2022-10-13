@@ -1,0 +1,38 @@
+
+name: main
+
+runtime: python3.9
+memorySize: 128 # optional, in MB, default is 1024
+timeout: 6 # optional, in seconds, default is 6
+
+# module: lorrgs_auth
+# handler: lorrgs_auth.handler.create_handler
+handler: lorgs.handler.handler
+layers:
+  - Ref: PythonRequirementsLambdaLayer
+package:
+  individually: true
+  patterns:
+    - "lorgs/**"
+
+url: true
+
+environment:
+  LORGS_CONFIG_NAME: ${env.LORGS_CONFIG_NAME}
+  SECRET_KEY: ${env:SECRET_KEY}
+
+  # Third Party Credentials
+  MONGO_URI: ${env:MONGO_URI}
+  WCL_CLIENT_ID: ${env:WCL_CLIENT_ID}
+  WCL_CLIENT_SECRET: ${env:WCL_CLIENT_SECRET}
+
+  # USER_REPORTS_QUEUE_URL: !Ref UserReportsQueue  # Ref returns the URL
+  # DISCORD_CLIENT_ID: ${opt:DISCORD_CLIENT_ID}
+  # DISCORD_CLIENT_SECRET: ${opt:DISCORD_CLIENT_SECRET}
+  # DISCORD_BOT_TOKEN: ${opt:DISCORD_BOT_TOKEN}
+  # GOOGLE_APPLICATION_CREDENTIALS: "./google_creds.json"
+
+  # events:
+  #   - http: GET /
+  #   - http: GET /{proxy+}
+

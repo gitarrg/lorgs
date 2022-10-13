@@ -9,7 +9,6 @@ import json
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
 from lorgs.client import InvalidReport
-from lorgs.config import config
 from lorgs.models.warcraftlogs_user_report import UserReport
 from lorgs.routes.api_tasks import create_cloud_function_task
 
@@ -31,7 +30,6 @@ async def get_user_report(report_id: str):
 
 
 @router.get("/{report_id}/fights")
-@cache()
 async def get_fights(report_id: str, fight: str, player: str = ""):
     """Get Fights in a report.
 
@@ -99,7 +97,7 @@ async def load_user_report(report_id: str, fight: str, player: str, user_id: int
     queue = sqs.Queue(USER_REPORTS_QUEUE_URL)
 
     # load immediate
-    if config.LORRGS_DEBUG:
+    if False: # config.LORRGS_DEBUG:
         user_report = UserReport.from_report_id(report_id=report_id, create=True)
         fight_ids = utils.str_int_list(fight)
         player_ids = utils.str_int_list(player)

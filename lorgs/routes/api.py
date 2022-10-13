@@ -31,12 +31,6 @@ router.include_router(api_world_data.router)
 ################################################################################
 
 
-@router.get("/")
-@router.get("/{path:path}")
-def page_not_found(path=""):
-    return "Invalid Route", 404
-
-
 @router.get("/ping")
 def ping():
     return {"reply": "Hi!", "time": datetime.datetime.utcnow().isoformat()}
@@ -46,3 +40,9 @@ def ping():
 def error():
     """Route to test error handling"""
     raise ValueError("something went wrong!")
+
+
+@router.get("/")
+@router.get("/{path:path}")
+def page_not_found(path=""):
+    return "Invalid Route", 404
