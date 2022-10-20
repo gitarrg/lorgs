@@ -1,0 +1,28 @@
+
+name: sqs_handler
+
+runtime: python3.9
+memorySize: 128 # optional, in MB, default is 1024
+timeout: 6 # optional, in seconds, default is 6
+
+handler: lorrgs_sqs_handler.handler.handler
+
+layers:
+  - Ref: PythonRequirementsLambdaLayer
+
+package:
+  individually: true
+  patterns:
+    - "lorrgs_sqs_handler/**"
+
+events:
+  - sqs: arn:aws:sqs:eu-west-1:746912274922:test1.fifo
+
+  # TODO: fix this
+  # - sqs:
+  # arn: !GetAtt [LorrgsMainQueue, "Arn"]
+  # batchSize: 1
+
+
+environment:
+  DISCORD_WEBHOOK_URL: ${env.DISCORD_WEBHOOK_URL}
