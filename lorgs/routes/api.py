@@ -36,6 +36,20 @@ def ping():
     return {"reply": "Hi!", "time": datetime.datetime.utcnow().isoformat()}
 
 
+@router.get("/ping_dc")
+def ping_dc(response: fastapi.Response):
+
+    ts = datetime.datetime.utcnow().isoformat()
+    payload = {"Text": "Hello", "time": ts}
+
+    from lorgs.models.task import Task
+    task = Task.submit("discord", payload)
+    payload["id"] = task.task_id
+
+    response.headers["Cache-Control"] = "no-cache"
+    return payload
+
+
 @router.get("/error")
 def error():
     """Route to test error handling"""
