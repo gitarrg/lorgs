@@ -12,15 +12,15 @@ provider:
   runtime: python3.8
   deploymentBucket:
     name: lorrgs-serverless-deployments
+  versionFunctions: false
 
-  # iamRoleStatements:
-  #   - Effect: "Allow"
-  #     Action:
-  #       - "sqs:SendMessage"
-  #     Resource:
-  #       - !GetAtt [LorrgsMainQueue, "Arn"]
-  #       - !GetAtt [UserReportsQueue, "Arn"]
 
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "sqs:SendMessage"
+      Resource:
+        - !GetAtt [MainSqsQueue, "Arn"]
 
 ################################################################################
 # package:
@@ -32,7 +32,6 @@ package:
 
 
 plugins:
-  - serverless-dotenv-plugin
   - serverless-python-requirements
 
 
@@ -53,3 +52,4 @@ resources:
     CloudFrontDistribution: ${file(serverless/CloudFrontDistribution.yml)}
     S3CachePolicy: ${file(serverless/S3CachePolicy.yml)}
     ApiOriginCachePolicy: ${file(serverless/ApiOriginCachePolicy.yml)}
+    MainSqsQueue: ${file(serverless/sqs.yml)}

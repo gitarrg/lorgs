@@ -71,7 +71,7 @@ async def load_user_report_overview(response: fastapi.Response, report_id: str, 
 
 
 @router.get("/{report_id}/load")
-async def load_user_report(report_id: str, fight: str, player: str, user_id: int = 0):
+async def load_user_report(response: fastapi.Response, report_id: str, fight: str, player: str, user_id: int = 0):
     """Load a Report
 
     Args:
@@ -93,6 +93,7 @@ async def load_user_report(report_id: str, fight: str, player: str, user_id: int
         payload=payload
     )
 
+    response.headers["Cache-Control"] = "no-cache"
     return {
         "task_id": task.task_id,
         "queue": "aws",

@@ -26,6 +26,8 @@ environment:
   WCL_CLIENT_ID: ${env:WCL_CLIENT_ID}
   WCL_CLIENT_SECRET: ${env:WCL_CLIENT_SECRET}
 
+  SQS_QUEUE_URL: { Ref: MainSqsQueue }
+
   # USER_REPORTS_QUEUE_URL: !Ref UserReportsQueue  # Ref returns the URL
   # DISCORD_CLIENT_ID: ${opt:DISCORD_CLIENT_ID}
   # DISCORD_CLIENT_SECRET: ${opt:DISCORD_CLIENT_SECRET}
