@@ -2,36 +2,23 @@ import os
 import aiohttp
 
 
-WEBHOOK_URL = os.getenv("WEBHOOK_URL")
-
+DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
 
 
 async def main(message):
-    fields = [
-        {"name": "ID", "value": message.get("messageId")},
-        {"name": "Body", "value": message.get("body")}
-    ]
+    if not DISCORD_WEBHOOK_URL:
+        raise EnvironmentError("Missing DISCORD_WEBHOOK_URL")
 
     data = {
-        # "content": "Hello!",
         "embeds" : [{
-            "fields": fields
+            "fields": [
+                {"name": "ID", "value": message.get("messageId")},
+                {"name": "Body", "value": message.get("body")}
+            ]
         }]
     }
 
     async with aiohttp.ClientSession() as session:
-        async with session.post(url=WEBHOOK_URL, json=data):
+        async with session.post(url=DISCORD_WEBHOOK_URL, json=data):
             pass
-
-
-if __name__ == "__main__":
-    import asyncio
-    asyncio.run(
-        main({
-            "messageId": "123-456",
-            "body": "Test Message"
-        })
-    )
-
-
 

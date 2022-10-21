@@ -1,19 +1,11 @@
-# IMPORT STANDARD LIBRARIES
-import os
-
 # IMPORT THIRD PARTY LIBRARIES
-import boto3
 import fastapi
-import json
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
 from lorgs.client import InvalidReport
+from lorgs.models.task import Task
 from lorgs.models.warcraftlogs_user_report import UserReport
-from lorgs.routes.api_tasks import create_cloud_function_task
-
-
-USER_REPORTS_QUEUE_URL = os.getenv("USER_REPORTS_QUEUE_URL")
 
 
 router = fastapi.APIRouter()
@@ -89,38 +81,19 @@ async def load_user_report(report_id: str, fight: str, player: str, user_id: int
         user_id (int, optional): user id to identify logged in users
 
     """
-    # TODO: disabled for now.
-    # any logged in user gets to use the "premium"-queue
-    # user_type = "premium" if user_id > 0 else "free"
-
-    sqs = boto3.resource('sqs')
-    queue = sqs.Queue(USER_REPORTS_QUEUE_URL)
-
-    # load immediate
-    if False: # config.LORRGS_DEBUG:
-        user_report = UserReport.from_report_id(report_id=report_id, create=True)
-        fight_ids = utils.str_int_list(fight)
-        player_ids = utils.str_int_list(player)
-
-        await user_report.report.load_fights(fight_ids=fight_ids, player_ids=player_ids)
-        user_report.save()
-        return {"status": "done"}
-
-    # Note:
-    #   fight and player-inputs are kept as str,
-    #   as we just pass them trough
-    message_payload = {
+    payload = {
         "report_id": report_id,
-        "fight_ids": fight,
-        "player_ids": player,
         "user_id": user_id,
+        "fight_ids": utils.str_int_list(fight),
+        "player_ids": utils.str_int_list(player),
     }
 
-    message = queue.send_message(
-        MessageBody=json.dumps(message_payload),
+    task = Task.submit(
+        task_type="load_user_report",
+        payload=payload
     )
 
     return {
-        "task_id": message.get("MessageId"),
+        "task_id": task.task_id,
         "queue": "aws",
     }

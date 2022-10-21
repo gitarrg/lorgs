@@ -9,10 +9,10 @@ provider:
   name: aws
   region: eu-west-1
   stage: ${opt:stage, "dev"}
-  # runtime: python3.8
+  runtime: python3.8
+  deploymentBucket:
+    name: lorrgs-serverless-deployments
 
-  # deploymentBucket:
-  #   name: lorrgs-serverless-deployments
   # iamRoleStatements:
   #   - Effect: "Allow"
   #     Action:
@@ -29,53 +29,24 @@ package:
   patterns:
     - "!*"
     - "!*/**"
-    # - "lorrgs_auth/**"
-  #   # - "lorgs/**"
-  #   # - google_creds.json
+
 
 plugins:
   - serverless-dotenv-plugin
-  # - serverless-plugin-modularize
   - serverless-python-requirements
-  # - serverless-layers
-  # - serverless-deployment-bucket
+
 
 custom:
-  # modularize:
-  #   glob: "serverless/**/*.yml"
   pythonRequirements:
-    layer:
-      dockerizePip: true
-      compatibleRuntimes: [python3.9]
+    layer: true
 
-#   serverless-layers:
-#     - main_layer:
-#         functions:
-#           - main
-#           # - load_user_reports
-#         dependenciesPath: ./requirements.txt
-#     - auth_layer:
-#         functions:
-#           - auth
-
-#   ####################################
-#   # Custom Config
-#   config:
-#     LORGS_CONFIG_NAME: ${opt:LORGS_CONFIG_NAME, lorgs.config.ProductionConfig}
-#     SECRET_KEY: ${opt:SECRET_KEY}
-#     # Third Party Credentials
-#     MONGO_URI: ${opt:MONGO_URI}
-#     WCL_CLIENT_ID: ${opt:WCL_CLIENT_ID}
-#     WCL_CLIENT_SECRET: ${opt:WCL_CLIENT_SECRET}
-#     # Discord Auth
-#     DISCORD_CLIENT_ID: ${opt:DISCORD_CLIENT_ID}
-#     DISCORD_CLIENT_SECRET: ${opt:DISCORD_CLIENT_SECRET}
-#     DISCORD_BOT_TOKEN: ${opt:DISCORD_BOT_TOKEN}
 
 ################################################################################
 # Functions:
 functions:
   main: ${file(serverless/lambda.main.yml)}
+  sqs_handler: ${file(serverless/lambda.sqs_handler.yml)}
+
 
 resources:
   Resources:
