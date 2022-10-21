@@ -1,0 +1,9 @@
+
+Type: "AWS::SQS::Queue"
+
+Properties:
+  QueueName: main.fifo
+  FifoQueue: true
+
+  ContentBasedDeduplication: true
+  VisibilityTimeout: 120  # needs to be high for long running functions
