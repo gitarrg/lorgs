@@ -75,7 +75,6 @@ class Task(me.Document):
         )
         message_id = message.get("MessageId")
 
-
         task = cls(task_id=message_id)
         task.save()
         return task
