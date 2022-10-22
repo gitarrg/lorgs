@@ -10,7 +10,7 @@ import fastapi
 from lorgs import data
 from lorgs.models.raid_boss import RaidBoss
 from lorgs.models import warcraftlogs_comp_ranking
-from lorgs.routes import api_tasks
+from lorrgs_api.routes import api_tasks
 
 
 router = fastapi.APIRouter()

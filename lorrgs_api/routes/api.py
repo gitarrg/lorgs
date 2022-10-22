@@ -7,11 +7,11 @@ import datetime
 import fastapi
 
 # IMPORT LOCAL LIBRARIES
-from lorgs.routes import api_comp_rankings
-from lorgs.routes import api_spec_rankings
-from lorgs.routes import api_tasks
-from lorgs.routes import api_user_reports
-from lorgs.routes import api_world_data
+from lorrgs_api.routes import api_comp_rankings
+from lorrgs_api.routes import api_spec_rankings
+from lorrgs_api.routes import api_tasks
+from lorrgs_api.routes import api_user_reports
+from lorrgs_api.routes import api_world_data
 # from lorgs.routes import auth
 
 
