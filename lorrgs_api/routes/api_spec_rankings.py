@@ -7,7 +7,7 @@ from lorgs.logger import logger
 from lorgs.models import warcraftlogs_ranking
 from lorgs.models.wow_spec import WowSpec
 from lorgs.models.raid_boss import RaidBoss
-from lorgs.routes import api_tasks
+from lorrgs_api.routes import api_tasks
 
 
 router = fastapi.APIRouter(tags=["spec_rankings"])

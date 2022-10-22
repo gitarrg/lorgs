@@ -7,7 +7,7 @@ import fastapi
 # IMPORT LOCAL LIBRARIES
 from lorgs import data   # pylint: disable=unused-import
 from lorgs import db  # pylint: disable=unused-import
-from lorgs.routes import api
+from lorrgs_api.routes import api
 
 
 def create_app():

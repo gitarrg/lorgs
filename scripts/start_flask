@@ -15,11 +15,10 @@ export PYTHONPATH=.  # adds current dir, so we can import
 
 
 # config
-export APP="lorgs.app:create_app"
+export APP="lorrgs_api.app:create_app"
 export PORT=5012
-export LORGS_CONFIG_NAME=lorgs.config.DevelopmentConfig
 export DEBUG=1
-export LORRGS_DEBUG=1
+
 
 # Dev Servers
 # flask run --host=0.0.0.0 --port=$PORT
