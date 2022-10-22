@@ -4,7 +4,6 @@ import glob
 import hashlib
 import io
 import os
-import pip
 import shutil
 import subprocess
 import typing
@@ -19,7 +18,7 @@ S3_CLIENT = boto3.client('s3')
 # SETTINGS
 DEPLOY_BUCKET = os.getenv("DEPLOY_BUCKET") or "lorrgs-code"
 
-DEPLOY_DIR = "./deploy"
+DEPLOY_DIR = "./.deploy"
 
 
 ################################################################################

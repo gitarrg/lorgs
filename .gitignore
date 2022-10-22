@@ -26,3 +26,4 @@ google_creds.json
 tsconfig.tsbuildinfo
 
 .serverless/
+.deploy/
