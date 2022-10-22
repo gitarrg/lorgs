@@ -6,6 +6,7 @@ import io
 import os
 import shutil
 import subprocess
+import time
 import typing
 
 import boto3
@@ -13,6 +14,7 @@ import botocore
 
 LAMBDA_CLIENT = boto3.client('lambda')
 S3_CLIENT = boto3.client('s3')
+LAMBDA_FUNCTION_UPDATED_WAITER = LAMBDA_CLIENT.get_waiter('function_updated')
 
 
 # SETTINGS
@@ -137,6 +139,11 @@ def deploy_lambda(name: str, src: str):
     S3_CLIENT.upload_file(zip_file, DEPLOY_BUCKET, f"{name}.zip")
     LAMBDA_CLIENT.update_function_code(FunctionName=name, S3Bucket=DEPLOY_BUCKET, S3Key=f"{name}.zip")
 
+    # Wait for the update to complete
+    print("[deploy_lambda]", name, "waiting...")
+    LAMBDA_FUNCTION_UPDATED_WAITER.wait(FunctionName=name, WaiterConfig={'Delay': 2})
+    print("[deploy_lambda]", name, "Done!")
+
 
 def update_used_layers(lambda_names: typing.List[str], layer_names: typing.List[str]):
 
@@ -172,11 +179,14 @@ def main():
     reqs_layer = deploy_requirements_layer(name="lorrgs-requirements")
 
     # Lambdas
-    deploy_lambda(name="lorrgs-api", src="lorgs")
+    deploy_lambda(name="lorrgs-api", src="lorrgs_api")
+    return
     deploy_lambda(name="lorrgs-sqs", src="lorrgs_sqs")
 
     # Update if one of them got deployed
     if core_layer or reqs_layer or True:
+        print("waiting 3sec")
+        time.sleep(1)  # avoid issue with functions still updating
         update_used_layers(
             lambda_names=["lorrgs-api", "lorrgs-sqs"],
             layer_names=["lorrgs-core", "lorrgs-requirements"]
