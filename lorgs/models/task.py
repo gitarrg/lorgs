@@ -13,10 +13,10 @@ import mongoengine as me
 # IMPORT LOCAL LIBRARIES
 from lorgs.lib import mongoengine_arrow
 
-
-# SQS_CLIENT = boto3.client("sqs")
-SQS_QUEUE_URL = os.getenv("SQS_QUEUE_URL") or ""
 sqs = boto3.resource("sqs")
+
+SQS_QUEUE_URL = os.getenv("SQS_QUEUE_URL") or ""
+SQS_QUEUE = sqs.Queue(url=SQS_QUEUE_URL)
 
 
 class Task(me.Document):
@@ -42,7 +42,6 @@ class Task(me.Document):
     _status: str = me.StringField(default=STATUS_NEW, db_field ="status")
     updated: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField(default=arrow.utcnow)
 
-
     @classmethod
     def from_id(cls, task_id):
         task: cls = cls.objects(task_id=task_id).first()  # pylint: disable=no-member
@@ -62,11 +61,8 @@ class Task(me.Document):
         self.save()
 
     @classmethod
-    def submit(cls, task_type: str, payload: typing.Dict):
-
-        queue = sqs.Queue(url=SQS_QUEUE_URL)
-
-        message = queue.send_message(
+    def submit(cls, task_type: str, payload: typing.Dict, save=True):
+        message = SQS_QUEUE.send_message(
             MessageBody=json.dumps(payload),
             MessageGroupId=task_type,
             MessageAttributes={
@@ -76,5 +72,6 @@ class Task(me.Document):
         message_id = message.get("MessageId")
 
         task = cls(task_id=message_id)
-        task.save()
+        if save:
+            task.save()
         return task
