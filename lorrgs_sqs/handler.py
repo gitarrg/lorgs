@@ -7,10 +7,11 @@ import typing
 import boto3
 
 # IMPORT LOCAL LIBRARIES
+from lorgs import utils
+from lorrgs_sqs import helpers
+from lorrgs_sqs.task_handlers import load_spec_rankings
 from lorrgs_sqs.task_handlers import load_user_report
 from lorrgs_sqs.task_handlers import send_discord_message
-from lorrgs_sqs import helpers
-from lorgs import utils
 
 
 TASK_HANDLERS = {
@@ -19,6 +20,7 @@ TASK_HANDLERS = {
     "discord": send_discord_message.main,
 
     "load_user_report": load_user_report.main,
+    "load_spec_rankings": load_spec_rankings.main,
 }
 
 
@@ -44,8 +46,10 @@ def submit_messages(queue_url, messages, chunk_size=10):
 async def process_message(message):
 
     message_attributes = message.get("messageAttributes") or {}
+    # print("1111", message_attributes)
     message_task = message_attributes.get("task") or {}
     message_task = message_task.get("stringValue") or "unknown"
+    # print("2222", message_task)
 
     # Task Status Updates
     message_id = message.get("messageId")
@@ -69,7 +73,10 @@ async def process_message(message):
 
         messages = [{
             "MessageBody": json.dumps(payload),
-            "MessageAttributes": message.get("messageAttributes") or {},
+            # "MessageAttributes": message.get("messageAttributes") or {},
+            "MessageAttributes": {
+                "task": { "DataType": "String", "StringValue": message_task },
+            },
             "MessageGroupId": attributes.get("MessageGroupId") or "undefined"
         } for payload in payloads]
 
