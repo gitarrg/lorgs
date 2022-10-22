@@ -1,10 +1,11 @@
-
+# IMPORT STANDARD LIBRARIES
 import asyncio
 import typing
 
+# IMPORT LOCAL LIBRARIES
 from lorgs.models.task import Task   # pylint: disable=unused-import
-from lorrgs_sqs_handler.task_handlers import load_user_report
-from lorrgs_sqs_handler.task_handlers import send_discord_message
+from lorrgs_sqs.task_handlers import load_user_report
+from lorrgs_sqs.task_handlers import send_discord_message
 
 
 TASK_HANDLERS = {

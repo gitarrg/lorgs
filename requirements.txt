@@ -8,18 +8,18 @@ fastapi==0.85.0
 # for user auth
 # PyJWT==2.3.0
 
-
 # TMP
 mongoengine==0.23.1
 dnspython==2.1.0  # for MongoEngine iirc
 
 # AWS
 mangum==0.15.1
-boto3==1.24.90
-boto3-stubs==1.24.90
 
 
+###############################
 # Dev Only
+# boto3==1.24.90
+# boto3-stubs==1.24.90
 # python-dotenv==0.17.1
 # pytest
 # pylint
