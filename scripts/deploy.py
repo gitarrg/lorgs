@@ -180,13 +180,10 @@ def main():
 
     # Lambdas
     deploy_lambda(name="lorrgs-api", src="lorrgs_api")
-    return
     deploy_lambda(name="lorrgs-sqs", src="lorrgs_sqs")
 
     # Update if one of them got deployed
-    if core_layer or reqs_layer or True:
-        print("waiting 3sec")
-        time.sleep(1)  # avoid issue with functions still updating
+    if core_layer or reqs_layer:
         update_used_layers(
             lambda_names=["lorrgs-api", "lorrgs-sqs"],
             layer_names=["lorrgs-core", "lorrgs-requirements"]
