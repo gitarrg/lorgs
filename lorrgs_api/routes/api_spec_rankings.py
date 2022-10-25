@@ -73,16 +73,12 @@ async def spec_ranking_load(
     limit: int = 50, clear: bool = False
 ):
     payload = {
+        "task": "load_spec_rankings",
         "spec_slug": spec_slug, "boss_slug": boss_slug,
         "difficulty": difficulty, "metric": metric,
         "limit": limit, "clear": clear,
     }
-
-    task = Task.submit(
-        task_type="load_spec_rankings",
-        payload=payload,
-        save=False,
-    )
+    task = Task.submit(payload=payload, save=False)
 
     return {
         "message": "task queued",

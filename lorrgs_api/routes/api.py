@@ -43,7 +43,7 @@ def ping_dc(response: fastapi.Response):
     payload = {"Text": "Hello", "time": ts}
 
     from lorgs.models.task import Task
-    task = Task.submit("discord", payload)
+    task = Task.submit(payload, save=False)
     payload["id"] = task.task_id
 
     response.headers["Cache-Control"] = "no-cache"
