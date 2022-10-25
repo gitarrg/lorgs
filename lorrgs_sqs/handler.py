@@ -3,6 +3,7 @@ import asyncio
 import json
 import os
 import typing
+import uuid
 
 import boto3
 
@@ -66,7 +67,7 @@ async def process_message(message):
 
         messages = [{
             "MessageBody": json.dumps(payload),
-            "MessageGroupId": attributes.get("MessageGroupId") or "undefined"
+            "MessageGroupId": uuid.uuid4()
         } for payload in payloads]
 
         return submit_messages(queue_url, messages)
