@@ -11,8 +11,8 @@ fated_bosses = CASTLE_NATHRIA.bosses + SANCTUM_OF_DOMINATION.bosses + SEPULCHER_
 
 
 PAYLOAD_EXPANDERS = {
-    "spec_name": [spec.full_name_slug for spec in ALL_SPECS],
-    "boss_name": [boss.full_name_slug for boss in fated_bosses],
+    "spec_slug": [spec.full_name_slug for spec in ALL_SPECS],
+    "boss_slug": [boss.full_name_slug for boss in fated_bosses],
     "difficulty": ["heroic", "mythic"],
     "metrics": ["dps", "hps", "bossdps"],
 }
