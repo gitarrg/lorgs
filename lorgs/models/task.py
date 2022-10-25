@@ -61,13 +61,10 @@ class Task(me.Document):
         self.save()
 
     @classmethod
-    def submit(cls, task_type: str, payload: typing.Dict, save=True):
+    def submit(cls, payload: typing.Dict, save=True):
         message = SQS_QUEUE.send_message(
+            MessageGroupId="main",
             MessageBody=json.dumps(payload),
-            MessageGroupId=task_type,
-            MessageAttributes={
-                "task": { "DataType": "String", "StringValue": task_type },
-            }
         )
         message_id = message.get("MessageId")
 

@@ -82,16 +82,13 @@ async def load_user_report(response: fastapi.Response, report_id: str, fight: st
 
     """
     payload = {
+        "task": "load_user_report",
         "report_id": report_id,
         "user_id": user_id,
         "fight_ids": utils.str_int_list(fight),
         "player_ids": utils.str_int_list(player),
     }
-
-    task = Task.submit(
-        task_type="load_user_report",
-        payload=payload
-    )
+    task = Task.submit(payload=payload, save=True)
 
     response.headers["Cache-Control"] = "no-cache"
     return {

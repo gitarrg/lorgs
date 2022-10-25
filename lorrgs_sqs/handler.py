@@ -45,26 +45,19 @@ def submit_messages(queue_url, messages, chunk_size=10):
 
 async def process_message(message):
 
-    message_attributes = message.get("messageAttributes") or {}
-    # print("1111", message_attributes)
-    message_task = message_attributes.get("task") or {}
-    message_task = message_task.get("stringValue") or "unknown"
-    # print("2222", message_task)
-
     # Task Status Updates
-    message_id = message.get("messageId")
-
+    # message_id = message.get("messageId")
     # task = Task.from_id(message_id)
     # task.status = Task.STATUS_IN_PROGRESS
 
-    message_body = message.get("body")
-    message_payload = json.loads(message_body)
+    payload = json.loads(message.get("body") or "")
+    task = payload.get("task") or "unknown"
 
     #################################
     # See if the message expands into multiple tasks
     # if so: resubmit those back to the queue
     # print("process_message.payload", message_payload)
-    payloads = helpers.expand_keywords(message_payload)
+    payloads = helpers.expand_keywords(payload)
     # print("process_message.payloads", payloads)
     if len(payloads) > 1:
         attributes = message.get("attributes")
@@ -73,18 +66,14 @@ async def process_message(message):
 
         messages = [{
             "MessageBody": json.dumps(payload),
-            # "MessageAttributes": message.get("messageAttributes") or {},
-            "MessageAttributes": {
-                "task": { "DataType": "String", "StringValue": message_task },
-            },
             "MessageGroupId": attributes.get("MessageGroupId") or "undefined"
         } for payload in payloads]
 
         return submit_messages(queue_url, messages)
 
     # run the Handler
-    message_handler = TASK_HANDLERS.get(message_task) or TASK_HANDLERS["unknown"]
-    await message_handler(message)
+    handler = TASK_HANDLERS.get(task) or TASK_HANDLERS["unknown"]
+    await handler(message)
 
     # Task Status Updates
     # task.status = Task.STATUS_DONE
