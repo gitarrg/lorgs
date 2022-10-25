@@ -1,9 +1,20 @@
 
 
+from lorgs.data.classes import ALL_SPECS
+from lorgs.data.raids import (
+    CASTLE_NATHRIA,
+    SANCTUM_OF_DOMINATION,
+    SEPULCHER_OF_THE_FIRST_ONES
+)
+
+fated_bosses = CASTLE_NATHRIA.bosses + SANCTUM_OF_DOMINATION.bosses + SEPULCHER_OF_THE_FIRST_ONES.bosses
+
+
 PAYLOAD_EXPANDERS = {
-    "boss_name": ["bossA", "bossB", "bossC"],
-    "spec_name": ["specA", "specB", "specC"],
+    "spec_name": [spec.full_name_slug for spec in ALL_SPECS],
+    "boss_name": [boss.full_name_slug for boss in fated_bosses],
     "difficulty": ["heroic", "mythic"],
+    "metrics": ["dps", "hps", "bossdps"],
 }
 
 
@@ -38,7 +49,6 @@ def expand_keywords(payload, cap=10):
         
         if steps >= cap:
             return payloads
-
 
     return payloads
 
