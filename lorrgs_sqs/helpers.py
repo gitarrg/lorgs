@@ -14,7 +14,7 @@ PAYLOAD_EXPANDERS = {
     "spec_slug": [spec.full_name_slug for spec in ALL_SPECS],
     "boss_slug": [boss.full_name_slug for boss in fated_bosses],
     "difficulty": ["heroic", "mythic"],
-    "metrics": ["dps", "hps", "bossdps"],
+    "metric": ["dps", "hps", "bossdps"],
 }
 
 

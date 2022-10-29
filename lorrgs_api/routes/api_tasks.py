@@ -22,5 +22,6 @@ async def get_task(response: fastapi.Response, task_id):
     return {
         "task_id": task.task_id,
         "status": task.status,
+        "message": task.message,
         "updated": int(task.updated.timestamp()),
     }

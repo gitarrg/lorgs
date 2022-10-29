@@ -1,8 +1,5 @@
 """Endpoints related to the Backend/API."""
 
-# IMPORT STANDARD LIBRARIES
-import datetime
-
 # IMPORT THIRD PARTY LIBRARIES
 import fastapi
 
@@ -12,6 +9,7 @@ from lorrgs_api.routes import api_spec_rankings
 from lorrgs_api.routes import api_tasks
 from lorrgs_api.routes import api_user_reports
 from lorrgs_api.routes import api_world_data
+from lorrgs_api.routes import debug
 # from lorgs.routes import auth
 
 
@@ -25,29 +23,11 @@ router.include_router(api_spec_rankings.router)
 router.include_router(api_tasks.router, prefix="/tasks")
 router.include_router(api_user_reports.router, prefix="/user_reports")
 router.include_router(api_world_data.router)
+router.include_router(debug.router)
 # router.include_router(auth.router, prefix="/auth")
 
 
 ################################################################################
-
-
-@router.get("/ping")
-def ping():
-    return {"reply": "Hi!", "time": datetime.datetime.utcnow().isoformat()}
-
-
-@router.get("/ping_dc")
-def ping_dc(response: fastapi.Response):
-
-    ts = datetime.datetime.utcnow().isoformat()
-    payload = {"Text": "Hello", "time": ts}
-
-    from lorgs.models.task import Task
-    task = Task.submit(payload, save=False)
-    payload["id"] = task.task_id
-
-    response.headers["Cache-Control"] = "no-cache"
-    return payload
 
 
 @router.get("/error")

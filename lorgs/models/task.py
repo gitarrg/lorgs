@@ -1,22 +1,11 @@
 """Model to Store Task Status."""
 
-# IMPORT STANDARD LIBRARIES
-import json
-import typing
-import os
-
 # IMPORT THIRD PARTY LIBRARIES
 import arrow
-import boto3
 import mongoengine as me
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.lib import mongoengine_arrow
-
-sqs = boto3.resource("sqs")
-
-SQS_QUEUE_URL = os.getenv("SQS_QUEUE_URL") or ""
-SQS_QUEUE = sqs.Queue(url=SQS_QUEUE_URL)
 
 
 class Task(me.Document):
@@ -38,13 +27,14 @@ class Task(me.Document):
         ]
     }
 
-    task_id: str = me.StringField(primary_key=True)
-    _status: str = me.StringField(default=STATUS_NEW, db_field ="status")
-    updated: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField(default=arrow.utcnow)
+    task_id: str = me.StringField(primary_key=True) # type: ignore[override]
+    _status: str = me.StringField(default=STATUS_NEW, db_field ="status") # type: ignore[override]
+    updated: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField(default=arrow.utcnow)  # type: ignore[override]
+    message: str = me.StringField(default="") # type: ignore[override]
 
     @classmethod
     def from_id(cls, task_id):
-        task: cls = cls.objects(task_id=task_id).first()  # pylint: disable=no-member
+        task: cls = cls.objects(task_id=task_id).first()  # type: ignore
         if not task:
             task = cls(task_id=task_id)
 
@@ -59,16 +49,3 @@ class Task(me.Document):
         self._status = value
         self.updated = arrow.utcnow()
         self.save()
-
-    @classmethod
-    def submit(cls, payload: typing.Dict, save=True):
-        message = SQS_QUEUE.send_message(
-            MessageGroupId="main",
-            MessageBody=json.dumps(payload),
-        )
-        message_id = message.get("MessageId")
-
-        task = cls(task_id=message_id)
-        if save:
-            task.save()
-        return task

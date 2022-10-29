@@ -4,6 +4,7 @@ import fastapi
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
 from lorgs.client import InvalidReport
+from lorgs.clients import sqs
 from lorgs.models.task import Task
 from lorgs.models.warcraftlogs_user_report import UserReport
 
@@ -88,7 +89,13 @@ async def load_user_report(response: fastapi.Response, report_id: str, fight: st
         "fight_ids": utils.str_int_list(fight),
         "player_ids": utils.str_int_list(player),
     }
-    task = Task.submit(payload=payload, save=True)
+
+    message = sqs.send_message(payload=payload)
+    message_id = message["MessageId"]
+
+    # task object to help track the progress
+    task = Task(task_id=message_id)
+    task.save()
 
     response.headers["Cache-Control"] = "no-cache"
     return {
