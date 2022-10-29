@@ -5,7 +5,6 @@ import os
 import typing
 
 # IMPORT THIRD PARTY LIBARIES
-from fastapi_cache.decorator import cache
 import fastapi
 import jwt
 import pydantic
@@ -46,8 +45,9 @@ def _get_user(discord_id=0, discord_tag="", create=True):
 
 
 @router.get("/token")
-async def get_token(code: str):
+async def get_token(response: fastapi.Response, code: str):
     """Exchange a Authorization Code for some user info."""
+    response.headers["Cache-Control"] = "no-cache"
 
     # get the discord access token
     user_credentials = await auth.exchange_code(code)
@@ -68,6 +68,8 @@ async def get_token(code: str):
 
     # find existing User
     user = _get_user(discord_id=discord_id, discord_tag=discord_tag)
+    if not user:
+        raise ValueError("Invalid User")
 
     # grap info from signin (in case users arn't members of the discord server)
     user.discord_id = discord_id
@@ -83,19 +85,13 @@ async def get_token(code: str):
     return {"token": token}
 
 
-# OLD: to be removed
-@router.get("/info/{user_id:int}")
-@cache()
-async def get_user_info(user_id: int):
-    member_info = await auth.get_member_info(user_id)
-    return member_info.get("user") or {}
-
-
 @router.get("/users")
-async def get_user():
+async def get_user_all():
     return "many"
 
 
+"""
+TODO: remove?
 @router.post("/users")
 async def add_user(info: UserData):
     user = User.objects(discord_id=info.discord_id).first()
@@ -109,11 +105,11 @@ async def add_user(info: UserData):
     )
     user.save()
     return "ok"
+"""
 
 
 @router.get("/users/{user_id:int}")
-@cache()
-async def get_user2(user_id: int):
+async def get_user(response: fastapi.Response, user_id: int):
     user = User.objects(discord_id=user_id).first()
     if not user:
         user = User(discord_id=user_id)
@@ -121,12 +117,12 @@ async def get_user2(user_id: int):
         user.save()
         # raise fastapi.HTTPException(status_code=404, detail="User not found")
 
+    response.headers["Cache-Control"] = f"private, max-age={60*5}"
     return user.to_dict()
 
 
 @router.get("/users/{user_id:int}/refresh")
-@cache()
-async def user_refresh(user_id: int):
+async def user_refresh(response: fastapi.Response, user_id: int):
 
     user = User.objects(discord_id=user_id).first()
     if not user:
@@ -135,4 +131,5 @@ async def user_refresh(user_id: int):
     await user.refresh()
     user.save()
 
+    response.headers["Cache-Control"] = "no-cache"
     return user.to_dict()

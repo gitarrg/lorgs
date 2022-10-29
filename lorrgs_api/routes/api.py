@@ -9,8 +9,8 @@ from lorrgs_api.routes import api_spec_rankings
 from lorrgs_api.routes import api_tasks
 from lorrgs_api.routes import api_user_reports
 from lorrgs_api.routes import api_world_data
+from lorrgs_api.routes import auth
 from lorrgs_api.routes import debug
-# from lorgs.routes import auth
 
 
 router = fastapi.APIRouter()
@@ -20,11 +20,11 @@ router = fastapi.APIRouter()
 # Child Blueprints
 router.include_router(api_comp_rankings.router)
 router.include_router(api_spec_rankings.router)
-router.include_router(api_tasks.router, prefix="/tasks")
+router.include_router(api_tasks.router)
 router.include_router(api_user_reports.router, prefix="/user_reports")
 router.include_router(api_world_data.router)
 router.include_router(debug.router)
-# router.include_router(auth.router, prefix="/auth")
+router.include_router(auth.router, prefix="/auth")
 
 
 ################################################################################

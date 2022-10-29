@@ -5,7 +5,7 @@ import fastapi
 # IMPORT LOCAL LIBRARIES
 from lorgs.models.task import Task
 
-router = fastapi.APIRouter(tags=["tasks"])
+router = fastapi.APIRouter(tags=["tasks"], prefix="/tasks")
 
 
 ################################################################################
@@ -23,5 +23,5 @@ async def get_task(response: fastapi.Response, task_id):
         "task_id": task.task_id,
         "status": task.status,
         "message": task.message,
-        "updated": int(task.updated.timestamp()),
+        "updated": task.updated.isoformat(),
     }

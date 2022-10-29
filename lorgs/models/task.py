@@ -1,6 +1,7 @@
 """Model to Store Task Status."""
 
 # IMPORT THIRD PARTY LIBRARIES
+from typing import Optional
 import arrow
 import mongoengine as me
 
@@ -11,6 +12,7 @@ from lorgs.lib import mongoengine_arrow
 class Task(me.Document):
 
     STATUS_NEW = "new"
+    STATUS_WAITING = "waiting"
     STATUS_IN_PROGRESS = "in-progress"
     STATUS_DONE = "done"
     STATUS_FAILED = "failed"
@@ -28,24 +30,30 @@ class Task(me.Document):
     }
 
     task_id: str = me.StringField(primary_key=True) # type: ignore[override]
-    _status: str = me.StringField(default=STATUS_NEW, db_field ="status") # type: ignore[override]
+    status: str = me.StringField(default=STATUS_NEW) # type: ignore[override]
     updated: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField(default=arrow.utcnow)  # type: ignore[override]
     message: str = me.StringField(default="") # type: ignore[override]
 
     @classmethod
-    def from_id(cls, task_id):
-        task: cls = cls.objects(task_id=task_id).first()  # type: ignore
+    def from_id(cls, task_id) -> Optional["Task"]:
+        return cls.objects(task_id=task_id).first()  # type: ignore
+
+    @classmethod
+    def update_task(cls, task_id: str, **kwargs):
+
+        task = cls.from_id(task_id)
         if not task:
-            task = cls(task_id=task_id)
+            return
 
-        return task
+        updated = False
 
-    @property
-    def status(self):
-        return self._status
+        if "message" in kwargs:
+            task.message = kwargs["message"]
+            updated = True
+        if "status" in kwargs:
+            task.status = kwargs["status"]
+            updated = True
 
-    @status.setter
-    def status(self, value):
-        self._status = value
-        self.updated = arrow.utcnow()
-        self.save()
+        if updated:
+            task.updated = arrow.utcnow()
+            task.save()

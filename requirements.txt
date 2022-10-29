@@ -5,7 +5,7 @@ arrow==1.2.3
 fastapi==0.85.1
 
 # for user auth
-# PyJWT==2.3.0
+PyJWT==2.3.0
 
 # TMP
 mongoengine==0.24.2

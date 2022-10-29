@@ -95,6 +95,7 @@ async def load_user_report(response: fastapi.Response, report_id: str, fight: st
 
     # task object to help track the progress
     task = Task(task_id=message_id)
+    task.status = Task.STATUS_WAITING
     task.save()
 
     response.headers["Cache-Control"] = "no-cache"
