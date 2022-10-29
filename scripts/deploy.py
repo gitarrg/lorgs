@@ -1,16 +1,20 @@
 #!/usr/bin/env python
+"""Small Script to automate the Deployment.
 
+I've spend a good amount of time trying to get serverless configured the way I
+want but never quite god it exactly as I wanted.
+
+"""
 import glob
 import hashlib
 import io
 import os
 import shutil
 import subprocess
-import time
 import typing
 
 import boto3
-import botocore
+
 
 LAMBDA_CLIENT = boto3.client('lambda')
 S3_CLIENT = boto3.client('s3')
@@ -28,7 +32,7 @@ DEPLOY_DIR = "./.deploy"
 #
 
 def calc_checksum(path):
-    """Calc an MD5 Checksum for a given path"""
+    """Calc an MD5 Checksum for a given path."""
     hash = hashlib.md5()
 
     for filepath in glob.glob(path, recursive=True):
@@ -39,20 +43,25 @@ def calc_checksum(path):
 
 
 def zip_folder(src, tar):
+    """Zip the content from `src` to `tar`."""
     zip_file = shutil.make_archive("tmp_zip", "zip", base_dir=src)
     return shutil.move(zip_file, tar)
 
 
-def checksum_compare(name: str, files: str, s3Bucket=DEPLOY_BUCKET):
+def checksum_compare(name: str, files: str, s3bucket=DEPLOY_BUCKET):
     """Compare the Checksum of `files` with an prev. version stored on S3.
-        Returns True if they are the same.
+
+    Returns True if they are the same.
     """
     # fetch old checksum
     try:
-        old_sha = S3_CLIENT.get_object(Bucket=s3Bucket, Key=f"{name}.md5")
-        old_sha = old_sha.get("Body").read().decode('utf-8')
+        old_obj = S3_CLIENT.get_object(Bucket=s3bucket, Key=f"{name}.md5")
     except S3_CLIENT.exceptions.NoSuchKey:
         old_sha = ""
+    else:
+        body = old_obj.get("Body")
+        if body:
+            old_sha = body.read().decode('utf-8')
 
     # calc new checksum
     new_sha = calc_checksum(files)
@@ -61,7 +70,7 @@ def checksum_compare(name: str, files: str, s3Bucket=DEPLOY_BUCKET):
     if old_sha != new_sha:
         print(name, "has changed", old_sha, ">", new_sha)
         S3_CLIENT.put_object(
-            Bucket=s3Bucket,
+            Bucket=s3bucket,
             Key=f"{name}.md5",
             Body=io.BytesIO(new_sha.encode("utf-8"))
         )
@@ -74,6 +83,7 @@ def checksum_compare(name: str, files: str, s3Bucket=DEPLOY_BUCKET):
 ################################################################################
 
 def get_layer_versions(name, max=50):
+    """List all versions for a given Lambda."""
     response = LAMBDA_CLIENT.list_layer_versions(LayerName=name, MaxItems=max)
     return response.get("LayerVersions") or []
 
@@ -91,7 +101,7 @@ def _deploy_layer(name, path):
 
 
 def delete_layer_versions(name):
-
+    """Deplete all version for a given Lambda."""
     for layer_version in get_layer_versions(name):
         version = layer_version.get("Version")
         if version:
@@ -99,8 +109,8 @@ def delete_layer_versions(name):
             print(f"deleting {name}.{version}")
 
 
-def deploy_layer(name, src_dir):
-
+def deploy_layer(name: str, src_dir: str):
+    """Deploy a Lambda Layer."""
     if checksum_compare(name=name, files=f"{src_dir}/**/*.py"):
         return
 
@@ -111,7 +121,7 @@ def deploy_layer(name, src_dir):
 
 
 def deploy_requirements_layer(name="requirements"):
-
+    """Deploy a Lambda layer using a pip requirements file."""
     if checksum_compare(name=name, files="requirements.txt"):
         return
 
@@ -146,8 +156,7 @@ def deploy_lambda(name: str, src: str):
 
 
 def update_used_layers(lambda_names: typing.List[str], layer_names: typing.List[str]):
-
-
+    """Update the given Lambdas to use the latest version of each Layer."""
     layers = []
     for layer in layer_names:
         layer_versions = get_layer_versions(layer, max=1)
@@ -169,7 +178,7 @@ def update_used_layers(lambda_names: typing.List[str], layer_names: typing.List[
 
 
 def main():
-
+    """Deploy everything."""
     if os.path.exists(DEPLOY_DIR):
         shutil.rmtree(DEPLOY_DIR)
     os.mkdir(DEPLOY_DIR)
