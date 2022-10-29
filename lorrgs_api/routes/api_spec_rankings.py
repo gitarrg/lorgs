@@ -1,4 +1,5 @@
 # IMPORT THIRD PARTY LIBRARIES
+import time
 import fastapi
 
 # IMPORT LOCAL LIBRARIES
@@ -26,6 +27,7 @@ async def get_spec_ranking(
         spec = WowSpec.get(full_name_slug=spec_slug)
         metric = spec.role.metric
 
+    logger.info(f"{spec_slug}/{boss_slug} | start")
     spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(
         boss_slug=boss_slug,
         spec_slug=spec_slug,

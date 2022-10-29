@@ -67,7 +67,7 @@ async def process_message(message):
 
         messages = [{
             "MessageBody": json.dumps(payload),
-            "MessageGroupId": uuid.uuid4()
+            "MessageGroupId": str(uuid.uuid4())
         } for payload in payloads]
 
         return submit_messages(queue_url, messages)
