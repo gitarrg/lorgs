@@ -8,9 +8,11 @@ import textwrap
 # IMPORT THIRD PARTY LIBRARIES
 import arrow
 import mongoengine as me
+import pydantic
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
+from lorgs.clients.wcl.models.character_ranking import CharacterRankingData
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
 from lorgs.models.raid_boss import RaidBoss
@@ -100,7 +102,6 @@ class SpecRanking(warcraftlogs_base.Document):
                     metric: {self.metric}
                     difficulty: {difficulty_id}
                     includeCombatantInfo: false
-                    partition: 4  # Fated
                 )
             }}
         }}
@@ -115,57 +116,56 @@ class SpecRanking(warcraftlogs_base.Document):
                     key = (report.report_id, fight.fight_id, player.name)
                     yield key
 
-    def add_new_fight(self, ranking_data):
-        report_data = ranking_data.get("report", {})
+    def add_new_fight(self, ranking_data: CharacterRankingData):
+        report_data = ranking_data.report
 
         if not report_data:
             return
 
         # skip hidden reports
-        if ranking_data.get("hidden"):
+        if ranking_data.hidden:
             return
 
         ################
         # Report
-        report = Report()
-        report.report_id = report_data.get("code", "")
-        report.start_time = arrow.get(report_data.get("startTime", 0))
+        report = Report(
+            report_id=report_data.code,
+            start_time=arrow.get(report_data.startTime),
+            # fights={str(fight.fight_id): fight },
+        )
         self.reports.append(report)
 
         ################
         # Fight
-        fight = report.add_fight(
-            encounterID=self.boss.id,
-            id=report_data.get("fightID"),
+        fight = Fight(
+            boss_id=self.boss.id,
+            fight_id=report_data.fightID,
+            start_time = arrow.get(ranking_data.startTime),
+            duration = ranking_data.duration,
         )
-        fight.start_time = arrow.get(ranking_data.get("startTime", 0))
-        fight.duration = ranking_data.get("duration", 0)
+        report.fights[str(fight.fight_id)] = fight
 
         ################
         # Player
-        player = Player()
+        player = Player(
+            source_id=-1,
+            name=ranking_data.name,
+            total=ranking_data.amount,
+            spec_slug=self.spec_slug,
+        )
         player.fight = fight
-        player.spec_slug = self.spec_slug
-        player.source_id = -1
-        player.name = ranking_data.get("name")
-        player.total = ranking_data.get("amount", 0)
-        player.covenant_id = ranking_data.get("covenantID", 0)
-        player.soulbind_id = ranking_data.get("soulbindID", 0)
         fight.players["-1"] = player
 
-    def add_new_fights(self, rankings):
+    def add_new_fights(self, rankings: typing.List[CharacterRankingData]):
+        """Add new Fights."""
         old_reports = self.get_old_reports()
 
         for ranking_data in rankings:
-            report_data = ranking_data.get("report", {})
+            report_data = ranking_data.report
 
             ################
             # check if already in the list
-            key = (
-                report_data.get("code", ""),
-                report_data.get("fightID"),
-                ranking_data.get("name")
-            )
+            key = (report_data.code, report_data.fightID, ranking_data.name)
             if key in old_reports:
                 continue
 
@@ -176,7 +176,9 @@ class SpecRanking(warcraftlogs_base.Document):
             query_result,
             "worldData", "encounter", "characterRankings", "rankings"
         ) or {}
-        self.add_new_fights(query_result)
+
+        rankings = pydantic.parse_obj_as(typing.List[CharacterRankingData], query_result)
+        self.add_new_fights(rankings)
 
     async def load_rankings(self):
         """Fetch the current Ranking Data"""
