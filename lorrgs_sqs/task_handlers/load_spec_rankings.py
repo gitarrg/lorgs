@@ -4,8 +4,8 @@
 import json
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import data # pylint: disable=unused-import
-from lorgs import db
+from lorgs import data  # pylint: disable=unused-import
+from lorgs import db  # pylint: disable=unused-import
 from lorgs.models import warcraftlogs_ranking
 
 
@@ -13,7 +13,7 @@ async def load_spec_rankings(
     boss_slug: str, spec_slug: str,
     difficulty = "mythic", metric = "dps",
     limit = 50, clear = False,
-    **kwargs,
+    **kwargs, # pylint: disable=unused-argument
 ):
     """Load the Spec Ranking Data from Warcraftlogs and save it to the Database."""
     ################################

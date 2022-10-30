@@ -7,7 +7,8 @@ if typing.TYPE_CHECKING:
     import fastapi
 
 
-DEBUG = os.getenv("DEBUG")
+# TMP FIX
+DEBUG = True # os.getenv("DEBUG")
 
 
 def init(app: "fastapi.FastAPI", enabled=DEBUG):
