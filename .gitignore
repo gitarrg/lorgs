@@ -21,8 +21,6 @@ dist
 
 deploy_variables.yaml
 
-# google account credentials
-google_creds.json
 tsconfig.tsbuildinfo
 
 .serverless/
