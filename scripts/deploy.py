@@ -137,8 +137,9 @@ def deploy_requirements_layer(name="requirements"):
     return _deploy_layer(name, path)
 
 
-def deploy_lambda(name: str, src: str):
+def deploy_lambda(name: str, src: str = ""):
     """Update the Lambda with `name` to use the Code found in `src`."""
+    src = src or name.replace("-", "_")
     if checksum_compare(name=name, files=f"{src}/**/*.py"):
         return
 
@@ -188,8 +189,9 @@ def main():
     reqs_layer = deploy_requirements_layer(name="lorrgs-requirements")
 
     # Lambdas
-    deploy_lambda(name="lorrgs-api", src="lorrgs_api")
-    deploy_lambda(name="lorrgs-sqs", src="lorrgs_sqs")
+    deploy_lambda(name="lorrgs-api")
+    deploy_lambda(name="lorrgs-sqs")
+    deploy_lambda(name="lorrgs-error-handler")
 
     # Update if one of them got deployed
     if core_layer or reqs_layer:
