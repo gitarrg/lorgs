@@ -54,7 +54,7 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
 
     boss_id = me.IntField()
     players: typing.Dict[str, Player] = me.MapField(me.EmbeddedDocumentField(Player))
-    boss: Boss = me.EmbeddedDocumentField(Boss)
+    boss: typing.Optional[Boss] = me.EmbeddedDocumentField(Boss)
 
     composition = me.DictField()
     deaths = me.IntField(default=0)
