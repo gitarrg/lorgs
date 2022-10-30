@@ -15,24 +15,35 @@ if typing.TYPE_CHECKING:
 class RaidBoss(base.Model):
     """A raid boss in the Game."""
 
-    def __init__(self, id: int, name: str, nick="", zone: "RaidZone" = None):
-        self.id = id
-        self.zone = zone
-        self.name = nick or name
-        self.full_name = name
+    def __init__(self, id: int, name: str, nick: str = ""):
+        """Initialise a new Raid Boss
 
-        # spells or buffs to track
-        self.events: typing.List[typing.Dict[str, str]] = []
+        Args:
+            id (int): Encounter ID
+            name (str): Nice Name
+            nick (str, optional): Nick Name. Defaults to `name`.
+        """
+        self.id = id
+        """The Encounter ID."""
+        self.full_name = name
+        """Full Name of the Boss (eg.: "Halondrus the Reclaimer")."""
+        self.name = nick or name
+        """Short commonlty used Nickname. eg.: "Halondrus"."""
+
+        # self.zone: typing.Optional["RaidZone"] = None
+
+        self.events: list[dict[str, str]] = []
+        """Custom Events to track."""
 
         # we track them as "spells" for now
-        self.spells: typing.List["WowSpell"] = []
-        self.buffs: typing.List["WowSpell"] = []
-        self.event_spells: typing.List["WowSpell"] = []
+        self.spells: list["WowSpell"] = []
+        self.buffs: list["WowSpell"] = []
+        self.event_spells: list["WowSpell"] = []
 
     def __repr__(self):
         return f"<RaidBoss(id={self.id} name={self.name})>"
 
-    def as_dict(self):
+    def as_dict(self) -> dict[str, typing.Any]:
         return {
             "id": self.id,
             "name": self.name,
@@ -42,28 +53,30 @@ class RaidBoss(base.Model):
 
     @property
     def full_name_slug(self):
+        """Complete Name slugified. eg.: `halondrus-the-reclaimer`."""
         return utils.slug(self.full_name, space="-")
 
-    @property
-    def icon(self):
-        return f"bosses/{self.zone.name_slug}/{self.full_name_slug}.jpg"
+    # @property
+    # def icon(self):
+    #     """Relative path to the Boss Icon."""
+    #     return f"bosses/{self.zone.name_slug}/{self.full_name_slug}.jpg"
 
     @property
     def all_abilities(self):
+        """Complete List of all Spells, Buffs and other Events."""
         return self.spells + self.buffs + self.event_spells
 
     ##########################
     # Methods
     #
-    def add_cast(self, **kwargs) -> WowSpell:
+    def add_cast(self, **kwargs: typing.Any) -> WowSpell:
         kwargs.setdefault("spell_type", self.full_name_slug)
         spell = WowSpell(**kwargs)
 
         self.spells.append(spell)
         return spell
 
-    def add_buff(self, spell_id, **kwargs) -> WowSpell:
-
+    def add_buff(self, spell_id: int, **kwargs: typing.Any) -> WowSpell:
         kwargs.setdefault("spell_type", self.full_name_slug)
         spell = WowSpell(spell_id=spell_id, **kwargs)
 
@@ -85,7 +98,7 @@ class RaidBoss(base.Model):
         kwargs.setdefault("spell_type", self.full_name_slug)
         spell = WowSpell(**kwargs)
 
-        spell.specs = [self]
+        # spell.specs = [self]
         self.event_spells.append(spell)
 
     ##########################

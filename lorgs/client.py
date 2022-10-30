@@ -17,7 +17,7 @@ ERROR_MESSAGE_INVALID_REPORT = "This report does not exist."
 
 
 class InvalidReport(ValueError):
-    """Exception raised when a report was not found"""
+    """Exception raised when a report was not found."""
 
 
 class WarcraftlogsClient:

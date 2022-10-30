@@ -8,14 +8,6 @@ import typing
 from lorgs.models import base
 
 
-class EventType(enum.Enum):
-    """Event Types used in Warcraftlogs.""" 
-    CAST = "cast"
-    BUFF = "buff"
-    DEBUFF = "debuff"
-    DAMAGE = "damage"
-
-
 class EventSource(enum.Enum):
     PLAYER = "player"
     ENEMY = "enemy"
@@ -38,7 +30,11 @@ class WowSpell(base.Model):
     TAG_DYNAMIC_CD = "dynamic_cd"
 
     # map to track spell varations and their "master"-spells
-    spell_variations : typing.Dict[int, int]= {}
+    # 
+    spell_variations : dict[int, int]= {}
+    """Map to track spell variations and their "master"-spells.
+        `[key: id of the variation] = id of the "master"-spell`
+    """
 
     @staticmethod
     def spell_ids(spells: typing.List["WowSpell"]) -> typing.List[int]:
@@ -64,48 +60,62 @@ class WowSpell(base.Model):
         return ",".join(str(spell_id) for spell_id in spell_ids)
 
     @classmethod
-    def resolve_spell_id(cls, spell_id) -> int:
+    def resolve_spell_id(cls, spell_id: int) -> int:
         """Resolve a Spell ID for a spell variation to its main-spell."""
         return cls.spell_variations.get(spell_id) or spell_id
 
-    def __init__(self, spell_id: int, cooldown: int = 0, duration: int = 0, show: bool = True, **kwargs):
+    def __init__(self,
+        spell_id: int,
+        cooldown: int = 0,
+        duration: int = 0,
+        show: bool = True,
+        icon: str = "",
+        name: str = "",
+        color: str = "",
+        variations: list[int] = [],
+        spell_type: str = "",
+        tags: list[str] = [],
+        event_type: str = "cast",
+        source: str = "player",
+        wowhead_data: str = "",
+    ):
         self.spell_id = spell_id
         self.cooldown = cooldown
         self.duration = duration
-
-        self.icon = kwargs.get("icon") or ""
-        self.name = kwargs.get("name") or ""
+        self.icon = icon
+        self.name = name
         self.show = show
-        self.color = kwargs.get("color") or ""
+        self.color = color
 
-        self.variations: typing.List[int] = []
+        self.variations: list[int] = []
+        """Spell IDs for Variants of the same Spell. Eg.: Glyphs or Talents sometimes change the Spell ID."""
+        self.add_variations(*variations)
 
-        self.add_variations(*kwargs.get("variations", []))
+        self.spell_type = spell_type
+        """type/category of spell. This is ussualy the class or spec name.
+        But can also be things like "other-trinket" or "other-buffs" for Raid Buffs."""
 
-        # str: type/category of spell
-        self.spell_type = kwargs.get("spell_type") or ""
+        self.tags = tags
+        """tags to indicate special properties. eg.: dynamic cooldown."""
 
-        # list(str): tags to indicate special properties
-        self.tags = kwargs.get("tags") or []
+        self.event_type = event_type
+        """type of event (eg.: "cast", "buff", debuff)."""
 
-        # type of event (eg.: Spell, Buff, Debuff)
-        self.event_type: EventType = kwargs.get("event_type") or EventType.CAST
+        self.source = source
+        """origin of the spell. aka: who is casting this spell."""
 
-        #: origin of the spell. aka: who is casting this spell
-        self.source: EventSource = kwargs.get("source") or EventSource.PLAYER
-
-        """str: info used for the wowhead tooltips."""
-        self.wowhead_data = kwargs.get("wowhead_data") or  f"spell={self.spell_id}"
+        self.wowhead_data = wowhead_data or  f"spell={self.spell_id}"
+        """Info used for the wowhead tooltips."""
 
     def __repr__(self):
         return f"<Spell({self.spell_id}, cd={self.cooldown})>"
 
-    def is_item_spell(self):
-        """bool: true if this spell from an item."""
+    def is_item_spell(self) -> bool:
+        """True if this spell from an item."""
         return self.spell_type in (self.TYPE_TRINKET, self.TYPE_POTION)
 
     def is_healing_cooldown(self):
-        """bool: true if a spell is what we call a healer cooldown."""
+        """True if a spell is what we call a healer cooldown."""
         if self.is_item_spell():
             return False
         if self.spell_type in (self.TYPE_PERSONAL, ):

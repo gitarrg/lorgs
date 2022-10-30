@@ -24,25 +24,11 @@ class MetaInstanceRegistry(type):
         return instance
 
 
-class IconPathMixin:
-    """docstring for img_path_mixin"""
-
-    @property
-    def icon_path(self):
-        if not self.icon:
-            return ""
-        return f"/static/images/{self.icon}"
-
-
 T = TypeVar('T', bound="Model")
 
 
-class Model(IconPathMixin, metaclass=MetaInstanceRegistry):
-    """
-
-    TODO:
-        - add filter
-    """
+class Model(metaclass=MetaInstanceRegistry):
+    """"""
 
     @classmethod
     def get(cls: Type[T], **kwargs) -> T:

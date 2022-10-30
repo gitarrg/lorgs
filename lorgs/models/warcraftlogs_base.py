@@ -105,7 +105,7 @@ class wclclient_mixin:
         return f"({queries_combined})"
 
     @abc.abstractmethod
-    def process_query_result(self, query_result: dict):
+    def process_query_result(self, query_result: typing.Dict):
         """Implement some custom logic here to process our results from the query."""
 
     async def load_many(self, objects, filters=None, chunk_size=0):

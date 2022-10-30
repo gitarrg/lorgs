@@ -158,10 +158,9 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
 
             # Create the Cast Object
             cast = Cast()
-            cast.spell_id = cast_data.get("abilityGameID")
-            cast.spell_id = WowSpell.resolve_spell_id(cast.spell_id)
-            cast.timestamp = cast_data.get("timestamp", 0) - fight_start
-            cast.duration = cast_data.get("duration")
+            cast.spell_id = WowSpell.resolve_spell_id(cast_data.abilityGameID)
+            cast.timestamp = cast_data.timestamp - fight_start
+            cast.duration = cast_data.duration
 
             if cast_type in ("cast", "damage"):
                 cast.stacks = 1
@@ -189,8 +188,8 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
                 # no stacks left --> buff/debuff ends
                 if start_cast.stacks == 0:
                     start_cast.duration = (cast.timestamp - start_cast.timestamp)
-                    start_cast.duration *= 0.001
-                    active_buffs[cast.spell_id] = None
+                    start_cast.duration *= 0.001  # type: ignore
+                    active_buffs.pop(cast.spell_id)
 
             if cast.stacks == 1:  # only add new buffs on their first application
                 # track applied buffs
@@ -262,25 +261,25 @@ class Player(BaseActor):
     ############################################################################
     # Query
     #
-    def get_cast_query(self, spells=typing.List[WowSpell]):
+    def get_cast_query(self, spells: list[WowSpell]):
         cast_query = super().get_cast_query(spells=spells)
         if cast_query and self.name:
             cast_query = f"source.name='{self.name}' and {cast_query}"
         return cast_query
 
-    def get_buff_query(self, spells=typing.List[WowSpell]):
+    def get_buff_query(self, spells: list[WowSpell]):
         buffs_query = super().get_buff_query(spells=spells)
         if buffs_query and self.name:
             buffs_query = f"target.name='{self.name}' and {buffs_query}"
         return buffs_query
 
-    def get_debuff_query(self, spells=typing.List[WowSpell]):
+    def get_debuff_query(self, spells: list[WowSpell]):
         debuffs_query = super().get_debuff_query(spells=spells)
         if debuffs_query and self.name:
             debuffs_query = f"source.name='{self.name}' and {debuffs_query}"
         return debuffs_query
 
-    def get_event_query(self, spells=typing.List[WowSpell]):
+    def get_event_query(self, spells=list[WowSpell]):
 
         # 1) spells used by the player
         player_query = ""
