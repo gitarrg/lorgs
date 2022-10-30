@@ -1,25 +1,28 @@
 """Adds a CORS Middleware."""
 
 import os
-import typing
+# import typing
 
-if typing.TYPE_CHECKING:
-    import fastapi
-
+import fastapi
+from fastapi.middleware.cors import CORSMiddleware
 
 # TMP FIX
-DEBUG = True # os.getenv("DEBUG")
+DEBUG = os.getenv("DEBUG")
 
 
-def init(app: "fastapi.FastAPI", enabled=DEBUG):
+def init(app: fastapi.FastAPI, enabled=DEBUG):
 
     if not enabled:
         return
 
-    from fastapi.middleware.cors import CORSMiddleware
+    origins = ["https://lorrgs.io"]
+    if DEBUG:
+        origins.append("*")
+
+    
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
+        allow_origins=origins,
         allow_credentials=True,
         allow_methods=["POST", "GET"],
         allow_headers=["*"],
