@@ -25,7 +25,7 @@ ROLE_PERMISSIONS = {
 }
 
 
-class User(me.Document):
+class User(me.Document):  # type: ignore
 
     meta = {
         # ignore non existing properties
@@ -36,23 +36,23 @@ class User(me.Document):
         ]
     }
 
-    discord_id: int = me.IntField() # type: ignore[override]
+    discord_id: int = me.IntField()
 
     # Discord Hame+Hash: eg.: "Arrg#2048"
-    discord_tag: str = me.StringField() # type: ignore[override]
+    discord_tag: str = me.StringField()
 
-    discord_avatar: str = me.StringField() # type: ignore[override]
+    discord_avatar: str = me.StringField()
 
     # Role IDs
-    discord_roles: List[str] = me.ListField(me.StringField(), default=[])  # type: ignore[override]
+    discord_roles: List[str] = me.ListField(me.StringField(), default=[]) 
 
-    extra_roles: List[str] = me.ListField(me.StringField(), default=[])  # type: ignore[override]
+    extra_roles: List[str] = me.ListField(me.StringField(), default=[]) 
 
     # just for info
-    last_login: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField()  # type: ignore[override]
+    last_login: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField() 
 
     # last time the roles have been checked
-    updated: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField()  # type: ignore[override]
+    updated: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField() 
 
     ################################
     # insert generated fields

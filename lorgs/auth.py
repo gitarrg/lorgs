@@ -151,7 +151,7 @@ async def get_user_info(user_id):
 #
 
 
-async def get_member_info(user_id):
+async def get_member_info(user_id: int):
     """Get the Member Info about a user in the Lorrgs Discord.
 
     This will return information like member-roles, nickname joined date etc.

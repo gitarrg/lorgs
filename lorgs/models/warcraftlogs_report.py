@@ -41,18 +41,14 @@ class Report(warcraftlogs_base.EmbeddedDocument):
     owner: str = me.StringField(default="")
 
     # fights in this report keyed by fight_id. (they may or may not be loaded)
-    fights: typing.Dict[str, Fight] = me.MapField(me.EmbeddedDocumentField(Fight), default={})
+    fights: dict[str, Fight] = me.MapField(me.EmbeddedDocumentField(Fight), default={})
 
     # players in this report.
     #   Note: not every player might participate in every fight.
-    players: typing.Dict[str, Player] = me.MapField(me.EmbeddedDocumentField(Player), default={})
+    players: dict[str, Player] = me.MapField(me.EmbeddedDocumentField(Player), default={})
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        # convert list to dict for old DB entries
-        # if isinstance(self.fights, list):
-        #     self.fights = {fight.fight_id: fight for fight in self.fights}
 
         for fight in self.fights.values():
             fight.report = self

@@ -50,5 +50,5 @@ class Cast(me.EmbeddedDocument):
         return self.timestamp + self.duration
 
     @end_time.setter
-    def end_time(self, value: int):
+    def end_time(self, value: int) -> None:
         self.duration = (value - self.timestamp)

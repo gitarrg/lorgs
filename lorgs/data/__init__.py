@@ -11,7 +11,6 @@ from lorgs.data.roles import *
 from lorgs.data.classes import *
 
 # Consumables, Gear and similar
-from lorgs.data.covenants import *
 from lorgs.data.potions import *
 from lorgs.data.trinkets import *
 from lorgs.data.racials import *

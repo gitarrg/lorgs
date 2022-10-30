@@ -17,7 +17,7 @@ class WowRole(base.Model):
         self.id = id  #used for sorting
         self.name = name
         self.code = code or name.lower()
-        self.specs: typing.List["WowSpec"] = []
+        self.specs: list["WowSpec"] = []
 
     def __repr__(self):
         return f"<Role({self.name})>"
@@ -25,7 +25,7 @@ class WowRole(base.Model):
     def __str__(self):
         return self.code
 
-    def __lt__(self, other: "WowRole"):
+    def __lt__(self, other: "WowRole") -> bool:
         return self.id < other.id
 
     def as_dict(self):

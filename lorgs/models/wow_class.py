@@ -1,4 +1,4 @@
-"""The Reason why all these classes are prefixes with "wow"."""
+"""Playable (and some non playble) Classes in WoW."""
 
 # IMPORT STANDARD LIBRARIES
 import typing
@@ -19,10 +19,10 @@ class WowClass(base.Model):
         self.id = id
         self.name = name
         self.color = color
-        self.specs: typing.List[WowSpec] = []
-        self.spells: typing.List[WowSpell] = []
-        self.buffs: typing.List[WowSpell] = []
-        self.debuffs: typing.List[WowSpell] = []
+        self.specs: list[WowSpec] = []
+        self.spells: list[WowSpell] = []
+        self.buffs: list[WowSpell] = []
+        self.debuffs: list[WowSpell] = []
 
         self.name_slug_cap = self.name.replace(" ", "")
         self.name_slug = utils.slug(self.name)
@@ -33,7 +33,7 @@ class WowClass(base.Model):
     def __repr__(self):
         return f"<Class(name='{self.name}')>"
 
-    def __lt__(self, other) -> bool:
+    def __lt__(self, other: "WowClass") -> bool:
         return self.id < other.id
 
     def as_dict(self):
@@ -54,7 +54,7 @@ class WowClass(base.Model):
         self.spells.append(spell)
         return spell
 
-    def add_buff(self, spell: WowSpell = None, **kwargs):
+    def add_buff(self, spell: typing.Optional[WowSpell] = None, **kwargs: typing.Any) -> None:
 
         if not spell:
             kwargs.setdefault("color", self.color)
@@ -63,7 +63,7 @@ class WowClass(base.Model):
 
         self.buffs.append(spell)
 
-    def add_debuff(self, spell: WowSpell = None, **kwargs):
+    def add_debuff(self, spell: typing.Optional[WowSpell] = None, **kwargs: typing.Any) -> None:
 
         if not spell:
             kwargs.setdefault("color", self.color)

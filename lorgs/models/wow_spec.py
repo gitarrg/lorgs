@@ -1,7 +1,6 @@
 """Models for Classes, Specs, Spells and Roles."""
 
 # IMPORT STANDARD LIBRARIES
-from collections import defaultdict
 import typing
 
 # IMPORT LOCAL LIBRARIES
@@ -14,7 +13,7 @@ if typing.TYPE_CHECKING:
     from lorgs.models.wow_class import WowClass
 
 
-def spell_ids(spells) -> typing.List[int]:
+def spell_ids(spells: list[WowSpell]) -> list[int]:
     """Converts a list of Spells to their spell_ids."""
     return [spell.spell_id for spell in spells]
 
@@ -26,10 +25,10 @@ class WowSpec(base.Model):
         super().__init__()
         self.name = name
 
-        self.spells: typing.List[WowSpell] = []
-        self.buffs: typing.List[WowSpell] = []
-        self.debuffs: typing.List[WowSpell] = []
-        self.events: typing.List[WowSpell] = []
+        self.spells: list[WowSpell] = []
+        self.buffs: list[WowSpell] = []
+        self.debuffs: list[WowSpell] = []
+        self.events: list[WowSpell] = []
 
         self.role = role
         self.role.specs.append(self)
@@ -54,9 +53,9 @@ class WowSpec(base.Model):
     def __repr__(self):
         return f"<Spec({self.full_name})>"
 
-    def __lt__(self, other):
+    def __lt__(self, other: "WowSpec") -> bool:
 
-        def sort_key(obj):
+        def sort_key(obj: WowSpec) -> tuple["WowRole", "WowClass", str]:
             return (obj.role, obj.wow_class, obj.name)
 
         return sort_key(self) < sort_key(other)
@@ -96,7 +95,7 @@ class WowSpec(base.Model):
     ##########################
     # Methods
     #
-    def add_spell(self, spell: WowSpell = None, **kwargs):
+    def add_spell(self, spell: typing.Optional[WowSpell] = None, **kwargs: typing.Any):
 
         if not spell:
             kwargs.setdefault("color", self.wow_class.color)
@@ -109,7 +108,7 @@ class WowSpec(base.Model):
     def add_spells(self, *spells: WowSpell):
         self.spells.extend(spells)
 
-    def add_buff(self, spell: WowSpell = None, **kwargs):
+    def add_buff(self, spell: typing.Optional[WowSpell] = None, **kwargs):
 
         if not spell:
             kwargs.setdefault("color", self.wow_class.color)
@@ -122,7 +121,7 @@ class WowSpec(base.Model):
     def add_buffs(self, *spells: WowSpell):
         self.buffs.extend(spells)
 
-    def add_debuff(self, spell: WowSpell = None, **kwargs):
+    def add_debuff(self, spell: typing.Optional[WowSpell] = None, **kwargs):
 
         if not spell:
             kwargs.setdefault("color", self.wow_class.color)
