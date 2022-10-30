@@ -1,15 +1,12 @@
+"""Enpoints dealing with Rankings per Spec."""
 # IMPORT THIRD PARTY LIBRARIES
-import time
 import fastapi
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import data
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_ranking
 from lorgs.models.task import Task
 from lorgs.models.wow_spec import WowSpec
-from lorgs.models.raid_boss import RaidBoss
-# from lorrgs_api.routes import api_tasks
 
 
 router = fastapi.APIRouter(tags=["spec_rankings"])
@@ -23,6 +20,7 @@ async def get_spec_ranking(
     metric: str = "",
     limit: int = 0
 ):
+    """Get the Rankings for a given Spec and Boss."""
     if not metric:
         spec = WowSpec.get(full_name_slug=spec_slug)
         metric = spec.role.metric
@@ -74,6 +72,7 @@ async def spec_ranking_load(
     difficulty="all", metric="all",
     limit: int = 50, clear: bool = False
 ):
+    """Queue an update for the given specs and bosses."""
     payload = {
         "task": "load_spec_rankings",
         "spec_slug": spec_slug, "boss_slug": boss_slug,
