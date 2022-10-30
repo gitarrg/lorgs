@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-
-docker.exe run \
-    -p 6379:6379 \
-    --name lorgs-redis \
-    -d redis redis-server
-
