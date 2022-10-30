@@ -23,5 +23,7 @@ deploy_variables.yaml
 
 # google account credentials
 google_creds.json
-package-lock.json
 tsconfig.tsbuildinfo
+
+.serverless/
+.deploy/

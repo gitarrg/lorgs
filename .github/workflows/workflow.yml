@@ -1,0 +1,32 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches:
+      - master
+      - aws
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_CONFIG_FILE: .github/workflows/aws_config
+      AWS_ACCESS_KEY_ID : ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY : ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    steps:
+      # Checkout the Code
+      - uses: actions/checkout@v2
+
+      # Setup Python
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip' # caching pip dependencies
+
+      # Install Deploy Dependencies
+      - run: pip install boto3
+
+      # Install Deploy Dependencies
+      - run: python scripts/deploy.py

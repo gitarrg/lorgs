@@ -2,6 +2,7 @@
 
 # IMPORT THIRD PARTY LIBRARIES
 import typing
+from typing import List
 import arrow
 import mongoengine as me
 
@@ -35,28 +36,39 @@ class User(me.Document):
         ]
     }
 
-    discord_id: int = me.IntField()
+    discord_id: int = me.IntField() # type: ignore[override]
 
     # Discord Hame+Hash: eg.: "Arrg#2048"
-    discord_tag: str = me.StringField()
+    discord_tag: str = me.StringField() # type: ignore[override]
 
-    discord_avatar: str = me.StringField()
+    discord_avatar: str = me.StringField() # type: ignore[override]
 
     # Role IDs
-    discord_roles = me.ListField(me.StringField(), default=[])
+    discord_roles: List[str] = me.ListField(me.StringField(), default=[])  # type: ignore[override]
 
-    extra_roles = me.ListField(me.StringField(), default=[])
+    extra_roles: List[str] = me.ListField(me.StringField(), default=[])  # type: ignore[override]
 
     # just for info
-    last_login: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField()
+    last_login: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField()  # type: ignore[override]
 
     # last time the roles have been checked
-    updated: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField()
+    updated: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField()  # type: ignore[override]
+
+    ################################
+    # insert generated fields
+    if typing.TYPE_CHECKING:
+        @classmethod
+        def objects(cls, **kwargs):
+
+            class X():
+                def first(self) -> typing.Optional[User]:
+                    return User()
+            return X()
+
 
     ################################
     # Properties
     #
-
     @property
     def name(self):
         return self.discord_tag.split("#")[0]

@@ -4,26 +4,28 @@
 import os
 
 # IMPORT THIRD PARTY LIBRARIES
-from pymongo import monitoring
 import mongoengine as me
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.logger import logger
 
 
-class CommandLogger(monitoring.CommandListener):
+SETUP_COMMANDLOGGER = False
+if SETUP_COMMANDLOGGER:
+    from pymongo import monitoring
 
-    def started(self, event):
-        logger.debug("{0.command_name} start".format(event))
+    class CommandLogger(monitoring.CommandListener):
 
-    def succeeded(self, event):
-        logger.debug("{0.command_name} succeeded in {0.duration_micros:g}μs".format(event))
+        def started(self, event):
+            logger.debug("{0.command_name} start".format(event))
 
-    def failed(self, event):
-        logger.debug("{0.command_name} failed in {0.duration_micros:g}μs".format(event))
+        def succeeded(self, event):
+            logger.debug("{0.command_name} succeeded in {0.duration_micros:g}μs".format(event))
 
+        def failed(self, event):
+            logger.debug("{0.command_name} failed in {0.duration_micros:g}μs".format(event))
 
-# monitoring.register(CommandLogger())
+    monitoring.register(CommandLogger())
 
 
 URI = os.getenv("MONGO_URI")
