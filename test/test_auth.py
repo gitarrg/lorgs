@@ -1,7 +1,7 @@
 import asyncio
 
 import dotenv
-dotenv.load_dotenv() # pylint: disable=wrong-import-position
+dotenv.load_dotenv()  # pylint: disable=wrong-import-position
 
 from lorgs import auth
 
