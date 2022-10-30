@@ -13,15 +13,12 @@ import boto3
 from lorgs import utils
 
 
-# sqs = boto3.resource("sqs")
 SQS_CLIENT = boto3.client("sqs")
-
 SQS_QUEUE_URL = os.getenv("SQS_QUEUE_URL") or ""
-# SQS_QUEUE = sqs.Queue(url=SQS_QUEUE_URL)
 
 
 def send_message(payload, queue_url=SQS_QUEUE_URL, message_group = ""):
-
+    """Send a single Message."""
     message_group = message_group or str(uuid.uuid4())
     return SQS_CLIENT.send_message(
         QueueUrl=queue_url,
@@ -31,7 +28,7 @@ def send_message(payload, queue_url=SQS_QUEUE_URL, message_group = ""):
 
 
 def send_message_batch(payloads: List[Dict[str, Any]], queue_url = "", chunk_size=10):
-    """Batch Submit multiple Messages"""
+    """Batch Submit multiple Messages."""
     print("submit_messages", payloads)
 
     # Wrap Payloads
@@ -48,4 +45,3 @@ def send_message_batch(payloads: List[Dict[str, Any]], queue_url = "", chunk_siz
             QueueUrl=queue_url,
             Entries=entries, # type: ignore
         )
-        # print("response", response)

@@ -14,29 +14,3 @@ Please make sure to update tests as appropriate.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
-
-
-
-# CI Setup
-
-Store GH Secret
-```
-base64 google_creds.json > google_creds_base64.json
-gh secret set GOOGLE_APPLICATION_CREDENTIALS_BASE64 < google_creds_base64.json
-rm google_creds_base64.json
-```
-
-# Serverless
-```
-serverless deploy function --function=main
-```
-
-fix:
-```js
-// file: serverless-python-requirements\index.js 119+
-
-return inputOpt.function
-    ? [inputOpt.functionObj || this.serverless.service.getFunction(inputOpt.function)]
-    : values(this.serverless.service.functions).filter((func) => !func.image);
-}
-```
