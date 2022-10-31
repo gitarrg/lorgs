@@ -1,164 +1,162 @@
 {
-	"data": {
-		"worldData": {
-			"encounter": {
-				"characterRankings": {
-					"page": 1,
-					"hasMorePages": true,
-					"count": 100,
-					"rankings": [
-						{
-							"name": "灬不再想嗳灬",
-							"class": "Paladin",
-							"spec": "Holy",
-							"amount": 17551.241679909,
-							"duration": 376949,
-							"startTime": 1634544096374,
-							"report": {
-								"code": "Q7jC6zbftX1ahdVR",
-								"fightID": 5,
-								"startTime": 1634543354962
-							},
-							"covenantID": 2,
-							"soulbindID": 9
+	"worldData": {
+		"encounter": {
+			"characterRankings": {
+				"page": 1,
+				"hasMorePages": true,
+				"count": 100,
+				"rankings": [
+					{
+						"name": "灬不再想嗳灬",
+						"class": "Paladin",
+						"spec": "Holy",
+						"amount": 17551.241679909,
+						"duration": 376949,
+						"startTime": 1634544096374,
+						"report": {
+							"code": "Q7jC6zbftX1ahdVR",
+							"fightID": 5,
+							"startTime": 1634543354962
 						},
-						{
-							"name": "Delinkthaum",
-							"class": "Paladin",
-							"spec": "Holy",
-							"amount": 16504.945775572,
-							"duration": 354545,
-							"startTime": 1635305998803,
-							"report": {
-								"code": "Gjc7atzTwgY23bRf",
-								"fightID": 34,
-								"startTime": 1635295790488
-							},
-							"covenantID": 2,
-							"soulbindID": 9
+						"covenantID": 2,
+						"soulbindID": 9
+					},
+					{
+						"name": "Delinkthaum",
+						"class": "Paladin",
+						"spec": "Holy",
+						"amount": 16504.945775572,
+						"duration": 354545,
+						"startTime": 1635305998803,
+						"report": {
+							"code": "Gjc7atzTwgY23bRf",
+							"fightID": 34,
+							"startTime": 1635295790488
 						},
-						{
-							"name": "Amoør",
-							"class": "Paladin",
-							"spec": "Holy",
-							"amount": 15579.9841927,
-							"duration": 403611,
-							"startTime": 1635472538090,
-							"report": {
-								"code": "hgJLw4ZqYA2vXrPB",
-								"fightID": 17,
-								"startTime": 1635466371906
-							},
-							"covenantID": 2,
-							"soulbindID": 9
+						"covenantID": 2,
+						"soulbindID": 9
+					},
+					{
+						"name": "Amoør",
+						"class": "Paladin",
+						"spec": "Holy",
+						"amount": 15579.9841927,
+						"duration": 403611,
+						"startTime": 1635472538090,
+						"report": {
+							"code": "hgJLw4ZqYA2vXrPB",
+							"fightID": 17,
+							"startTime": 1635466371906
 						},
-						{
-							"name": "Supslift",
-							"class": "Paladin",
-							"spec": "Holy",
-							"amount": 15383.206851755,
-							"duration": 340234,
-							"startTime": 1632920713032,
-							"report": {
-								"code": "NP8Xhg2j73DcAF1w",
-								"fightID": 36,
-								"startTime": 1632394030873
-							},
-							"covenantID": 2,
-							"soulbindID": 9
+						"covenantID": 2,
+						"soulbindID": 9
+					},
+					{
+						"name": "Supslift",
+						"class": "Paladin",
+						"spec": "Holy",
+						"amount": 15383.206851755,
+						"duration": 340234,
+						"startTime": 1632920713032,
+						"report": {
+							"code": "NP8Xhg2j73DcAF1w",
+							"fightID": 36,
+							"startTime": 1632394030873
 						},
-						{
-							"name": "Holypalaswê",
-							"class": "Paladin",
-							"spec": "Holy",
-							"amount": 15117.673214742,
-							"duration": 364331,
-							"startTime": 1634758258559,
-							"report": {
-								"code": "ZKFCGNaMBpc27k1V",
-								"fightID": 10,
-								"startTime": 1634751999940
-							},
-							"covenantID": 2,
-							"soulbindID": 9
+						"covenantID": 2,
+						"soulbindID": 9
+					},
+					{
+						"name": "Holypalaswê",
+						"class": "Paladin",
+						"spec": "Holy",
+						"amount": 15117.673214742,
+						"duration": 364331,
+						"startTime": 1634758258559,
+						"report": {
+							"code": "ZKFCGNaMBpc27k1V",
+							"fightID": 10,
+							"startTime": 1634751999940
 						},
-						{
-							"name": "끼잉낑",
-							"class": "Paladin",
-							"spec": "Holy",
-							"amount": 15116.08234922,
-							"duration": 379360,
-							"startTime": 1633497416961,
-							"report": {
-								"code": "KkLpvqVy7X2YDZtx",
-								"fightID": 24,
-								"startTime": 1633493590716
-							},
-							"covenantID": 2,
-							"soulbindID": 9
+						"covenantID": 2,
+						"soulbindID": 9
+					},
+					{
+						"name": "끼잉낑",
+						"class": "Paladin",
+						"spec": "Holy",
+						"amount": 15116.08234922,
+						"duration": 379360,
+						"startTime": 1633497416961,
+						"report": {
+							"code": "KkLpvqVy7X2YDZtx",
+							"fightID": 24,
+							"startTime": 1633493590716
 						},
-						{
-							"name": "Wakuwaku",
-							"class": "Paladin",
-							"spec": "Holy",
-							"amount": 14999.480364841,
-							"duration": 382961,
-							"startTime": 1634092360349,
-							"report": {
-								"code": "LHq9kh1CxXgFM24A",
-								"fightID": 5,
-								"startTime": 1634090541504
-							},
-							"covenantID": 2,
-							"soulbindID": 9
+						"covenantID": 2,
+						"soulbindID": 9
+					},
+					{
+						"name": "Wakuwaku",
+						"class": "Paladin",
+						"spec": "Holy",
+						"amount": 14999.480364841,
+						"duration": 382961,
+						"startTime": 1634092360349,
+						"report": {
+							"code": "LHq9kh1CxXgFM24A",
+							"fightID": 5,
+							"startTime": 1634090541504
 						},
-						{
-							"name": "莫少",
-							"class": "Paladin",
-							"spec": "Holy",
-							"amount": 14955.527858607,
-							"duration": 395551,
-							"startTime": 1631241464903,
-							"report": {
-								"code": "GqhdN4ZKcjawfy7t",
-								"fightID": 18,
-								"startTime": 1631236689026
-							},
-							"covenantID": 2,
-							"soulbindID": 9
+						"covenantID": 2,
+						"soulbindID": 9
+					},
+					{
+						"name": "莫少",
+						"class": "Paladin",
+						"spec": "Holy",
+						"amount": 14955.527858607,
+						"duration": 395551,
+						"startTime": 1631241464903,
+						"report": {
+							"code": "GqhdN4ZKcjawfy7t",
+							"fightID": 18,
+							"startTime": 1631236689026
 						},
-						{
-							"name": "Redponyo",
-							"class": "Paladin",
-							"spec": "Holy",
-							"amount": 14542.553567349,
-							"duration": 424559,
-							"startTime": 1631201829560,
-							"report": {
-								"code": "qCkyMj1X6bxVaFW3",
-								"fightID": 43,
-								"startTime": 1631188646575
-							},
-							"covenantID": 2,
-							"soulbindID": 9
+						"covenantID": 2,
+						"soulbindID": 9
+					},
+					{
+						"name": "Redponyo",
+						"class": "Paladin",
+						"spec": "Holy",
+						"amount": 14542.553567349,
+						"duration": 424559,
+						"startTime": 1631201829560,
+						"report": {
+							"code": "qCkyMj1X6bxVaFW3",
+							"fightID": 43,
+							"startTime": 1631188646575
 						},
-						{
-							"name": "巴哈姆特杰克",
-							"class": "Paladin",
-							"spec": "Holy",
-							"amount": 14538.589042255,
-							"duration": 401798,
-							"startTime": 1631715644437,
-							"report": {
-								"code": "rQavAM6VjCqxZBRf",
-								"fightID": 20,
-								"startTime": 1631707779638
-							},
-							"covenantID": 2,
-							"soulbindID": 9
-						}
-					]
-				}
+						"covenantID": 2,
+						"soulbindID": 9
+					},
+					{
+						"name": "巴哈姆特杰克",
+						"class": "Paladin",
+						"spec": "Holy",
+						"amount": 14538.589042255,
+						"duration": 401798,
+						"startTime": 1631715644437,
+						"report": {
+							"code": "rQavAM6VjCqxZBRf",
+							"fightID": 20,
+							"startTime": 1631707779638
+						},
+						"covenantID": 2,
+						"soulbindID": 9
+					}
+				]
 			}
 		}
 	}
