@@ -41,7 +41,7 @@ class UserReport(me.Document):
     @classmethod
     def from_report_id(cls, report_id: str, create=False) -> typing.Union["UserReport", None]:
         """Need to split it, as otherwise the creation with nested parm does;t work"""
-        user_report = cls.objects(report_id=report_id).first()  # pylint: disable=no-member
+        user_report: "UserReport" = cls.objects(report_id=report_id).first()  # pylint: disable=no-member
         if user_report:
             return user_report
 
@@ -55,7 +55,7 @@ class UserReport(me.Document):
     ################################
     # Properties
     #
-    def as_dict(self):
+    def as_dict(self) -> dict[str, typing.Any]:
         info = self.report.as_dict()
         info["updated"] = int(self.updated.timestamp())
         return info

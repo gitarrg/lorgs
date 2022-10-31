@@ -16,19 +16,20 @@ EventDataType = typing.Literal[
 
 
 class ReportEvent(BaseModel):
+    """Represents a single event that occurs in the fight."""
 
-    timestamp: int
+    timestamp: int = 0
     """Timestamp of the Event (Milliseconds relative to the Report Start)."""
 
-    type: typing.Union[EventDataType, str]
+    type: typing.Union[EventDataType, str] = ""
     """The type of Event. """
 
-    sourceID: int
+    sourceID: int = 0
 
-    targetID: int
+    targetID: int = 0
 
-    abilityGameID: int
+    abilityGameID: int = 0
 
-    fight: int
+    fight: int = 0
 
     duration: int = 0

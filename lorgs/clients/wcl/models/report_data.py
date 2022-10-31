@@ -51,7 +51,7 @@ class Report(BaseModel):
     guild: typing.Optional[Guild] = None
     """The guild that the report belongs to. If this is null, then the report was uploaded to the user's personal logs."""
 
-    @validator("events")
+    @validator("events", pre=True)
     def unwrap_event_data(cls, v):
         """Events come in wraped in an ReportEventPaginator. Lets skip that step."""
         try:

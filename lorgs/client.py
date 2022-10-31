@@ -63,7 +63,7 @@ class WarcraftlogsClient:
     #   Connection
     #
 
-    async def update_auth_token(self):
+    async def update_auth_token(self) -> None:
         """Request a new Auth Token from Warcraftlogs."""
         data = {
             "grant_type": "client_credentials",
@@ -75,15 +75,15 @@ class WarcraftlogsClient:
             async with session.post(url=self.URL_AUTH, data=data) as resp:
 
                 try:
-                    data = await resp.json()
+                    response: dict[str, str] = await resp.json()
                 except Exception as e:
                     logger.error(resp)
                     raise e
 
-        token = data.get("access_token", "")
+        token = response.get("access_token", "")
         self.headers["Authorization"] = "Bearer " + token
 
-    async def ensure_auth(self):
+    async def ensure_auth(self) -> None:
         if self.headers:
             return
         await self.update_auth_token()
@@ -103,7 +103,7 @@ class WarcraftlogsClient:
         return info.get("limitPerHour", 0) - info.get("pointsSpentThisHour", 0)
 
     @timeit
-    async def query(self, query):
+    async def query(self, query: str) -> dict[str, typing.Any]:
         self._num_queries += 1
         logger.debug("Num Queries: %d", self._num_queries)
 
@@ -149,9 +149,9 @@ class WarcraftlogsClient:
                         print(query)
                         raise ValueError(msg)
 
-                return result.get("data", {})
+                return result.get("data", {}) # type: ignore
 
-    async def multiquery(self, queries):
+    async def multiquery(self, queries: list[str]) -> list[str]:
         """Execute a list of queries as a batch.
 
         Args:

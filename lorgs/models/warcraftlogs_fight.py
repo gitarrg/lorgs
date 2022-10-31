@@ -14,9 +14,11 @@ from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
 from lorgs.models.raid_boss import RaidBoss
 from lorgs.models.warcraftlogs_boss import Boss
-from lorgs.models.warcraftlogs_actor import Player
+from lorgs.models.warcraftlogs_player import Player
 from lorgs.models.wow_spec import WowSpec
 
+if typing.TYPE_CHECKING:
+    from lorgs.models.warcraftlogs_report import Report
 
 
 def get_composition(players: typing.List[Player]) -> dict:
@@ -45,9 +47,10 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
     fight_id = me.IntField(primary_key=True)
 
     start_time: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField()
+    """Encounter Start."""
 
-    # fight duration in milliseconds
     duration: int = me.IntField(default=0)
+    """fight duration in milliseconds."""
 
     # deprecated in favor of "duration".
     end_time_old: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField(db_field="end_time")
@@ -61,13 +64,13 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
     ilvl = me.FloatField(default=0)
     damage_taken = me.IntField(default=0)
 
-    # boss percentage at the end. (its 0.01 for kills)
+    # boss percentage at the end.
     percent = me.FloatField(default=0)
     kill = me.BooleanField(default=True)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: typing.Any, **kwargs: typing.Any):
         super().__init__(*args, **kwargs)
-        self.report = None
+        self.report: typing.Optional["Report"] = None
         if self.boss:
             self.boss.fight = self
         for player in self.players.values():
@@ -76,21 +79,21 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
     def __str__(self):
         return f"{self.__class__.__name__}(id={self.fight_id}, players={len(self.players)})"
 
-    def summary(self):
+    def summary(self) -> dict[str, typing.Any]:
 
         raid_boss_name = self.boss and self.boss.raid_boss and self.boss.raid_boss.full_name_slug
 
         return {
-            "report_id": self.report.report_id,
+            # "report_id": self.report and self.report.report_id or "NO",
             "fight_id": self.fight_id,
             "percent": self.percent,
             "kill": self.kill,
             "duration": self.duration,
-            "time": self.start_time.timestamp(),
+            "time": self.start_time.isoformat(),
             "boss": {"name": raid_boss_name},
         }
 
-    def as_dict(self, player_ids: typing.List[int] = None) -> dict:
+    def as_dict(self, player_ids: list[int] = []) -> dict:
 
         # Get players
         players = list(self.players.values())
@@ -130,9 +133,9 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
     #
     def get_player(self, **kwargs) -> Player:
         """Returns a single Player based on the kwargs."""
-        return utils.get(self.players.values(), **kwargs)
+        return utils.get(self.players.values(), **kwargs) # type: ignore
 
-    def get_players(self, source_ids: typing.List[int] = None):
+    def get_players(self, source_ids: typing.Optional[list[int]] = None):
         """Gets multiple players based on source id."""
         players = list(self.players.values())
         if source_ids:
@@ -140,7 +143,7 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
 
         return [player for player in players if player]
 
-    def add_boss(self, boss_id) -> RaidBoss:
+    def add_boss(self, boss_id: int) -> RaidBoss:
         self.boss_id = boss_id
         self.boss = Boss(boss_id=boss_id)
         self.boss.fight = self
@@ -156,10 +159,13 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
     ############################################################################
     #   Summary
     #
-    def get_summary_query(self):
+    def get_summary_query(self) -> str:
         """Get the Query to load the fights summary."""
         if self.players:
             return ""
+
+        if not self.report:
+            raise ValueError("Missing Parent Report")
 
         return textwrap.dedent(f"""\
             reportData

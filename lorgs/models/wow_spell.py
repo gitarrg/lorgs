@@ -78,6 +78,7 @@ class WowSpell(base.Model):
         event_type: str = "cast",
         source: str = "player",
         wowhead_data: str = "",
+        **_,
     ):
         self.spell_id = spell_id
         self.cooldown = cooldown

@@ -116,7 +116,7 @@ class SpecRanking(warcraftlogs_base.Document):
                     key = (report.report_id, fight.fight_id, player.name)
                     yield key
 
-    def add_new_fight(self, ranking_data: CharacterRankingData):
+    def add_new_fight(self, ranking_data: CharacterRankingData) -> None:
         report_data = ranking_data.report
 
         if not report_data:
