@@ -1,5 +1,6 @@
 """Enpoints dealing with Rankings per Spec."""
 # IMPORT THIRD PARTY LIBRARIES
+import typing
 import fastapi
 
 # IMPORT LOCAL LIBRARIES
@@ -52,7 +53,7 @@ async def get_spec_ranking(
 @router.get("/status/spec_ranking")
 async def status():
 
-    x = {}
+    x: dict[str, typing.Any] = {}
     for sr in warcraftlogs_ranking.SpecRanking.objects().exclude("reports"):
         x[sr.spec_slug] = x.get(sr.spec_slug) or {}
         x[sr.spec_slug][sr.boss_slug] = {

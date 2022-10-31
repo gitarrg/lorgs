@@ -1,59 +1,63 @@
-"""Data we receive from WCL under the reportData."""
+# IMPORT STANDARD LIBRARIES
 import datetime
 import typing
 
-from pydantic import BaseModel
+# IMPORT THIRD PARTY LIBRARIES
+from pydantic import BaseModel, validator
 
-
-EventDataType = typing.Literal[
-    "cast",
-    "damage",
-    "applybuff", "removebuff",
-    "applydebuff", "removedebuff",
-    "resurrect",
-]
-
-
-class ReportEvent(BaseModel):
-
-    timestamp: int
-
-    type: typing.Union[EventDataType, str]
-    """The type of Event. """
-    sourceID: int
-    targetID: int
-    abilityGameID: int
-    fight: int
-    duration: int = 0
-
-
-class ReportEventPaginator(BaseModel):
-    """The ReportEventPaginator represents a paginated list of report events."""
-
-    data: typing.List[ReportEvent] = []
-    """The list of events obtained."""
-
-    nextPageTimestamp: float = 0
-    """A timestamp to pass in as the start time when fetching the next page of data."""
+# IMPORT LOCAL LIBRARIES
+from .guild import Guild
+from .report_events import ReportEvent
+from .report_fight import ReportFight
+from .report_master_data import ReportMasterData
+from .report_summary import ReportSummary
+from .user import User
+from .zone import Zone
 
 
 class Report(BaseModel):
     """A single report uploaded by a player to a guild or personal logs."""
 
-    code: typing.Optional[str]
+    code: str = ""
     """The report code, a unique value used to identify the report."""
 
-    title: typing.Optional[str]
+    title: str = ""
     """A title for the report."""
 
-    endTime: typing.Optional[datetime.datetime]
+    startTime: datetime.datetime = datetime.datetime.fromtimestamp(0)
+    """The start time of the report. Representing the timestamp of the first event contained in the report.."""
+
+    endTime: datetime.datetime = datetime.datetime.fromtimestamp(0)
     """The end time of the report. Representing the timestamp of the last event contained in the report."""
 
-    visibility: typing.Optional[typing.Literal["public", "private", "unlisted"]] = "public"
+    visibility: typing.Literal["public", "private", "unlisted"] = "public"
     """The visibility level of the report."""
 
-    events: ReportEventPaginator = ReportEventPaginator()
+    summary: typing.Optional[ReportSummary]
+    """Summary Overview (queried via `table(..., dataType: Summary)`."""
+
+    events: list[ReportEvent] = []
     """A set of report events, filterable via arguments like type, source, target, ability, etc."""
+
+    masterData: typing.Optional[ReportMasterData]
+
+    fights: list[ReportFight] = []
+
+    zone: Zone = Zone(id=-1, name="unknown")
+
+    owner: User = User(id=0, name="")
+    """The user that uploaded the report."""
+
+    guild: typing.Optional[Guild] = None
+    """The guild that the report belongs to. If this is null, then the report was uploaded to the user's personal logs."""
+
+    @validator("events")
+    def unwrap_event_data(cls, v):
+        """Events come in wraped in an ReportEventPaginator. Lets skip that step."""
+        try:
+            return v["data"]
+        except KeyError:
+            raise ValueError("Missing `data`.")
 
 
 class ReportData(BaseModel):

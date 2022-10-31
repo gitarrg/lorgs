@@ -89,7 +89,7 @@ class wclclient_mixin:
         return ""
 
     @staticmethod
-    def combine_queries(*queries, op="or"):
+    def combine_queries(*queries: str, op="or"):
         """Combine multiple queries.
 
         Example:
@@ -98,8 +98,8 @@ class wclclient_mixin:
 
         """
         # combine all filters
-        queries = [q for q in queries if q]   # filter out empty statements
-        queries = [f"({q})" for q in queries] # wrap each into bracers
+        queries = [q for q in queries if q]   # type: ignore # filter out empty statements
+        queries = [f"({q})" for q in queries] # type: ignore # wrap each into bracers
 
         queries_combined = f" {op} ".join(queries)
         return f"({queries_combined})"
@@ -167,6 +167,6 @@ class Document(me.Document, wclclient_mixin):
 
     @classmethod
     def get_or_create(cls: Type[T], **kwargs) -> T:
-        obj = cls.objects(**kwargs).first()
+        obj: typing.Optional[T] = cls.objects(**kwargs).first()
         obj = obj or cls(**kwargs)
         return obj
