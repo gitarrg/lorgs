@@ -9,7 +9,7 @@ from lorgs.models import base
 from lorgs.models.wow_spell import WowSpell
 
 if typing.TYPE_CHECKING:
-    from lorgs.models.raid_zone import RaidZone
+    from lorgs.clients import wcl
 
 
 class RaidBoss(base.Model):
@@ -29,8 +29,6 @@ class RaidBoss(base.Model):
         """Full Name of the Boss (eg.: "Halondrus the Reclaimer")."""
         self.name = nick or name
         """Short commonlty used Nickname. eg.: "Halondrus"."""
-
-        # self.zone: typing.Optional["RaidZone"] = None
 
         self.events: list[dict[str, str]] = []
         """Custom Events to track."""
@@ -129,8 +127,13 @@ class RaidBoss(base.Model):
 
         return " or ".join(filters)
 
+    def preprocess_query_results(self, query_results: "wcl.Query"):
 
-    def preprocess_query_results(self, query_results):
+        # TODO:
+        #   not 100% sure what this was supposed to do.
+        #   I think its the custom "unit-event"-logic
+        #   Might need some time/rework
+        return
 
         casts = utils.get_nested_value(query_results, "report", "events", "data") or []
         events_by_id = {event.get("spell_id"): event for event in self.events}
@@ -174,4 +177,3 @@ class RaidBoss(base.Model):
 
         query_results["report"]["events"]["data"] = casts
         return query_results
-
