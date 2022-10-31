@@ -83,7 +83,7 @@ class RaidBoss(base.Model):
         self.buffs.append(spell)
         return spell
 
-    def add_event(self, **kwargs): # event_type, spell_id, name: str, icon: str, duration: int = 0):
+    def add_event(self, **kwargs: typing.Any): # event_type, spell_id, name: str, icon: str, duration: int = 0):
         kwargs.setdefault("event_type", "cast")
 
         # track the event (for query)

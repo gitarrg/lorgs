@@ -1,5 +1,5 @@
 
-from typing import Type, TypeVar
+from typing import Type, TypeVar, Any
 import weakref
 
 # IMPORT THIRD PARTY LIBRARIES
@@ -13,7 +13,7 @@ class MetaInstanceRegistry(type):
 
     def __init__(cls, name, bases, attrs):
         super(MetaInstanceRegistry, cls).__init__(name, bases, attrs)
-        cls.all = weakref.WeakSet()
+        cls.all: weakref.WeakSet[Any] = weakref.WeakSet()
 
     def __call__(cls, *args, **kwargs):
         instance = super(MetaInstanceRegistry, cls).__call__(*args, **kwargs)
@@ -32,4 +32,4 @@ class Model(metaclass=MetaInstanceRegistry):
 
     @classmethod
     def get(cls: Type[T], **kwargs) -> T:
-        return utils.get(cls.all, **kwargs)
+        return utils.get(cls.all, **kwargs) # type: ignore

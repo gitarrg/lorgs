@@ -10,19 +10,17 @@ from lorgs.models.wow_spell import WowSpell
 class Cast(me.EmbeddedDocument):
     """An Instance of a Cast of a specific Spell in a Fight."""
 
-    # ID of the spell
     spell_id: int = me.IntField()
+    """ID of the spell/aura."""
 
-    # time the spell was cast, in milliseconds relativ to the start of the fight
     timestamp: int = me.IntField()
+    """time the spell was cast, in milliseconds relative to the start of the fight."""
 
-    # time the spell/buff was active in milliseconds
     duration: int = me.IntField()
+    """time the spell/buff was active in milliseconds."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        # int: track the number
         self.stacks = 0
 
     def __str__(self):
@@ -47,6 +45,7 @@ class Cast(me.EmbeddedDocument):
 
     @property
     def end_time(self):
+        """"Time the Spell/Aura faded. (relative to Fight Start, in milliseconds)."""
         return self.timestamp + self.duration
 
     @end_time.setter
