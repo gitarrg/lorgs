@@ -13,7 +13,7 @@ from lorgs.models.raid_boss import RaidBoss
 class RaidZone(base.Model):
     """A raid zone in the Game."""
 
-    def __init__(self, id: int, name: str, bosses: list[RaidBoss] = []):
+    def __init__(self, id: int, name: str, bosses: list[RaidBoss] = []) -> None:
         self.id: int = id
         """ID of the Raid Zone. aka. T28, T29 (as used in WarcraftLogs)."""
         self.name: str = name
@@ -22,7 +22,7 @@ class RaidZone(base.Model):
         """All Bosses, in order, in this Zone."""
         self.name_slug = utils.slug(self.name, space="-")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<RaidZone(id={self.id} name={self.name})>"
 
     def as_dict(self) -> dict[str, typing.Any]:

@@ -15,8 +15,8 @@ router = fastapi.APIRouter(tags=["spec_rankings"])
 
 @router.get("/spec_ranking/{spec_slug}/{boss_slug}")
 async def get_spec_ranking(
-    spec_slug,
-    boss_slug,
+    spec_slug: str,
+    boss_slug: str,
     difficulty: str = "mythic",
     metric: str = "",
     limit: int = 0

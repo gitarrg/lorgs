@@ -12,7 +12,7 @@ import mongoengine as me
 from lorgs.lib import mongoengine_arrow
 
 
-class Task(me.Document): # type: ignore
+class Task(me.Document):
     """"""
 
     STATUS_NEW = "new"
@@ -33,10 +33,10 @@ class Task(me.Document): # type: ignore
         ]
     }
 
-    task_id: str = me.StringField(primary_key=True)
-    status: str = me.StringField(default=STATUS_NEW)
+    task_id = me.StringField(primary_key=True)
+    status = me.StringField(default=STATUS_NEW)
     updated: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField(default=arrow.utcnow)
-    message: str = me.StringField(default="")
+    message = me.StringField(default="")
 
     @classmethod
     def from_id(cls, task_id: str) -> Optional["Task"]:

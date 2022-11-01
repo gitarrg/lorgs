@@ -38,19 +38,29 @@ class UserReport(me.Document):
         ]
     }
 
+    @typing.overload
+    @classmethod
+    def from_report_id(cls, report_id: str, create: typing.Literal[True]) -> "UserReport":
+        ...
+
+    @typing.overload
+    @classmethod
+    def from_report_id(cls, report_id: str) -> typing.Union["UserReport", None]:
+        ...
+
     @classmethod
     def from_report_id(cls, report_id: str, create=False) -> typing.Union["UserReport", None]:
-        """Need to split it, as otherwise the creation with nested parm does;t work"""
-        user_report: "UserReport" = cls.objects(report_id=report_id).first()  # pylint: disable=no-member
+        """Return a Report based of the Report ID. Create one if not found."""
+        user_report = cls.objects(report_id=report_id).first()
         if user_report:
-            return user_report
+            return user_report  # type: ignore
 
         if not create:
             return None
 
         user_report = cls(report_id=report_id)
         user_report.report = warcraftlogs_report.Report(report_id=report_id)
-        return user_report
+        return user_report  # type: ignore
 
     ################################
     # Properties
