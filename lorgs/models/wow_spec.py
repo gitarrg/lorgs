@@ -60,7 +60,7 @@ class WowSpec(base.Model):
 
         return sort_key(self) < sort_key(other)
 
-    def as_dict(self):
+    def as_dict(self) -> dict[str, typing.Any]:
         return {
             "name": self.name,
             "full_name": self.full_name,
@@ -95,7 +95,7 @@ class WowSpec(base.Model):
     ##########################
     # Methods
     #
-    def add_spell(self, spell: typing.Optional[WowSpell] = None, **kwargs: typing.Any):
+    def add_spell(self, spell: typing.Optional[WowSpell] = None, **kwargs: typing.Any) -> WowSpell:
 
         if not spell:
             kwargs.setdefault("color", self.wow_class.color)

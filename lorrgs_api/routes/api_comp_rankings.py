@@ -86,11 +86,11 @@ async def task_load_comp_rankings(boss_slug: str = "all", limit: int = 50, clear
         bosses = [boss_slug]
 
     # create tasks
-    for boss_slug in bosses:
-        await api_tasks.create_cloud_function_task(
-            function_name="load_comp_rankings",
-            boss_slug=boss_slug,
-            **kwargs
-        )
+    # for boss_slug in bosses:
+    #     await api_tasks.create_cloud_function_task(
+    #         function_name="load_comp_rankings",
+    #         boss_slug=boss_slug,
+    #         **kwargs
+    #     )
 
     return {"message": "tasks queued", "bosses": bosses}

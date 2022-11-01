@@ -3,9 +3,7 @@
 # pylint: disable=C0326  # spaces
 
 # IMPORT LOCAL LIBRARIES
-from lib2to3.pgen2.token import GREATER
 from lorgs.models.raid_zone import RaidZone
-
 
 
 GREEN = "#2ee62e" # HSV: 120, 80, 90

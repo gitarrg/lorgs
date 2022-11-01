@@ -188,21 +188,36 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
                     # Automatically create start event
                     event.convert_to_start_event()
 
-        print("events", events)
         return [event for event in events if event.spell_id >= 0]
 
-    def process_query_result(self, query_data: "wcl.Query") -> None:
-        """Process the result of a casts-query to create Cast objects."""
-        report_data = query_data.reportData
-        if not report_data:
+    def set_source_id_from_events(self, casts: list[wcl.ReportEvent], force=False):
+        """Set the Source ID from the cast data.
+        
+            In some cases (eg.: data pulled from spec rankings) we don't know the source ID upfront..
+            but we can fill that gap here
+        """
+        if force == False and self._has_source_id:
             return
+        
+        for cast in casts:
+            if cast.type == "cast":
+                self.source_id = cast.sourceID
 
+            # return as soon as we have a value
+            if self.source_id > 0:
+                return
+
+    def process_query_result(self, **query_data: typing.Any) -> None:
+        """Process the result of a casts-query to create Cast objects."""
+        report_data = wcl.ReportData(**query_data)
         casts_data = report_data.report.events
         if not casts_data:
             logger.warning("casts_data is empty")
             return
 
         fight_start = self.fight.start_time_rel if self.fight else 0
+
+        self.set_source_id_from_events(casts_data)
 
         for cast_data in casts_data:
             self.process_event(cast_data)

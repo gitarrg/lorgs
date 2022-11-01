@@ -127,7 +127,7 @@ class RaidBoss(base.Model):
 
         return " or ".join(filters)
 
-    def preprocess_query_results(self, query_results: "wcl.Query"):
+    def preprocess_query_results(self, **query_results: typing.Any):
 
         # TODO:
         #   not 100% sure what this was supposed to do.

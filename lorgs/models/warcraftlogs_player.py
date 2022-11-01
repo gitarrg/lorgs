@@ -114,36 +114,39 @@ class Player(BaseActor):
         queries_combined = " and ".join(filters)
         return f"({queries_combined})"
 
-    def process_death_events(self, death_events):
+    def process_death_events(self, death_events: list[wcl.DeathEvent]):
         """Add the Death Events the the Players.
 
         Args:
             death_events[list[dict]]
 
         """
-        ABILITY_OVERWRITES = {}
-        ABILITY_OVERWRITES[1] = {"name": "Melee", "guid": 260421, "abilityIcon": "ability_meleedamage.jpg"}
-        ABILITY_OVERWRITES[3] = {"name": "Fall Damage"}
+
+        # TODO: add during model validation?
+        # ABILITY_OVERWRITES = {}
+        # ABILITY_OVERWRITES[1] = {"name": "Melee", "guid": 260421, "abilityIcon": "ability_meleedamage.jpg"}
+        # ABILITY_OVERWRITES[3] = {"name": "Fall Damage"}
 
         for death_event in death_events:
-            target_id = death_event.get("id", 0)
+            target_id = death_event.id
             if self._has_source_id and (target_id != self.source_id):
                 continue
 
-            death_ability = death_event.get("ability", {})
-            death_ability_id = death_ability.get("guid", -1)
-            death_ability = ABILITY_OVERWRITES.get(death_ability_id) or death_ability
+            death_ability = death_event.ability
+            # death_ability_id = death_ability.guid
+            # death_ability = ABILITY_OVERWRITES.get(death_ability_id) or death_ability
 
-            death_data = {}
-            death_data["ts"] = death_event.get("deathTime", 0)
-            death_data["spell_name"] = death_ability.get("name", "")
-            death_data["spell_icon"] = death_ability.get("abilityIcon", "")
+            death_data = {
+                "ts": death_event.deathTime,
+                "spell_name": death_ability.name,
+                "spell_icon": death_ability.abilityIcon,
+            }
             self.deaths.append(death_data)
- 
+
     def process_event_resurrect(self, event: "wcl.ReportEvent"):
         fight_start = self.fight.start_time_rel if self.fight else 0
 
-        data = {}
+        data: dict[str, typing.Any] = {}
         data["ts"] = event.timestamp - fight_start
 
         spell_id = event.abilityGameID
@@ -152,11 +155,13 @@ class Player(BaseActor):
             data["spell_name"] = spell.name
             data["spell_icon"] = spell.icon
 
+        # Look for the Source ID
         source_id = event.sourceID
-        source_player: Player = self.fight.report.players.get(str(source_id))
-        if source_player:
-            data["source_name"] = source_player.name
-            data["source_class"] = source_player.class_slug
+        if self.fight and self.fight.report:
+            source_player = self.fight.report.players.get(str(source_id))
+            if source_player:
+                data["source_name"] = source_player.name
+                data["source_class"] = source_player.class_slug
 
         self.resurrects.append(data)
 
@@ -170,26 +175,3 @@ class Player(BaseActor):
 
         if event.type == "resurrect":
             self.process_event_resurrect(event)
-
-    def set_source_id_from_events(self, casts: list[wcl.ReportEvent], force=False):
-        """Set the Source ID from the cast data.
-        
-            In some cases (eg.: data pulled from spec rankings) we don't know the source ID upfront..
-            but we can fill that gap here
-        """
-        if force == False and self._has_source_id:
-            return
-        
-        for cast in casts:
-            if cast.type == "cast":
-                self.source_id = cast.sourceID
-
-            # return as soon as we have a value
-            if self.source_id > 0:
-                return
-
-    def process_query_result(self, query_result: wcl.Query):
-        super().process_query_result(query_result)
-
-        if query_result.reportData:
-            self.set_source_id_from_events(query_result.reportData.report.events)

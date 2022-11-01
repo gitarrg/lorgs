@@ -16,9 +16,6 @@ import mongoengine as me
 from lorgs import utils
 from lorgs.client import WarcraftlogsClient
 
-if typing.TYPE_CHECKING:
-    from lorgs.clients.wcl.models.query import Query
-
 
 VALID_OPS = ["eq", "lt", "lte", "gt", "gte"]
 RE_KEY = fr"([\w\-]+)"  # expr to match the key/attr name. eg.: spec or role name
@@ -80,7 +77,10 @@ def query_args_to_mongo(*query_args, prefix=""):
     return mongo_kwargs
 
 
-class wclclient_mixin:
+W = TypeVar('W', bound="wclclient_mixin")
+
+
+class wclclient_mixin():
 
     @property
     def client(self):
@@ -108,10 +108,10 @@ class wclclient_mixin:
         return f"({queries_combined})"
 
     @abc.abstractmethod
-    def process_query_result(self, query_result: "Query") -> None:
+    def process_query_result(self, **query_result: typing.Any) -> None:
         """Implement some custom logic here to process our results from the query."""
 
-    async def load_many(self, objects: list["wclclient_mixin"], filters: typing.Optional[list[str]] = None, chunk_size=0):
+    async def load_many(self: W, objects: list[W], filters: typing.Optional[list[str]] = None, chunk_size=0):
         """Load multiple objects at once.
 
         Args:
@@ -139,7 +139,7 @@ class wclclient_mixin:
                 continue
             else:
                 for obj, result in zip(chunk_items, query_results):
-                    obj.process_query_result(result)
+                    obj.process_query_result(**result)
 
     async def load(self, *args: Any, **kwargs: Any):
         return await self.load_many([self], *args, **kwargs)

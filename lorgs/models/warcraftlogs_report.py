@@ -58,7 +58,7 @@ class Report(warcraftlogs_base.EmbeddedDocument):
     ##########################
     # Attributes
     #
-    def as_dict(self):
+    def as_dict(self) -> dict[str, typing.Any]:
         """Return a Summary/Overview about this report."""
         info = {
             "title": self.title,
@@ -184,9 +184,6 @@ class Report(warcraftlogs_base.EmbeddedDocument):
 
     def process_master_data(self, master_data: wcl.ReportMasterData):
         """Create the Players from the passed Report-MasterData"""
-        if not master_data:
-            return
-
         # clear out any old instances
         self.players = {}
 
@@ -200,24 +197,22 @@ class Report(warcraftlogs_base.EmbeddedDocument):
         for fight in fights:
             self.add_fight(fight)
 
-    def process_query_result(self, query_result: wcl.Query):
-
-        if not query_result.reportData:
-            return
-        report_data = query_result.reportData.report
+    def process_query_result(self, **query_result: typing.Any):
+        report_data = wcl.ReportData(**query_result)
+        report = report_data.report
 
         # Update the Report itself
-        self.title = report_data.title
-        self.start_time = arrow.get(report_data.startTime)
-        self.zone_id = report_data.zone.id
-        self.owner = report_data.owner.name
+        self.title = report.title
+        self.start_time = arrow.get(report.startTime)
+        self.zone_id = report.zone.id
+        self.owner = report.owner.name
 
-        guild = report_data.guild
+        guild = report.guild
         self.guild = guild.name if guild else ""
 
-        if report_data.masterData:
-            self.process_master_data(report_data.masterData)
-        self.process_report_fights(report_data.fights)
+        if report.masterData:
+            self.process_master_data(report.masterData)
+        self.process_report_fights(report.fights)
 
     async def load_summary(self) -> None:
         await self.load()

@@ -126,7 +126,7 @@ class WowSpell(base.Model):
     ##########################
     # Methods
     #
-    def as_dict(self):
+    def as_dict(self) -> dict[str, typing.Any]:
         return {
             "spell_id": self.spell_id,
             "duration": self.duration,

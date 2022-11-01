@@ -12,12 +12,12 @@ import pydantic
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
-from lorgs.clients.wcl.models.character_ranking import CharacterRankingData
+from lorgs.clients import wcl
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
 from lorgs.models.raid_boss import RaidBoss
-from lorgs.models.warcraftlogs_actor import BaseActor, Player
 from lorgs.models.warcraftlogs_fight import Fight
+from lorgs.models.warcraftlogs_player import Player
 from lorgs.models.warcraftlogs_report import Report
 from lorgs.models.wow_spec import WowSpec
 
@@ -63,20 +63,20 @@ class SpecRanking(warcraftlogs_base.Document):
         return RaidBoss.get(full_name_slug=self.boss_slug)
 
     @property
-    def fights(self) -> typing.List[Fight]:
+    def fights(self) -> list[Fight]:
         return utils.flatten(report.fights.values() for report in self.reports)
 
     @property
-    def players(self) -> typing.List[Player]:
+    def players(self) -> list[Player]:
         return utils.flatten(fight.players.values() for fight in self.fights)
 
     ##########################
     # Methods
     #
     @staticmethod
-    def sort_reports(reports):
+    def sort_reports(reports: list[Report]) -> list[Report]:
         """Sort the reports in place by the highest dps player."""
-        def get_total(report: Report):
+        def get_total(report: Report) -> int:
             top = 0
             for fight in report.fights.values():
                 for player in fight.players.values():
@@ -87,7 +87,7 @@ class SpecRanking(warcraftlogs_base.Document):
     ############################################################################
     # Query: Rankings
     #
-    def get_query(self):
+    def get_query(self) -> str:
         """Return the Query to load the rankings for this Spec & Boss."""
         difficulty_id = DIFFICULTY_IDS.get(self.difficulty, 5)
 
@@ -116,7 +116,7 @@ class SpecRanking(warcraftlogs_base.Document):
                     key = (report.report_id, fight.fight_id, player.name)
                     yield key
 
-    def add_new_fight(self, ranking_data: CharacterRankingData) -> None:
+    def add_new_fight(self, ranking_data: wcl.CharacterRanking) -> None:
         report_data = ranking_data.report
 
         if not report_data:
@@ -143,6 +143,7 @@ class SpecRanking(warcraftlogs_base.Document):
             start_time = arrow.get(ranking_data.startTime),
             duration = ranking_data.duration,
         )
+        fight.report = report
         report.fights[str(fight.fight_id)] = fight
 
         ################
@@ -156,7 +157,7 @@ class SpecRanking(warcraftlogs_base.Document):
         player.fight = fight
         fight.players["-1"] = player
 
-    def add_new_fights(self, rankings: typing.List[CharacterRankingData]):
+    def add_new_fights(self, rankings: list[wcl.CharacterRanking]):
         """Add new Fights."""
         old_reports = self.get_old_reports()
 
@@ -171,41 +172,52 @@ class SpecRanking(warcraftlogs_base.Document):
 
             self.add_new_fight(ranking_data)
 
-    def process_query_result(self, query_result):
-        query_result = utils.get_nested_value(
-            query_result,
-            "worldData", "encounter", "characterRankings", "rankings"
-        ) or {}
+    def process_query_result(self, **query_result: typing.Any):
+        """Process the Ranking Results.
 
-        rankings = pydantic.parse_obj_as(typing.List[CharacterRankingData], query_result)
+        Expected Query:
+        >>> {
+        >>>     worldData: {
+        >>>         encounter: {
+        >>>             characterRankings: ....
+        >>>         }
+        >>>     }
+        >>> }
+        """ 
+        # unwrap data
+        query_result = query_result["worldData"]
+        world_data = wcl.WorldData(**query_result)
+
+        rankings = world_data.encounter.characterRankings.rankings
         self.add_new_fights(rankings)
 
-    async def load_rankings(self):
+    async def load_rankings(self) -> None:
         """Fetch the current Ranking Data"""
         # Build and run the query
         query = self.get_query()
         query_result = await self.client.query(query)
-        self.process_query_result(query_result)
+        self.process_query_result(**query_result)
 
     ############################################################################
     # Query: Fights
     #
-    async def load_players(self):
+    async def load_players(self) -> None:
         """Load the Casts for all missing fights."""
-        actors_to_load: typing.List[BaseActor] = self.players
+        actors_to_load = self.players
 
         # make sure the first report has the boss added
         if self.fights:
             first_fight = self.fights[0]
-            actors_to_load += [first_fight.boss]
+            actors_to_load += [first_fight.boss] # type: ignore
 
+        actors_to_load = [actor for actor in actors_to_load if actor]
         actors_to_load = [actor for actor in actors_to_load if not actor.casts]
 
         logger.info(f"load {len(actors_to_load)} players")
         if not actors_to_load:
             return
 
-        await self.load_many(actors_to_load, chunk_size=5)
+        await self.load_many(actors_to_load, chunk_size=10)
 
     ############################################################################
     # Query: Both

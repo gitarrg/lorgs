@@ -15,7 +15,7 @@ class ReportActor(BaseModel):
     server: str = ""
     """The normalized server name of the actor."""
 
-    type: str = ""
+    type: str = "Player"
     """The type of the actor, i.e., if it is a player, pet or NPC. eg.: "Player", "NPC", "Pet"."""
     
     subType: str = ""

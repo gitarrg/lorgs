@@ -17,7 +17,7 @@ class CharacterRankingReportFightData(BaseModel):
     """ID of the Fight."""
 
 
-class CharacterRankingData(BaseModel):
+class CharacterRanking(BaseModel):
     """Represents a Character/Player on the Rankings for a given Boss/Difficulty/Metric.
     Ref: https://www.warcraftlogs.com/v2-api-docs/warcraft/encounter.doc.html
 
@@ -49,3 +49,12 @@ class CharacterRankingData(BaseModel):
         fields = {
             'class_': 'class'
         }
+
+
+class CharacterRankings(BaseModel):
+
+    page: int = 1
+    hasMorePages: bool = False
+    count: int = 0
+
+    rankings: list[CharacterRanking] = []

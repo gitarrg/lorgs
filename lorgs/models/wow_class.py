@@ -46,7 +46,7 @@ class WowClass(base.Model):
     ##########################
     # Methods
     #
-    def add_spell(self, **kwargs):
+    def add_spell(self, **kwargs: typing.Any) -> WowSpell:
         kwargs.setdefault("color", self.color)
         kwargs.setdefault("spell_type", self.name_slug)
 

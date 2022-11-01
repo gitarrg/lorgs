@@ -1,5 +1,6 @@
 # IMPORT STANRD LIBRARIES
 from collections import defaultdict
+import datetime
 import textwrap
 import typing
 
@@ -9,6 +10,7 @@ import mongoengine as me
 from lorgs import utils
 
 # IMPORT LOCAL LIBRARIES
+from lorgs.clients import wcl
 from lorgs.lib import mongoengine_arrow
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
@@ -21,7 +23,7 @@ if typing.TYPE_CHECKING:
     from lorgs.models.warcraftlogs_report import Report
 
 
-def get_composition(players: typing.List[Player]) -> dict:
+def get_composition(players: typing.Iterable[Player]) -> dict:
     """Generate a Composition Dict from a list of Players."""
     players = players or []
 
@@ -114,15 +116,22 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
     def end_time(self) -> arrow.Arrow:
         return self.start_time.shift(seconds=self.duration / 1000)
 
+    @end_time.setter
+    def end_time(self, value: datetime.datetime):
+        delta = value - self.start_time
+        self.duration = int(delta.total_seconds() * 1000)
+
     @property
     def start_time_rel(self) -> int:
         """Fight start time, relative the parent report (in milliseconds)."""
-        return 1000 * int(self.start_time.timestamp() - self.report.start_time.timestamp())
+        t = self.report.start_time.timestamp() if self.report else 0
+        return int(1000 * (self.start_time.timestamp() - t))
 
     @property
     def end_time_rel(self) -> int:
         """fight end time, relative to the report (in milliseconds)."""
-        return 1000 * int(self.end_time.timestamp() -  self.report.start_time.timestamp())
+        t = self.report.start_time.timestamp() if self.report else 0
+        return int(1000 * (self.end_time.timestamp() -  t))
 
     @property
     def raid_boss(self) -> RaidBoss:
@@ -159,7 +168,7 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
     ############################################################################
     #   Summary
     #
-    def get_summary_query(self) -> str:
+    def get_query(self) -> str:
         """Get the Query to load the fights summary."""
         if self.players:
             return ""
@@ -177,36 +186,31 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
             }}
         """)
 
-    def process_players(self, players_data):
-        if not players_data:
-            logger.warning("players_data is empty")
-            return
+    def process_players(self, summary_data: "wcl.ReportSummary"):
 
-        total_damage = players_data.get("damageDone", [])
-        total_healing = players_data.get("healingDone", [])
+        total_damage = summary_data.damageDone
+        total_healing = summary_data.healingDone
 
-        for composition_data in players_data.get("composition", []):
+        for composition_data in summary_data.composition:
 
-            spec_data = composition_data.get("specs", [])
-            if not spec_data:
-                logger.warning("Player has no spec: %s", composition_data.get("name"))
+            # Get Class and Spec
+            if not composition_data.specs:
+                logger.warning("Player has no spec: %s", composition_data.name)
                 continue
 
-            spec_data = spec_data[0]
-            spec_name = spec_data.get("spec")
-            class_name = composition_data.get("type")
-
+            spec_data = composition_data.specs[0]
+            spec_name = spec_data.spec
+            class_name = composition_data.type
             spec = WowSpec.get(name_slug_cap=spec_name, wow_class__name_slug_cap=class_name)
             if not spec:
                 logger.warning("Unknown Spec: %s", spec_name)
                 continue
 
             # Get Total Damage or Healing
-            spec_role = spec_data.get("role")
-            total_data = total_healing if spec_role == "healer" else total_damage
+            total_data = total_healing if spec.role.code == "heal" else total_damage
             for data in total_data:
-                if data.get("id", -1) == composition_data.get("id"):
-                    total = data.get("total", 0) / (self.duration / 1000)
+                if data.id == composition_data.id:
+                    total = data.total / (self.duration / 1000)
                     break
             else:
                 total = 0
@@ -215,24 +219,26 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
             player = Player()
             player.fight = self
             player.spec_slug = spec.full_name_slug
-            player.source_id = composition_data.get("id")
-            player.name = composition_data.get("name")
+            player.source_id = composition_data.id
+            player.name = composition_data.name
             player.total = int(total)
-            player.process_death_events(players_data.get("deathEvents", []))
+            player.process_death_events(summary_data.deathEvents)
             self.players[str(player.source_id)] = player
-
 
         # call this before filtering to always get the full comp
         self.composition = get_composition(self.players.values())
 
-    def process_overview(self, data):
+    def process_query_result(self, **query_result: typing.Any):
         """Process the data retured from an Overview-Query."""
-        data = data.get("reportData") or data
-        summary_data = utils.get_nested_value(data, "report", "summary", "data") or {}
-        self.duration = self.duration or summary_data.get("totalTime", 0)
+
+        report_data = wcl.ReportData(**query_result)
+        if not report_data.report.summary:
+            return
+        summary_data = report_data.report.summary
+        self.duration = self.duration or summary_data.totalTime
         self.process_players(summary_data)
 
-    async def load_summary(self, force=False):
+    async def load_summary(self, force=False) -> None:
         """Load this fights Summary.
 
         Args:
@@ -243,23 +249,23 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
             self.players = {}
 
         if self.players:
-            return ""
+            return
 
-        query = self.get_summary_query()
+        query = self.get_query()
         result = await self.client.query(query)
-        self.process_overview(result)
 
-    # alias to set the default "load"-behaviour
-    process_query_result = process_overview
-    get_query = get_summary_query
+        query_data = wcl.Query(**result)
+        self.process_overview(query_data)
 
     ############################################################################
     #   Load Player:
     #
-    async def load_players(self, player_ids: typing.List[int] = None):
+    async def load_players(self, player_ids: typing.Optional[list[int]] = None):
+
+        player_ids = player_ids or []
 
         if not self.players:
-            await self.load_summary()
+            await self.load()
 
         # Get Players to load
         players_to_load = self.get_players(player_ids)

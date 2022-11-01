@@ -29,7 +29,7 @@ class WarcraftlogsClient:
     _instance: typing.Optional["WarcraftlogsClient"] = None
 
     @classmethod
-    def get_instance(cls, *args, **kwargs) -> "WarcraftlogsClient":
+    def get_instance(cls, *args: typing.Any, **kwargs: typing.Any) -> "WarcraftlogsClient":
         """Get an instance of the Client.
 
         This is a singleton-style wrapper,
@@ -88,7 +88,7 @@ class WarcraftlogsClient:
             return
         await self.update_auth_token()
 
-    async def get_points_left(self):
+    async def get_points_left(self) -> int:
         """Points left until we hit the rate limit."""
         query = """
         rateLimitData
@@ -99,7 +99,7 @@ class WarcraftlogsClient:
         }
         """
         result = await self.query(query)
-        info = result.get("rateLimitData", {})
+        info: dict[str, int] = result.get("rateLimitData", {})
         return info.get("limitPerHour", 0) - info.get("pointsSpentThisHour", 0)
 
     @timeit
@@ -163,6 +163,5 @@ class WarcraftlogsClient:
         """
         queries = [f"data{i}: {q}" for i, q in enumerate(queries)]
         query = "\n".join(queries)
-
         result = await self.query(query)
         return [result.get(f"data{i}") for i, _ in enumerate(queries)]

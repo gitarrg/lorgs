@@ -25,7 +25,7 @@ async def test__load_rankings():
         metric="hps",
     )
 
-    await spec_ranking.load(limit=40, clear_old=True)
+    await spec_ranking.load(limit=10, clear_old=True)
     spec_ranking.save()
 
 
@@ -40,8 +40,8 @@ async def test__load_all_rankings():
 
 
 async def main():
-    pass
-    # await test__load_rankings()
+    # pass
+    await test__load_rankings()
     # await test__load_all_rankings()
 
 

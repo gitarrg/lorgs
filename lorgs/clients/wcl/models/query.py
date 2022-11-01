@@ -5,7 +5,8 @@ import typing
 from pydantic import BaseModel, root_validator
 
 # IMPORT LOCAL LIBRARIES
-from .report_data import ReportData
+from .report_data import Report, ReportData
+from .world_data import WorldData
 
 
 class Query(BaseModel):
@@ -29,15 +30,18 @@ class Query(BaseModel):
     # rateLimitData: RateLimitData
     # Obtain the rate limit data object to see how many points have been spent by this key.
 
-    reportData: typing.Optional[ReportData]
-    """Obtain the report data object that allows the retrieval of individual reports
-    or filtered collections of reports by guild or by user."""
+    report: typing.Optional[Report]
+
+    # reportData: typing.Optional[ReportData]
+    # """Obtain the report data object that allows the retrieval of individual reports
+    # or filtered collections of reports by guild or by user."""
 
     # userData: UserData
     # Obtain the user object that allows the retrieval of the authorized user's id and username.
 
-    # worldData: WorldData
-    # Obtain the world data object that holds collections of data such as all expansions, regions, subregions, servers, dungeon/raid zones, and encounters.
+    worldData: typing.Optional[WorldData]
+    """The world data object contains collections of data such as
+    expansions, zones, encounters, regions, subregions, etc."""
 
     @root_validator(pre=True)
     def unwrap_data(cls, v):
