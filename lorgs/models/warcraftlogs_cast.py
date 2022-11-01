@@ -35,8 +35,8 @@ class Cast(me.EmbeddedDocument):
             "ts": self.timestamp,
             "id": self.spell_id,
         }
-        if self.duration_:
-            info["d"] = self.duration_
+        if self.duration:
+            info["d"] = self.duration
         return info
 
     ##########################

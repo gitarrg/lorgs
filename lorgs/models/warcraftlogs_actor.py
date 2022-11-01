@@ -209,6 +209,7 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
 
     def process_query_result(self, **query_data: typing.Any) -> None:
         """Process the result of a casts-query to create Cast objects."""
+        query_data = query_data.get("reportData") or query_data
         report_data = wcl.ReportData(**query_data)
         casts_data = report_data.report.events
         if not casts_data:

@@ -2,6 +2,7 @@
 """Warcaftlogs API Client."""
 
 # IMPORT STANDARD LIBRARIES
+import asyncio
 import os
 import typing
 
@@ -20,7 +21,37 @@ class InvalidReport(ValueError):
     """Exception raised when a report was not found."""
 
 
-class WarcraftlogsClient:
+class BaseClient:
+
+    _sem = asyncio.Semaphore(value=10)
+    """Semaphore used to control the number of parallel Requests."""
+
+    def __init__(self) -> None:
+        self.session: typing.Optional[aiohttp.ClientSession] = None
+        self.headers: dict[str, typing.Any] = {}
+
+    async def ensure_auth(self) -> None:
+        pass
+
+    @timeit
+    async def query(self, url: str, query: str) -> typing.Any:
+        """Executes a "query" to "url".
+
+        reuses a shared ClientSession and limits the maximum number of
+        parallel connections
+
+        Args:
+            query (str): the query to execute
+        """
+        self.session = self.session or aiohttp.ClientSession()
+        async with self._sem:
+            await self.ensure_auth()
+            async with self.session.get(url=url, json={"query": query}, headers=self.headers) as resp:
+                resp.raise_for_status()
+                return await resp.json()
+
+
+class WarcraftlogsClient(BaseClient):
 
     URL_API = "https://www.warcraftlogs.com/api/v2/client"
     URL_AUTH = "https://www.warcraftlogs.com/oauth/token"
@@ -48,7 +79,7 @@ class WarcraftlogsClient:
             cls._instance = cls(*args, **kwargs)
         return cls._instance
 
-    def __init__(self, client_id: str = "", client_secret: str = ""):
+    def __init__(self, client_id: str = "", client_secret: str = "") -> None:
         super().__init__()
 
         # credentials
@@ -106,56 +137,44 @@ class WarcraftlogsClient:
         info: dict[str, int] = result.get("rateLimitData", {})
         return info.get("limitPerHour", 0) - info.get("pointsSpentThisHour", 0)
 
-    @timeit
-    async def query(self, query: str) -> dict[str, typing.Any]:
-        self._num_queries += 1
-        logger.debug("Num Queries: %d", self._num_queries)
+    def raise_errors(self, result: dict[str, typing.Any]) -> None:
+        if result.get("error"):
+            raise ValueError(result.get("error"))
 
-        query = f"""
-        query {{
-            {query}
-        }}"""
+        errors = result.get("errors") or []
+        if errors:
+            msg = ""
+            for error in errors:
+                message = error.get("message")
 
-        await self.ensure_auth()
+                if message == "This report does not exist.":
+                    raise InvalidReport()
+                if message == "You do not have permission to view this report.":
+                    # some reports are private.. but still show up in rankings..
+                    raise PermissionError("Private Report!")
 
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url=self.URL_API, json={"query": query}, headers=self.headers) as resp:
+                msg += "\n" + error.get("message") + " path:" + "/".join(error.get("path", []))
+            if msg:
+                # print(query)
+                raise ValueError(msg)
 
-                try:
-                    result = await resp.json()
-                except Exception as e:
-                    logger.error(resp)
-                    raise e
+    async def query(self, query: str, raise_errors=True) -> dict[str, typing.Any]:
 
-                # some reports are private.. but still show up in rankings..
-                # lets just see what happens
-                # ----> it stops..
-                # "You do not have permission to view this report"
-                # TODO: figure out how to skip those reports..
-                if result.get("error"):
-                    raise ValueError(result.get("error"))
+        # Format Inputs
+        if not query:
+            return {}
+        query = f"query {{ {query} }}"
 
-                if result.get("errors"):
-                    msg = ""
-                    for error in result.get("errors"):
-                        message = error.get("message")
+        # Run
+        result = await super().query(self.URL_API, query)
 
-                        if message == ERROR_MESSAGE_INVALID_REPORT:
-                            raise InvalidReport()
+        # Check for Errors
+        if raise_errors:
+            self.raise_errors(result)
 
-                        # TODO: find a way to not hardcode the error message
-                        if message == "You do not have permission to view this report.":
-                            raise PermissionError("Private Report!")
+        return result.get("data", {}) # type: ignore
 
-                        msg += "\n" + error.get("message") + " path:" + "/".join(error.get("path", []))
-
-                    if msg:
-                        print(query)
-                        raise ValueError(msg)
-
-                return result.get("data", {}) # type: ignore
-
-    async def multiquery(self, queries: list[str]) -> list[str]:
+    async def multiquery(self, queries: list[str], raise_errors=True) -> list[typing.Any]:
         """Execute a list of queries as a batch.
 
         Args:
@@ -165,7 +184,5 @@ class WarcraftlogsClient:
             data[object]: the results in the same order
 
         """
-        queries = [f"data{i}: {q}" for i, q in enumerate(queries)]
-        query = "\n".join(queries)
-        result = await self.query(query)
-        return [result.get(f"data{i}") for i, _ in enumerate(queries)]
+        tasks = [self.query(query, raise_errors=raise_errors) for query in queries]
+        return await asyncio.gather(*tasks) # type: ignore
