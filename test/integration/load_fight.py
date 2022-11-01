@@ -1,54 +1,50 @@
+import asyncio
+import datetime
 
 import dotenv
-dotenv.load_dotenv() # pylint: disable=wrong-import-position
+dotenv.load_dotenv()
 
-import asyncio
-from lorgs.models import warcraftlogs_fight
+from lorgs.models.warcraftlogs_fight import Fight
 from lorgs.models import warcraftlogs_report
+from lorgs import data
 
-from lorgs import data # pylint: disable=unused-import
 
-
-def create_fight():
+def create_fight() -> Fight:
+    """Create an Example Fight Instance."""
     report = warcraftlogs_report.Report(
-        report_id="j68Fkv7DaVfmWbrc",
-        start_time=1634490036325,
+        report_id="tZVAxLYg7kTz1PBm",
+        start_time = datetime.datetime.fromtimestamp(1666891263596 / 1000)
     )
 
-    fight = warcraftlogs_fight.Fight(
-        fight_id=8,
-        start_time=1634490036325 + 5629191,
-        duration=(6327948 - 5629191) / 1000,
-        boss_id=2435,
+    fight = Fight(
+        fight_id=2,
+        boss_id=2553,
+        start_time = report.start_time + datetime.timedelta(milliseconds=271703),
+        duration = (493690 - 271703),
     )
     fight.report = report
-
     return fight
 
 
-async def load_fight_overview():
-    """Load a fight that has no reference in our DB yet."""
-
+async def load_fight_overview() -> None:
+    """Load a the fight Overview."""
     fight = create_fight()
-    # print(fight.get_summary_query())
-    await fight.load_overview()
+
+    q = fight.get_query()
+    print(q)
+    # fight.client.query(q)
+    await fight.load()
+
     print(fight.players)
+    print(fight.as_dict())
+    return
+    return
 
 
-async def load_casts():
-
-    fight = create_fight()
-
-    await fight.load_overview()
-
-    fight.players = fight.players[:3]
-    fight.boss = None
-
-    await fight.load_casts()
-
-
+async def main():
+    await load_fight_overview()
+    # await load_casts()
 
 
 if __name__ == "__main__":
-    asyncio.run(load_fight_overview())
-    # asyncio.run(load_casts())
+    asyncio.run(main())

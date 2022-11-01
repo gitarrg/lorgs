@@ -16,7 +16,10 @@ class WowRole(base.Model):
     def __init__(self, id: int, name: str, code: str = ""):
         self.id = id  #used for sorting
         self.name = name
+
         self.code = code or name.lower()
+        """Lowercase short Version. eg.: `tank`, `heal`, `mdps` or `rdps`."""
+
         self.specs: list["WowSpec"] = []
 
     def __repr__(self):

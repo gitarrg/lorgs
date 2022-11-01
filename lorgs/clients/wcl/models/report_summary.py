@@ -7,9 +7,14 @@ from pydantic import BaseModel, root_validator
 
 class UnitInfo(BaseModel):
     name: str
+    """Unit Name. eg,.: Charater- or NPC-Name."""
     id: int
-    guid: int
+    """Source ID."""
+    guid: int = 0
+    """Units GUID"""
     type: str
+    """Unit Type. ClassName for Players."""
+
 
 
 class PlayerTotal(UnitInfo):
@@ -27,6 +32,9 @@ class DeathEventAbility(BaseModel):
     """DMG Type."""
     abilityIcon: str = ""
 
+    guid: int = 0
+    """Spell ID."""
+
 
 class DeathEvent(UnitInfo):
     """Event describing a players death."""
@@ -39,7 +47,7 @@ class DeathEvent(UnitInfo):
 
 class CompositionEntrySpec(BaseModel):
     spec: str
-    role: str
+    role: str = ""
 
 
 class CompositionEntry(UnitInfo):
@@ -51,17 +59,15 @@ class CompositionEntry(UnitInfo):
 
 class ReportSummary(BaseModel):
 
-    totalTime: int
-    itemLevel: float
-    composition: list[CompositionEntry]
-    damageDone: list[PlayerTotal]
-    healingDone: list[PlayerTotal]
-
-    deathEvents: list[DeathEvent]
+    totalTime: int = 0
+    itemLevel: float = 0
+    composition: list[CompositionEntry] = []
+    damageDone: list[PlayerTotal] = []
+    healingDone: list[PlayerTotal] = []
+    deathEvents: list[DeathEvent] = []
 
     @root_validator(pre=True)
     def unwrap_data(cls, v):
-        try:
-            return v["data"]
-        except KeyError:
-            raise ValueError("Missing `data`.")
+        if v and v.get("data"):
+            v = v["data"]
+        return v

@@ -67,7 +67,7 @@ class UserReport(me.Document):
     ################################
     # Methods
     #
-    def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
-        """Update the timestamp and Sve the Report."""
+    def save(self, *args: typing.Any, **kwargs: typing.Any):  # pylint: disable=arguments-differ
+        """Update the timestamp and Save the Report."""
         self.updated = arrow.utcnow()
         return super().save(*args, **kwargs)

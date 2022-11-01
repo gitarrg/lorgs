@@ -94,11 +94,10 @@ class TestBaseActor(unittest.TestCase):
                 "abilityGameID": 103,
             },
         ]
-        casts_data = helpers.wrap_data(casts_events, "reportData", "report", "events", "data")
-        query_data = wcl.Query(**casts_data)
+        casts_data = helpers.wrap_data(casts_events, "report", "events", "data")
 
         self.actor.source_id = 10
-        self.actor.process_query_result(query_data)
+        self.actor.process_query_result(**casts_data)
 
         assert self.actor.casts != []
         assert len(self.actor.casts) == 3
@@ -110,12 +109,11 @@ class TestBaseActor(unittest.TestCase):
     def test__process_casts__ignore_other_source_ids(self):
         """Make sure a cast from another ID is not added"""
         casts_events = [{"sourceID": 123}]
-        casts_data = helpers.wrap_data(casts_events, "reportData", "report", "events", "data")
-        query_data = wcl.Query(**casts_data)
+        casts_data = helpers.wrap_data(casts_events, "report", "events", "data")
 
         assert not self.actor.casts
         self.actor.source_id = 10
-        self.actor.process_query_result(query_data)
+        self.actor.process_query_result(**casts_data)
         assert not self.actor.casts
 
     ############################################################################
@@ -209,10 +207,10 @@ class TestBaseActor(unittest.TestCase):
     def test__load_fixture_report_data_1(self) -> None:
 
         query_result = helpers.load_fixture("report_data_1.json")
-        query_data = wcl.Query(**query_result)
+        query_result = query_result["reportData"]
 
         self.actor.source_id == 4
-        self.actor.process_query_result(query_data)
+        self.actor.process_query_result(**query_result)
 
         assert len(self.actor.casts) == 21
         assert self.actor.source_id == 4
