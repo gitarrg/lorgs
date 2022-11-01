@@ -54,7 +54,11 @@ class WarcraftlogsClient:
         # credentials
         self.client_id = client_id or os.getenv("WCL_CLIENT_ID")
         self.client_secret = client_secret or os.getenv("WCL_CLIENT_SECRET")
-        self.headers: typing.Dict[str, str] = {}
+        self.headers: dict[str, str] = {}
+
+        auth_token = os.getenv("WCL_AUTH_TOKEN")
+        if auth_token:
+            self.headers["Authorization"] = "Bearer " + auth_token
 
         logger.info("NEW CLIENT: %s", self.client_id)
         self._num_queries = 0
@@ -77,14 +81,14 @@ class WarcraftlogsClient:
                 try:
                     response: dict[str, str] = await resp.json()
                 except Exception as e:
-                    logger.error(resp)
+                    logger.error(resp.text())
                     raise e
 
         token = response.get("access_token", "")
         self.headers["Authorization"] = "Bearer " + token
 
     async def ensure_auth(self) -> None:
-        if self.headers:
+        if self.headers.get("Authorization"):
             return
         await self.update_auth_token()
 
