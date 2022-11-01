@@ -32,13 +32,12 @@ DIFFICULTY_IDS["mythic"] = 5
 
 class SpecRanking(warcraftlogs_base.Document):
 
-    spec_slug: str = me.StringField(required=True)
-    boss_slug: str = me.StringField(required=True)
-    difficulty: str = me.StringField(default="")
-    metric: str = me.StringField(default="")
-    updated = me.DateTimeField(default=datetime.datetime.utcnow)
-
-    reports: typing.List[Report] = me.EmbeddedDocumentListField(Report)
+    spec_slug: str = me.StringField(required=True) # type: ignore
+    boss_slug: str = me.StringField(required=True) # type: ignore
+    difficulty: str = me.StringField(default="") # type: ignore
+    metric: str = me.StringField(default="") # type: ignore
+    updated: datetime.datetime = me.DateTimeField(default=datetime.datetime.utcnow) # type: ignore
+    reports: typing.List[Report] = me.EmbeddedDocumentListField(Report) # type: ignore
 
     meta = {
         'indexes': [  # type: ignore
@@ -217,7 +216,7 @@ class SpecRanking(warcraftlogs_base.Document):
         if not actors_to_load:
             return
 
-        await self.load_many(actors_to_load, chunk_size=10)
+        await self.load_many(actors_to_load, raise_errors=False)
 
     ############################################################################
     # Query: Both
