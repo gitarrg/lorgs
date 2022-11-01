@@ -57,23 +57,12 @@ class User(me.Document):
     # last time the roles have been checked
     updated: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField() 
 
-    ################################
-    # insert generated fields
-    if typing.TYPE_CHECKING:
-        @classmethod
-        def objects(cls, **kwargs: typing.Any):
-
-            class X():
-                def first(self) -> typing.Optional[User]:
-                    return User()
-            return X()
-
     @classmethod
     def get_or_create(cls, discord_id=0, discord_tag="") -> "User":
-        user: User = cls.objects(discord_id=discord_id).first()
+        user = cls.objects(discord_id=discord_id).first()
         user = user or cls.objects(discord_tag=discord_tag).first()
         user = user or cls(discord_id=discord_id, discord_tag=discord_tag)
-        return user
+        return user  # type: ignore
 
     ################################
     # Properties

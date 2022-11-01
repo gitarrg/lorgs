@@ -6,9 +6,6 @@ import mongoengine as me
 from lorgs.models import warcraftlogs_actor
 from lorgs.models.raid_boss import RaidBoss
 
-if typing.TYPE_CHECKING:
-    from lorgs.clients import wcl
-
 
 class Boss(warcraftlogs_actor.BaseActor):
     """A NPC/Boss in a Fight."""
@@ -46,6 +43,7 @@ class Boss(warcraftlogs_actor.BaseActor):
 
         return self.combine_queries(cast_query, buffs_query, events_query)
 
-    def process_query_result(self, query_result: "wcl.Query"):
-        query_result = self.raid_boss.preprocess_query_results(query_result)
-        return super().process_query_result(query_result)
+    def process_query_result(self, **query_result: typing.Any) -> None:
+        query_result = self.raid_boss.preprocess_query_results(**query_result)
+        super().process_query_result(**query_result)
+

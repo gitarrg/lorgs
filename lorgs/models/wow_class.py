@@ -13,7 +13,7 @@ from lorgs.models.wow_spell import WowSpell
 class WowClass(base.Model):
     """A playable class in wow."""
 
-    def __init__(self, id: int, name: str, color: str = ""):
+    def __init__(self, id: int, name: str, color: str = "") -> None:
 
         # int: class id, mostly used for sorting
         self.id = id
@@ -30,13 +30,13 @@ class WowClass(base.Model):
         #: bool: flag for the trinkets/potions groups
         self.is_other = self.name.lower() == "other"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<Class(name='{self.name}')>"
 
     def __lt__(self, other: "WowClass") -> bool:
         return self.id < other.id
 
-    def as_dict(self):
+    def as_dict(self) -> dict[str, typing.Any]:
         return {
             "name": self.name,
             "name_slug": self.name_slug,

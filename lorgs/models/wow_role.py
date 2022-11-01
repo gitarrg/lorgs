@@ -13,7 +13,7 @@ if typing.TYPE_CHECKING:
 class WowRole(base.Model):
     """A role like Tank, Healer, DPS."""
 
-    def __init__(self, id: int, name: str, code: str = ""):
+    def __init__(self, id: int, name: str, code: str = "") -> None:
         self.id = id  #used for sorting
         self.name = name
 
@@ -22,16 +22,16 @@ class WowRole(base.Model):
 
         self.specs: list["WowSpec"] = []
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<Role({self.name})>"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.code
 
     def __lt__(self, other: "WowRole") -> bool:
         return self.id < other.id
 
-    def as_dict(self):
+    def as_dict(self) -> dict[str, typing.Any]:
         return {
             "id": self.id,
             "name": self.name,
@@ -40,6 +40,6 @@ class WowRole(base.Model):
         }
 
     @property
-    def metric(self):
+    def metric(self) -> str:
         """str: the preferred metric. aka: dps for all. hps for healers."""
         return "hps" if self.code == "heal" else "dps"

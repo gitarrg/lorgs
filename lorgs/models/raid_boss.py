@@ -133,7 +133,7 @@ class RaidBoss(base.Model):
         #   not 100% sure what this was supposed to do.
         #   I think its the custom "unit-event"-logic
         #   Might need some time/rework
-        return
+        return query_results
 
         casts = utils.get_nested_value(query_results, "report", "events", "data") or []
         events_by_id = {event.get("spell_id"): event for event in self.events}

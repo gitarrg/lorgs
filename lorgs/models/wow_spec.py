@@ -21,7 +21,7 @@ def spell_ids(spells: list[WowSpell]) -> list[int]:
 class WowSpec(base.Model):
     """docstring for Spec"""
 
-    def __init__(self, wow_class: "WowClass", name: str, role: "WowRole", short_name: str = ""):
+    def __init__(self, wow_class: "WowClass", name: str, role: "WowRole", short_name: str = "") -> None:
         super().__init__()
         self.name = name
 
@@ -50,7 +50,7 @@ class WowSpec(base.Model):
         # still used on the flask index page
         self.icon = f"specs/{self.full_name_slug}.jpg"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<Spec({self.full_name})>"
 
     def __lt__(self, other: "WowSpec") -> bool:
@@ -73,22 +73,22 @@ class WowSpec(base.Model):
         }
 
     @property
-    def all_spells(self):
+    def all_spells(self) -> list[WowSpell]:
         """Get all spells spec can use."""
         return self.wow_class.spells + self.spells
 
     @property
-    def all_buffs(self):
+    def all_buffs(self) -> list[WowSpell]:
         """Get all buffs that are relavent for this spec."""
         return self.wow_class.buffs + self.buffs
 
     @property
-    def all_debuffs(self):
+    def all_debuffs(self) -> list[WowSpell]:
         """Get all debuffs that are relavent for this spec."""
         return self.wow_class.debuffs + self.debuffs
 
     @property
-    def all_events(self):
+    def all_events(self) -> list[WowSpell]:
         """Get all events that are relavent for this spec."""
         return self.events
 
@@ -105,10 +105,10 @@ class WowSpec(base.Model):
         self.spells.append(spell)  # Important to keep a ref in memory
         return spell
 
-    def add_spells(self, *spells: WowSpell):
+    def add_spells(self, *spells: WowSpell) -> None:
         self.spells.extend(spells)
 
-    def add_buff(self, spell: typing.Optional[WowSpell] = None, **kwargs):
+    def add_buff(self, spell: typing.Optional[WowSpell] = None, **kwargs) -> WowSpell:
 
         if not spell:
             kwargs.setdefault("color", self.wow_class.color)
@@ -118,10 +118,10 @@ class WowSpec(base.Model):
         self.buffs.append(spell)
         return spell
 
-    def add_buffs(self, *spells: WowSpell):
+    def add_buffs(self, *spells: WowSpell) -> None:
         self.buffs.extend(spells)
 
-    def add_debuff(self, spell: typing.Optional[WowSpell] = None, **kwargs):
+    def add_debuff(self, spell: typing.Optional[WowSpell] = None, **kwargs) -> WowSpell:
 
         if not spell:
             kwargs.setdefault("color", self.wow_class.color)
@@ -131,8 +131,8 @@ class WowSpec(base.Model):
         self.debuffs.append(spell)
         return spell
 
-    def add_debuffs(self, *spells: WowSpell):
+    def add_debuffs(self, *spells: WowSpell) -> None:
         self.debuffs.extend(spells)
 
-    def add_events(self, *spells: WowSpell):
+    def add_events(self, *spells: WowSpell) -> None:
         self.events.extend(spells)

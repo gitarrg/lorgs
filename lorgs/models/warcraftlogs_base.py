@@ -145,15 +145,6 @@ class Document(me.Document, wclclient_mixin):
         "strict": False # ignore non existing properties
     }
 
-    # insert generated fields
-    if typing.TYPE_CHECKING:
-
-        def objects(self, **kwargs: typing.Any):
-            def first():
-                return self
-            return first
-
-
     @classmethod
     def get_or_create(cls: Type[T], **kwargs) -> T:
         obj: typing.Optional[T] = cls.objects(**kwargs).first()
