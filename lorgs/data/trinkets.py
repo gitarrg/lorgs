@@ -5,7 +5,7 @@
 # from lorgs.data.classes import *
 
 from lorgs.data.classes import *
-from lorgs.models.wow_spell import WowSpell, EventType
+from lorgs.models.wow_spell import WowSpell
 
 
 maxilvl = "&ilvl=278"
@@ -41,7 +41,7 @@ CACHE_OF_ACQUIRED_TREASURES_AXE   = WowSpell(spell_type=TYPE_TRINKET, spell_id=3
 CACHE_OF_ACQUIRED_TREASURES_SWORD = WowSpell(spell_type=TYPE_TRINKET, spell_id=368649, duration=25, cooldown=180, color="#cca843", name="Cache of Acquired Treasures (Sword)", icon="inv_sword_1h_draenorcrafted_d_01_c_alliance.jpg", wowhead_data=f"item=188265{mythic}{maxilvl}")
 # track Wand via the "damage" event
 CACHE_OF_ACQUIRED_TREASURES_WAND  = WowSpell(spell_type=TYPE_TRINKET, spell_id=368653,              cooldown=180, color="#43ccb5", name="Cache of Acquired Treasures (Wand)",  icon="inv_wand_25.jpg", wowhead_data=f"item=188265{mythic}{maxilvl}")
-CACHE_OF_ACQUIRED_TREASURES_WAND.event_type = EventType.DAMAGE
+CACHE_OF_ACQUIRED_TREASURES_WAND.event_type = "damage"
 
 #### OTHER ####
 # pvp badge

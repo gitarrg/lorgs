@@ -38,24 +38,34 @@ class UserReport(me.Document):
         ]
     }
 
+    @typing.overload
+    @classmethod
+    def from_report_id(cls, report_id: str, create: typing.Literal[True]) -> "UserReport":
+        ...
+
+    @typing.overload
+    @classmethod
+    def from_report_id(cls, report_id: str) -> typing.Union["UserReport", None]:
+        ...
+
     @classmethod
     def from_report_id(cls, report_id: str, create=False) -> typing.Union["UserReport", None]:
-        """Need to split it, as otherwise the creation with nested parm does;t work"""
-        user_report = cls.objects(report_id=report_id).first()  # pylint: disable=no-member
+        """Return a Report based of the Report ID. Create one if not found."""
+        user_report = cls.objects(report_id=report_id).first()
         if user_report:
-            return user_report
+            return user_report  # type: ignore
 
         if not create:
             return None
 
         user_report = cls(report_id=report_id)
         user_report.report = warcraftlogs_report.Report(report_id=report_id)
-        return user_report
+        return user_report  # type: ignore
 
     ################################
     # Properties
     #
-    def as_dict(self):
+    def as_dict(self) -> dict[str, typing.Any]:
         info = self.report.as_dict()
         info["updated"] = int(self.updated.timestamp())
         return info
@@ -67,7 +77,7 @@ class UserReport(me.Document):
     ################################
     # Methods
     #
-    def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
-        """Update the timestamp and Sve the Report."""
+    def save(self, *args: typing.Any, **kwargs: typing.Any):  # pylint: disable=arguments-differ
+        """Update the timestamp and Save the Report."""
         self.updated = arrow.utcnow()
         return super().save(*args, **kwargs)

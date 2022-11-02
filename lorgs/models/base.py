@@ -1,5 +1,5 @@
 
-from typing import Type, TypeVar
+from typing import Type, TypeVar, Any
 import weakref
 
 # IMPORT THIRD PARTY LIBRARIES
@@ -13,7 +13,7 @@ class MetaInstanceRegistry(type):
 
     def __init__(cls, name, bases, attrs):
         super(MetaInstanceRegistry, cls).__init__(name, bases, attrs)
-        cls.all = weakref.WeakSet()
+        cls.all: weakref.WeakSet[Any] = weakref.WeakSet()
 
     def __call__(cls, *args, **kwargs):
         instance = super(MetaInstanceRegistry, cls).__call__(*args, **kwargs)
@@ -24,26 +24,12 @@ class MetaInstanceRegistry(type):
         return instance
 
 
-class IconPathMixin:
-    """docstring for img_path_mixin"""
-
-    @property
-    def icon_path(self):
-        if not self.icon:
-            return ""
-        return f"/static/images/{self.icon}"
-
-
 T = TypeVar('T', bound="Model")
 
 
-class Model(IconPathMixin, metaclass=MetaInstanceRegistry):
-    """
-
-    TODO:
-        - add filter
-    """
+class Model(metaclass=MetaInstanceRegistry):
+    """"""
 
     @classmethod
-    def get(cls: Type[T], **kwargs) -> T:
-        return utils.get(cls.all, **kwargs)
+    def get(cls: Type[T], **kwargs) -> T:  # TODO: this actually returns an Optional[T]
+        return utils.get(cls.all, **kwargs) # type: ignore

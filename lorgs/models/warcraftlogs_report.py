@@ -11,13 +11,13 @@ import mongoengine as me
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
+from lorgs.clients import wcl
 from lorgs.lib import mongoengine_arrow
 from lorgs.logger import logger
-from lorgs.models import warcraftlogs_actor
 from lorgs.models import warcraftlogs_base
-from lorgs.models.warcraftlogs_actor import Player
 from lorgs.models.warcraftlogs_boss import Boss
 from lorgs.models.warcraftlogs_fight import Fight
+from lorgs.models.warcraftlogs_player import Player
 
 
 class Report(warcraftlogs_base.EmbeddedDocument):
@@ -41,19 +41,14 @@ class Report(warcraftlogs_base.EmbeddedDocument):
     owner: str = me.StringField(default="")
 
     # fights in this report keyed by fight_id. (they may or may not be loaded)
-    fights: typing.Dict[str, Fight] = me.MapField(me.EmbeddedDocumentField(Fight), default={})
+    fights: dict[str, Fight] = me.MapField(me.EmbeddedDocumentField(Fight), default={})
 
     # players in this report.
     #   Note: not every player might participate in every fight.
-    players: typing.Dict[str, Player] = me.MapField(me.EmbeddedDocumentField(Player), default={})
+    players: dict[str, Player] = me.MapField(me.EmbeddedDocumentField(Player), default={})
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: typing.Any, **kwargs: typing.Any):
         super().__init__(*args, **kwargs)
-
-        # convert list to dict for old DB entries
-        # if isinstance(self.fights, list):
-        #     self.fights = {fight.fight_id: fight for fight in self.fights}
-
         for fight in self.fights.values():
             fight.report = self
 
@@ -63,7 +58,7 @@ class Report(warcraftlogs_base.EmbeddedDocument):
     ##########################
     # Attributes
     #
-    def as_dict(self):
+    def as_dict(self) -> dict[str, typing.Any]:
         """Return a Summary/Overview about this report."""
         info = {
             "title": self.title,
@@ -82,29 +77,27 @@ class Report(warcraftlogs_base.EmbeddedDocument):
     ##########################
     # Methods
     #
-    def add_fight(self, **fight_data):
+    def add_fight(self, fight_data: wcl.ReportFight):
         """Add a new Fight to this Report."""
         # skip trash fights
-        boss_id = fight_data.get("encounterID")
-        if not boss_id:
+        if not fight_data.encounterID:
             return
 
         fight = Fight()
-
-        fight.fight_id = fight_data.get("id", "0")
+        fight.fight_id = fight_data.id
         fight.report = self
 
-        fight.percent = fight_data.get("fightPercentage")
-        fight.kill = fight_data.get("kill", True)
+        fight.percent = fight_data.fightPercentage
+        fight.kill = fight_data.kill
 
         # Fight: Time/Duration
-        start_time = fight_data.get("startTime", 0) / 1000
-        end_time = fight_data.get("endTime", 0) / 1000
+        start_time = fight_data.startTime / 1000
+        end_time = fight_data.endTime / 1000
         fight.start_time = self.start_time.shift(seconds=start_time)
-        fight.duration = (end_time - start_time) * 1000
+        fight.duration = int((end_time - start_time) * 1000)
 
         # Fight: Boss
-        fight.boss = Boss(boss_id=boss_id)
+        fight.boss = Boss(boss_id=fight_data.encounterID)
         if fight.boss: # could be a boss unknown to Lorrgs
             fight.boss.fight = fight
 
@@ -121,24 +114,28 @@ class Report(warcraftlogs_base.EmbeddedDocument):
         fights = [self.get_fight(fight_id) for fight_id in fight_ids]
         return [f for f in fights if f] # filter out nones
 
-    def add_player(self, **actor_data):
-        # pets
-        if actor_data.get("subType") == "Unknown":
+    def add_player(self, actor_data: wcl.ReportActor):
+
+        if actor_data.type != "Player":
             return
 
         # guess spec from the icon
         # WCL gives us an icon matching the spec, IF a player
         # played the same spec in all fights inside a report.
         # Otherwise it only includes a class-name.
-        icon_name = actor_data.get("icon", "")
+        icon_name = actor_data.icon
         spec_slug = icon_name.lower() if "-" in icon_name else ""
 
         # create the new player
-        player = warcraftlogs_actor.Player()
-        player.source_id = actor_data.get("id")
-        player.name = actor_data.get("name")
-        player.class_slug = actor_data.get("subType", "").lower()
-        player.spec_slug = spec_slug
+        player = Player(
+            source_id=actor_data.id,
+            name=actor_data.name,
+            class_slug = actor_data.subType.lower(),
+            spec_slug=spec_slug,
+        )
+        if player.spec == None:
+            logger.debug("Skipping unknown Player: %s", player)
+            return
 
         # add to to the report
         self.players[str(player.source_id)] = player
@@ -188,49 +185,42 @@ class Report(warcraftlogs_base.EmbeddedDocument):
         }}
         """)
 
-    def process_master_data(self, master_data: typing.Dict[str, typing.Any]):
+    def process_master_data(self, master_data: wcl.ReportMasterData):
         """Create the Players from the passed Report-MasterData"""
-        if not master_data:
-            return
-
         # clear out any old instances
         self.players = {}
 
-        for actor_data in master_data.get("actors", []):
-            self.add_player(**actor_data)
+        for actor_data in master_data.actors:
+            self.add_player(actor_data)
 
-    def process_report_fights(self, fights_data: typing.List[typing.Dict]):
+    def process_report_fights(self, fights: list[wcl.ReportFight]):
         """Update the Fights in this report."""
         # clear out any old data
         self.fights = {}
+        for fight in fights:
+            self.add_fight(fight)
 
-        fights_data = fights_data or []
-        for fight_data in fights_data:
-            self.add_fight(**fight_data)
-
-    def process_query_result(self, query_result: dict):
-
-        report_data = query_result.get("report", {})
+    def process_query_result(self, **query_result: typing.Any):
+        report_data = wcl.ReportData(**query_result)
+        report = report_data.report
 
         # Update the Report itself
-        self.title = report_data.get("title", "")
-        self.start_time = arrow.get(report_data.get("startTime", 0))
+        self.title = report.title
+        self.start_time = arrow.get(report.startTime)
+        self.zone_id = report.zone.id
+        self.owner = report.owner.name
 
-        zone = report_data.get("zone") or {}  # might contain a "None" in the results
-        self.zone_id = zone.get("id") or -1
+        guild = report.guild
+        self.guild = guild.name if guild else ""
 
-        self.owner = report_data.get("owner", {}).get("name", "")
+        if report.masterData:
+            self.process_master_data(report.masterData)
+        self.process_report_fights(report.fights)
 
-        guild_info: typing.Dict = report_data.get("guild") or {}
-        self.guild = guild_info.get("name") or ""
-
-        self.process_master_data(report_data.get("masterData"))
-        self.process_report_fights(report_data.get("fights"))
-
-    async def load_summary(self):
+    async def load_summary(self) -> None:
         await self.load()
 
-    async def load_fight(self, fight_id: int, player_ids=typing.List[int]):
+    async def load_fight(self, fight_id: int, player_ids: list[int]):
         """Load a single Fight from this Report."""
         fight = self.fights[str(fight_id)]
         if not fight:

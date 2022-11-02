@@ -80,14 +80,14 @@ async def test_load_multiple_fights():
     await save()
 
 
-async def test_load():
+async def test_load() -> None:
 
-    REPORT_ID = "G9TV6CBWpjXFamK1"
-    fight_ids = [5]
-    player_ids = [3, 4, 21]
+    REPORT_ID = "4KZGNP8HtxWRkyJ9"
+    fight_ids = [4, 19]
+    player_ids = [11, 9]
 
     user_report = UserReport.from_report_id(report_id=REPORT_ID, create=True)
-    user_report.report.fights = []
+    user_report.report.fights = {}
     await user_report.report.load_fights(fight_ids=fight_ids, player_ids=player_ids)
     user_report.save()
 

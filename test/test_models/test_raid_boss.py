@@ -15,7 +15,7 @@ class TestRaidBoss():
     def test__preprocess_query_results__end_event(self):
 
         zone = RaidZone(id=1, name="TestZone")
-        boss = RaidBoss(zone=zone, id=10, name="TestBoss")
+        boss = RaidBoss(id=10, name="TestBoss")
         boss.add_event(spell_id=100, until={"spell_id": 200})
 
         query_result = {
@@ -29,7 +29,7 @@ class TestRaidBoss():
             }
         }
 
-        processed = boss.preprocess_query_results(query_result)
+        processed = boss.preprocess_query_results(**query_result)
 
         casts = utils.get_nested_value(processed, "report", "events", "data") or []
         assert len(casts) == 1

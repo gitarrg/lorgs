@@ -2,15 +2,15 @@
 import unittest
 from unittest import mock
 
-
+from lorgs.clients import wcl
 from lorgs.models import warcraftlogs_actor
 from lorgs.models import wow_class
 from lorgs.models import wow_role
 from lorgs.models import wow_spec
+from lorgs.models.warcraftlogs_cast import Cast
 from lorgs.models.wow_spell import WowSpell
 
-# pylint: disable=protected-access
-# pylint: disable=attribute-defined-outside-init
+from test import helpers
 
 
 # Test Classes
@@ -52,7 +52,7 @@ class TestBaseActor(unittest.TestCase):
         # run and test
         q = self.actor.get_cast_query(spells)
         assert q == "type='cast' and ability.id in (101,102)"
-
+    
     ################################
     # get_buff_query
 
@@ -64,7 +64,7 @@ class TestBaseActor(unittest.TestCase):
         #inputs
         spells = [WowSpell(spell_id=101), WowSpell(spell_id=102)]
 
-        expected = "type in ('applybuff','removebuff','applydebuff','removedebuff') and ability.id in (101,102)"
+        expected = "type in ('applybuff','removebuff') and ability.id in (101,102)"
 
         # run and test
         q = self.actor.get_buff_query(spells)
@@ -74,7 +74,7 @@ class TestBaseActor(unittest.TestCase):
     # process query result
     #
     def test__process_casts__simple(self):
-        casts_data = {"data": [
+        casts_events = [
             {
                 "timestamp": 1001,
                 "type": "cast",
@@ -93,10 +93,11 @@ class TestBaseActor(unittest.TestCase):
                 "sourceID": 10,
                 "abilityGameID": 103,
             },
-        ]}
+        ]
+        casts_data = helpers.wrap_data(casts_events, "report", "events", "data")
 
         self.actor.source_id = 10
-        self.actor.process_query_result(casts_data)
+        self.actor.process_query_result(**casts_data)
 
         assert self.actor.casts != []
         assert len(self.actor.casts) == 3
@@ -107,100 +108,109 @@ class TestBaseActor(unittest.TestCase):
 
     def test__process_casts__ignore_other_source_ids(self):
         """Make sure a cast from another ID is not added"""
-        casts_data = {"data": [
-            {
-                "sourceID": 123,
-            }
-        ]}
+        casts_events = [{"sourceID": 123}]
+        casts_data = helpers.wrap_data(casts_events, "report", "events", "data")
 
         assert not self.actor.casts
         self.actor.source_id = 10
-        self.actor.process_query_result(casts_data)
+        self.actor.process_query_result(**casts_data)
         assert not self.actor.casts
 
-    def test__process_query_result__calc_buff_duration(self):
-        casts_data = {"data": [
-            {"type": "applybuff",  "timestamp": 100, "abilityGameID": 10},
-            {"type": "removebuff", "timestamp": 250, "abilityGameID": 10},
-        ]}
-
-        self.actor.process_query_result(casts_data)
-        cast = self.actor.casts[0]
-        assert cast.timestamp == 100
-        assert cast.duration == 0.15
-
-    def test__process_query_result__calc_buff_duration_when_applied_prepull(self):
-        casts_data = {"data": [
-            {"type": "removebuff", "timestamp": 4500, "abilityGameID": 10},
-        ]}
-
-        with mock.patch("lorgs.models.wow_spell.WowSpell.get") as mock_get_spell:
-            mock_get_spell.return_value = mock.MagicMock()
-            mock_get_spell.return_value.duration = 5  # 5 sec = 5000ms
-
-            # Run
-            self.actor.process_query_result(casts_data)
-
-        # Test
-        cast = self.actor.casts[0]
-        assert cast.timestamp == -500
-
-
-class TestPlayer(unittest.TestCase):
-
-    def setUp(self):
-        self.player = warcraftlogs_actor.Player(
-            spec_slug=MOCK_SPEC.full_name_slug
-        )
-        self.spells = [WowSpell(spell_id=101)]
-
-        self.cast_query_patch = mock.patch("lorgs.models.warcraftlogs_actor.BaseActor.get_cast_query")
-        self.cast_query_mock = self.cast_query_patch.start()
-        self.cast_query_mock.return_value = "CAST_QUERY"
-        self.buff_query_patch = mock.patch("lorgs.models.warcraftlogs_actor.BaseActor.get_buff_query")
-        self.buff_query_mock = self.buff_query_patch.start()
-        self.buff_query_mock.return_value = "BUFF_QUERY"
-
-    def tearDown(self):
-        self.cast_query_patch.stop()
-        self.buff_query_patch.stop()
-
-    def test_spec(self):
-        assert self.player.spec == MOCK_SPEC
-
-    ################################
-    # get_cast_query
+    ############################################################################
     #
 
-    def test_get_cast_query__includes_player_name(self):
-        self.player.name = "PlayerName"
+    def test__process_auras__calc_buff_duration(self):
+        events = [
+            Cast(spell_id=10, timestamp=100, event_type="applybuff"),
+            Cast(spell_id=10, timestamp=250, event_type="removebuff"),
+        ]
 
-        query = self.player.get_cast_query()
-        print("query", query)
-        assert "source.name='PlayerName'" in query
+        result = self.actor.process_auras(events)
 
-    def test_get_buff_query__includes_player_name(self):
-        self.player.name = "PlayerName"
+        assert len(result) == 1  # the removebuff event should be dropped
+        event = result[0]
+        assert event.timestamp == 100
+        assert event.duration == 150
 
-        query = self.player.get_buff_query()
-        assert "target.name='PlayerName'" in query
+    def test__process_auras__multiple_applications(self):
+        events = [
+            Cast(spell_id=10, timestamp=110, event_type="applybuff"),
+            Cast(spell_id=10, timestamp=120, event_type="applybuff"),
+            Cast(spell_id=10, timestamp=130, event_type="applybuff"),
+            Cast(spell_id=10, timestamp=250, event_type="removebuff"),
+        ]
 
-    def test_get_sub_query(self):
+        result = self.actor.process_auras(events)
 
-        query = self.player.get_sub_query()
-        assert self.cast_query_mock.called_once()
-        assert self.buff_query_mock.called_once()
+        assert len(result) == 1  # the removebuff event should be dropped
+        event = result[0]
+        assert event.timestamp == 110
+        assert event.duration == 140
 
-        assert "CAST_QUERY" in query
-        assert "BUFF_QUERY" in query
+    def test__process_auras__multiple_buffs_same_spell(self):
+        events = [
+            Cast(spell_id=10, timestamp=100, event_type="applybuff"),
+            Cast(spell_id=10, timestamp=150, event_type="removebuff"),
+            Cast(spell_id=10, timestamp=200, event_type="applybuff"),
+            Cast(spell_id=10, timestamp=260, event_type="removebuff"),
+        ]
 
-    def test__process_casts__sets_source_id_from_casts(self):
-        casts_data = {"report": {"events": { "data": [
-            {"type": "cast", "sourceID": 32},
-        ]}}}
+        result = self.actor.process_auras(events)
 
-        assert not self.player.casts
-        self.player.source_id = -2
-        self.player.process_query_result(casts_data)
-        assert len(self.player.casts) == 1
-        assert self.player.source_id == 32
+        assert len(result) == 2  # the removebuff event should be dropped
+        eventA = result[0]
+        assert eventA.timestamp == 100
+        assert eventA.duration == 50
+
+        eventB = result[1]
+        assert eventB.timestamp == 200
+        assert eventB.duration == 60
+
+    def test__process_auras__multiple_buffs_diff_spell(self):
+        events = [
+            Cast(spell_id=10, timestamp=100, event_type="applybuff"),
+            Cast(spell_id=20, timestamp=120, event_type="applybuff"),
+            Cast(spell_id=10, timestamp=150, event_type="removebuff"),
+            Cast(spell_id=20, timestamp=260, event_type="removebuff"),
+        ]
+
+        result = self.actor.process_auras(events)
+
+        assert len(result) == 2  # the removebuff event should be dropped
+        eventA = result[0]
+        assert eventA.timestamp == 100
+        assert eventA.duration == 50  # 100-150
+
+        eventB = result[1]
+        assert eventB.timestamp == 120
+        assert eventB.duration == 140  # 120 - 260
+
+    def test__process_auras__automatic_start(self) -> None:
+        events = [
+            # Aura fading 4sec into fight
+            Cast(spell_id=10, timestamp=4000, event_type="removebuff"),
+        ]
+
+        # mock the spell to return 6sec as its default duration
+        with mock.patch("lorgs.models.wow_spell.WowSpell.get") as mock_get_spell:
+            mock_get_spell.return_value = mock.MagicMock()
+            mock_get_spell.return_value.duration = 6
+
+            # Run
+            result = self.actor.process_auras(events)
+
+        assert len(result) == 1  # still one everny
+        event = result[0]
+        assert event.timestamp == -2000
+        assert event.event_type == "applybuff"
+
+    def test__load_fixture_report_data_1(self) -> None:
+
+        query_result = helpers.load_fixture("report_data_1.json")
+        query_result = query_result["reportData"]
+
+        self.actor.source_id == 4
+        self.actor.process_query_result(**query_result)
+
+        assert len(self.actor.casts) == 21
+        assert self.actor.source_id == 4

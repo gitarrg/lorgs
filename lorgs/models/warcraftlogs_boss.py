@@ -1,4 +1,5 @@
 # IMPORT THIRD PARTY LIBRARIES
+import typing
 import mongoengine as me
 
 # IMPORT LOCAL LIBRARIES
@@ -22,7 +23,7 @@ class Boss(warcraftlogs_actor.BaseActor):
     def raid_boss(self) -> RaidBoss:
         return RaidBoss.get(id=self.boss_id)
 
-    def as_dict(self):
+    def as_dict(self) -> dict[str, typing.Any]:
         return {
             "name": self.raid_boss and self.raid_boss.full_name_slug,
             "casts": [cast.as_dict() for cast in self.casts]
@@ -31,7 +32,7 @@ class Boss(warcraftlogs_actor.BaseActor):
     #################################
     # Query
     #
-    def get_sub_query(self) -> str:
+    def get_sub_query(self):
         """Get the Query for fetch all relevant data for this Boss."""
         if not self.raid_boss:
             return ""
@@ -42,6 +43,7 @@ class Boss(warcraftlogs_actor.BaseActor):
 
         return self.combine_queries(cast_query, buffs_query, events_query)
 
-    def process_query_result(self, query_result):
-        query_result = self.raid_boss.preprocess_query_results(query_result)
-        return super().process_query_result(query_result)
+    def process_query_result(self, **query_result: typing.Any) -> None:
+        query_result = self.raid_boss.preprocess_query_results(**query_result)
+        super().process_query_result(**query_result)
+
