@@ -93,8 +93,10 @@ async def process_messages(messages: typing.List):
 
 def handler(event, context=None):
     """Main Handler called by Lambda."""
-    print("handler", event)
+    print("[handler]", event)
     records = event.get("Records") or []
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(process_messages(records))
+    print("[handler] done.")
+

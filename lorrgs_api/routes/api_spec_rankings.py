@@ -4,9 +4,9 @@ import typing
 import fastapi
 
 # IMPORT LOCAL LIBRARIES
+from lorgs.clients import sqs
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_ranking
-from lorgs.models.task import Task
 from lorgs.models.wow_spec import WowSpec
 
 
@@ -80,10 +80,10 @@ async def spec_ranking_load(
         "difficulty": difficulty, "metric": metric,
         "limit": limit, "clear": clear,
     }
-    task = Task.submit(payload=payload, save=False)
+    message = sqs.send_message(payload=payload)
 
     return {
         "message": "task queued",
-        "task": task.task_id,
+        "task": message.get("MessageId"),
         "payload": payload
     }
