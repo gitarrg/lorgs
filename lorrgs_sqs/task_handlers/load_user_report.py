@@ -22,13 +22,11 @@ async def load_user_report(
 ):
     print(f"[load_user_report] report_id={report_id} fight_ids={fight_ids} player_ids={player_ids}")
     if not (report_id and fight_ids and player_ids):
-        return "Missing fight or player ids", 400
+        raise ValueError("Missing fight or player ids")
 
     ################################
     # loading...
     user_report = UserReport.from_report_id(report_id=report_id, create=True)
-    if not user_report:
-        return
     await user_report.report.load_fights(fight_ids=fight_ids, player_ids=player_ids)
     user_report.save()
 
@@ -43,6 +41,10 @@ async def main(message):
     # Main
     message_body = message.get("body")
     message_payload = json.loads(message_body)
-    await load_user_report(**message_payload)
 
-    Task.update_task(message_id, status=Task.STATUS_DONE)
+    try:
+        await load_user_report(**message_payload)
+    except:
+        Task.update_task(message_id, status=Task.STATUS_FAILED)
+    else:
+        Task.update_task(message_id, status=Task.STATUS_DONE)
