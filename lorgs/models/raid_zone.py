@@ -13,12 +13,12 @@ from lorgs.models.raid_boss import RaidBoss
 class RaidZone(base.Model):
     """A raid zone in the Game."""
 
-    def __init__(self, id: int, name: str, bosses: list[RaidBoss] = []) -> None:
+    def __init__(self, id: int, name: str, bosses: typing.Optional[list[RaidBoss]] = None) -> None:
         self.id: int = id
         """ID of the Raid Zone. aka. T28, T29 (as used in WarcraftLogs)."""
         self.name: str = name
         """Full Name of the Zone. eg.: `Castle Nathria`."""
-        self.bosses = bosses
+        self.bosses = bosses or []
         """All Bosses, in order, in this Zone."""
         self.name_slug = utils.slug(self.name, space="-")
 
