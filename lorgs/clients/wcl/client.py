@@ -58,8 +58,12 @@ class BaseClient():
         return cls._instance # type: ignore
 
     def __init__(self) -> None:
-        self.session: typing.Optional[aiohttp.ClientSession] = None
         self.headers: dict[str, typing.Any] = {}
+        # self.session: typing.Optional[aiohttp.ClientSession] = None
+        session_timeout = aiohttp.ClientTimeout(total=60)
+        conn = aiohttp.TCPConnector(limit_per_host=CONCURRENT_CONNECTIONS)
+        self.session = aiohttp.ClientSession(connector=conn, timeout=session_timeout)
+
 
     async def ensure_auth(self) -> None:
         """Ensure the Client is authenticated prior making any Requests."""
@@ -74,12 +78,13 @@ class BaseClient():
         Args:
             query (str): the query to execute
         """
-        self.session = self.session or aiohttp.ClientSession()
-        async with self._sem:
-            await self.ensure_auth()
-            async with self.session.get(url=url, json={"query": query}, headers=self.headers) as resp:
-                resp.raise_for_status()
-                return await resp.json()
+        # print("X", self.session)
+        # self.session = self.session or aiohttp.ClientSession()
+        # async with self._sem:
+        await self.ensure_auth()
+        async with self.session.get(url=url, json={"query": query}, headers=self.headers) as resp:
+            resp.raise_for_status()
+            return await resp.json()
 
 
 class WarcraftlogsClient(BaseClient):
@@ -119,6 +124,7 @@ class WarcraftlogsClient(BaseClient):
 
                 try:
                     response: dict[str, str] = await resp.json()
+                    # asyncio.exceptions.TimeoutError
                 except Exception as e:
                     logger.error(resp.text())
                     raise e
