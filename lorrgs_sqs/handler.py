@@ -1,10 +1,10 @@
 # IMPORT STANDARD LIBRARIES
 import asyncio
 import json
-import os
 import typing
 import uuid
 
+# IMPORT THIRD PARTY LIBRARIES
 import boto3
 
 # IMPORT LOCAL LIBRARIES
@@ -28,6 +28,13 @@ TASK_HANDLERS = {
 SQS_CLIENT = boto3.client("sqs")
 
 
+loop = asyncio.new_event_loop()
+"""A global loop shared across multiple invokations of the same lambda.
+
+This is required when lambda reuses the same instance for subsequent runs
+"""
+
+
 def submit_messages(queue_url, messages, chunk_size=10):
     """"""
     print("submit_messages", messages)
@@ -46,11 +53,6 @@ def submit_messages(queue_url, messages, chunk_size=10):
 
 async def process_message(message):
 
-    # Task Status Updates
-    # message_id = message.get("messageId")
-    # task = Task.from_id(message_id)
-    # task.status = Task.STATUS_IN_PROGRESS
-
     payload = json.loads(message.get("body") or "")
     task = payload.get("task") or "unknown"
 
@@ -61,9 +63,7 @@ async def process_message(message):
     payloads = helpers.expand_keywords(payload)
     # print("process_message.payloads", payloads)
     if len(payloads) > 1:
-        attributes = message.get("attributes")
-        source_arn = message.get("eventSourceARN")
-        queue_url = helpers.queue_arn_to_url(source_arn)
+        queue_url = helpers.queue_arn_to_url(message.get("eventSourceARN"))
 
         messages = [{
             "MessageBody": json.dumps(payload),
@@ -72,12 +72,10 @@ async def process_message(message):
 
         return submit_messages(queue_url, messages)
 
+    #################################
     # run the Handler
     handler = TASK_HANDLERS.get(task) or TASK_HANDLERS["unknown"]
     await handler(message)
-
-    # Task Status Updates
-    # task.status = Task.STATUS_DONE
 
 
 async def process_messages(messages: typing.List):
@@ -96,24 +94,10 @@ def handler(event, context=None):
     print("[handler]", event)
     records = event.get("Records") or []
 
-    # an old Instance might still be connected to an old asyncio-loop
-    from lorgs.clients import wcl
-    wcl.BaseClient._instance = None
-    wcl.WarcraftlogsClient._instance = None
+    # We can not use `asyncio.run` here as it creates and closes fresh loop
+    # each time it runs.
+    # This interferes with shared instances (eg.: the `aiohttp.ClientSession`)
+    # that are bound to a given loop.
+    loop.run_until_complete(process_messages(records))
 
-    # Make sure we have a fresh event loop
-    # in case Lambda reuses the same instance
-    asyncio.run(process_messages(records))
-
-    """
-    loop = asyncio.new_event_loop()
-    # loop = asyncio.get_event_loop()
-    # asyncio.set_event_loop(loop)
-    # Main
-    try:
-        loop.run_until_complete(process_messages(records))
-    finally:
-        loop.run_until_complete(loop.shutdown_asyncgens())
-    """
-    # loop.close()
     print("[handler] done.")
