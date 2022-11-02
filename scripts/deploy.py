@@ -178,7 +178,7 @@ def update_used_layers(lambda_names: typing.List[str], layer_names: typing.List[
 ################################################################################
 
 
-def main():
+def main() -> None:
     """Deploy everything."""
     if os.path.exists(DEPLOY_DIR):
         shutil.rmtree(DEPLOY_DIR)

@@ -229,12 +229,11 @@ class Report(warcraftlogs_base.EmbeddedDocument):
         await fight.load_players(player_ids=player_ids)
 
     async def load_fights(self, fight_ids: typing.List[int], player_ids: typing.List[int]):
-        await self.client.ensure_auth()
 
         if not self.fights:
             await self.load_summary()
 
-        for ids in utils.chunks(fight_ids, 10):
-            logger.info(f"loading fights: {ids}")
-            tasks = [self.load_fight(fight_id=fight_id, player_ids=player_ids) for fight_id in ids]
-            await asyncio.gather(*tasks)
+        # queue all tasks at once.
+        # the client will make sure its throttled accordingly 
+        tasks = [self.load_fight(fight_id=fight_id, player_ids=player_ids) for fight_id in fight_ids]
+        await asyncio.gather(*tasks)

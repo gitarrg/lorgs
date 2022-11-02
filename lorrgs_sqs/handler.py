@@ -97,8 +97,4 @@ def handler(event, context=None):
     records = event.get("Records") or []
 
     loop = asyncio.get_event_loop()
-    try:
-        loop.run_until_complete(process_messages(records))
-    finally:
-        loop.run_until_complete(loop.shutdown_asyncgens())
-        loop.close()
+    loop.run_until_complete(process_messages(records))
