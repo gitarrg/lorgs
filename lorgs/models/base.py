@@ -31,5 +31,5 @@ class Model(metaclass=MetaInstanceRegistry):
     """"""
 
     @classmethod
-    def get(cls: Type[T], **kwargs) -> T:
+    def get(cls: Type[T], **kwargs) -> T:  # TODO: this actually returns an Optional[T]
         return utils.get(cls.all, **kwargs) # type: ignore

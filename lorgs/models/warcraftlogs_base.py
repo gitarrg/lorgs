@@ -10,18 +10,18 @@ import typing
 import mongoengine as me
 
 # IMPORT LOCAL LIBRARIES
-from lorgs.client import WarcraftlogsClient
+from lorgs.clients.wcl import WarcraftlogsClient
 
 
 VALID_OPS = ["eq", "lt", "lte", "gt", "gte"]
-RE_KEY = fr"([\w\-]+)"  # expr to match the key/attr name. eg.: spec or role name
-RE_OPS = fr"|".join(VALID_OPS)
-RE_VAL = fr"\d+"
+RE_KEY = r"([\w\-]+)"  # expr to match the key/attr name. eg.: spec or role name
+RE_OPS = r"|".join(VALID_OPS)
+RE_VAL = r"\d+"
 
 QUERY_ARG_RE = fr"(?P<key>{RE_KEY})\.((?P<op>{RE_OPS})\.)?(?P<value>{RE_VAL})"
 
 
-def query_args_to_mongo(*query_args, prefix=""):
+def query_args_to_mongo(*query_args: str, prefix="") -> dict[str, str]:
     """Takes a list of query strings and converts them into mongoengine-style kwargs.
 
     Args:
@@ -146,7 +146,7 @@ class Document(me.Document, wclclient_mixin):
     }
 
     @classmethod
-    def get_or_create(cls: Type[T], **kwargs) -> T:
-        obj: typing.Optional[T] = cls.objects(**kwargs).first()
+    def get_or_create(cls: Type[T], **kwargs: typing.Any) -> T:
+        obj = cls.objects(**kwargs).first()
         obj = obj or cls(**kwargs)
-        return obj
+        return obj  # type: ignore

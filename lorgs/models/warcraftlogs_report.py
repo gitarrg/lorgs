@@ -133,6 +133,9 @@ class Report(warcraftlogs_base.EmbeddedDocument):
             class_slug = actor_data.subType.lower(),
             spec_slug=spec_slug,
         )
+        if player.spec == None:
+            logger.debug("Skipping unknown Player: %s", player)
+            return
 
         # add to to the report
         self.players[str(player.source_id)] = player

@@ -21,17 +21,43 @@ class InvalidReport(ValueError):
     """Exception raised when a report was not found."""
 
 
-class BaseClient:
+T = typing.TypeVar("T", bound="BaseClient")
+
+
+class BaseClient():
 
     _sem = asyncio.Semaphore(value=10)
     """Semaphore used to control the number of parallel Requests."""
+
+    # reference used to provide a singelton interface.
+    _instance: typing.Optional["BaseClient"] = None
+
+    @classmethod
+    def get_instance(cls: typing.Type[T], *args: typing.Any, **kwargs: typing.Any) -> T:
+        """Get an instance of the Client.
+
+        This is a singleton-style wrapper,
+        which will return an existing instance, if there is one,
+        or create a new instance otherwise.
+
+        Args:
+            *args, **kwargs passed to the __init__
+
+        Returns:
+            <BaseClient> instance.
+
+        """
+        if cls._instance is None:
+            logger.debug(f"creating new {cls.__name__} Instance.")
+            cls._instance = cls(*args, **kwargs)
+        return cls._instance # type: ignore
 
     def __init__(self) -> None:
         self.session: typing.Optional[aiohttp.ClientSession] = None
         self.headers: dict[str, typing.Any] = {}
 
     async def ensure_auth(self) -> None:
-        pass
+        """Ensure the Client is authenticated prior making any Requests."""
 
     @timeit
     async def query(self, url: str, query: str) -> typing.Any:
@@ -55,29 +81,6 @@ class WarcraftlogsClient(BaseClient):
 
     URL_API = "https://www.warcraftlogs.com/api/v2/client"
     URL_AUTH = "https://www.warcraftlogs.com/oauth/token"
-
-    # reference used to provide a singelton interface.
-    _instance: typing.Optional["WarcraftlogsClient"] = None
-
-    @classmethod
-    def get_instance(cls, *args: typing.Any, **kwargs: typing.Any) -> "WarcraftlogsClient":
-        """Get an instance of the Client.
-
-        This is a singleton-style wrapper,
-        which will return an existing instance, if there is one,
-        or create a new instance otherwise.
-
-        Args:
-            *args, **kwargs passed to the __init__
-
-        Returns:
-            <WarcraftlogsClient> instance.
-
-        """
-        if cls._instance is None:
-            logger.debug("creating new WarcraftlogsClient")
-            cls._instance = cls(*args, **kwargs)
-        return cls._instance
 
     def __init__(self, client_id: str = "", client_secret: str = "") -> None:
         super().__init__()

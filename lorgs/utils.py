@@ -1,3 +1,5 @@
+"""A Collection of very generic Helper Functions."""
+# pylint: disable=invalid-name
 from operator import attrgetter
 import asyncio
 import datetime
@@ -7,6 +9,7 @@ import typing
 
 
 T = typing.TypeVar("T")
+U = typing.TypeVar("U")
 
 
 def chunks(lst: list[T], n: int) -> typing.Generator[list[T], None, None]:
@@ -43,15 +46,42 @@ def format_time(timestamp: int) -> str:
 
 
 def format_big_number(num: float) -> str:
+    """Formats a large number into a readable format.
+
+    Example:
+        >>> utils.format_big_number(12345)
+        '123.35k'
+
+    Args:
+        num (float): The number to be formatted
+
+    Returns:
+        str: the formatted string
+
+    """
     magnitude = 0
     while abs(num) >= 1000:
         magnitude += 1
         num /= 1000.0
     # add more suffixes if you need them
-    return '%.2f%s' % (num, ['', 'k', 'm', 'g', 't', 'p'][magnitude])
+    suffix = ['', 'k', 'm', 'g', 't', 'p'][magnitude]
+    return f"{num:0.2f}{suffix}"
 
 
 def slug(text: str, space="", delete_chars="(),'-") -> str:
+    """Slugifies an input text.
+
+    >>> utils.slug("Hey Test Number 2", space="|")
+    'hey|test|number|2'
+
+    Args:
+        text (str): the text to slugify
+        space (str, optional): character to use in place of whitespace. Defaults to "".
+        delete_chars (str, optional): Characters to remove. Defaults to "(),'-".
+
+    Returns:
+        str: the slugified text.
+    """
     text = text.lower()
     for c in delete_chars:
         text = text.replace(c, "")
@@ -61,11 +91,11 @@ def slug(text: str, space="", delete_chars="(),'-") -> str:
 
 def str_int_list(string: str, sep=".") -> list[int]:
     """Converts string-list of intergers into an actual list.
-    
+
     Example:
         >>> str_int_list("2/4/8/16", sep="/")
         [2, 4, 8, 16]
-    
+
     """
     if not string:
         return []
@@ -74,7 +104,7 @@ def str_int_list(string: str, sep=".") -> list[int]:
 
 
 def get_nested_value(dct: typing.Dict[str, typing.Any], *keys: str, default=None):
-
+    """Extra a value from nested dict."""
     data = dct
     for key in keys:
         data = data or {}
@@ -98,10 +128,10 @@ def flatten(values: typing.Iterable[typing.Iterable[T]]) -> list[T]:
     return list(itertools.chain.from_iterable(values))
 
 
-def as_list(func):
+def as_list(func: typing.Callable[[U], typing.Generator[T, None, None]]) -> typing.Callable[[U], list[T]]:
     """Wrap a Generator to return a list."""
     @functools.wraps(func)
-    def wrapped(*args, **kwargs):
+    def wrapped(*args: typing.Any, **kwargs: typing.Any) -> list[T]:
         return list(func(*args, **kwargs))
 
     return wrapped
@@ -121,7 +151,7 @@ def uniqify(iterable: typing.Iterable[T], key: typing.Callable[[T], typing.Hasha
     return list(d.values())
 
 
-def find(predicate, seq):
+def find(predicate: typing.Callable[[T], typing.Any], seq: typing.Iterable[T]) -> typing.Optional[T]:
     """A helper to return the first element found in the sequence
     that meets the predicate. For example: ::
 
@@ -147,7 +177,7 @@ def find(predicate, seq):
     return None
 
 
-def get(iterable, **attrs):
+def get(iterable: typing.Iterable[T], **attrs) -> typing.Optional[T]:
     r"""A helper that returns the first element in the iterable that meets
     all the traits passed in ``attrs``. This is an alternative for
     :func:`~discord.utils.find`.
@@ -228,4 +258,3 @@ def run_in_executor(_func):
         return loop.run_in_executor(executor=None, func=func)
 
     return wrapped
-

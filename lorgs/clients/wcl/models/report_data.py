@@ -3,7 +3,7 @@ import datetime
 import typing
 
 # IMPORT THIRD PARTY LIBRARIES
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, root_validator
 
 # IMPORT LOCAL LIBRARIES
 from .guild import Guild
@@ -64,3 +64,7 @@ class ReportData(BaseModel):
     """The ReportData object enables the retrieval of single reports or filtered collections of reports."""
 
     report: Report
+
+    @root_validator(pre=True)
+    def unwrap_data(cls, v):
+        return v and v.get("reportData") or v
