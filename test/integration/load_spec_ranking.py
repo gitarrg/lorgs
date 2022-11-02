@@ -25,7 +25,7 @@ async def test__load_rankings():
         metric="hps",
     )
 
-    await spec_ranking.load(limit=40, clear_old=True)
+    await spec_ranking.load(limit=10, clear_old=True)
     spec_ranking.save()
 
 
@@ -40,10 +40,20 @@ async def test__load_all_rankings():
 
 
 async def main():
-    pass
-    # await test__load_rankings()
+
+    # pass
+    await test__load_rankings()
     # await test__load_all_rankings()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    # asyncio.run(main())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
+    """
+    try:
+        loop.run_until_complete(main())
+    finally:
+        loop.run_until_complete(loop.shutdown_asyncgens())
+        loop.close()
+    """

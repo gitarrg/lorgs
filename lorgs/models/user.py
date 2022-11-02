@@ -2,13 +2,16 @@
 
 # IMPORT THIRD PARTY LIBRARIES
 import typing
-from typing import List
 import arrow
 import mongoengine as me
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import auth
+from lorgs.clients import discord
 from lorgs.lib import mongoengine_arrow
+
+
+LORRGS_SERVER_ID  = 885638678607708172
+"""Server ID for the lorrgs discord."""
 
 
 # Role IDs -> Permissions
@@ -36,53 +39,52 @@ class User(me.Document):
         ]
     }
 
-    discord_id: int = me.IntField() # type: ignore[override]
+    discord_id: int = me.IntField()
 
     # Discord Hame+Hash: eg.: "Arrg#2048"
-    discord_tag: str = me.StringField() # type: ignore[override]
+    discord_tag: str = me.StringField()
 
-    discord_avatar: str = me.StringField() # type: ignore[override]
+    discord_avatar: str = me.StringField()
 
     # Role IDs
-    discord_roles: List[str] = me.ListField(me.StringField(), default=[])  # type: ignore[override]
+    discord_roles: list[str] = me.ListField(me.StringField(), default=[]) 
 
-    extra_roles: List[str] = me.ListField(me.StringField(), default=[])  # type: ignore[override]
+    extra_roles: list[str] = me.ListField(me.StringField(), default=[]) 
 
     # just for info
-    last_login: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField()  # type: ignore[override]
+    last_login: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField() 
 
     # last time the roles have been checked
-    updated: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField()  # type: ignore[override]
+    updated: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField() 
 
-    ################################
-    # insert generated fields
-    if typing.TYPE_CHECKING:
-        @classmethod
-        def objects(cls, **kwargs):
-
-            class X():
-                def first(self) -> typing.Optional[User]:
-                    return User()
-            return X()
-
+    @classmethod
+    def get_or_create(cls, discord_id=0, discord_tag="") -> "User":
+        user = cls.objects(discord_id=discord_id).first()
+        user = user or cls.objects(discord_tag=discord_tag).first()
+        user = user or cls(discord_id=discord_id, discord_tag=discord_tag)
+        return user  # type: ignore
 
     ################################
     # Properties
     #
     @property
     def name(self):
+        """The Users Name only (eg.: Arrg#2048 -> Arrg)"""
         return self.discord_tag.split("#")[0]
 
     @property
     def discriminator(self):
+        """The Users discriminator (eg.: Arrg#2048 -> 2048)"""
         return self.discord_tag.split("#")[-1]
 
     @property
     def roles(self):
+        """All Roles the User has."""
         return list(set(self.discord_roles + self.extra_roles))
 
     @property
-    def permissions(self) -> typing.Set[str]:
+    def permissions(self) -> set[str]:
+        """All Permissions the User has."""
         permissions = set()
         for role in self.roles:
             role_permissions = ROLE_PERMISSIONS.get(role, [])
@@ -98,27 +100,21 @@ class User(me.Document):
             "permissions": self.permissions,
 
             # "last_login": self.last_login,
-            "updated": int(self.updated.timestamp()) if self.updated else 0,
+            "updated": self.updated.isoformat()
         }
 
     ################################
     # Methods
     #
 
-    async def refresh(self):
+    async def refresh(self) -> None:
         """Refresh the User Info from Discord."""
 
         # update discord roles / avatar
-        member_info = await auth.get_member_info(self.discord_id)
-        user_info = member_info.get("user") or {}
+        member_info = await discord.get_member_info(server_id=LORRGS_SERVER_ID, user_id=self.discord_id)
+        user_info = member_info.user
 
-        # help convert old logins
-        if not self.discord_tag:
-            try:
-                self.discord_tag = "{username}#{discriminator}".format(**user_info)
-            except KeyError:
-                pass
-
-        self.discord_avatar = member_info.get("avatar") or user_info.get("avatar") or ""
-        self.discord_roles = member_info.get("roles") or []
+        self.discord_tag = user_info.tag
+        self.discord_avatar = member_info.avatar or user_info.avatar or ""
+        self.discord_roles = member_info.roles or []
         self.updated = arrow.utcnow()

@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 """Main Entrypoint to create the Backend-APP."""
 
-# IMPORT STANDARD  LIBRARIES
-import os
-
 # IMPORT THIRD PARTY LIBRARIES
 import fastapi
 
@@ -15,7 +12,7 @@ from lorrgs_api.middlewares import cors_middleware
 from lorrgs_api.routes import api
 
 
-def create_app():
+def create_app() -> fastapi.FastAPI:
     """Create and return a new QuartApp-Instance.
 
     Returns:

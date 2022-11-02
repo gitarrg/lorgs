@@ -11,11 +11,12 @@ import mongoengine as me
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
+from lorgs.clients import wcl
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
 from lorgs.models.raid_boss import RaidBoss
-from lorgs.models.warcraftlogs_actor import BaseActor, Player
 from lorgs.models.warcraftlogs_fight import Fight
+from lorgs.models.warcraftlogs_player import Player
 from lorgs.models.warcraftlogs_report import Report
 from lorgs.models.wow_spec import WowSpec
 
@@ -30,13 +31,12 @@ DIFFICULTY_IDS["mythic"] = 5
 
 class SpecRanking(warcraftlogs_base.Document):
 
-    spec_slug: str = me.StringField(required=True)
-    boss_slug: str = me.StringField(required=True)
-    difficulty: str = me.StringField(default="")
-    metric: str = me.StringField(default="")
-    updated = me.DateTimeField(default=datetime.datetime.utcnow)
-
-    reports: typing.List[Report] = me.EmbeddedDocumentListField(Report)
+    spec_slug: str = me.StringField(required=True) # type: ignore
+    boss_slug: str = me.StringField(required=True) # type: ignore
+    difficulty: str = me.StringField(default="") # type: ignore
+    metric: str = me.StringField(default="") # type: ignore
+    updated: datetime.datetime = me.DateTimeField(default=datetime.datetime.utcnow) # type: ignore
+    reports: typing.List[Report] = me.EmbeddedDocumentListField(Report) # type: ignore
 
     meta = {
         'indexes': [  # type: ignore
@@ -61,20 +61,20 @@ class SpecRanking(warcraftlogs_base.Document):
         return RaidBoss.get(full_name_slug=self.boss_slug)
 
     @property
-    def fights(self) -> typing.List[Fight]:
+    def fights(self) -> list[Fight]:
         return utils.flatten(report.fights.values() for report in self.reports)
 
     @property
-    def players(self) -> typing.List[Player]:
+    def players(self) -> list[Player]:
         return utils.flatten(fight.players.values() for fight in self.fights)
 
     ##########################
     # Methods
     #
     @staticmethod
-    def sort_reports(reports):
+    def sort_reports(reports: list[Report]) -> list[Report]:
         """Sort the reports in place by the highest dps player."""
-        def get_total(report: Report):
+        def get_total(report: Report) -> int:
             top = 0
             for fight in report.fights.values():
                 for player in fight.players.values():
@@ -85,7 +85,7 @@ class SpecRanking(warcraftlogs_base.Document):
     ############################################################################
     # Query: Rankings
     #
-    def get_query(self):
+    def get_query(self) -> str:
         """Return the Query to load the rankings for this Spec & Boss."""
         difficulty_id = DIFFICULTY_IDS.get(self.difficulty, 5)
 
@@ -100,14 +100,13 @@ class SpecRanking(warcraftlogs_base.Document):
                     metric: {self.metric}
                     difficulty: {difficulty_id}
                     includeCombatantInfo: false
-                    partition: 4  # Fated
                 )
             }}
         }}
         """)
 
     @utils.as_list
-    def get_old_reports(self):
+    def get_old_reports(self) -> typing.Generator[tuple[str, int, str], None, None]:
         """Return a list of unique keys to identify existing reports."""
         for report in self.reports:
             for fight in report.fights.values():
@@ -115,95 +114,108 @@ class SpecRanking(warcraftlogs_base.Document):
                     key = (report.report_id, fight.fight_id, player.name)
                     yield key
 
-    def add_new_fight(self, ranking_data):
-        report_data = ranking_data.get("report", {})
+    def add_new_fight(self, ranking_data: wcl.CharacterRanking) -> None:
+        report_data = ranking_data.report
 
         if not report_data:
             return
 
         # skip hidden reports
-        if ranking_data.get("hidden"):
+        if ranking_data.hidden:
             return
 
         ################
         # Report
-        report = Report()
-        report.report_id = report_data.get("code", "")
-        report.start_time = arrow.get(report_data.get("startTime", 0))
+        report = Report(
+            report_id=report_data.code,
+            start_time=arrow.get(report_data.startTime),
+            # fights={str(fight.fight_id): fight },
+        )
         self.reports.append(report)
 
         ################
         # Fight
-        fight = report.add_fight(
-            encounterID=self.boss.id,
-            id=report_data.get("fightID"),
+        fight = Fight(
+            boss_id=self.boss.id,
+            fight_id=report_data.fightID,
+            start_time = arrow.get(ranking_data.startTime),
+            duration = ranking_data.duration,
         )
-        fight.start_time = arrow.get(ranking_data.get("startTime", 0))
-        fight.duration = ranking_data.get("duration", 0)
+        fight.report = report
+        report.fights[str(fight.fight_id)] = fight
 
         ################
         # Player
-        player = Player()
+        player = Player(
+            source_id=-1,
+            name=ranking_data.name,
+            total=ranking_data.amount,
+            spec_slug=self.spec_slug,
+        )
         player.fight = fight
-        player.spec_slug = self.spec_slug
-        player.source_id = -1
-        player.name = ranking_data.get("name")
-        player.total = ranking_data.get("amount", 0)
-        player.covenant_id = ranking_data.get("covenantID", 0)
-        player.soulbind_id = ranking_data.get("soulbindID", 0)
         fight.players["-1"] = player
 
-    def add_new_fights(self, rankings):
+    def add_new_fights(self, rankings: list[wcl.CharacterRanking]):
+        """Add new Fights."""
         old_reports = self.get_old_reports()
 
         for ranking_data in rankings:
-            report_data = ranking_data.get("report", {})
+            report_data = ranking_data.report
 
             ################
             # check if already in the list
-            key = (
-                report_data.get("code", ""),
-                report_data.get("fightID"),
-                ranking_data.get("name")
-            )
+            key = (report_data.code, report_data.fightID, ranking_data.name)
             if key in old_reports:
                 continue
 
             self.add_new_fight(ranking_data)
 
-    def process_query_result(self, query_result):
-        query_result = utils.get_nested_value(
-            query_result,
-            "worldData", "encounter", "characterRankings", "rankings"
-        ) or {}
-        self.add_new_fights(query_result)
+    def process_query_result(self, **query_result: typing.Any):
+        """Process the Ranking Results.
 
-    async def load_rankings(self):
+        Expected Query:
+        >>> {
+        >>>     worldData: {
+        >>>         encounter: {
+        >>>             characterRankings: ....
+        >>>         }
+        >>>     }
+        >>> }
+        """ 
+        # unwrap data
+        query_result = query_result["worldData"]
+        world_data = wcl.WorldData(**query_result)
+
+        rankings = world_data.encounter.characterRankings.rankings
+        self.add_new_fights(rankings)
+
+    async def load_rankings(self) -> None:
         """Fetch the current Ranking Data"""
         # Build and run the query
         query = self.get_query()
         query_result = await self.client.query(query)
-        self.process_query_result(query_result)
+        self.process_query_result(**query_result)
 
     ############################################################################
     # Query: Fights
     #
-    async def load_players(self):
+    async def load_players(self) -> None:
         """Load the Casts for all missing fights."""
-        actors_to_load: typing.List[BaseActor] = self.players
+        actors_to_load = self.players
 
         # make sure the first report has the boss added
         if self.fights:
             first_fight = self.fights[0]
-            actors_to_load += [first_fight.boss]
+            actors_to_load += [first_fight.boss] # type: ignore
 
+        actors_to_load = [actor for actor in actors_to_load if actor]
         actors_to_load = [actor for actor in actors_to_load if not actor.casts]
 
         logger.info(f"load {len(actors_to_load)} players")
         if not actors_to_load:
             return
 
-        await self.load_many(actors_to_load, chunk_size=5)
+        await self.load_many(actors_to_load, raise_errors=False)
 
     ############################################################################
     # Query: Both

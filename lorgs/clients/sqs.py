@@ -17,7 +17,7 @@ SQS_CLIENT = boto3.client("sqs")
 SQS_QUEUE_URL = os.getenv("SQS_QUEUE_URL") or ""
 
 
-def send_message(payload, queue_url=SQS_QUEUE_URL, message_group = ""):
+def send_message(payload: Any, queue_url=SQS_QUEUE_URL, message_group = ""):
     """Send a single Message."""
     message_group = message_group or str(uuid.uuid4())
     return SQS_CLIENT.send_message(

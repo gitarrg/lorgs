@@ -8,31 +8,37 @@ from lorgs import utils
 from lorgs.models import base
 from lorgs.models.wow_spell import WowSpell
 
-if typing.TYPE_CHECKING:
-    from lorgs.models.raid_zone import RaidZone
-
 
 class RaidBoss(base.Model):
     """A raid boss in the Game."""
 
-    def __init__(self, id: int, name: str, nick="", zone: "RaidZone" = None):
-        self.id = id
-        self.zone = zone
-        self.name = nick or name
-        self.full_name = name
+    def __init__(self, id: int, name: str, nick: str = ""):
+        """Initialise a new Raid Boss
 
-        # spells or buffs to track
-        self.events: typing.List[typing.Dict[str, str]] = []
+        Args:
+            id (int): Encounter ID
+            name (str): Nice Name
+            nick (str, optional): Nick Name. Defaults to `name`.
+        """
+        self.id = id
+        """The Encounter ID."""
+        self.full_name = name
+        """Full Name of the Boss (eg.: "Halondrus the Reclaimer")."""
+        self.name = nick or name
+        """Short commonlty used Nickname. eg.: "Halondrus"."""
+
+        self.events: list[dict[str, str]] = []
+        """Custom Events to track."""
 
         # we track them as "spells" for now
-        self.spells: typing.List["WowSpell"] = []
-        self.buffs: typing.List["WowSpell"] = []
-        self.event_spells: typing.List["WowSpell"] = []
+        self.spells: list["WowSpell"] = []
+        self.buffs: list["WowSpell"] = []
+        self.event_spells: list["WowSpell"] = []
 
     def __repr__(self):
         return f"<RaidBoss(id={self.id} name={self.name})>"
 
-    def as_dict(self):
+    def as_dict(self) -> dict[str, typing.Any]:
         return {
             "id": self.id,
             "name": self.name,
@@ -42,35 +48,37 @@ class RaidBoss(base.Model):
 
     @property
     def full_name_slug(self):
+        """Complete Name slugified. eg.: `halondrus-the-reclaimer`."""
         return utils.slug(self.full_name, space="-")
 
-    @property
-    def icon(self):
-        return f"bosses/{self.zone.name_slug}/{self.full_name_slug}.jpg"
+    # @property
+    # def icon(self):
+    #     """Relative path to the Boss Icon."""
+    #     return f"bosses/{self.zone.name_slug}/{self.full_name_slug}.jpg"
 
     @property
     def all_abilities(self):
+        """Complete List of all Spells, Buffs and other Events."""
         return self.spells + self.buffs + self.event_spells
 
     ##########################
     # Methods
     #
-    def add_cast(self, **kwargs) -> WowSpell:
+    def add_cast(self, **kwargs: typing.Any) -> WowSpell:
         kwargs.setdefault("spell_type", self.full_name_slug)
         spell = WowSpell(**kwargs)
 
         self.spells.append(spell)
         return spell
 
-    def add_buff(self, spell_id, **kwargs) -> WowSpell:
-
+    def add_buff(self, spell_id: int, **kwargs: typing.Any) -> WowSpell:
         kwargs.setdefault("spell_type", self.full_name_slug)
         spell = WowSpell(spell_id=spell_id, **kwargs)
 
         self.buffs.append(spell)
         return spell
 
-    def add_event(self, **kwargs): # event_type, spell_id, name: str, icon: str, duration: int = 0):
+    def add_event(self, **kwargs: typing.Any): # event_type, spell_id, name: str, icon: str, duration: int = 0):
         kwargs.setdefault("event_type", "cast")
 
         # track the event (for query)
@@ -85,7 +93,7 @@ class RaidBoss(base.Model):
         kwargs.setdefault("spell_type", self.full_name_slug)
         spell = WowSpell(**kwargs)
 
-        spell.specs = [self]
+        # spell.specs = [self]
         self.event_spells.append(spell)
 
     ##########################
@@ -116,8 +124,13 @@ class RaidBoss(base.Model):
 
         return " or ".join(filters)
 
+    def preprocess_query_results(self, **query_results: typing.Any):
 
-    def preprocess_query_results(self, query_results):
+        # TODO:
+        #   not 100% sure what this was supposed to do.
+        #   I think its the custom "unit-event"-logic
+        #   Might need some time/rework
+        return query_results
 
         casts = utils.get_nested_value(query_results, "report", "events", "data") or []
         events_by_id = {event.get("spell_id"): event for event in self.events}
@@ -161,4 +174,3 @@ class RaidBoss(base.Model):
 
         query_results["report"]["events"]["data"] = casts
         return query_results
-

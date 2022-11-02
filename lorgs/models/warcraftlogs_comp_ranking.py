@@ -1,5 +1,8 @@
 """Models to store our list of full reports.."""
 
+# mypy: ignore-errors
+
+
 # IMPORT STANDARD LIBRARIES
 import datetime
 import typing

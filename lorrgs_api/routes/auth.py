@@ -2,46 +2,21 @@
 
 # IMPORT STANDARD LIBARIES
 import os
-import typing
 
 # IMPORT THIRD PARTY LIBARIES
 import fastapi
 import jwt
-import pydantic
-
 
 # IMPORT LOCAL LIBARIES
-from lorgs import auth
+from lorgs.clients import discord
 from lorgs.models.user import User
 
 
 SECRET_KEY = os.getenv("SECRET_KEY") or "my-super-secret-key"
-
-
-class UserData(pydantic.BaseModel):
-    discord_id: int
-    discord_tag: str
-    extra_roles: typing.List[str]
+REDIRECT_URI = os.getenv("REDIRECT_URI") or "http://localhost:9001/login"
 
 
 router = fastapi.APIRouter()
-
-
-def _get_user(discord_id=0, discord_tag="", create=True):
-
-    user = User.objects(discord_id=discord_id).first()
-    if user:
-        return user
-
-    user = User.objects(discord_tag=discord_tag).first()
-    if user:
-        return user
-
-    if create:
-        return User(
-            discord_id=discord_id,
-            discord_tag=discord_tag,
-        )
 
 
 @router.get("/token")
@@ -50,37 +25,33 @@ async def get_token(response: fastapi.Response, code: str):
     response.headers["Cache-Control"] = "no-cache"
 
     # get the discord access token
-    user_credentials = await auth.exchange_code(code)
-    access_token = user_credentials.get("access_token")
-    if not access_token:
+    user_credentials = await discord.exchange_code(code, redirect_uri=REDIRECT_URI)
+    if user_credentials.get("error"):
         return {
             "error": user_credentials.get("error"),
-            "message": user_credentials.get("error_description", "")
+            "message": user_credentials.get("error_description") or ""
         }
 
     # load user info
-    info = await auth.get_user_profile(access_token)
+    access_token: str = user_credentials.get("access_token") # type: ignore
+    info = await discord.get_user_profile(access_token)
     if not info:
         return
 
-    discord_id = info.get("id")
-    discord_tag = "{username}#{discriminator}".format(**info)
-
     # find existing User
-    user = _get_user(discord_id=discord_id, discord_tag=discord_tag)
+    user = User.get_or_create(discord_id=info.id, discord_tag=info.tag)
     if not user:
         raise ValueError("Invalid User")
 
     # grap info from signin (in case users arn't members of the discord server)
-    user.discord_id = discord_id
-    user.discord_tag = discord_tag
-    user.discord_avatar = info.get("avatar")
+    user.discord_id = info.id
+    user.discord_tag = info.tag
     await user.refresh()
     user.save()
 
     # encode everything into JWT
-    # TODO: could drop the encoding?
-    token_data = {"id": user.discord_id}
+    # converting the ID to string due to numberical issues
+    token_data = {"id": str(user.discord_id)}
     token = jwt.encode(token_data, SECRET_KEY, algorithm="HS256")
     return {"token": token}
 
@@ -90,34 +61,20 @@ async def get_user_all():
     return "many"
 
 
-"""
-TODO: remove?
-@router.post("/users")
-async def add_user(info: UserData):
-    user = User.objects(discord_id=info.discord_id).first()
-    if user:
-        raise fastapi.HTTPException(status_code=409, detail="User already exists.")
-
-    user = User(
-        discord_id=info.discord_id,
-        discord_tag=info.discord_tag,
-        extra_roles=info.extra_roles,
-    )
-    user.save()
-    return "ok"
-"""
-
-
 @router.get("/users/{user_id:int}")
 async def get_user(response: fastapi.Response, user_id: int):
+    response.headers["Cache-Control"] = f"private, max-age={60*5}"
+
     user = User.objects(discord_id=user_id).first()
     if not user:
-        user = User(discord_id=user_id)
-        await user.refresh()
-        user.save()
-        # raise fastapi.HTTPException(status_code=404, detail="User not found")
+        try:
+            user = User(discord_id=user_id)
+            await user.refresh()
+        except ValueError:
+            raise fastapi.HTTPException(status_code=404, detail="User not found")
+        else:
+            user.save()
 
-    response.headers["Cache-Control"] = f"private, max-age={60*5}"
     return user.to_dict()
 
 

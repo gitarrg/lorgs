@@ -13,19 +13,19 @@ from lorgs.models.raid_boss import RaidBoss
 class RaidZone(base.Model):
     """A raid zone in the Game."""
 
-    def __init__(self, id, name, bosses: typing.List[RaidBoss] = []):
+    def __init__(self, id: int, name: str, bosses: typing.Optional[list[RaidBoss]] = None) -> None:
         self.id: int = id
+        """ID of the Raid Zone. aka. T28, T29 (as used in WarcraftLogs)."""
         self.name: str = name
-        self.bosses: typing.List[RaidBoss] = []
+        """Full Name of the Zone. eg.: `Castle Nathria`."""
+        self.bosses = bosses or []
+        """All Bosses, in order, in this Zone."""
         self.name_slug = utils.slug(self.name, space="-")
 
-        if bosses:
-            self.add_bosss(*bosses)
-
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<RaidZone(id={self.id} name={self.name})>"
 
-    def as_dict(self):
+    def as_dict(self) -> dict[str, typing.Any]:
         return {
             "id": self.id,
             "name": self.name,
@@ -33,14 +33,12 @@ class RaidZone(base.Model):
             "bosses": [boss.as_dict() for boss in self.bosses]  # list to preserve the correct order
         }
 
-    def add_boss(self, boss: typing.Optional[RaidBoss] = None, **kwargs) -> RaidBoss:
+    def add_boss(self, boss: typing.Optional[RaidBoss] = None, **kwargs: typing.Any) -> RaidBoss:
         """Add a new RaidBoss to this zone."""
-        boss = boss or RaidBoss(zone=self, **kwargs)
-        boss.zone = boss.zone or self
-
+        boss = boss or RaidBoss(**kwargs)
         self.bosses.append(boss)
         return boss
 
-    def add_bosss(self, *bosses: RaidBoss):
-        for boss in bosses:
-            self.add_boss(boss=boss)
+    def add_bosses(self, *bosses: RaidBoss) -> None:
+        """Add multiple Bosses to this Zone."""
+        self.bosses.extend(bosses)
