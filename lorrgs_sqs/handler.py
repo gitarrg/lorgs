@@ -96,7 +96,9 @@ def handler(event, context=None):
     print("[handler]", event)
     records = event.get("Records") or []
 
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(process_messages(records))
+    asyncio.run(process_messages(records))
+
+    # loop = asyncio.get_event_loop()
+    # loop.run_until_complete(process_messages(records))
     print("[handler] done.")
 
