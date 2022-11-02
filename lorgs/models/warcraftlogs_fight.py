@@ -86,7 +86,9 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
         raid_boss_name = self.boss and self.boss.raid_boss and self.boss.raid_boss.full_name_slug
 
         return {
-            # "report_id": self.report and self.report.report_id or "NO",
+            # required for spec rankings
+            "report_id": self.report and self.report.report_id or "",
+
             "fight_id": self.fight_id,
             "percent": self.percent,
             "kill": self.kill,
