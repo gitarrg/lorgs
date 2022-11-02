@@ -96,9 +96,17 @@ def handler(event, context=None):
     print("[handler]", event)
     records = event.get("Records") or []
 
+    # Make sure we have a fresh event loop
+    # in case Lambda reuses the same instance
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    # Main
     asyncio.run(process_messages(records))
 
-    # loop = asyncio.get_event_loop()
-    # loop.run_until_complete(process_messages(records))
+    # try:
+    #     loop.run_until_complete(process_messages(records))
+    # finally:
+    #     loop.run_until_complete(loop.shutdown_asyncgens())
+    #     loop.close()
     print("[handler] done.")
-
