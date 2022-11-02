@@ -1,3 +1,8 @@
+"""Custom Stubs for mongoengine."""
+# pylint: disable=unused-argument
+# pylint: disable=missing-function-docstring
+# pylint: disable=missing-class-docstring
+# pylint: disable=multiple-statements
 
 from typing import Any, Generic, Type, TypeVar, Optional
 
@@ -7,9 +12,11 @@ T = TypeVar('T', bound="Document")
 
 class QuerySet(Generic[T]):
 
-    def first(self) -> Optional[T]: ...
+    def first(self) -> Optional[T]:
+        ...
 
-    def exclude(*args: Any) -> list[T]: ...
+    def exclude(self, *args: Any) -> list[T]:
+        ...
 
 
 class Document:
@@ -33,4 +40,3 @@ class StringField(str):
 
 
 def __getattr__(name: str) -> Any: ...
-

@@ -8,9 +8,6 @@ from lorgs import utils
 from lorgs.models import base
 from lorgs.models.wow_spell import WowSpell
 
-if typing.TYPE_CHECKING:
-    from lorgs.clients import wcl
-
 
 class RaidBoss(base.Model):
     """A raid boss in the Game."""

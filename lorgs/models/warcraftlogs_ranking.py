@@ -8,7 +8,6 @@ import textwrap
 # IMPORT THIRD PARTY LIBRARIES
 import arrow
 import mongoengine as me
-import pydantic
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
@@ -107,7 +106,7 @@ class SpecRanking(warcraftlogs_base.Document):
         """)
 
     @utils.as_list
-    def get_old_reports(self):
+    def get_old_reports(self) -> typing.Generator[tuple[str, int, str], None, None]:
         """Return a list of unique keys to identify existing reports."""
         for report in self.reports:
             for fight in report.fights.values():
