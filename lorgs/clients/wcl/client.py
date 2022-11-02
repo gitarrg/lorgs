@@ -24,9 +24,14 @@ class InvalidReport(ValueError):
 T = typing.TypeVar("T", bound="BaseClient")
 
 
+CONCURRENT_CONNECTIONS = int(os.getenv("CONCURRENT_CONNECTIONS") or 10)
+"""int: Number of parallel Requests."""
+
+
 class BaseClient():
 
-    _sem = asyncio.Semaphore(value=10)
+
+    _sem = asyncio.Semaphore(value=CONCURRENT_CONNECTIONS)
     """Semaphore used to control the number of parallel Requests."""
 
     # reference used to provide a singelton interface.
