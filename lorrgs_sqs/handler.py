@@ -95,4 +95,10 @@ def handler(event, context=None):
     """Main Handler called by Lambda."""
     print("handler", event)
     records = event.get("Records") or []
-    return asyncio.run(process_messages(records))
+
+    loop = asyncio.get_event_loop()
+    try:
+        loop.run_until_complete(process_messages(records))
+    finally:
+        loop.run_until_complete(loop.shutdown_asyncgens())
+        loop.close()
