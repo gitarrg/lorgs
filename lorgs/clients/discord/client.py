@@ -100,6 +100,11 @@ async def get_user_profile(access_token: str) -> DiscordUser:
         endpoint="users/@me",
         headers=headers
     )
+
+    message = response.get("message") or ""
+    if "Unauthorized" in message:
+        raise PermissionError(message)
+
     return DiscordUser.parse_obj(response)
 
 
@@ -158,6 +163,5 @@ async def get_member_info(server_id: int, user_id: int) -> DiscordGuildMember:
 
     return DiscordGuildMember.parse_obj(response)
 
-################################################################################
-# Core
-#
+
+

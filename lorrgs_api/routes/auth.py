@@ -26,22 +26,22 @@ async def get_token(response: fastapi.Response, code: str):
 
     # get the discord access token
     user_credentials = await discord.exchange_code(code, redirect_uri=REDIRECT_URI)
+    error = user_credentials.get("error")
     if user_credentials.get("error"):
-        return {
-            "error": user_credentials.get("error"),
-            "message": user_credentials.get("error_description") or ""
-        }
+        error = user_credentials.get("error_description") or user_credentials.get("error") or ""
+        raise fastapi.HTTPException(status_code=401, detail=error)
 
     # load user info
     access_token: str = user_credentials.get("access_token") # type: ignore
-    info = await discord.get_user_profile(access_token)
-    if not info:
-        return
+    try:
+        info = await discord.get_user_profile(access_token)
+    except PermissionError:
+        raise fastapi.HTTPException(status_code=401, detail="Invalid AuthToken.")
 
     # find existing User
     user = User.get_or_create(discord_id=info.id, discord_tag=info.tag)
     if not user:
-        raise ValueError("Invalid User")
+        raise fastapi.HTTPException(status_code=fastapi.status.HTTP_404_NOT_FOUND, detail="Invalid User.")
 
     # grap info from signin (in case users arn't members of the discord server)
     user.discord_id = info.id
