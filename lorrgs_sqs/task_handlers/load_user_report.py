@@ -62,6 +62,7 @@ async def main(message):
     task.set(status=task.STATUS.IN_PROGRESS)
     events.register("actor.load.start", set_task_item_status(task, task.STATUS.IN_PROGRESS))
     events.register("actor.load.done", set_task_item_status(task, task.STATUS.DONE))
+    events.register("actor.load.failed", set_task_item_status(task, task.STATUS.FAILED))
 
     ###########################
     # Main

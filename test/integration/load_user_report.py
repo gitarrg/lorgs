@@ -80,15 +80,37 @@ async def test_load_multiple_fights():
     await save()
 
 
+from lorgs import events
+
 async def test_load() -> None:
 
-    REPORT_ID = "4KZGNP8HtxWRkyJ9"
-    fight_ids = [4, 19]
-    player_ids = [11, 9]
+    REPORT_ID = "LAjpTGtv7FZrP9YH"
+    fight_ids = [2, 3, 4, 6, 7]
+    player_ids = [3, 8, 5]
+
+    # Setup test handler
+    progress = {
+        "done": 0,
+        "steps": len(fight_ids) * (len(player_ids) + 1 + 1),
+    }
+
+    async def increase_done(event: events.Event) -> None:
+        actor = event.payload.get("actor")
+        print("actor", actor)
+        progress["done"] += 1
+
+    # async def report_status(event) -> None
+    #     print(f"Progress: {d}/{t} ({d/t:.1%})")
+
+    events.register("player.load.complete", increase_done)
+    # events.register("boss.load.complete", increase_done)
+    # events.register("actor.load.complete", report_status)
+
 
     user_report = UserReport.from_report_id(report_id=REPORT_ID, create=True)
     user_report.report.fights = {}
     await user_report.report.load_fights(fight_ids=fight_ids, player_ids=player_ids)
+    return 
     user_report.save()
 
     ############################
@@ -104,6 +126,46 @@ async def test_load() -> None:
 
 
 
+    # Add subitems to track the status more granual
+    for (f, p) in itertools.product(fight_ids, player_ids):
+        task.items[f"{f}.{p}"] = {"fight": f, "player": p, "status": task.status}
+
+
+async def test_load_with_progress() -> None:
+    from lorgs.models.task import Task
+    import itertools
+    import typing
+    from lorgs.models import warcraftlogs_actor
+
+
+    task = Task.get(key="dev")
+    # task.items["1.5"]["status"] = Task.STATUS.IN_PROGRESS
+
+    # task.set("items.1_5", {"status": "changed"})
+    task.set("items.1_5.status", "changed9")
+
+    REPORT_ID = "LAjpTGtv7FZrP9YH"
+    FIGHT_IDS = [2, 3, 4, 6, 7, 8, 9]
+    PLAYER_IDS = [3, 8, 5, 1, 2, 3, 4]
+
+    ################################
+    # Create Status Object
+    task = Task(key="dev", status=Task.STATUS.WAITING)
+    task.items = {}
+    for (f, p) in itertools.product(FIGHT_IDS, PLAYER_IDS):
+        task.items[f"{f}_{p}"] = {"fight": f, "player": p, "status": task.status}
+    task.save()
+
+    ################################
+    # Main
+    user_report = UserReport.from_report_id(report_id=REPORT_ID, create=True)
+    await user_report.report.load_fights(
+        fight_ids=FIGHT_IDS,
+        player_ids=PLAYER_IDS
+    )
+
+
+
 async def main():
 
 
@@ -113,8 +175,21 @@ async def main():
     # await test_load_single_player()
     # await test_load_multiple_players()
     # await test_load_multiple_fights()
-    await test_load()
+    # await test_load()
+    await test_load_with_progress()
 
 
 if __name__ == "__main__":
+    # loop = asyncio.get_event_loop()
     asyncio.run(main())
+
+    """
+    loop = asyncio.new_event_loop()
+
+    # print(loop.is_closed())
+    try:
+        loop.run_until_complete(main())
+    finally:
+        loop.run_until_complete(loop.shutdown_asyncgens())
+        loop.close()
+    """
