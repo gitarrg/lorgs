@@ -79,9 +79,16 @@ class RedisModel(pydantic.BaseModel):
         full_key = cls.get_key(key)
         data = redis_client.json().get(full_key) or {}
 
-        if not data and not create:
-            return None
-            # raise ValueError("Item not found.")
+        # case: existing object
+        if data:
+            data["key"] = key
+            return cls.parse_obj(data)
 
-        data["key"] = key
-        return cls.parse_obj(data)
+        # case: no object + no create --> None
+        if not create:
+            return None
+        
+        # create new object
+        n = cls(key=key)
+        n.save()
+        return n
