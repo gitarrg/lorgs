@@ -141,8 +141,13 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
     #
     async def load(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         await events.submit("actor.load.start", actor=self)
-        await super().load(*args, **kwargs)
-        await events.submit("actor.load.done", actor=self)
+        try:
+            await super().load(*args, **kwargs)
+        except:
+            await events.submit("actor.load.failed", actor=self)
+            raise
+        else:
+            await events.submit("actor.load.done", actor=self)
 
     def process_event(self, event: wcl.ReportEvent):
         """Hook to preprocess Events
