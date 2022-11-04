@@ -78,18 +78,22 @@ async def process_message(message):
     await handler(message)
 
 
-async def process_messages(messages: typing.List):
+async def process_messages(messages: typing.List) -> dict[str, typing.Any]:
     """Wrapper to process all messages in the batch."""
+    failures: list[str] = []
+
     for message in messages:
-        await process_message(message)
+        try:
+            await process_message(message)
+        except:
+            failures.append(message.get("MessageId"))
 
     return {
-        # TODO: track failed tasks and return IDs here
-        "batchItemFailures" : []
+        "batchItemFailures" : [f for f in failures if f],
     }
 
 
-def handler(event, context=None):
+def handler(event, context=None) -> None:
     """Main Handler called by Lambda."""
     print("[handler]", event)
     records = event.get("Records") or []
