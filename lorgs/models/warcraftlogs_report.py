@@ -217,8 +217,8 @@ class Report(warcraftlogs_base.EmbeddedDocument):
             self.process_master_data(report.masterData)
         self.process_report_fights(report.fights)
 
-    async def load_summary(self) -> None:
-        await self.load()
+    async def load_summary(self, raise_errors=False) -> None:
+        await self.load(raise_errors=raise_errors)
 
     async def load_fight(self, fight_id: int, player_ids: list[int]):
         """Load a single Fight from this Report."""
