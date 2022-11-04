@@ -13,15 +13,16 @@ router = fastapi.APIRouter(tags=["tasks"], prefix="/tasks")
 #
 @router.get("/{task_id}")
 async def get_task(response: fastapi.Response, task_id):
+    response.headers["Cache-Control"] = "no-cache"
 
-    task = Task.from_id(task_id=task_id)
+    task = Task.get(key=task_id)
     if not task:
         return "Task not found.", 404
 
-    response.headers["Cache-Control"] = "no-cache"
     return {
-        "task_id": task.task_id,
+        "task_id": task.key,
         "status": task.status,
         "message": task.message,
         "updated": task.updated.isoformat(),
+        "items": task.items,
     }

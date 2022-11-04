@@ -1,26 +1,21 @@
 
 # IMPORT STANRD LIBRARIES
 import abc
-from collections import defaultdict
 import textwrap
 import typing
 import math
 
 # IMPORT THIRD PARTY LIBRARIES
 import mongoengine as me
-import pydantic
 
 # IMPORT LOCAL LIBRARIES
+from lorgs import events
 from lorgs import utils
-# from lorgs.clients.wcl.models.query import Query
-# from lorgs.clients.wcl.models.report_data import ReportData, ReportEvent
+from lorgs.clients import wcl
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
 from lorgs.models.warcraftlogs_cast import Cast
-from lorgs.models.wow_spec import WowSpec
-from lorgs.models.wow_spell import EventSource, WowSpell
-
-from lorgs.clients import wcl
+from lorgs.models.wow_spell import WowSpell
 
 if typing.TYPE_CHECKING:
     from lorgs.models.warcraftlogs_fight import Fight
@@ -144,6 +139,10 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
     #################################
     # Query
     #
+    async def load(self, *args: typing.Any, **kwargs: typing.Any) -> None:
+        await events.submit("actor.load.start", actor=self)
+        await super().load(*args, **kwargs)
+        await events.submit("actor.load.done", actor=self)
 
     def process_event(self, event: wcl.ReportEvent):
         """Hook to preprocess Events

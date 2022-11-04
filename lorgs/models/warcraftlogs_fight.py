@@ -1,5 +1,6 @@
 # IMPORT STANRD LIBRARIES
 from collections import defaultdict
+import asyncio
 import datetime
 import textwrap
 import typing
@@ -280,7 +281,8 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
             return
 
         # load
-        await self.load_many(players_to_load + boss)
+        tasks = [actor.load() for actor in players_to_load + boss]
+        await asyncio.gather(*tasks)
 
         # re-add them to the dict, as otherwise we get some mongodb issues
         for actor in players_to_load:
