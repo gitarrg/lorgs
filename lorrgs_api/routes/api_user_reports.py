@@ -1,4 +1,7 @@
 """Routes related to UserReports."""
+# IMPORT STANDARD LIBRARIES
+import itertools
+
 # IMPORT THIRD PARTY LIBRARIES
 import fastapi
 
@@ -83,6 +86,11 @@ async def load_user_report(response: fastapi.Response, report_id: str, fight: st
         user_id (int, optional): user id to identify logged in users
 
     """
+    response.headers["Cache-Control"] = "no-cache"
+
+    fight_ids = utils.str_int_list(fight)
+    player_ids = utils.str_int_list(player)
+
     payload = {
         "task": "load_user_report",
         "report_id": report_id,
@@ -95,12 +103,15 @@ async def load_user_report(response: fastapi.Response, report_id: str, fight: st
     message_id = message["MessageId"]
 
     # task object to help track the progress
-    task = Task(task_id=message_id)
-    task.status = Task.STATUS_WAITING
+    task = Task(key=message_id, status=Task.STATUS.WAITING)
+
+    # Add subitems to track the status more granual
+    for (f, p) in itertools.product(fight_ids, player_ids):
+        task.items[f"{f}.{p}"] = {"fight": f, "player": p, "status": task.status}
+
     task.save()
 
-    response.headers["Cache-Control"] = "no-cache"
     return {
-        "task_id": task.task_id,
+        "task_id": task.key,
         "queue": "aws",
     }
