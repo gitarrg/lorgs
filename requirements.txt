@@ -13,3 +13,5 @@ mongoengine==0.24.2
 
 # AWS
 mangum==0.15.1
+
+redis==4.3.4
