@@ -73,5 +73,5 @@ async def main(message):
     except:
         task.set(status=task.STATUS.FAILED)
     else:
-        task.set(status=task.STATUS.IN_PROGRESS)
+        task.set(status=task.STATUS.DONE)
 

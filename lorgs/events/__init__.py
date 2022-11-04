@@ -59,7 +59,6 @@ async def submit(event_name: str, **kwargs: Any) -> None:
         event_name (str): name of the event
         payload (typing.Any): event payload
     """
-    print("EVENT", event_name, kwargs)
     event = Event(name=event_name, payload=kwargs)
 
     for handler in handlers[event_name]:
