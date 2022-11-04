@@ -63,7 +63,7 @@ async def load_user_report_overview(response: fastapi.Response, report_id: str, 
     needs_to_load = refresh or not user_report.is_loaded
     if needs_to_load:
         try:
-            await user_report.report.load_summary()
+            await user_report.report.load_summary(raise_errors=True)
         except InvalidReport:
             return {"error": "Invalid URL."}
         except PermissionError:
