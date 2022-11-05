@@ -191,7 +191,6 @@ def main() -> None:
     # Lambdas
     deploy_lambda(name="lorrgs-api")
     deploy_lambda(name="lorrgs-sqs")
-    deploy_lambda(name="lorrgs-error-handler")
 
     # Update if one of them got deployed
     if core_layer or reqs_layer:
