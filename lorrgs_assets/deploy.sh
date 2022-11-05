@@ -3,6 +3,7 @@
 aws s3 sync \
     lorrgs_assets \
     s3://lorrgs-assets \
+    --size-only \
     --cache-control 'public, max-age=31536000, immutable' \
     --exclude "*" \
     --include "*.png" \
