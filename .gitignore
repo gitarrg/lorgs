@@ -1,30 +1,37 @@
+
+################
+# Python
 __pycache__/
 *.py[cod]
 *.swp
 *.*~
 *~
-*.sublime-workspace
 *.scannerwork
-.vscode
 .coverage
+.mypy_cache
 
+
+################
+# Code Editors
+*.sublime-workspace
+.vscode
+
+
+################
+# Local Dev/Build Files
 static
 node_modules
 venv
 _src
-.mypy_cache
 dist
-# for ".env", we need this (since its already tracked)
-# >>> git update-index --assume-unchanged .env
-.env
-.env_bak
-
-deploy_variables.yaml
-
-tsconfig.tsbuildinfo
-
-.serverless/
 .deploy/
+*.webp
+
+
+################
+# Config Files
+.env
+tsconfig.tsbuildinfo
 
 # wip
 docs
