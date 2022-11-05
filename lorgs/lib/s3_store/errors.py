@@ -1,0 +1,6 @@
+
+
+
+
+class NotFound(KeyError):
+    pass
