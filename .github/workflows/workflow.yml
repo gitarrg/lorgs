@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-      - lorrgs_assets
+
 
 jobs:
   deploy:
@@ -29,6 +29,6 @@ jobs:
       - run: pip install boto3
 
       # Deploy Main
-      # - run: python scripts/deploy.py
+      - run: python scripts/deploy.py
 
       - run: ./lorrgs_assets/deploy.sh
