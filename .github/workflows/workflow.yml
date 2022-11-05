@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - lorrgs_assets
 
 jobs:
   deploy:
@@ -24,8 +25,10 @@ jobs:
           python-version: '3.9'
           cache: 'pip' # caching pip dependencies
 
-      # Install Deploy Dependencies
+      # install Dependencies
       - run: pip install boto3
 
-      # Install Deploy Dependencies
-      - run: python scripts/deploy.py
+      # Deploy Main
+      # - run: python scripts/deploy.py
+
+      - run: ./lorrgs_assets/deploy.sh
