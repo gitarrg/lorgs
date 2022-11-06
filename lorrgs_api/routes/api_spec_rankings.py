@@ -1,6 +1,5 @@
 """Enpoints dealing with Rankings per Spec."""
 # IMPORT THIRD PARTY LIBRARIES
-import typing
 import fastapi
 
 # IMPORT LOCAL LIBRARIES
@@ -19,7 +18,6 @@ async def get_spec_ranking(
     boss_slug: str,
     difficulty: str = "mythic",
     metric: str = "",
-    limit: int = 0
 ):
     """Get the Rankings for a given Spec and Boss."""
     if not metric:
@@ -27,63 +25,44 @@ async def get_spec_ranking(
         metric = spec.role.metric
 
     logger.info(f"{spec_slug}/{boss_slug} | start")
-    spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(
+    spec_ranking = warcraftlogs_ranking.SpecRanking.get(
         boss_slug=boss_slug,
         spec_slug=spec_slug,
         difficulty=difficulty,
         metric=metric,
+        create=True,
     )
-    fights = spec_ranking.fights or []
-    if limit:
-        fights = fights[:limit]
-
-    # remove bosses
-    for fight in fights[1:]:
-        fight.boss = None
-
-
-    return {
-        "fights": [fight.as_dict() for fight in fights],
-        "updated": int(spec_ranking.updated.timestamp()),
-        "difficulty": difficulty,
-        "metric": metric,
-    }
-
-
-@router.get("/status/spec_ranking")
-async def status():
-
-    x: dict[str, typing.Any] = {}
-    for sr in warcraftlogs_ranking.SpecRanking.objects().exclude("reports"):
-        x[sr.spec_slug] = x.get(sr.spec_slug) or {}
-        x[sr.spec_slug][sr.boss_slug] = {
-            "updated": int(sr.updated.timestamp()),
-        }
-
-    return x
+    return spec_ranking.dict(exclude_unset=True)
 
 
 ################################################################################
 # Tasks
 #
 
+
 @router.get("/spec_ranking/load")
 async def spec_ranking_load(
-    spec_slug="all", boss_slug="all",
-    difficulty="all", metric="all",
-    limit: int = 50, clear: bool = False
+    spec_slug="all",
+    boss_slug="all",
+    difficulty="all",
+    metric="all",
+    limit: int = 50,
+    clear: bool = False,
 ):
     """Queue an update for the given specs and bosses."""
     payload = {
         "task": "load_spec_rankings",
-        "spec_slug": spec_slug, "boss_slug": boss_slug,
-        "difficulty": difficulty, "metric": metric,
-        "limit": limit, "clear": clear,
+        "spec_slug": spec_slug,
+        "boss_slug": boss_slug,
+        "difficulty": difficulty,
+        "metric": metric,
+        "limit": limit,
+        "clear": clear,
     }
     message = sqs.send_message(payload=payload)
 
     return {
         "message": "task queued",
         "task": message.get("MessageId"),
-        "payload": payload
+        "payload": payload,
     }

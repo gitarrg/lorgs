@@ -1,4 +1,3 @@
-
 # IMPORT STANRD LIBRARIES
 import typing
 
@@ -29,7 +28,6 @@ class Player(BaseActor):
             "name": self.name,
             "source_id": self.source_id,
             "class": self.class_slug,
-
             "spec": self.spec_slug,
             "role": self.spec.role.code if self.spec else "",
         }
@@ -99,8 +97,8 @@ class Player(BaseActor):
             filters.append(resurect_query)
 
         # combine all filters
-        filters = [f for f in filters if f]   # filter the filters
-        filters = [f"({f})" for f in filters] # wrap each filter into bracers
+        filters = [f for f in filters if f]  # filter the filters
+        filters = [f"({f})" for f in filters]  # wrap each filter into bracers
         filters = [" or ".join(filters)]
 
         queries_combined = " and ".join(filters)
@@ -150,7 +148,7 @@ class Player(BaseActor):
         # Look for the Source ID
         source_id = event.sourceID
         if self.fight and self.fight.report:
-            source_player = self.fight.report.players.get(str(source_id))
+            source_player = self.fight.get_player(source_id=source_id)
             if source_player:
                 data["source_name"] = source_player.name
                 data["source_class"] = source_player.class_slug
@@ -162,7 +160,7 @@ class Player(BaseActor):
 
         # Ankh doesn't shows as a regular spell
         spell_id = event.abilityGameID
-        if spell_id in (21169,): # Ankh
+        if spell_id in (21169,):  # Ankh
             event.type = "resurrect"
 
         if event.type == "resurrect":

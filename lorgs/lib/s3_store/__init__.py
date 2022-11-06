@@ -18,7 +18,7 @@ from lorgs.lib.s3_store import errors
 T = typing.TypeVar("T", bound="BaseModel")
 
 
-s3_client = boto3.client('s3')
+s3_client = boto3.client("s3")
 
 
 def serialize_value(value: typing.Any) -> typing.Any:
@@ -43,13 +43,11 @@ class BaseModel(pydantic.BaseModel):
     bucket: typing.ClassVar[str] = os.getenv("DATA_BUCKET") or "lorrgs"
     key_fmt: typing.ClassVar[str]
 
-    store: typing.ClassVar = boto3.client('s3')
-
     @classmethod
     def get_key(cls, **kwargs: typing.Any) -> str:
         """Generate a `key` based on the given `kwargs`."""
-        key = cls.key_fmt.format(**kwargs).lower()
         table = to_snake_case(cls.__name__)
+        key = cls.key_fmt.format(**kwargs).lower()
         return f"{table}/{key}"
 
     @property
@@ -93,8 +91,8 @@ class BaseModel(pydantic.BaseModel):
         # no data + no create --> :(
         raise errors.NotFound(f"Invalid Key: {key}")
 
-    def save(self) -> None:
-        data = json.dumps(self.dict())
+    def save(self, exclude_unset=True) -> None:
+        data = self.json(exclude_unset=exclude_unset)
 
         # self.s3_object.put(
         s3_client.put_object(

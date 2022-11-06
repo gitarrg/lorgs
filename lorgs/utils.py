@@ -116,6 +116,26 @@ def get_nested_value(dct: typing.Dict[str, typing.Any], *keys: str, default=None
     return data
 
 
+def rename_dict_keys(data: dict[str, typing.Any], names: dict[str, str], reverse=False) -> dict[str, typing.Any]:
+    """Renames keys in a dictornary.
+    
+    Examples:
+    >>> d = { "foo": 1234, "b": "value" }
+    >>> k = { "foo": "f", "bar": "b" }
+    >>> rename_dict_keys(d, k)
+    {'f': 1234, 'b': 'value'}
+    >>> rename_dict_keys(d, k, reverse=True)
+    {'foo': 1234, 'bar': 'value'}
+
+    """
+    name_map = dict(names)
+
+    if reverse:
+        name_map = {v:k for k,v in name_map.items()}
+
+    return { name_map.get(k, k): v for k, v in data.items() }
+
+
 def flatten(values: typing.Iterable[typing.Iterable[T]]) -> list[T]:
     """Flattens a list of lists into a single large list.
 

@@ -38,15 +38,15 @@ class Report(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
     owner: str = ""
     """The user that uploaded the report."""
 
-    fights: dict[str, Fight] = {} # pydantic.Field(default_factory=dict)
+    fights: list[Fight] = []
     """fights in this report keyed by fight_id. (they may or may not be loaded)."""
 
-    players: dict[str, Player] = {} # pydantic.Field(default_factory=dict)
+    players: list[Player] = []
     """players in this report.
     Note: not every player might participate in every fight."""
 
     def post_init(self) -> None:
-        for fight in self.fights.values():
+        for fight in self.fights:
             fight.report = self
             fight.post_init()
 
@@ -68,8 +68,8 @@ class Report(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
         }
 
         # for players and fights we only include essential data
-        info["fights"] = {fight.fight_id: fight.summary() for fight in self.fights.values()}
-        info["players"] = {player.source_id: player.summary() for player in self.players.values()}
+        info["fights"] = {fight.fight_id: fight.summary() for fight in self.fights}
+        info["players"] = {player.source_id: player.summary() for player in self.players}
         return info
 
     ##########################
@@ -82,31 +82,33 @@ class Report(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
             return
 
         fight = Fight(
-            fight_id = fight_data.id,
-            percent = fight_data.fightPercentage,
-            kill = fight_data.kill,
-            start_time = self.start_time + datetime.timedelta(),
-            duration = fight_data.endTime - fight_data.startTime,
+            fight_id=fight_data.id,
+            percent=fight_data.fightPercentage,
+            kill=fight_data.kill,
+            start_time=self.start_time + datetime.timedelta(),
+            duration=fight_data.endTime - fight_data.startTime,
         )
         fight.report = self  # TODO: replace in favor of `post_init()``
 
         # Fight: Boss
         fight.boss = Boss(boss_id=fight_data.encounterID)
-        if fight.boss: # could be a boss unknown to Lorrgs
+        if fight.boss:  # could be a boss unknown to Lorrgs
             fight.boss.fight = fight
 
         # store and return
-        self.fights[str(fight.fight_id)] = fight
+        self.fights.append(fight)
         return fight
 
     def get_fight(self, fight_id: int):
         """Get a single fight from this Report."""
-        return self.fights.get(str(fight_id))
+        for fight in self.fights:
+            if fight.fight_id == fight_id:
+                return fight
 
-    def get_fights(self, *fight_ids: int):
+    def get_fights(self, *fight_ids: int) -> list[Fight]:
         """Get a multiple fights based of their fight ids."""
         fights = [self.get_fight(fight_id) for fight_id in fight_ids]
-        return [f for f in fights if f] # filter out nones
+        return [f for f in fights if f]
 
     def add_player(self, actor_data: wcl.ReportActor):
 
@@ -124,7 +126,7 @@ class Report(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
         player = Player(
             source_id=actor_data.id,
             name=actor_data.name,
-            class_slug = actor_data.subType.lower(),
+            class_slug=actor_data.subType.lower(),
             spec_slug=spec_slug,
         )
         if player.spec == None:
@@ -132,14 +134,15 @@ class Report(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
             return
 
         # add to to the report
-        self.players[str(player.source_id)] = player
+        self.players.append(player)
 
     ############################################################################
     # Query
     #
     def get_query(self):
         """Get the Query to load this Reports Overview."""
-        return textwrap.dedent(f"""
+        return textwrap.dedent(
+            f"""
         reportData
         {{
             report(code: "{self.report_id}")
@@ -177,20 +180,20 @@ class Report(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
                 }}
             }}
         }}
-        """)
+        """
+        )
 
-    def process_master_data(self, master_data: wcl.ReportMasterData):
+    def process_master_data(self, master_data: wcl.ReportMasterData) -> None:
         """Create the Players from the passed Report-MasterData"""
         # clear out any old instances
-        self.players = {}
-
+        self.players = []
         for actor_data in master_data.actors:
             self.add_player(actor_data)
 
-    def process_report_fights(self, fights: list[wcl.ReportFight]):
+    def process_report_fights(self, fights: list[wcl.ReportFight]) -> None:
         """Update the Fights in this report."""
         # clear out any old data
-        self.fights = {}
+        self.fights = []
         for fight in fights:
             self.add_fight(fight)
 
@@ -216,18 +219,18 @@ class Report(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
 
     async def load_fight(self, fight_id: int, player_ids: list[int]):
         """Load a single Fight from this Report."""
-        fight = self.fights[str(fight_id)]
+        fight = self.get_fight(fight_id=fight_id)
         if not fight:
             raise ValueError("invalid fight id")
 
         await fight.load_players(player_ids=player_ids)
 
-    async def load_fights(self, fight_ids: typing.List[int], player_ids: typing.List[int]):
+    async def load_fights(self, fight_ids: list[int], player_ids: list[int]) -> None:
 
         if not self.fights:
             await self.load_summary()
 
         # queue all tasks at once.
-        # the client will make sure its throttled accordingly 
+        # the client will make sure its throttled accordingly
         tasks = [self.load_fight(fight_id=fight_id, player_ids=player_ids) for fight_id in fight_ids]
         await asyncio.gather(*tasks)

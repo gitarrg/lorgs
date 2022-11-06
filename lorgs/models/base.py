@@ -1,8 +1,6 @@
 
-from typing import Type, TypeVar, Any
 import weakref
-
-# IMPORT THIRD PARTY LIBRARIES
+from typing import Any, Type, TypeVar
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils

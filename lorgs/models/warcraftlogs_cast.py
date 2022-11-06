@@ -1,5 +1,7 @@
-# IMPORT THIRD PARTY LIBRARIES
+# IMPORT STANDARD LIBRARIES
 import typing
+
+# IMPORT THIRD PARTY LIBRARIES
 import pydantic
 
 # IMPORT LOCAL LIBRARIES
@@ -25,17 +27,22 @@ class Cast(pydantic.BaseModel):
     ######################
     # Validators
 
-    @pydantic.validator("spell_id")
-    def resolve_spell_id(cls, spell_id: int):
-        return WowSpell.resolve_spell_id(spell_id)
-
-    @pydantic.root_validator(pre=True)
-    def rename_fields_in(cls, data):
+    @classmethod
+    def get_json_aliases(cls) -> dict[str, str]:
+        r = {}
         for name, field in cls.__fields__.items():
             alias = field.field_info.extra.get("json_alias")
             if alias:
-                data[name] = data.get(name) or data.get(alias)
-        return data
+                r[name] = alias
+        return r
+
+    @pydantic.validator("spell_id")
+    def resolve_spell_id(cls, spell_id: int) -> int:
+        return WowSpell.resolve_spell_id(spell_id)
+
+    @pydantic.root_validator(pre=True)
+    def rename_fields_in(cls, data: dict[str, typing.Any]) -> dict[str, typing.Any]:
+        return utils.rename_dict_keys(data, cls.get_json_aliases(), reverse=True)
 
     def __str__(self):
         time_fmt = utils.format_time(self.timestamp)
@@ -43,12 +50,7 @@ class Cast(pydantic.BaseModel):
 
     def dict(self, **kwargs: typing.Any):
         data = super().dict(**kwargs)
-        # apply json aliases
-        for name, field in self.__fields__.items():
-            alias = field.field_info.extra.get("json_alias")
-            if alias:
-                data[alias] = data.get(alias) or data.get(name)
-        return data
+        return utils.rename_dict_keys(data, self.get_json_aliases())
 
     ##########################
     # Attributes
@@ -64,7 +66,7 @@ class Cast(pydantic.BaseModel):
 
         if self.spell:
             return self.spell.duration * 1000
-        
+
         return 0
 
     def convert_to_start_event(self) -> None:
