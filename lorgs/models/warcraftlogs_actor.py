@@ -93,7 +93,7 @@ class BaseActor(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
             return ""
         spell_ids = WowSpell.spell_ids_str(spells)
 
-        event_types = [f"'{event}'" for event in event_types] # wrap each into single quotes
+        event_types = [f"'{event}'" for event in event_types]  # wrap each into single quotes
         event_types_combined = ",".join(event_types)
 
         return f"type in ({event_types_combined}) and ability.id in ({spell_ids})"
@@ -109,13 +109,13 @@ class BaseActor(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
         return ""
 
     def get_query(self) -> str:
-        print("Get Query", self.fight)
         if not self.fight:
             raise ValueError("missing fight")
         if not self.fight.report:
             raise ValueError("missing report")
 
-        return textwrap.dedent(f"""\
+        return textwrap.dedent(
+            f"""\
             reportData
             {{
                 report(code: "{self.fight.report.report_id}")
@@ -124,7 +124,8 @@ class BaseActor(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
                         {{data}}
                 }}
             }}
-        """)
+        """
+        )
 
     #################################
     # Query
@@ -153,7 +154,7 @@ class BaseActor(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
 
         Also converts "removebuff" events without matching "apply"
         eg.: a "removebuff" from an Aura that got applied prepull
-        
+
         """
         # spell id --> application event
         active_buffs: dict[int, Cast] = {}
@@ -163,7 +164,7 @@ class BaseActor(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
 
             # track the applications (pref initial)
             if event.event_type in ("applybuff", "applydebuff"):
-                if event.spell_id in active_buffs: # this is already tracked
+                if event.spell_id in active_buffs:  # this is already tracked
                     event.spell_id = -1
                     continue
 
@@ -186,21 +187,16 @@ class BaseActor(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
 
     def set_source_id_from_events(self, casts: list[wcl.ReportEvent], force=False):
         """Set the Source ID from the cast data.
-        
-            In some cases (eg.: data pulled from spec rankings) we don't know the source ID upfront..
-            but we can fill that gap here
+
+        In some cases (eg.: data pulled from spec rankings) we don't know the source ID upfront..
+        but we can fill that gap here
         """
         if force == False and self._has_source_id:
             return
-        
+
         for cast in casts:
             if cast.type == "cast":
                 self.source_id = cast.sourceID
-
-                # update fight dict
-                if self.fight and self.fight.players.get("1") == self:
-                    self.fight.players.pop("-1")
-                    self.fight.players[str(self.source_id)] = self # type: ignore
 
             # return as soon as we have a value
             if self.source_id > 0:
@@ -239,19 +235,23 @@ class BaseActor(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
                 continue
 
             # Create the Cast Object
-            self.casts.append(Cast(
-                spell_id=cast_data.abilityGameID,
-                timestamp=cast_data.timestamp - fight_start,
-                duration=cast_data.duration,
-            ))
+            self.casts.append(
+                Cast(
+                    spell_id=cast_data.abilityGameID,
+                    timestamp=cast_data.timestamp - fight_start,
+                    duration=cast_data.duration,
+                )
+            )
 
         ##############################
         # Post Processing
         self.casts = self.process_auras(self.casts)
 
         # Filter out same event at the same time (eg.: raid wide debuff apply)
-        self.casts = utils.uniqify(self.casts, key=lambda cast: (cast.spell_id, math.floor(cast.timestamp / 1000)))
-        # self.casts = list(self.casts) # `utils.uniqify` returns dict values, which mongoengine doesn't like
+        self.casts = utils.uniqify(
+            self.casts,
+            key=lambda cast: (cast.spell_id, math.floor(cast.timestamp / 1000)),
+        )
 
         # make sure casts are sorted correctly
         # avoids weird UI overlaps, and just feels cleaner

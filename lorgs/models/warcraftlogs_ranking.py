@@ -32,10 +32,10 @@ class SpecRanking(s3_store.BaseModel, warcraftlogs_base.wclclient_mixin):
     boss_slug: str
     difficulty: str = "mythic"
     metric: str = ""
-    reports: typing.List[Report] = []
+    reports: list[Report] = []
 
     # Config
-    key_fmt: typing.ClassVar[str] = "{spec_slug}/{boss_slug}/{difficulty}_{metric}"
+    key_fmt: typing.ClassVar[str] = "{spec_slug}/{boss_slug}__{difficulty}__{metric}"
 
     def post_init(self) -> None:
         for report in self.reports:
@@ -54,11 +54,11 @@ class SpecRanking(s3_store.BaseModel, warcraftlogs_base.wclclient_mixin):
 
     @property
     def fights(self) -> list[Fight]:
-        return utils.flatten(report.fights.values() for report in self.reports)
+        return utils.flatten(report.fights for report in self.reports)
 
     @property
     def players(self) -> list[Player]:
-        return utils.flatten(fight.players.values() for fight in self.fights)
+        return utils.flatten(fight.players for fight in self.fights)
 
     ##########################
     # Methods
@@ -66,12 +66,14 @@ class SpecRanking(s3_store.BaseModel, warcraftlogs_base.wclclient_mixin):
     @staticmethod
     def sort_reports(reports: list[Report]) -> list[Report]:
         """Sort the reports in place by the highest dps player."""
+
         def get_total(report: Report) -> float:
             top = 0.0
-            for fight in report.fights.values():
-                for player in fight.players.values():
+            for fight in report.fights:
+                for player in fight.players:
                     top = max(top, player.total)
             return top
+
         return sorted(reports, key=get_total, reverse=True)
 
     ############################################################################
@@ -81,7 +83,8 @@ class SpecRanking(s3_store.BaseModel, warcraftlogs_base.wclclient_mixin):
         """Return the Query to load the rankings for this Spec & Boss."""
         difficulty_id = DIFFICULTY_IDS.get(self.difficulty) or 5
 
-        return textwrap.dedent(f"""\
+        return textwrap.dedent(
+            f"""\
         worldData
         {{
             encounter(id: {self.boss.id})
@@ -95,14 +98,15 @@ class SpecRanking(s3_store.BaseModel, warcraftlogs_base.wclclient_mixin):
                 )
             }}
         }}
-        """)
+        """
+        )
 
     @utils.as_list
     def get_old_reports(self) -> typing.Generator[tuple[str, int, str], None, None]:
         """Return a list of unique keys to identify existing reports."""
         for report in self.reports:
-            for fight in report.fights.values():
-                for player in fight.players.values():
+            for fight in report.fights:
+                for player in fight.players:
                     key = (report.report_id, fight.fight_id, player.name)
                     yield key
 
@@ -129,9 +133,9 @@ class SpecRanking(s3_store.BaseModel, warcraftlogs_base.wclclient_mixin):
         fight = Fight(
             boss_id=self.boss.id,
             fight_id=report_data.fightID,
-            start_time = ranking_data.startTime,
-            duration = ranking_data.duration,
-            players={"-1": player},  # set a new dict for `exclude_unset=True`
+            start_time=ranking_data.startTime,
+            duration=ranking_data.duration,
+            players=[player],
         )
 
         ################
@@ -139,7 +143,7 @@ class SpecRanking(s3_store.BaseModel, warcraftlogs_base.wclclient_mixin):
         report = Report(
             report_id=report_data.code,
             start_time=report_data.startTime,
-            fights={str(fight.fight_id): fight},
+            fights=[fight],
         )
         self.reports.append(report)
 
@@ -169,7 +173,7 @@ class SpecRanking(s3_store.BaseModel, warcraftlogs_base.wclclient_mixin):
         >>>         }
         >>>     }
         >>> }
-        """ 
+        """
         # unwrap data
         query_result = query_result["worldData"]
         world_data = wcl.WorldData(**query_result)
@@ -195,7 +199,7 @@ class SpecRanking(s3_store.BaseModel, warcraftlogs_base.wclclient_mixin):
         # make sure the first report has the boss added
         if self.fights:
             first_fight = self.fights[0]
-            actors_to_load += [first_fight.boss] # type: ignore
+            actors_to_load += [first_fight.boss]  # type: ignore
 
         actors_to_load = [actor for actor in actors_to_load if actor]
         actors_to_load = [actor for actor in actors_to_load if not actor.casts]
@@ -211,7 +215,9 @@ class SpecRanking(s3_store.BaseModel, warcraftlogs_base.wclclient_mixin):
     #
     async def load(self, limit=50, clear_old=False) -> None:
         """Get Top Ranks for a given boss and spec."""
-        logger.info(f"{self.boss.name} vs. {self.spec.name} {self.spec.wow_class.name} START | limit={limit} | clear_old={clear_old}")
+        logger.info(
+            f"{self.boss.name} vs. {self.spec.name} {self.spec.wow_class.name} START | limit={limit} | clear_old={clear_old}"
+        )
 
         if clear_old:
             self.reports = []

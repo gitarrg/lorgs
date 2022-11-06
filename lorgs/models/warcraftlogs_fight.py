@@ -53,8 +53,8 @@ class Fight(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
     duration: int = 0
     """fight duration in milliseconds."""
 
-    boss_id: int = -1 # todo: no default
-    players: typing.Dict[str, Player] = {}
+    boss_id: int = -1  # todo: no default
+    players: list[Player] = []
     boss: typing.Optional[Boss] = None
 
     composition: dict = {}
@@ -68,7 +68,7 @@ class Fight(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
     report: typing.Optional["Report"] = pydantic.Field(default=None, exclude=True)
 
     def post_init(self) -> None:
-        actors = list(self.players.values()) + [self.boss]
+        actors = self.players + [self.boss]
         for actor in actors:
             if actor:
                 actor.fight = self
@@ -83,7 +83,6 @@ class Fight(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
         return {
             # required for spec rankings
             "report_id": self.report and self.report.report_id or "",
-
             "fight_id": self.fight_id,
             "percent": self.percent,
             "kill": self.kill,
@@ -95,7 +94,7 @@ class Fight(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
     def as_dict(self, player_ids: list[int] = []) -> dict:
 
         # Get players
-        players = list(self.players.values())
+        players = self.players
         if player_ids:
             players = [player for player in players if player.source_id in player_ids]
         players = sorted(players, key=lambda player: (player.spec.role, player.spec, player.name))
@@ -128,7 +127,7 @@ class Fight(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
     def end_time_rel(self) -> int:
         """fight end time, relative to the report (in milliseconds)."""
         t = self.report.start_time.timestamp() if self.report else 0
-        return int(1000 * (self.end_time.timestamp() -  t))
+        return int(1000 * (self.end_time.timestamp() - t))
 
     @property
     def raid_boss(self) -> RaidBoss:
@@ -139,11 +138,11 @@ class Fight(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
     #
     def get_player(self, **kwargs) -> Player:
         """Returns a single Player based on the kwargs."""
-        return utils.get(self.players.values(), **kwargs) # type: ignore
+        return utils.get(self.players.values(), **kwargs)  # type: ignore
 
     def get_players(self, source_ids: typing.Optional[list[int]] = None):
         """Gets multiple players based on source id."""
-        players = list(self.players.values())
+        players = self.players
         if source_ids:
             players = [player for player in players if player.source_id in source_ids]
 
@@ -173,7 +172,8 @@ class Fight(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
         if not self.report:
             raise ValueError("Missing Parent Report")
 
-        return textwrap.dedent(f"""\
+        return textwrap.dedent(
+            f"""\
             reportData
             {{
                 report(code: "{self.report.report_id}")
@@ -181,7 +181,8 @@ class Fight(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
                     summary: table({self.table_query_args}, dataType: Summary)
                 }}
             }}
-        """)
+        """
+        )
 
     def process_players(self, summary_data: "wcl.ReportSummary"):
 
@@ -220,10 +221,10 @@ class Fight(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
             player.name = composition_data.name
             player.total = int(total)
             player.process_death_events(summary_data.deathEvents)
-            self.players[str(player.source_id)] = player
+            self.players.append(player)
 
         # call this before filtering to always get the full comp
-        self.composition = get_composition(self.players.values())
+        self.composition = get_composition(self.players)
 
     def process_query_result(self, **query_result: typing.Any):
         """Process the data retured from an Overview-Query."""
@@ -243,7 +244,7 @@ class Fight(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
 
         """
         if force:
-            self.players = {}
+            self.players = []
 
         if self.players:
             return
