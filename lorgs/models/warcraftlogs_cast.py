@@ -1,43 +1,54 @@
-
 # IMPORT THIRD PARTY LIBRARIES
-from email.policy import default
 import typing
-import mongoengine as me
+import pydantic
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
 from lorgs.models.wow_spell import WowSpell
 
 
-class Cast(me.EmbeddedDocument):
+class Cast(pydantic.BaseModel):
     """An Instance of a Cast of a specific Spell in a Fight."""
 
-    spell_id: int = me.IntField()
+    spell_id: int = pydantic.Field(json_alias="id")
     """ID of the spell/aura."""
 
-    timestamp: int = me.IntField()
+    # timestamp: int
+    timestamp: int = pydantic.Field(json_alias="ts")
     """time the spell was cast, in milliseconds relative to the start of the fight."""
 
-    duration: int = me.IntField()
+    duration: typing.Optional[int] = pydantic.Field(json_alias="d", default=None)
     """time the spell/buff was active in milliseconds."""
 
-    def __init__(self, spell_id: int, timestamp: int, duration=0, event_type: str = "cast", **kwargs):
-        super().__init__(spell_id=spell_id, timestamp=timestamp, duration=duration)
-        self.spell_id = WowSpell.resolve_spell_id(self.spell_id)
-        self.event_type = event_type
+    event_type: str = pydantic.Field(default="cast", exclude=True)
+
+    ######################
+    # Validators
+
+    @pydantic.validator("spell_id")
+    def resolve_spell_id(cls, spell_id: int):
+        return WowSpell.resolve_spell_id(spell_id)
+
+    @pydantic.root_validator(pre=True)
+    def rename_fields_in(cls, data):
+        for name, field in cls.__fields__.items():
+            alias = field.field_info.extra.get("json_alias")
+            if alias:
+                data[name] = data.get(name) or data.get(alias)
+        return data
 
     def __str__(self):
         time_fmt = utils.format_time(self.timestamp)
         return f"Cast({self.spell_id}, at={time_fmt})"
 
-    def as_dict(self) -> dict[str, typing.Any]:
-        info = {
-            "ts": self.timestamp,
-            "id": self.spell_id,
-        }
-        if self.duration:
-            info["d"] = self.duration
-        return info
+    def dict(self, **kwargs: typing.Any):
+        data = super().dict(**kwargs)
+        # apply json aliases
+        for name, field in self.__fields__.items():
+            alias = field.field_info.extra.get("json_alias")
+            if alias:
+                data[alias] = data.get(alias) or data.get(name)
+        return data
 
     ##########################
     # Attributes
@@ -45,15 +56,6 @@ class Cast(me.EmbeddedDocument):
     @property
     def spell(self) -> WowSpell:
         return WowSpell.get(spell_id=self.spell_id)
-
-    # @property
-    # def end_time(self):
-    #     """"Time the Spell/Aura faded. (relative to Fight Start, in milliseconds)."""
-    #     return self.timestamp + self.duration
-
-    # @end_time.setter
-    # def end_time(self, value: int) -> None:
-    #     self.duration = (value - self.timestamp)
 
     def get_duration(self) -> int:
         """TODO: use a property + setter."""

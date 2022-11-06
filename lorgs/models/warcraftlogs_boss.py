@@ -1,6 +1,5 @@
 # IMPORT THIRD PARTY LIBRARIES
 import typing
-import mongoengine as me
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.models import warcraftlogs_actor
@@ -10,8 +9,8 @@ from lorgs.models.raid_boss import RaidBoss
 class Boss(warcraftlogs_actor.BaseActor):
     """A NPC/Boss in a Fight."""
 
-    boss_id = me.IntField(required=True)
-    percent = me.FloatField(default=100)
+    boss_id: int
+    percent: float = 100.0
 
     ##########################
     # Attributes
@@ -26,7 +25,7 @@ class Boss(warcraftlogs_actor.BaseActor):
     def as_dict(self) -> dict[str, typing.Any]:
         return {
             "name": self.raid_boss and self.raid_boss.full_name_slug,
-            "casts": [cast.as_dict() for cast in self.casts]
+            "casts": [cast.dict() for cast in self.casts]
         }
 
     #################################

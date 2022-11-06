@@ -1,17 +1,13 @@
 """Models for Top Rankings for a given Spec."""
 
 # IMPORT STANDARD LIBRARIES
-import datetime
 import typing
 import textwrap
-
-# IMPORT THIRD PARTY LIBRARIES
-import arrow
-import mongoengine as me
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
 from lorgs.clients import wcl
+from lorgs.lib import s3_store
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
 from lorgs.models.raid_boss import RaidBoss
@@ -22,32 +18,28 @@ from lorgs.models.wow_spec import WowSpec
 
 
 # Map Difficulty Names to Integers used in WCL
-DIFFICULTY_IDS: typing.Dict[str, int] = {}
-DIFFICULTY_IDS["normal"] = 3
-DIFFICULTY_IDS["heroic"] = 4
-DIFFICULTY_IDS["mythic"] = 5
+DIFFICULTY_IDS = {
+    "normal": 3,
+    "heroic": 4,
+    "mythic": 5,
+}
 
 
+class SpecRanking(s3_store.BaseModel, warcraftlogs_base.wclclient_mixin):
 
-class SpecRanking(warcraftlogs_base.Document):
+    # Fields
+    spec_slug: str
+    boss_slug: str
+    difficulty: str = "mythic"
+    metric: str = ""
+    reports: typing.List[Report] = []
 
-    spec_slug: str = me.StringField(required=True) # type: ignore
-    boss_slug: str = me.StringField(required=True) # type: ignore
-    difficulty: str = me.StringField(default="") # type: ignore
-    metric: str = me.StringField(default="") # type: ignore
-    updated: datetime.datetime = me.DateTimeField(default=datetime.datetime.utcnow) # type: ignore
-    reports: typing.List[Report] = me.EmbeddedDocumentListField(Report) # type: ignore
+    # Config
+    key_fmt: typing.ClassVar[str] = "{spec_slug}/{boss_slug}/{difficulty}_{metric}"
 
-    meta = {
-        'indexes': [  # type: ignore
-            ("boss_slug", "spec_slug", "difficulty", "metric"),
-            "spec_slug",
-            "boss_slug",
-            "difficulty",
-            "metric",
-        ],
-        "strict": False # ignore non existing properties
-    }
+    def post_init(self) -> None:
+        for report in self.reports:
+            report.post_init()
 
     ##########################
     # Attributes
@@ -74,8 +66,8 @@ class SpecRanking(warcraftlogs_base.Document):
     @staticmethod
     def sort_reports(reports: list[Report]) -> list[Report]:
         """Sort the reports in place by the highest dps player."""
-        def get_total(report: Report) -> int:
-            top = 0
+        def get_total(report: Report) -> float:
+            top = 0.0
             for fight in report.fights.values():
                 for player in fight.players.values():
                     top = max(top, player.total)
@@ -87,7 +79,7 @@ class SpecRanking(warcraftlogs_base.Document):
     #
     def get_query(self) -> str:
         """Return the Query to load the rankings for this Spec & Boss."""
-        difficulty_id = DIFFICULTY_IDS.get(self.difficulty, 5)
+        difficulty_id = DIFFICULTY_IDS.get(self.difficulty) or 5
 
         return textwrap.dedent(f"""\
         worldData
@@ -125,35 +117,31 @@ class SpecRanking(warcraftlogs_base.Document):
             return
 
         ################
-        # Report
-        report = Report(
-            report_id=report_data.code,
-            start_time=arrow.get(report_data.startTime),
-            # fights={str(fight.fight_id): fight },
+        # Player
+        player = Player(
+            name=ranking_data.name,
+            total=ranking_data.amount,
+            spec_slug=self.spec_slug,
         )
-        self.reports.append(report)
 
         ################
         # Fight
         fight = Fight(
             boss_id=self.boss.id,
             fight_id=report_data.fightID,
-            start_time = arrow.get(ranking_data.startTime),
+            start_time = ranking_data.startTime,
             duration = ranking_data.duration,
+            players={"-1": player},  # set a new dict for `exclude_unset=True`
         )
-        fight.report = report
-        report.fights[str(fight.fight_id)] = fight
 
         ################
-        # Player
-        player = Player(
-            source_id=-1,
-            name=ranking_data.name,
-            total=ranking_data.amount,
-            spec_slug=self.spec_slug,
+        # Report
+        report = Report(
+            report_id=report_data.code,
+            start_time=report_data.startTime,
+            fights={str(fight.fight_id): fight},
         )
-        player.fight = fight
-        fight.players["-1"] = player
+        self.reports.append(report)
 
     def add_new_fights(self, rankings: list[wcl.CharacterRanking]):
         """Add new Fights."""
@@ -188,6 +176,7 @@ class SpecRanking(warcraftlogs_base.Document):
 
         rankings = world_data.encounter.characterRankings.rankings
         self.add_new_fights(rankings)
+        self.post_init()
 
     async def load_rankings(self) -> None:
         """Fetch the current Ranking Data"""
@@ -215,12 +204,12 @@ class SpecRanking(warcraftlogs_base.Document):
         if not actors_to_load:
             return
 
-        await self.load_many(actors_to_load, raise_errors=False)
+        await self.load_many(actors_to_load, raise_errors=False)  # type: ignore
 
     ############################################################################
     # Query: Both
     #
-    async def load(self, limit=50, clear_old=False):
+    async def load(self, limit=50, clear_old=False) -> None:
         """Get Top Ranks for a given boss and spec."""
         logger.info(f"{self.boss.name} vs. {self.spec.name} {self.spec.wow_class.name} START | limit={limit} | clear_old={clear_old}")
 
@@ -238,5 +227,4 @@ class SpecRanking(warcraftlogs_base.Document):
         # load the fights/players/casts
         await self.load_players()
 
-        self.updated = datetime.datetime.utcnow()
         logger.info("done")

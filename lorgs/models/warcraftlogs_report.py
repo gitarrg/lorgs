@@ -1,18 +1,16 @@
 """Class and Functions to manage Report-Instances."""
 
 # IMPORT STANRD LIBRARIES
-import typing
-import textwrap
 import asyncio
+import datetime
+import textwrap
+import typing
 
 # IMPORT THIRD PARTY LIBRARIES
-import arrow
-import mongoengine as me
+import pydantic
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import utils
 from lorgs.clients import wcl
-from lorgs.lib import mongoengine_arrow
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
 from lorgs.models.warcraftlogs_boss import Boss
@@ -20,39 +18,39 @@ from lorgs.models.warcraftlogs_fight import Fight
 from lorgs.models.warcraftlogs_player import Player
 
 
-class Report(warcraftlogs_base.EmbeddedDocument):
+class Report(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
     """Defines a Report read from WarcraftLogs.com and stores in our DB."""
 
-    # 16 digit unique id/code as used on warcraftlogs
-    report_id: str = me.StringField(primary_key=True)
+    report_id: str
+    """16 digit unique id/code as used on warcraftlogs."""
 
-    # time the report (!) has started. The first fight might start later
-    start_time: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField(default=lambda: arrow.get(0))
+    start_time: datetime.datetime
+    """time the report itself has started. The first fight might start later."""
 
-    # title of the report
-    title: str = me.StringField()
+    title: str = ""
+    """title of the report."""
 
-    zone_id: int = me.IntField(default=0)
+    zone_id: int = 0
 
-    # The guild that the report belongs to. None if it was a logged as a personal report
-    guild: str = me.StringField(default="")
+    guild: str = ""
+    """The guild that the report belongs to. None if it was a logged as a personal report."""
 
-    # The user that uploaded the report.
-    owner: str = me.StringField(default="")
+    owner: str = ""
+    """The user that uploaded the report."""
 
-    # fights in this report keyed by fight_id. (they may or may not be loaded)
-    fights: dict[str, Fight] = me.MapField(me.EmbeddedDocumentField(Fight), default={})
+    fights: dict[str, Fight] = {} # pydantic.Field(default_factory=dict)
+    """fights in this report keyed by fight_id. (they may or may not be loaded)."""
 
-    # players in this report.
-    #   Note: not every player might participate in every fight.
-    players: dict[str, Player] = me.MapField(me.EmbeddedDocumentField(Player), default={})
+    players: dict[str, Player] = {} # pydantic.Field(default_factory=dict)
+    """players in this report.
+    Note: not every player might participate in every fight."""
 
-    def __init__(self, *args: typing.Any, **kwargs: typing.Any):
-        super().__init__(*args, **kwargs)
+    def post_init(self) -> None:
         for fight in self.fights.values():
             fight.report = self
+            fight.post_init()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"<BaseReport({self.report_id}, num_fights={len(self.fights)})>"
 
     ##########################
@@ -83,18 +81,14 @@ class Report(warcraftlogs_base.EmbeddedDocument):
         if not fight_data.encounterID:
             return
 
-        fight = Fight()
-        fight.fight_id = fight_data.id
-        fight.report = self
-
-        fight.percent = fight_data.fightPercentage
-        fight.kill = fight_data.kill
-
-        # Fight: Time/Duration
-        start_time = fight_data.startTime / 1000
-        end_time = fight_data.endTime / 1000
-        fight.start_time = self.start_time.shift(seconds=start_time)
-        fight.duration = int((end_time - start_time) * 1000)
+        fight = Fight(
+            fight_id = fight_data.id,
+            percent = fight_data.fightPercentage,
+            kill = fight_data.kill,
+            start_time = self.start_time + datetime.timedelta(),
+            duration = fight_data.endTime - fight_data.startTime,
+        )
+        fight.report = self  # TODO: replace in favor of `post_init()``
 
         # Fight: Boss
         fight.boss = Boss(boss_id=fight_data.encounterID)
@@ -206,7 +200,7 @@ class Report(warcraftlogs_base.EmbeddedDocument):
 
         # Update the Report itself
         self.title = report.title
-        self.start_time = arrow.get(report.startTime)
+        self.start_time = report.startTime
         self.zone_id = report.zone.id
         self.owner = report.owner.name
 

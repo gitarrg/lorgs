@@ -76,7 +76,7 @@ def query_args_to_mongo(*query_args: str, prefix="") -> dict[str, str]:
 W = TypeVar('W', bound="wclclient_mixin")
 
 
-class wclclient_mixin():
+class wclclient_mixin:
 
     @property
     def client(self) -> WarcraftlogsClient:

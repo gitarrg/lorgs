@@ -35,7 +35,7 @@ class CharacterRanking(BaseModel):
     amount: float
     """total DPS/HPS."""
 
-    duration: float
+    duration: int
     """Fight duration in Milliseconds."""
 
     report: CharacterRankingReportFightData
