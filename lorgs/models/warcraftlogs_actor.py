@@ -1,12 +1,11 @@
-
 # IMPORT STANRD LIBRARIES
 import abc
+import math
 import textwrap
 import typing
-import math
 
 # IMPORT THIRD PARTY LIBRARIES
-import mongoengine as me
+import pydantic
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import events
@@ -21,27 +20,17 @@ if typing.TYPE_CHECKING:
     from lorgs.models.warcraftlogs_fight import Fight
 
 
-
-class BaseActor(warcraftlogs_base.EmbeddedDocument):
+class BaseActor(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
     """Base Class for any Actor in a Fight.
 
     these are usually either Players or NPC/Bosses
 
     """
 
-    casts: list[Cast] = me.ListField(me.EmbeddedDocumentField(Cast))
+    source_id: int = -1
+    casts: list[Cast] = []
 
-    source_id = -1
-
-    meta = {
-        'abstract': True,
-    }
-
-    def __init__(self, *args: typing.Any, **kwargs: typing.Any):
-        super().__init__(*args, **kwargs)
-
-        # backref to the parent fight object
-        self.fight: typing.Optional["Fight"] = None
+    fight: typing.Optional["Fight"] = pydantic.Field(exclude=True, default=None)
 
     ##########################
     # Attributes
@@ -120,6 +109,7 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
         return ""
 
     def get_query(self) -> str:
+        print("Get Query", self.fight)
         if not self.fight:
             raise ValueError("missing fight")
         if not self.fight.report:
@@ -206,6 +196,11 @@ class BaseActor(warcraftlogs_base.EmbeddedDocument):
         for cast in casts:
             if cast.type == "cast":
                 self.source_id = cast.sourceID
+
+                # update fight dict
+                if self.fight and self.fight.players.get("1") == self:
+                    self.fight.players.pop("-1")
+                    self.fight.players[str(self.source_id)] = self # type: ignore
 
             # return as soon as we have a value
             if self.source_id > 0:

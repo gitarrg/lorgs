@@ -6,13 +6,11 @@ import textwrap
 import typing
 
 # IMPORT THIRD PARTY LIBRARIES
-import arrow
-import mongoengine as me
-from lorgs import utils
+import pydantic
 
 # IMPORT LOCAL LIBRARIES
+from lorgs import utils
 from lorgs.clients import wcl
-from lorgs.lib import mongoengine_arrow
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
 from lorgs.models.raid_boss import RaidBoss
@@ -45,39 +43,35 @@ def get_composition(players: typing.Iterable[Player]) -> dict:
     return comp
 
 
-class Fight(warcraftlogs_base.EmbeddedDocument):
+class Fight(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
 
-    fight_id = me.IntField(primary_key=True)
+    fight_id: int
 
-    start_time: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField()
+    start_time: datetime.datetime
     """Encounter Start."""
 
-    duration: int = me.IntField(default=0)
+    duration: int = 0
     """fight duration in milliseconds."""
 
-    # deprecated in favor of "duration".
-    end_time_old: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField(db_field="end_time")
+    boss_id: int = -1 # todo: no default
+    players: typing.Dict[str, Player] = {}
+    boss: typing.Optional[Boss] = None
 
-    boss_id = me.IntField()
-    players: typing.Dict[str, Player] = me.MapField(me.EmbeddedDocumentField(Player))
-    boss: typing.Optional[Boss] = me.EmbeddedDocumentField(Boss)
+    composition: dict = {}
+    deaths: int = 0
+    damage_taken: int = 0
 
-    composition = me.DictField()
-    deaths = me.IntField(default=0)
-    ilvl = me.FloatField(default=0)
-    damage_taken = me.IntField(default=0)
+    percent: float = 0
+    """boss percentage at the end of the fight."""
+    kill: bool = True
 
-    # boss percentage at the end.
-    percent = me.FloatField(default=0)
-    kill = me.BooleanField(default=True)
+    report: typing.Optional["Report"] = pydantic.Field(default=None, exclude=True)
 
-    def __init__(self, *args: typing.Any, **kwargs: typing.Any):
-        super().__init__(*args, **kwargs)
-        self.report: typing.Optional["Report"] = None
-        if self.boss:
-            self.boss.fight = self
-        for player in self.players.values():
-            player.fight = self
+    def post_init(self) -> None:
+        actors = list(self.players.values()) + [self.boss]
+        for actor in actors:
+            if actor:
+                actor.fight = self
 
     def __str__(self):
         return f"{self.__class__.__name__}(id={self.fight_id}, players={len(self.players)})"
@@ -116,8 +110,8 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
     ##########################
     # Attributes
     @property
-    def end_time(self) -> arrow.Arrow:
-        return self.start_time.shift(seconds=self.duration / 1000)
+    def end_time(self) -> datetime.datetime:
+        return self.start_time + datetime.timedelta(milliseconds=self.duration)
 
     @end_time.setter
     def end_time(self, value: datetime.datetime):
@@ -155,7 +149,7 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
 
         return [player for player in players if player]
 
-    def add_boss(self, boss_id: int) -> RaidBoss:
+    def add_boss(self, boss_id: int) -> Boss:
         self.boss_id = boss_id
         self.boss = Boss(boss_id=boss_id)
         self.boss.fight = self
@@ -271,19 +265,13 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
             await self.load()
 
         # Get Players to load
-        players_to_load = self.get_players(player_ids)
-        players_to_load = [player for player in players_to_load if not player.casts]
+        actors_to_load = self.get_players(player_ids)
+        actors_to_load += [self.boss] if self.boss else []
+        actors_to_load = [actor for actor in actors_to_load if not actor.casts]
 
-        # see if we need to load the boss
-        boss = [] if (self.boss and self.boss.casts) else [self.boss]
-
-        if not (players_to_load or boss):
+        if not (actors_to_load):
             return
 
         # load
-        tasks = [actor.load() for actor in players_to_load + boss]
+        tasks = [actor.load() for actor in actors_to_load]
         await asyncio.gather(*tasks)
-
-        # re-add them to the dict, as otherwise we get some mongodb issues
-        for actor in players_to_load:
-            self.players[str(actor.source_id)] = actor

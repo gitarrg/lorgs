@@ -1,23 +1,18 @@
 """Datastore using S3."""
 
 # IMPORT STANDARD LIBRARIES
+import json
 import os
 import typing
-import dataclasses
-import json
-from dataclasses import dataclass, field
 
 # IMPORT THIRD PARTY LIBRARIES
-import boto3
-import pydantic
-import datetime
-import attrs
 from botocore.exceptions import ClientError
-# from mypy_boto3_s3.service_resource import Object
+import boto3
+import datetime
+import pydantic
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.lib.s3_store import errors
-from lorgs.logger import timeit
 
 
 T = typing.TypeVar("T", bound="BaseModel")
@@ -39,29 +34,22 @@ def serialize_dataclass(data: list[tuple[str, typing.Any]]) -> dict[str, typing.
     return d
 
 
+def to_snake_case(name) -> str:
+    return "".join("_%s" % c if c.isupper() else c for c in name).strip("_").lower()
 
-class BaseModel:
 
-    bucket: typing.ClassVar[str] = os.getenv("DATA_BUCKET") or "lorrgs" # 
-    ttl: datetime.timedelta = datetime.timedelta(0)
+class BaseModel(pydantic.BaseModel):
+
+    bucket: typing.ClassVar[str] = os.getenv("DATA_BUCKET") or "lorrgs"
     key_fmt: typing.ClassVar[str]
 
-    store = boto3.client('s3')
-
-    def __init__(self, **kwargs: typing.Any) -> None:
-        ...
-        # super().__init__(**kwargs)
-
-    def dict(self) -> dict[str, typing.Any]:
-        if dataclasses.is_dataclass(self):
-            return dataclasses.asdict(self, dict_factory=serialize_dataclass)
-        raise NotImplementedError
+    store: typing.ClassVar = boto3.client('s3')
 
     @classmethod
     def get_key(cls, **kwargs: typing.Any) -> str:
         """Generate a `key` based on the given `kwargs`."""
         key = cls.key_fmt.format(**kwargs).lower()
-        table = cls.__name__.lower()
+        table = to_snake_case(cls.__name__)
         return f"{table}/{key}"
 
     @property
@@ -96,11 +84,7 @@ class BaseModel:
         # data found --> parse and return
         if data:
             body = data["Body"]
-            # content = body.read().decode("utf8")
-            info = json.load(body)
-            return cls(**info)
-            # content = pickle.loads(bb)
-            # return cls.parse_raw()
+            return cls.parse_raw(body.read())
 
         # not data --> create new instance
         if create:
@@ -119,5 +103,4 @@ class BaseModel:
             Body=data,
             ContentType="application/json",
             ACL="public-read",
-            Expires="", # TODO
         )

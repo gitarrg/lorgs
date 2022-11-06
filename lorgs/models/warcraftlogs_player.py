@@ -2,11 +2,7 @@
 # IMPORT STANRD LIBRARIES
 import typing
 
-# IMPORT THIRD PARTY LIBRARIES
-import mongoengine as me
-
 # IMPORT LOCAL LIBRARIES
-from lorgs import utils
 from lorgs.clients import wcl
 from lorgs.models.warcraftlogs_actor import BaseActor
 from lorgs.models.wow_spec import WowSpec
@@ -16,27 +12,23 @@ from lorgs.models.wow_spell import EventSource, WowSpell
 class Player(BaseActor):
     """A PlayerCharater in a Fight (or report)."""
 
-    source_id: int = me.IntField(primary_key=True)
-    name: str = me.StringField(max_length=12) # names can be max 12 chars
-    total: int = me.IntField(default=0)
+    name: str = ""
+    class_slug: str = ""
+    spec_slug: str = ""
 
-    class_slug: str = me.StringField()
-    spec_slug: str = me.StringField(required=True)
+    total: float = 0
 
-    deaths = me.ListField(me.DictField())
-    resurrects = me.ListField(me.DictField())
+    deaths: list = []
+    resurrects: list = []
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Player(id={self.source_id} name={self.name} spec={self.spec})"
 
     def summary(self) -> dict[str, typing.Any]:
-
-        class_slug = self.class_slug or self.spec_slug.split("-")[0]
-
         return {
             "name": self.name,
             "source_id": self.source_id,
-            "class": class_slug,
+            "class": self.class_slug,
 
             "spec": self.spec_slug,
             "role": self.spec.role.code if self.spec else "",
@@ -46,7 +38,7 @@ class Player(BaseActor):
         return {
             **self.summary(),
             "total": int(self.total),
-            "casts": [cast.as_dict() for cast in self.casts],
+            "casts": [cast.dict() for cast in self.casts],
             "deaths": self.deaths,
             "resurrects": self.resurrects,
         }
