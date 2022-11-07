@@ -11,6 +11,7 @@ from lorgs.lib import s3_store
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
 from lorgs.models.raid_boss import RaidBoss
+from lorgs.models.warcraftlogs_boss import Boss
 from lorgs.models.warcraftlogs_fight import Fight
 from lorgs.models.warcraftlogs_player import Player
 from lorgs.models.warcraftlogs_report import Report
@@ -131,7 +132,6 @@ class SpecRanking(s3_store.BaseModel, warcraftlogs_base.wclclient_mixin):
         ################
         # Fight
         fight = Fight(
-            boss_id=self.boss.id,
             fight_id=report_data.fightID,
             start_time=ranking_data.startTime,
             duration=ranking_data.duration,
@@ -199,6 +199,11 @@ class SpecRanking(s3_store.BaseModel, warcraftlogs_base.wclclient_mixin):
         # make sure the first report has the boss added
         if self.fights:
             first_fight = self.fights[0]
+
+            if not first_fight.boss:
+                first_fight.boss = Boss(boss_slug=self.boss_slug)
+                first_fight.boss.fight = first_fight
+
             actors_to_load += [first_fight.boss]  # type: ignore
 
         actors_to_load = [actor for actor in actors_to_load if actor]

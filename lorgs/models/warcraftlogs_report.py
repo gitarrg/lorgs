@@ -13,6 +13,7 @@ import pydantic
 from lorgs.clients import wcl
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
+from lorgs.models.raid_boss import RaidBoss
 from lorgs.models.warcraftlogs_boss import Boss
 from lorgs.models.warcraftlogs_fight import Fight
 from lorgs.models.warcraftlogs_player import Player
@@ -24,7 +25,7 @@ class Report(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
     report_id: str
     """16 digit unique id/code as used on warcraftlogs."""
 
-    start_time: datetime.datetime
+    start_time: datetime.datetime = datetime.datetime.min
     """time the report itself has started. The first fight might start later."""
 
     title: str = ""
@@ -85,14 +86,15 @@ class Report(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
             fight_id=fight_data.id,
             percent=fight_data.fightPercentage,
             kill=fight_data.kill,
-            start_time=self.start_time + datetime.timedelta(),
-            duration=fight_data.endTime - fight_data.startTime,
+            start_time=self.start_time + datetime.timedelta(milliseconds=fight_data.startTime),
+            duration=fight_data.endTime - fight_data.startTime + 1,  # somehow there is 1ms missing
         )
         fight.report = self  # TODO: replace in favor of `post_init()``
 
         # Fight: Boss
-        fight.boss = Boss(boss_id=fight_data.encounterID)
-        if fight.boss:  # could be a boss unknown to Lorrgs
+        raid_boss = RaidBoss.get(id=fight_data.encounterID)
+        if raid_boss:
+            fight.boss = Boss.from_raid_boss(raid_boss)
             fight.boss.fight = fight
 
         # store and return
@@ -129,7 +131,8 @@ class Report(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
             class_slug=actor_data.subType.lower(),
             spec_slug=spec_slug,
         )
-        if player.spec == None:
+
+        if player.class_ == None:
             logger.debug("Skipping unknown Player: %s", player)
             return
 
@@ -214,9 +217,6 @@ class Report(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
             self.process_master_data(report.masterData)
         self.process_report_fights(report.fights)
 
-    async def load_summary(self, raise_errors=False) -> None:
-        await self.load(raise_errors=raise_errors)
-
     async def load_fight(self, fight_id: int, player_ids: list[int]):
         """Load a single Fight from this Report."""
         fight = self.get_fight(fight_id=fight_id)
@@ -228,7 +228,7 @@ class Report(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
     async def load_fights(self, fight_ids: list[int], player_ids: list[int]) -> None:
 
         if not self.fights:
-            await self.load_summary()
+            await self.load()
 
         # queue all tasks at once.
         # the client will make sure its throttled accordingly

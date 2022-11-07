@@ -43,6 +43,9 @@ class BaseModel(pydantic.BaseModel):
     bucket: typing.ClassVar[str] = os.getenv("DATA_BUCKET") or "lorrgs"
     key_fmt: typing.ClassVar[str]
 
+    def post_init(self) -> None:
+        """Hook to implement some custom initialization logic."""
+
     @classmethod
     def get_key(cls, **kwargs: typing.Any) -> str:
         """Generate a `key` based on the given `kwargs`."""
@@ -82,17 +85,24 @@ class BaseModel(pydantic.BaseModel):
         # data found --> parse and return
         if data:
             body = data["Body"]
-            return cls.parse_raw(body.read())
+            obj = cls.parse_raw(body.read())
+            obj.post_init()
+            return obj
 
         # not data --> create new instance
         if create:
             return cls(**kwargs)
 
         # no data + no create --> :(
-        raise errors.NotFound(f"Invalid Key: {key}")
+        return None
 
-    def save(self, exclude_unset=True) -> None:
-        data = self.json(exclude_unset=exclude_unset)
+    def save(self, filename="", exclude_unset=True, **kwargs: typing.Any) -> None:
+        data = self.json(exclude_unset=exclude_unset, **kwargs)
+
+        if filename:
+            with open(filename, "w") as f:
+                f.write(data)
+            return
 
         # self.s3_object.put(
         s3_client.put_object(
