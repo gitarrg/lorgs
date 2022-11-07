@@ -19,11 +19,12 @@ router = fastapi.APIRouter()
 @router.get("/{report_id}")
 async def get_user_report(report_id: str):
     """Returns the overview about a user report."""
-    user_report = UserReport.from_report_id(report_id=report_id)
+    user_report = UserReport.get(report_id=report_id, create=False)
     if not user_report:
         return {"message": "not found"}
 
-    return user_report.as_dict()
+    # TODO: expclude nested casts/fights etc
+    return user_report.dict(exclude_unset=True)
 
 
 @router.get("/{report_id}/fights")
@@ -36,18 +37,19 @@ async def get_fights(report_id: str, fight: str, player: str = ""):
         player (str): dot separeted list of player ids (eg.: 1.5.20)
 
     """
-    user_report = UserReport.from_report_id(report_id=report_id)
+    user_report = UserReport.get(report_id=report_id, create=False)
     if not user_report:
         return "Report not found.", 404
 
     fight_ids = utils.str_int_list(fight)
     player_ids = utils.str_int_list(player)
 
-    report = user_report.report
-    fights = report.get_fights(*fight_ids)
-    return {
-        "fights": [fight.as_dict(player_ids=player_ids) for fight in fights]
-    }
+    fights = user_report.get_fights(*fight_ids)
+
+    for f in fights:
+        f.players = f.get_players(*player_ids)
+
+    return {"fights": [fight.dict(exclude_unset=True) for fight in fights]}
 
 
 ################################################################################
@@ -56,14 +58,12 @@ async def get_fights(report_id: str, fight: str, player: str = ""):
 @router.get("/{report_id}/load_overview")
 async def load_user_report_overview(response: fastapi.Response, report_id: str, refresh: bool = False):
     """Load a Report's Overview/Masterdata."""
-    user_report = UserReport.from_report_id(report_id=report_id, create=True)
-    if not user_report:
-        return "Report not found.", 404
+    user_report = UserReport.get(report_id=report_id, create=True)
 
     needs_to_load = refresh or not user_report.is_loaded
     if needs_to_load:
         try:
-            await user_report.report.load_summary(raise_errors=True)
+            await user_report.load(raise_errors=True)
         except InvalidReport:
             return {"error": "Invalid URL."}
         except PermissionError:
@@ -72,7 +72,7 @@ async def load_user_report_overview(response: fastapi.Response, report_id: str, 
             user_report.save()
 
     response.headers["Cache-Control"] = "no-cache"
-    return user_report.as_dict()
+    return user_report.dict(exclude_unset=True)
 
 
 @router.get("/{report_id}/load")

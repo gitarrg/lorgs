@@ -4,6 +4,7 @@ import typing
 # IMPORT LOCAL LIBRARIES
 from lorgs.clients import wcl
 from lorgs.models.warcraftlogs_actor import BaseActor
+from lorgs.models.wow_class import WowClass
 from lorgs.models.wow_spec import WowSpec
 from lorgs.models.wow_spell import EventSource, WowSpell
 
@@ -44,6 +45,10 @@ class Player(BaseActor):
     ##########################
     # Attributes
     #
+    @property
+    def class_(self) -> WowClass:
+        return WowClass.get(name_slug=self.class_slug)
+
     @property
     def spec(self) -> WowSpec:
         return WowSpec.get(full_name_slug=self.spec_slug)

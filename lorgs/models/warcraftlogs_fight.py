@@ -13,13 +13,13 @@ from lorgs import utils
 from lorgs.clients import wcl
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
-from lorgs.models.raid_boss import RaidBoss
 from lorgs.models.warcraftlogs_boss import Boss
 from lorgs.models.warcraftlogs_player import Player
 from lorgs.models.wow_spec import WowSpec
 
 if typing.TYPE_CHECKING:
     from lorgs.models.warcraftlogs_report import Report
+    from lorgs.models.warcraftlogs_actor import BaseActor
 
 
 def get_composition(players: typing.Iterable[Player]) -> dict:
@@ -53,8 +53,7 @@ class Fight(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
     duration: int = 0
     """fight duration in milliseconds."""
 
-    boss_id: int = -1  # todo: no default
-    players: list[Player] = []
+    players: list[Player] = pydantic.Field(default_factory=list)
     boss: typing.Optional[Boss] = None
 
     composition: dict = {}
@@ -129,30 +128,20 @@ class Fight(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
         t = self.report.start_time.timestamp() if self.report else 0
         return int(1000 * (self.end_time.timestamp() - t))
 
-    @property
-    def raid_boss(self) -> RaidBoss:
-        return RaidBoss.get(id=self.boss_id)
-
     #################################
     # Methods
     #
-    def get_player(self, **kwargs) -> Player:
+    def get_player(self, **kwargs) -> typing.Optional[Player]:
         """Returns a single Player based on the kwargs."""
-        return utils.get(self.players.values(), **kwargs)  # type: ignore
+        return utils.get(self.players, **kwargs)
 
-    def get_players(self, source_ids: typing.Optional[list[int]] = None):
+    def get_players(self, *source_ids: int) -> list[Player]:
         """Gets multiple players based on source id."""
         players = self.players
         if source_ids:
             players = [player for player in players if player.source_id in source_ids]
 
         return [player for player in players if player]
-
-    def add_boss(self, boss_id: int) -> Boss:
-        self.boss_id = boss_id
-        self.boss = Boss(boss_id=boss_id)
-        self.boss.fight = self
-        return self.boss
 
     ############################################################################
     # Query
@@ -214,12 +203,14 @@ class Fight(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
                 total = 0
 
             # create and return yield player object
-            player = Player()
+            player = Player(
+                source_id=composition_data.id,
+                name=composition_data.name,
+                class_slug=spec.wow_class.name_slug,
+                spec_slug=spec.full_name_slug,
+                total=int(total),
+            )
             player.fight = self
-            player.spec_slug = spec.full_name_slug
-            player.source_id = composition_data.id
-            player.name = composition_data.name
-            player.total = int(total)
             player.process_death_events(summary_data.deathEvents)
             self.players.append(player)
 
@@ -236,25 +227,6 @@ class Fight(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
         self.duration = self.duration or summary_data.totalTime
         self.process_players(summary_data)
 
-    async def load_summary(self, force=False) -> None:
-        """Load this fights Summary.
-
-        Args:
-            force(boolean, optional): load even if its already loaded
-
-        """
-        if force:
-            self.players = []
-
-        if self.players:
-            return
-
-        query = self.get_query()
-        result = await self.client.query(query)
-
-        query_data = wcl.Query(**result)
-        self.process_overview(query_data)
-
     ############################################################################
     #   Load Player:
     #
@@ -266,7 +238,8 @@ class Fight(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
             await self.load()
 
         # Get Players to load
-        actors_to_load = self.get_players(player_ids)
+        actors_to_load: list["BaseActor"] = []
+        actors_to_load += self.get_players(*player_ids)
         actors_to_load += [self.boss] if self.boss else []
         actors_to_load = [actor for actor in actors_to_load if not actor.casts]
 
@@ -276,3 +249,6 @@ class Fight(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
         # load
         tasks = [actor.load() for actor in actors_to_load]
         await asyncio.gather(*tasks)
+
+        # Create a new list (otherwise pydantic would consider it as unset )
+        self.players = [p for p in self.players]

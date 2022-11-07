@@ -30,7 +30,7 @@ class BaseActor(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
     source_id: int = -1
     casts: list[Cast] = []
 
-    fight: typing.Optional["Fight"] = pydantic.Field(exclude=True, default=None)
+    fight: typing.Optional["Fight"] = pydantic.Field(exclude=True, default=None, repr=False)
 
     ##########################
     # Attributes
@@ -235,13 +235,15 @@ class BaseActor(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
                 continue
 
             # Create the Cast Object
-            self.casts.append(
-                Cast(
-                    spell_id=cast_data.abilityGameID,
-                    timestamp=cast_data.timestamp - fight_start,
-                    duration=cast_data.duration,
-                )
+            cast = Cast(
+                spell_id=cast_data.abilityGameID,
+                timestamp=cast_data.timestamp - fight_start,
             )
+            # we only want to touch the field if needed
+            if cast_data.duration:
+                cast.duration = cast_data.duration
+
+            self.casts.append(cast)
 
         ##############################
         # Post Processing

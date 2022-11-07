@@ -9,24 +9,25 @@ from lorgs.models.raid_boss import RaidBoss
 class Boss(warcraftlogs_actor.BaseActor):
     """A NPC/Boss in a Fight."""
 
-    boss_id: int
+    boss_slug: str
     percent: float = 100.0
 
     ##########################
     # Attributes
     #
     def __str__(self):
-        return f"Boss(id={self.boss_id})"
+        return f"Boss(slug={self.boss_slug})"
 
     @property
     def raid_boss(self) -> RaidBoss:
-        return RaidBoss.get(id=self.boss_id)
+        return RaidBoss.get(full_name_slug=self.boss_slug)
+
+    @classmethod
+    def from_raid_boss(cls, raid_boss: RaidBoss) -> "Boss":
+        return cls(boss_slug=raid_boss.full_name_slug)
 
     def as_dict(self) -> dict[str, typing.Any]:
-        return {
-            "name": self.raid_boss and self.raid_boss.full_name_slug,
-            "casts": [cast.dict() for cast in self.casts]
-        }
+        return {"name": self.raid_boss and self.raid_boss.full_name_slug, "casts": [cast.dict() for cast in self.casts]}
 
     #################################
     # Query
@@ -45,4 +46,3 @@ class Boss(warcraftlogs_actor.BaseActor):
     def process_query_result(self, **query_result: typing.Any) -> None:
         query_result = self.raid_boss.preprocess_query_results(**query_result)
         super().process_query_result(**query_result)
-
