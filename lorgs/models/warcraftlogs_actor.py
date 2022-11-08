@@ -1,6 +1,5 @@
 # IMPORT STANRD LIBRARIES
 import abc
-import math
 import textwrap
 import typing
 
@@ -17,7 +16,28 @@ from lorgs.models.warcraftlogs_cast import Cast
 from lorgs.models.wow_spell import WowSpell
 
 if typing.TYPE_CHECKING:
+    from lorgs.models.wow_actor import WowActor
     from lorgs.models.warcraftlogs_fight import Fight
+
+
+def build_aura_query(spells: list[WowSpell], event_types: list[str]) -> str:
+    """Build a query for Aura (buffs, debuffs).
+
+    Args:
+        spells(list[WowSpell]): List of spells to query.
+        event_types(list[str]): List of event types to query (eg.: "applybuff", appldebuff"")
+
+    TODO:
+        * Check if duration is set. Only query auraremove if required.
+    """
+    if not spells:
+        return ""
+    spell_ids = WowSpell.spell_ids_str(spells)
+
+    event_types = [f"'{event}'" for event in event_types]  # wrap each into single quotes
+    event_types_combined = ",".join(event_types)
+
+    return f"type in ({event_types_combined}) and ability.id in ({spell_ids})"
 
 
 class BaseActor(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
@@ -32,9 +52,12 @@ class BaseActor(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
 
     fight: typing.Optional["Fight"] = pydantic.Field(exclude=True, default=None, repr=False)
 
-    ##########################
+    ############################################################################
+    #
     # Attributes
     #
+    ############################################################################
+
     @property
     def _has_source_id(self):
         return self.source_id >= 0
@@ -49,10 +72,45 @@ class BaseActor(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
                 return True
         return False
 
-    #################################
+    @abc.abstractmethod
+    def get_actor_type(self) -> "WowActor":
+        """Get the Type of Actor."""
+
+    @property
+    def actor_type(self) -> "WowActor":
+        return self.get_actor_type()
+
+    async def load(self, *args: typing.Any, **kwargs: typing.Any) -> None:
+        await events.submit("actor.load.start", actor=self)
+        try:
+            await super().load(*args, **kwargs)
+        except:
+            await events.submit("actor.load.failed", actor=self)
+            raise
+        else:
+            await events.submit("actor.load.done", actor=self)
+
+    ############################################################################
+    #
     # Query
     #
-    def get_event_query(self, spells: list[WowSpell]) -> str:
+    ############################################################################
+
+    def get_cast_query(self, spells: list[WowSpell]) -> str:
+        if not spells:
+            return ""
+
+        spell_ids = WowSpell.spell_ids_str(spells)
+        cast_filter = f"type='cast' and ability.id in ({spell_ids})"
+        return cast_filter
+
+    def get_buff_query(self, spells: list[WowSpell]):
+        return build_aura_query(spells, ["applybuff", "removebuff"])
+
+    def get_debuff_query(self, spells: list[WowSpell]):
+        return build_aura_query(spells, ["applydebuff", "removedebuff"])
+
+    def get_events_query(self, spells: list[WowSpell]) -> str:
         """Generate the Query based of the given Spells.
 
         Generates a very verbose:
@@ -65,44 +123,16 @@ class BaseActor(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
 
         Returns:
             str: The Query
+
+        TODO:
+            * group spells by event_type
         """
         if not spells:
             return ""
 
-        # TODO: group spells by event_type
-        # spell_ids = WowSpell.spell_ids_str(spells)
-
-        parts = []
-        for spell in spells:
-            part = f"(type='{spell.event_type}' and ability.id={spell.spell_id})"
-            parts.append(part)
-
+        spells += [e.until for e in spells if e.until]  # include until events
+        parts = [f"(type='{spell.event_type}' and ability.id={spell.spell_id})" for spell in spells]
         return " or ".join(parts)
-
-    def get_cast_query(self, spells: list[WowSpell]):
-        if not spells:
-            return ""
-
-        spell_ids = WowSpell.spell_ids_str(spells)
-        cast_filter = f"type='cast' and ability.id in ({spell_ids})"
-        return cast_filter
-
-    @staticmethod
-    def _build_buff_query(spells: list[WowSpell], event_types: list[str]):
-        if not spells:
-            return ""
-        spell_ids = WowSpell.spell_ids_str(spells)
-
-        event_types = [f"'{event}'" for event in event_types]  # wrap each into single quotes
-        event_types_combined = ",".join(event_types)
-
-        return f"type in ({event_types_combined}) and ability.id in ({spell_ids})"
-
-    def get_buff_query(self, spells: list[WowSpell]):
-        return self._build_buff_query(spells, ["applybuff", "removebuff"])
-
-    def get_debuff_query(self, spells: list[WowSpell]):
-        return self._build_buff_query(spells, ["applydebuff", "removedebuff"])
 
     @abc.abstractmethod
     def get_sub_query(self) -> str:
@@ -127,63 +157,19 @@ class BaseActor(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
         """
         )
 
-    #################################
-    # Query
+    ############################################################################
     #
-    async def load(self, *args: typing.Any, **kwargs: typing.Any) -> None:
-        await events.submit("actor.load.start", actor=self)
-        try:
-            await super().load(*args, **kwargs)
-        except:
-            await events.submit("actor.load.failed", actor=self)
-            raise
-        else:
-            await events.submit("actor.load.done", actor=self)
+    # Process
+    #
+    ############################################################################
 
-    def process_event(self, event: wcl.ReportEvent):
-        """Hook to preprocess Events
+    def process_event(self, event: wcl.ReportEvent) -> wcl.ReportEvent:
+        """Hook to preprocess each Cast/Event
 
         Args:
             event (wcl.ReportEvent): The Event to be processed
         """
-        pass
-
-    @staticmethod
-    def process_auras(events: list[Cast]) -> list[Cast]:
-        """Calculate Aura Durations from "applybuff" to "applydebuff".
-
-        Also converts "removebuff" events without matching "apply"
-        eg.: a "removebuff" from an Aura that got applied prepull
-
-        """
-        # spell id --> application event
-        active_buffs: dict[int, Cast] = {}
-
-        for event in events:
-            spell_id = event.spell_id
-
-            # track the applications (pref initial)
-            if event.event_type in ("applybuff", "applydebuff"):
-                if event.spell_id in active_buffs:  # this is already tracked
-                    event.spell_id = -1
-                    continue
-
-                active_buffs[spell_id] = event
-                continue
-
-            if event.event_type in ("removebuff", "removedebuff"):
-                start_event = active_buffs.get(spell_id)
-
-                # calc dynamic duration from start -> end
-                if start_event:
-                    start_event.duration = event.timestamp - start_event.timestamp
-                    active_buffs.pop(event.spell_id)
-                    event.spell_id = -1
-                else:
-                    # Automatically create start event
-                    event.convert_to_start_event()
-
-        return [event for event in events if event.spell_id >= 0]
+        return event
 
     def set_source_id_from_events(self, casts: list[wcl.ReportEvent], force=False):
         """Set the Source ID from the cast data.
@@ -207,53 +193,42 @@ class BaseActor(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
         query_data = query_data.get("reportData") or query_data
         report_data = wcl.ReportData(**query_data)
         casts_data = report_data.report.events
+
         if not casts_data:
             logger.warning("casts_data is empty")
             return
 
-        fight_start = self.fight.start_time_rel if self.fight else 0
-
+        ##############################
+        # Pre Processing
         self.set_source_id_from_events(casts_data)
 
+        ##############################
+        # Main
         for cast_data in casts_data:
-            self.process_event(cast_data)
-
-            cast_type = cast_data.type or "unknown"
-
-            # resurrect are dealt with in `process_event`
-            if cast_type == "resurrect":
-                continue
+            cast_data = self.process_event(cast_data)
 
             # Some Types (eg.: Buffs) are tracked based on the target.
             # eg.: PowerInfusion shows on the Target, not the Priest.
             cast_actor_id = cast_data.sourceID
-            if cast_type in ("applybuff", "removebuff", "resurrect"):
+            if cast_data.type in ("applybuff", "removebuff", "resurrect"):
                 cast_actor_id = cast_data.targetID
 
             # Skip if the Source ID doesn't match
             if self._has_source_id and (cast_actor_id != self.source_id):
                 continue
 
-            # Create the Cast Object
-            cast = Cast(
-                spell_id=cast_data.abilityGameID,
-                timestamp=cast_data.timestamp - fight_start,
-            )
-            # we only want to touch the field if needed
-            if cast_data.duration:
-                cast.duration = cast_data.duration
-
+            # create the cast object
+            cast = Cast.from_report_event(cast_data)
+            cast.timestamp -= self.fight.start_time_rel if self.fight else 0
             self.casts.append(cast)
 
         ##############################
         # Post Processing
-        self.casts = self.process_auras(self.casts)
+        self.casts = Cast.process_until_events(self.casts)
+        self.casts = Cast.process_auras(self.casts)
 
         # Filter out same event at the same time (eg.: raid wide debuff apply)
-        self.casts = utils.uniqify(
-            self.casts,
-            key=lambda cast: (cast.spell_id, math.floor(cast.timestamp / 1000)),
-        )
+        self.casts = utils.uniqify(self.casts, key=lambda cast: (cast.spell_id, int(cast.timestamp / 1000)))
 
         # make sure casts are sorted correctly
         # avoids weird UI overlaps, and just feels cleaner

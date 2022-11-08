@@ -5,11 +5,11 @@ import typing
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
-from lorgs.models import base
+from lorgs.models.wow_actor import WowActor
 from lorgs.models.wow_spell import WowSpell
 
 
-class RaidBoss(base.Model):
+class RaidBoss(WowActor):
     """A raid boss in the Game."""
 
     def __init__(self, id: int, name: str, nick: str = ""):
@@ -20,20 +20,22 @@ class RaidBoss(base.Model):
             name (str): Nice Name
             nick (str, optional): Nick Name. Defaults to `name`.
         """
+        super().__init__()
+
         self.id = id
         """The Encounter ID."""
+
         self.full_name = name
         """Full Name of the Boss (eg.: "Halondrus the Reclaimer")."""
+
         self.name = nick or name
         """Short commonlty used Nickname. eg.: "Halondrus"."""
 
-        self.events: list[dict[str, str]] = []
-        """Custom Events to track."""
+        self.full_name_slug = utils.slug(self.full_name, space="-")
+        """Complete Name slugified. eg.: `"halondrus-the-reclaimer"`."""
 
-        # we track them as "spells" for now
-        self.spells: list["WowSpell"] = []
-        self.buffs: list["WowSpell"] = []
-        self.event_spells: list["WowSpell"] = []
+        # alias
+        self.add_cast = self.add_spell
 
     def __repr__(self):
         return f"<RaidBoss(id={self.id} name={self.name})>"
@@ -48,7 +50,7 @@ class RaidBoss(base.Model):
 
     @property
     def full_name_slug(self):
-        """Complete Name slugified. eg.: `halondrus-the-reclaimer`."""
+        """Complete Name slugified. eg.: `"halondrus-the-reclaimer"`."""
         return utils.slug(self.full_name, space="-")
 
     # @property
