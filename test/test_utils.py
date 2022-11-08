@@ -1,3 +1,5 @@
+import sys
+import pytest
 from lorgs import utils
 
 
@@ -12,34 +14,18 @@ def test__str_int_list__empty_input():
     assert utils.str_int_list("") == []
 
 
-################################################################################
-# get_nested_value
-#
+class TestGroupBy:
+    def test__group_by__empty_input(self):
+        items: list = []
+        assert utils.group_by(*items, keyfunc=lambda x: "") == {}
 
-def test__get_nested_value__empty_input():
-    assert utils.get_nested_value({}, "attr", "name") == None
+    def test__group_by__1(self):
 
+        items = ["foo", "bar", "a", "b", "c"]
 
-def test__get_nested_value__simple():
-    data = {"attr": {"name": 5}}
-    assert utils.get_nested_value(data, "attr", "name") == 5
-
-def test__get_nested_value__simple_deep():
-    data = {
-        "some": {
-            "deep": {
-                "nested": {
-                    "attr": {
-                        "name": "Hello!"
-                    }
-                }
-            }
-        }
-    }
-
-    assert utils.get_nested_value(data, "some", "deep", "nested", "attr", "name") == "Hello!"
+        result = utils.group_by(*items, keyfunc=lambda x: len(x))
+        assert result == {3: ["foo", "bar"], 1: ["a", "b", "c"]}
 
 
-def test__get_nested_value__default():
-    data = {"attr": {"name": 5}}
-    assert utils.get_nested_value(data, "attr", "other", default=32) == 32
+if __name__ == "__main__":
+    pytest.main(sys.argv)

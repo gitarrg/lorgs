@@ -53,6 +53,7 @@ class WowActor(base.Model):
     def add_spell(self, spell: typing.Optional[WowSpell] = None, **kwargs: typing.Any) -> WowSpell:
         """Add a spell to the actor."""
         if not spell:
+            kwargs.setdefault("event_type", "cast")
             kwargs.setdefault("spell_type", self.full_name_slug)
             spell = WowSpell(**kwargs)
 
@@ -66,6 +67,7 @@ class WowActor(base.Model):
     def add_buff(self, spell: typing.Optional[WowSpell] = None, **kwargs) -> WowSpell:
         """Add a buff to the actor."""
         if not spell:
+            kwargs.setdefault("event_type", "applybuff")
             kwargs.setdefault("spell_type", self.full_name_slug)
             spell = WowSpell(**kwargs)
 
@@ -79,6 +81,7 @@ class WowActor(base.Model):
     def add_debuff(self, spell: typing.Optional[WowSpell] = None, **kwargs) -> WowSpell:
         """Add a debuff to the actor."""
         if not spell:
+            kwargs.setdefault("event_type", "applydebuff")
             kwargs.setdefault("spell_type", self.full_name_slug)
             spell = WowSpell(**kwargs)
 

@@ -13,31 +13,11 @@ from lorgs.clients import wcl
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
 from lorgs.models.warcraftlogs_cast import Cast
-from lorgs.models.wow_spell import WowSpell
+from lorgs.models.wow_spell import WowSpell, build_spell_query
 
 if typing.TYPE_CHECKING:
     from lorgs.models.wow_actor import WowActor
     from lorgs.models.warcraftlogs_fight import Fight
-
-
-def build_aura_query(spells: list[WowSpell], event_types: list[str]) -> str:
-    """Build a query for Aura (buffs, debuffs).
-
-    Args:
-        spells(list[WowSpell]): List of spells to query.
-        event_types(list[str]): List of event types to query (eg.: "applybuff", appldebuff"")
-
-    TODO:
-        * Check if duration is set. Only query auraremove if required.
-    """
-    if not spells:
-        return ""
-    spell_ids = WowSpell.spell_ids_str(spells)
-
-    event_types = [f"'{event}'" for event in event_types]  # wrap each into single quotes
-    event_types_combined = ",".join(event_types)
-
-    return f"type in ({event_types_combined}) and ability.id in ({spell_ids})"
 
 
 class BaseActor(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
@@ -96,47 +76,35 @@ class BaseActor(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
     #
     ############################################################################
 
-    def get_cast_query(self, spells: list[WowSpell]) -> str:
-        if not spells:
-            return ""
+    def get_cast_query(self) -> str:
+        """Get the query for all spells cast by this actor."""
+        return build_spell_query(self.actor_type.all_spells)
 
-        spell_ids = WowSpell.spell_ids_str(spells)
-        cast_filter = f"type='cast' and ability.id in ({spell_ids})"
-        return cast_filter
+    def get_buff_query(self) -> str:
+        """Get the query for all buffs applied to this actor."""
+        return build_spell_query(self.actor_type.all_buffs)
 
-    def get_buff_query(self, spells: list[WowSpell]):
-        return build_aura_query(spells, ["applybuff", "removebuff"])
+    def get_debuff_query(self) -> str:
+        """Get the query for all debuffs applied from this actor."""
+        return build_spell_query(self.actor_type.all_debuffs)
 
-    def get_debuff_query(self, spells: list[WowSpell]):
-        return build_aura_query(spells, ["applydebuff", "removedebuff"])
+    def get_events_query(self) -> str:
+        """Get the query for all custom events for this actor."""
+        return build_spell_query(self.actor_type.all_events)
 
-    def get_events_query(self, spells: list[WowSpell]) -> str:
-        """Generate the Query based of the given Spells.
+    def get_query_parts(self) -> list[str]:
+        return [
+            self.get_cast_query(),
+            self.get_buff_query(),
+            self.get_debuff_query(),
+            self.get_events_query(),
+        ]
 
-        Generates a very verbose:
-        ```
-            "(type='spellA.type' and ability.id=spellA.spell_id) or (type='spellB.type' and ability.id=spellB.spell_id)"
-        ```
-
-        Args:
-            spells WowSpell[]: List of Spells
-
-        Returns:
-            str: The Query
-
-        TODO:
-            * group spells by event_type
-        """
-        if not spells:
-            return ""
-
-        spells += [e.until for e in spells if e.until]  # include until events
-        parts = [f"(type='{spell.event_type}' and ability.id={spell.spell_id})" for spell in spells]
-        return " or ".join(parts)
-
-    @abc.abstractmethod
     def get_sub_query(self) -> str:
-        return ""
+        """Get the Query for fetch all relevant data for this actor."""
+        # combine all parts
+        query_parts = self.get_query_parts()
+        return self.combine_queries(*query_parts, op="or")
 
     def get_query(self) -> str:
         if not self.fight:

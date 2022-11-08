@@ -6,7 +6,7 @@ from lorgs.clients import wcl
 from lorgs.models.warcraftlogs_actor import BaseActor
 from lorgs.models.wow_class import WowClass
 from lorgs.models.wow_spec import WowSpec
-from lorgs.models.wow_spell import EventSource, WowSpell
+from lorgs.models.wow_spell import WowSpell
 
 
 class Player(BaseActor):
@@ -59,58 +59,49 @@ class Player(BaseActor):
     ############################################################################
     # Query
     #
-    def get_cast_query(self, spells: list[WowSpell]) -> str:
-        cast_query = super().get_cast_query(spells=spells)
-        if cast_query and self.name:
-            cast_query = f"source.name='{self.name}' and {cast_query}"
-        return cast_query
+    def get_cast_query(self) -> str:
+        """Get a query for spells cast by this player."""
+        query = super().get_cast_query()
+        if query and self.name:
+            query = f"source.name='{self.name}' and {query}"
+        return query
 
-    def get_buff_query(self, spells: list[WowSpell]):
-        buffs_query = super().get_buff_query(spells=spells)
-        if buffs_query and self.name:
-            buffs_query = f"target.name='{self.name}' and {buffs_query}"
-        return buffs_query
+    def get_buff_query(self) -> str:
+        """Get a query for all buffs applied to this player."""
+        query = super().get_buff_query()
+        if query and self.name:
+            query = f"target.name='{self.name}' and {query}"
+        return query
 
-    def get_debuff_query(self, spells: list[WowSpell]):
-        debuffs_query = super().get_debuff_query(spells=spells)
-        if debuffs_query and self.name:
-            debuffs_query = f"source.name='{self.name}' and {debuffs_query}"
-        return debuffs_query
+    def get_debuff_query(self) -> str:
+        """Get a query for all debuffs applied by this player."""
+        query = super().get_debuff_query()
+        if query and self.name:
+            query = f"source.name='{self.name}' and {query}"
+        return query
 
-    def get_event_query(self, spells: list[WowSpell]):
+    def get_event_query(self) -> str:
+        """Get a query for custom events this player."""
+        query = super().get_events_query()
+        if query and self.name:
+            query = f"source.name='{self.name}' and {query}"
+        return query or ""
 
-        # 1) spells used by the player
-        player_query = ""
-        player_spells = [e for e in spells if e.source == EventSource.PLAYER]
-        if player_spells:
-            player_query = super().get_event_query(spells=player_spells)
-            if player_query and self.name:
-                player_query = f"source.name='{self.name}' and {player_query}"
-
-        return player_query or ""
-
-    def get_sub_query(self) -> str:
-        """Get the Query for fetch all relevant data for this player."""
-
-        filters = [
-            self.get_cast_query(self.spec.all_spells),
-            self.get_buff_query(self.spec.all_buffs),
-            self.get_debuff_query(self.spec.all_debuffs),
-            self.get_event_query(self.spec.all_events),
-        ]
-
+    def get_resurection_query(self) -> str:
+        """Get a query for resurrects given to this player."""
         # Resurrections
         if self.name:
-            resurect_query = f"target.name='{self.name}' and type='resurrect'"
-            filters.append(resurect_query)
+            return f"target.name='{self.name}' and type='resurrect'"
+        return ""
 
-        # combine all filters
-        filters = [f for f in filters if f]  # filter the filters
-        filters = [f"({f})" for f in filters]  # wrap each filter into bracers
-        filters = [" or ".join(filters)]
+    def get_query_parts(self) -> list[str]:
+        parts = super().get_query_parts()
+        parts += [self.get_resurection_query()]
+        return parts
 
-        queries_combined = " and ".join(filters)
-        return f"({queries_combined})"
+    ############################################################################
+    # Process
+    #
 
     def process_death_events(self, death_events: list[wcl.DeathEvent]):
         """Add the Death Events the the Players.

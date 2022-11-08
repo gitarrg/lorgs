@@ -1,7 +1,6 @@
 """Datastore using S3."""
 
 # IMPORT STANDARD LIBRARIES
-import json
 import os
 import typing
 
@@ -10,10 +9,6 @@ from botocore.exceptions import ClientError
 import boto3
 import datetime
 import pydantic
-
-# IMPORT LOCAL LIBRARIES
-from lorgs.lib.s3_store import errors
-
 
 T = typing.TypeVar("T", bound="BaseModel")
 

@@ -15,19 +15,21 @@ TEMP_FILE = "/mnt/d/tmp.json"
 
 async def test__load_rankings():
 
-    spec_ranking = SpecRanking(
-        spec_slug="shaman-restoration",
+    spec_ranking = SpecRanking.get(
+        spec_slug="druid-restoration",
         boss_slug="lords-of-dread",
-        difficulty="heroic",
+        difficulty="mythic",
         metric="hps",
+        create=True,
     )
     # print(spec_ranking.key)
     # return
 
-    await spec_ranking.load(limit=10, clear_old=True)
-    print(spec_ranking)
-    print(spec_ranking.dict())
-    # spec_ranking.save()
+    await spec_ranking.load(limit=5, clear_old=False)
+
+    # print(spec_ranking)
+    # print(spec_ranking.dict())
+    spec_ranking.save()
     # spec_ranking.save()
     # return
 
@@ -66,7 +68,7 @@ async def test__load_from_db():
     spec_ranking = SpecRanking.get(
         spec_slug="druid-restoration",
         boss_slug="lords-of-dread",
-        difficulty="heroic",
+        difficulty="mythic",
         metric="hps",
         create=True,
     )
@@ -82,9 +84,9 @@ async def test__load_from_db():
 async def main():
 
     # pass
-    # await test__load_rankings()
+    await test__load_rankings()
     # await test__load_from_disk()
-    await test__load_from_db()
+    # await test__load_from_db()
 
 
 if __name__ == "__main__":

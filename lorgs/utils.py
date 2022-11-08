@@ -22,6 +22,18 @@ def chunks(lst: list[T], n: int) -> typing.Generator[list[T], None, None]:
         yield lst[i : i + n]
 
 
+def group_by(*items: T, keyfunc: typing.Callable[[T], U]) -> dict[U, list[T]]:
+    """Group items using keyfunc."""
+    d: dict[U, list[T]] = {}
+    for item in items:
+        key = keyfunc(item)
+        if key not in d:
+            d[key] = []
+        d[key].append(item)
+
+    return d
+
+
 def format_time(timestamp: int) -> str:
     """Format a time/duration.
 
@@ -101,19 +113,6 @@ def str_int_list(string: str, sep=".") -> list[int]:
         return []
 
     return [int(v) for v in string.split(sep)]
-
-
-def get_nested_value(dct: typing.Dict[str, typing.Any], *keys: str, default=None):
-    """Extra a value from nested dict."""
-    data = dct
-    for key in keys:
-        data = data or {}
-        try:
-            data = data[key]
-        except KeyError:
-            return default
-
-    return data
 
 
 def rename_dict_keys(data: dict[str, typing.Any], names: dict[str, str], reverse=False) -> dict[str, typing.Any]:

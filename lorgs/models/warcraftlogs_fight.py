@@ -1,6 +1,5 @@
 # IMPORT STANRD LIBRARIES
 from collections import defaultdict
-import asyncio
 import datetime
 import textwrap
 import typing
@@ -242,8 +241,7 @@ class Fight(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
             return
 
         # load
-        tasks = [actor.load() for actor in actors_to_load]
-        await asyncio.gather(*tasks)
+        await self.load_many(actors_to_load)  # type: ignore
 
         # Create a new list (otherwise pydantic would consider it as unset )
         self.players = [p for p in self.players]

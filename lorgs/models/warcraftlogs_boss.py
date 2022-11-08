@@ -37,16 +37,3 @@ class Boss(warcraftlogs_actor.BaseActor):
 
     def as_dict(self) -> dict[str, typing.Any]:
         return {"name": self.raid_boss and self.raid_boss.full_name_slug, "casts": [cast.dict() for cast in self.casts]}
-
-    #################################
-    # Query
-    #
-    def get_sub_query(self):
-        """Get the Query for fetch all relevant data for this Boss."""
-        if not self.raid_boss:
-            return ""
-
-        cast_query = self.get_cast_query(self.actor_type.spells)
-        buffs_query = self.get_buff_query(self.actor_type.buffs)
-        events_query = self.get_events_query(self.actor_type.all_events)
-        return self.combine_queries(cast_query, buffs_query, events_query)
