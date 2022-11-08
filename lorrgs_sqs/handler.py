@@ -19,7 +19,6 @@ TASK_HANDLERS = {
     # for debugging
     "unknown": send_discord_message.main,
     "discord": send_discord_message.main,
-
     "load_user_report": load_user_report.main,
     "load_spec_rankings": load_spec_rankings.main,
 }
@@ -65,10 +64,7 @@ async def process_message(message):
     if len(payloads) > 1:
         queue_url = helpers.queue_arn_to_url(message.get("eventSourceARN"))
 
-        messages = [{
-            "MessageBody": json.dumps(payload),
-            "MessageGroupId": str(uuid.uuid4())
-        } for payload in payloads]
+        messages = [{"MessageBody": json.dumps(payload), "MessageGroupId": str(uuid.uuid4())} for payload in payloads]
 
         return submit_messages(queue_url, messages)
 
@@ -89,7 +85,7 @@ async def process_messages(messages: typing.List) -> dict[str, typing.Any]:
             failures.append(message.get("MessageId"))
 
     return {
-        "batchItemFailures" : [f for f in failures if f],
+        "batchItemFailures": [f for f in failures if f],
     }
 
 
