@@ -1,16 +1,11 @@
 """A Spell/Ability in the Game."""
 
 # IMPORT STANDARD LIBRARIES
-import enum
 import typing
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.models import base
-
-
-class EventSource(enum.Enum):
-    PLAYER = "player"
-    ENEMY = "enemy"
+from lorgs import utils
 
 
 class WowSpell(base.Model):
@@ -74,7 +69,6 @@ class WowSpell(base.Model):
         spell_type: str = "",
         tags: list[str] = [],
         event_type: str = "cast",
-        source: str = "player",
         wowhead_data: str = "",
         until: typing.Optional["WowSpell"] = None,
         extra_filter: str = "",
@@ -101,9 +95,6 @@ class WowSpell(base.Model):
         self.event_type = event_type
         """type of event (eg.: "cast", "buff", debuff)."""
 
-        self.source = source
-        """origin of the spell. aka: who is casting this spell."""
-
         self.wowhead_data = wowhead_data or f"spell={self.spell_id}"
         """Info used for the wowhead tooltips."""
 
@@ -120,7 +111,7 @@ class WowSpell(base.Model):
         """True if this spell from an item."""
         return self.spell_type in (self.TYPE_TRINKET, self.TYPE_POTION)
 
-    def is_healing_cooldown(self):
+    def is_healing_cooldown(self) -> bool:
         """True if a spell is what we call a healer cooldown."""
         if self.is_item_spell():
             return False
@@ -159,3 +150,41 @@ class WowSpell(base.Model):
     def add_variations(self, *spell_ids: int):
         for spell_id in spell_ids:
             self.add_variation(spell_id)
+
+    def expand_events(self) -> list["WowSpell"]:
+
+        # dedicated "until-event"
+        if self.until:
+            return [self, self.until]
+
+        # we have fixed duration --> we are fine
+        if self.duration:
+            return [self]
+
+        # automatic mirror_events for buffs/debuffs
+        if self.event_type in ("applybuff", "applydebuff"):
+            event_type = self.event_type.replace("apply", "remove")
+            end = WowSpell(spell_id=self.spell_id, event_type=event_type)
+            return [self, end]
+
+        return [self]
+
+
+def build_spell_query(spells: list[WowSpell]) -> str:
+
+    if not spells:
+        return ""
+
+    spells = utils.flatten([spell.expand_events() for spell in spells])
+
+    queries: list[str] = []
+
+    spells_by_type = utils.group_by(*spells, keyfunc=lambda spell: spell.event_type)
+    for event_type, event_spells in spells_by_type.items():
+        spell_ids = WowSpell.spell_ids_str(event_spells)
+        event_query = f"type='{event_type}' and ability.id in ({spell_ids})"
+        event_query = f"({event_query})"
+
+        queries.append(event_query)
+
+    return " or ".join(queries)
