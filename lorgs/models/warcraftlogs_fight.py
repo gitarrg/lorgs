@@ -111,11 +111,6 @@ class Fight(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
     def end_time(self) -> datetime.datetime:
         return self.start_time + datetime.timedelta(milliseconds=self.duration)
 
-    @end_time.setter
-    def end_time(self, value: datetime.datetime):
-        delta = value - self.start_time
-        self.duration = int(delta.total_seconds() * 1000)
-
     @property
     def start_time_rel(self) -> int:
         """Fight start time, relative the parent report (in milliseconds)."""

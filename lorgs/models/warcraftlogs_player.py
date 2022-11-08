@@ -53,10 +53,13 @@ class Player(BaseActor):
     def spec(self) -> WowSpec:
         return WowSpec.get(full_name_slug=self.spec_slug)
 
+    def get_actor_type(self):
+        return self.spec
+
     ############################################################################
     # Query
     #
-    def get_cast_query(self, spells: list[WowSpell]):
+    def get_cast_query(self, spells: list[WowSpell]) -> str:
         cast_query = super().get_cast_query(spells=spells)
         if cast_query and self.name:
             cast_query = f"source.name='{self.name}' and {cast_query}"
@@ -90,10 +93,10 @@ class Player(BaseActor):
         """Get the Query for fetch all relevant data for this player."""
 
         filters = [
-            self.get_event_query(self.spec.all_events),
             self.get_cast_query(self.spec.all_spells),
             self.get_buff_query(self.spec.all_buffs),
             self.get_debuff_query(self.spec.all_debuffs),
+            self.get_event_query(self.spec.all_events),
         ]
 
         # Resurrections
@@ -160,8 +163,7 @@ class Player(BaseActor):
 
         self.resurrects.append(data)
 
-    def process_event(self, event: "wcl.ReportEvent"):
-        super().process_event(event)
+    def process_event(self, event: "wcl.ReportEvent") -> wcl.ReportEvent:
 
         # Ankh doesn't shows as a regular spell
         spell_id = event.abilityGameID
@@ -170,3 +172,6 @@ class Player(BaseActor):
 
         if event.type == "resurrect":
             self.process_event_resurrect(event)
+            event.abilityGameID = -1
+
+        return super().process_event(event)

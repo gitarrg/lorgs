@@ -14,12 +14,12 @@ U = typing.TypeVar("U")
 
 def chunks(lst: list[T], n: int) -> typing.Generator[list[T], None, None]:
     """Yield successive n-sized chunks from lst."""
-    if n <= 0: # special case to allow unchucked
+    if n <= 0:  # special case to allow unchucked
         yield lst
         return
 
     for i in range(0, len(lst), n):
-        yield lst[i:i + n]
+        yield lst[i : i + n]
 
 
 def format_time(timestamp: int) -> str:
@@ -40,7 +40,7 @@ def format_time(timestamp: int) -> str:
 
     duration = datetime.timedelta(milliseconds=timestamp)
 
-    duration_str = str(duration) # "0:05:12.00000"
+    duration_str = str(duration)  # "0:05:12.00000"
     duration_str = duration_str[2:7]
     return sign + duration_str
 
@@ -64,7 +64,7 @@ def format_big_number(num: float) -> str:
         magnitude += 1
         num /= 1000.0
     # add more suffixes if you need them
-    suffix = ['', 'k', 'm', 'g', 't', 'p'][magnitude]
+    suffix = ["", "k", "m", "g", "t", "p"][magnitude]
     return f"{num:0.2f}{suffix}"
 
 
@@ -118,7 +118,7 @@ def get_nested_value(dct: typing.Dict[str, typing.Any], *keys: str, default=None
 
 def rename_dict_keys(data: dict[str, typing.Any], names: dict[str, str], reverse=False) -> dict[str, typing.Any]:
     """Renames keys in a dictornary.
-    
+
     Examples:
     >>> d = { "foo": 1234, "b": "value" }
     >>> k = { "foo": "f", "bar": "b" }
@@ -131,9 +131,9 @@ def rename_dict_keys(data: dict[str, typing.Any], names: dict[str, str], reverse
     name_map = dict(names)
 
     if reverse:
-        name_map = {v:k for k,v in name_map.items()}
+        name_map = {v: k for k, v in name_map.items()}
 
-    return { name_map.get(k, k): v for k, v in data.items() }
+    return {name_map.get(k, k): v for k, v in data.items()}
 
 
 def flatten(values: typing.Iterable[typing.Iterable[T]]) -> list[T]:
@@ -150,6 +150,7 @@ def flatten(values: typing.Iterable[typing.Iterable[T]]) -> list[T]:
 
 def as_list(func: typing.Callable[[U], typing.Generator[T, None, None]]) -> typing.Callable[[U], list[T]]:
     """Wrap a Generator to return a list."""
+
     @functools.wraps(func)
     def wrapped(*args: typing.Any, **kwargs: typing.Any) -> list[T]:
         return list(func(*args, **kwargs))
@@ -248,16 +249,13 @@ def get(iterable: typing.Iterable[T], **attrs) -> typing.Optional[T]:
     # Special case the single element call
     if len(attrs) == 1:
         k, v = attrs.popitem()
-        pred = attrget(k.replace('__', '.'))
+        pred = attrget(k.replace("__", "."))
         for elem in iterable:
             if pred(elem) == v:
                 return elem
         return None
 
-    converted = [
-        (attrget(attr.replace('__', '.')), value)
-        for attr, value in attrs.items()
-    ]
+    converted = [(attrget(attr.replace("__", ".")), value) for attr, value in attrs.items()]
 
     for elem in iterable:
         if _all(pred(elem) == value for pred, value in converted):
@@ -271,6 +269,7 @@ def run_in_executor(_func):
     We can use this to make blocking functions async (more or less)
 
     """
+
     @functools.wraps(_func)
     def wrapped(*args, **kwargs):
         loop = asyncio.get_event_loop()

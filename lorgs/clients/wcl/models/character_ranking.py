@@ -46,9 +46,7 @@ class CharacterRanking(BaseModel):
     hidden: bool = False
 
     class Config:  # pylint: disable=missing-class-docstring,too-few-public-methods
-        fields = {
-            'class_': 'class'
-        }
+        fields = {"class_": "class"}
 
 
 class CharacterRankings(BaseModel):

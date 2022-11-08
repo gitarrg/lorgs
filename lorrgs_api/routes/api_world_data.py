@@ -24,12 +24,11 @@ router = fastapi.APIRouter()
 #
 ###############################################################################
 
+
 @router.get("/roles")
 async def get_roles():
     """Get all roles (tank, heal, mpds, rdps)."""
-    return {
-        "roles": [role.as_dict() for role in WowRole.all]
-    }
+    return {"roles": [role.as_dict() for role in WowRole.all]}
 
 
 ###############################################################################
@@ -37,6 +36,7 @@ async def get_roles():
 #       Classes
 #
 ###############################################################################
+
 
 @router.get("/classes")
 async def get_classes():
@@ -48,6 +48,7 @@ async def get_classes():
 #       Specs
 #
 ###############################################################################
+
 
 @router.get("/specs", tags=["specs"])
 async def get_specs_all():
@@ -86,6 +87,7 @@ async def get_spec_spells(spec_slug: str):
 #
 ###############################################################################
 
+
 @router.get("/spells/{spell_id}", tags=["spells"])
 async def spells_one(spell_id: int):
     """Get a single Spell by spell_id."""
@@ -107,6 +109,7 @@ async def spells_all():
 #       Zones
 #
 ###############################################################################
+
 
 @router.get("/zones", tags=["raids"])
 async def get_zones():
@@ -147,9 +150,7 @@ async def get_bosses():
         this does not filter by raid.
         use "/zone/<zone_id>/bosses" to only get the bosses for a given raid.
     """
-    return {
-        "bosses": [boss.as_dict() for boss in RaidBoss.all]
-    }
+    return {"bosses": [boss.as_dict() for boss in RaidBoss.all]}
 
 
 @router.get("/bosses/{boss_slug}", tags=["raids"])
@@ -178,4 +179,5 @@ async def get_boss_spells(boss_slug: str):
     if not boss:
         return "Invalid Boss.", 404
 
-    return {spell.spell_id: spell.as_dict() for spell in boss.all_abilities}
+    spells = boss.all_spells + boss.all_buffs + boss.all_debuffs + boss.all_events
+    return {spell.spell_id: spell.as_dict() for spell in spells}

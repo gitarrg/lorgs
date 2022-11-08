@@ -29,9 +29,7 @@ class WowSpell(base.Model):
     # tags to indicate special properties
     TAG_DYNAMIC_CD = "dynamic_cd"
 
-    # map to track spell varations and their "master"-spells
-    # 
-    spell_variations : dict[int, int]= {}
+    spell_variations: dict[int, int] = {}
     """Map to track spell variations and their "master"-spells.
         `[key: id of the variation] = id of the "master"-spell`
     """
@@ -39,10 +37,9 @@ class WowSpell(base.Model):
     @staticmethod
     def spell_ids(spells: typing.List["WowSpell"]) -> typing.List[int]:
         """Converts a list of Spells to their spell_ids."""
-        ids = [] # [spell.spell_id for spell in spells]
+        ids = []  # [spell.spell_id for spell in spells]
         for spell in spells:
             ids += [spell.spell_id] + spell.variations
-        ids += []
         ids = sorted(list(set(ids)))
         return ids
 
@@ -64,7 +61,8 @@ class WowSpell(base.Model):
         """Resolve a Spell ID for a spell variation to its main-spell."""
         return cls.spell_variations.get(spell_id) or spell_id
 
-    def __init__(self,
+    def __init__(
+        self,
         spell_id: int,
         cooldown: int = 0,
         duration: int = 0,
@@ -78,7 +76,8 @@ class WowSpell(base.Model):
         event_type: str = "cast",
         source: str = "player",
         wowhead_data: str = "",
-        **_,
+        until: typing.Optional["WowSpell"] = None,
+        extra_filter: str = "",
     ):
         self.spell_id = spell_id
         self.cooldown = cooldown
@@ -105,8 +104,14 @@ class WowSpell(base.Model):
         self.source = source
         """origin of the spell. aka: who is casting this spell."""
 
-        self.wowhead_data = wowhead_data or  f"spell={self.spell_id}"
+        self.wowhead_data = wowhead_data or f"spell={self.spell_id}"
         """Info used for the wowhead tooltips."""
+
+        self.until = until
+        """Custom End-Event."""
+
+        self.extra_filter = extra_filter
+        """Extra filter for the spell."""
 
     def __repr__(self):
         return f"<Spell({self.spell_id}, cd={self.cooldown})>"
@@ -119,7 +124,7 @@ class WowSpell(base.Model):
         """True if a spell is what we call a healer cooldown."""
         if self.is_item_spell():
             return False
-        if self.spell_type in (self.TYPE_PERSONAL, ):
+        if self.spell_type in (self.TYPE_PERSONAL,):
             return False
         return True
 
@@ -132,23 +137,21 @@ class WowSpell(base.Model):
             "duration": self.duration,
             "cooldown": self.cooldown,
             "spell_type": self.spell_type,
-
             # display attributes
             "name": self.name,
             "icon": self.icon,
             "color": self.color,
             "show": self.show,
             "tooltip_info": self.wowhead_data,
-
             "tags": self.tags,
         }
 
     def add_variation(self, spell_id: int):
         """Add an additional spell ids for the "same" spell.
 
-            eg.: glyphed versions of the spell
-            or sometimes boss abiltieis use different spells in
-            differnet phases for the same mechanic
+        eg.: glyphed versions of the spell
+        or sometimes boss abiltieis use different spells in
+        differnet phases for the same mechanic
         """
         self.variations.append(spell_id)
         self.spell_variations[spell_id] = self.spell_id
