@@ -41,17 +41,21 @@ class WowClass(WowActor):
     # Methods
     #
     def add_spell(self, spell: typing.Optional[WowSpell] = None, **kwargs: typing.Any) -> WowSpell:
+        kwargs.setdefault("spell_type", self.name_slug)
         kwargs.setdefault("color", self.color)
         return super().add_spell(spell, **kwargs)
 
     def add_buff(self, spell: typing.Optional[WowSpell] = None, **kwargs: typing.Any) -> WowSpell:
+        kwargs.setdefault("spell_type", self.name_slug)
         kwargs.setdefault("color", self.color)
         return super().add_buff(spell, **kwargs)
 
     def add_debuff(self, spell: typing.Optional[WowSpell] = None, **kwargs: typing.Any) -> WowSpell:
+        kwargs.setdefault("spell_type", self.name_slug)
         kwargs.setdefault("color", self.color)
         return super().add_debuff(spell, **kwargs)
 
     def add_event(self, event: typing.Optional[WowSpell] = None, **kwargs: typing.Any) -> WowSpell:
+        kwargs.setdefault("spell_type", self.name_slug)
         kwargs.setdefault("color", self.color)
         return super().add_event(event, **kwargs)
