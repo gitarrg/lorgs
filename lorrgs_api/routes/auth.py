@@ -2,6 +2,7 @@
 
 # IMPORT STANDARD LIBARIES
 import os
+import typing
 
 # IMPORT THIRD PARTY LIBARIES
 import fastapi
@@ -32,16 +33,16 @@ async def get_token(response: fastapi.Response, code: str):
         raise fastapi.HTTPException(status_code=401, detail=error)
 
     # load user info
-    access_token: str = user_credentials.get("access_token") # type: ignore
+    access_token: str = user_credentials.get("access_token")  # type: ignore
     try:
         info = await discord.get_user_profile(access_token)
     except PermissionError:
         raise fastapi.HTTPException(status_code=401, detail="Invalid AuthToken.")
 
-    # find existing User
-    user = User.get_or_create(discord_id=info.id, discord_tag=info.tag)
-    if not user:
-        raise fastapi.HTTPException(status_code=fastapi.status.HTTP_404_NOT_FOUND, detail="Invalid User.")
+    # find existing User or create new one
+    user = User.get(discord_id=info.id) or User.first(discord_tag=info.tag) or User(discord_id=info.id)
+    # if not user:
+    #     raise fastapi.HTTPException(status_code=fastapi.status.HTTP_404_NOT_FOUND, detail="Invalid User.")
 
     # grap info from signin (in case users arn't members of the discord server)
     user.discord_id = info.id
@@ -61,11 +62,12 @@ async def get_user_all():
     return "many"
 
 
-@router.get("/users/{user_id:int}")
-async def get_user(response: fastapi.Response, user_id: int):
+@router.get("/users/{user_id:str}")
+async def get_user(response: fastapi.Response, user_id: str) -> dict[str, typing.Any]:
     response.headers["Cache-Control"] = f"private, max-age={60*5}"
 
-    user = User.objects(discord_id=user_id).first()
+    user = User.get(discord_id=user_id)
+
     if not user:
         try:
             user = User(discord_id=user_id)
@@ -75,13 +77,13 @@ async def get_user(response: fastapi.Response, user_id: int):
         else:
             user.save()
 
-    return user.to_dict()
+    return user.dict()
 
 
-@router.get("/users/{user_id:int}/refresh")
-async def user_refresh(response: fastapi.Response, user_id: int):
+@router.get("/users/{user_id:str}/refresh")
+async def user_refresh(response: fastapi.Response, user_id: str) -> dict[str, typing.Any]:
 
-    user = User.objects(discord_id=user_id).first()
+    user = User.get(discord_id=user_id)
     if not user:
         raise fastapi.HTTPException(status_code=404, detail="User not found")
 
@@ -89,4 +91,4 @@ async def user_refresh(response: fastapi.Response, user_id: int):
     user.save()
 
     response.headers["Cache-Control"] = "no-cache"
-    return user.to_dict()
+    return user.dict()
