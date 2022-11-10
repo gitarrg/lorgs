@@ -5,7 +5,6 @@ import json
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import data  # pylint: disable=unused-import
-from lorgs import db  # pylint: disable=unused-import
 from lorgs.models import warcraftlogs_ranking
 
 
@@ -29,12 +28,11 @@ async def load_spec_rankings(
 
     ################################
     # get spec ranking object
-    ranking = warcraftlogs_ranking.SpecRanking.get(
+    ranking = warcraftlogs_ranking.SpecRanking.get_or_create(
         boss_slug=boss_slug,
         spec_slug=spec_slug,
         difficulty=difficulty,
         metric=metric,
-        create=True,
     )
     if not ranking.boss:
         return False, "invalid boss"
