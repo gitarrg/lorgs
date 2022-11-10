@@ -26,7 +26,7 @@ DIFFICULTY_IDS = {
 }
 
 
-class SpecRanking(dynamodb.BaseModel, warcraftlogs_base.wclclient_mixin):
+class SpecRanking(warcraftlogs_base.BaseModel):
 
     # Fields
     spec_slug: str
