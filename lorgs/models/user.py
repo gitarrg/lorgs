@@ -45,7 +45,7 @@ class User(dynamodb.BaseModel):
     updated: datetime = datetime.min
 
     # Config
-    pkey_fmt: typing.ClassVar[str] = "{discord_id}"
+    pkey: typing.ClassVar[str] = "{discord_id}"
 
     ################################
     # Properties

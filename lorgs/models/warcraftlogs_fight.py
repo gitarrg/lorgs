@@ -236,8 +236,7 @@ class Fight(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
         actors_to_load += self.get_players(*player_ids)
         actors_to_load += [self.boss] if self.boss else []
         actors_to_load = [actor for actor in actors_to_load if not actor.casts]
-
-        if not (actors_to_load):
+        if not actors_to_load:
             return
 
         # load
