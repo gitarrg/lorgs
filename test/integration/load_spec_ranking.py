@@ -15,18 +15,21 @@ TEMP_FILE = "/mnt/d/tmp.json"
 
 async def test__load_rankings():
 
-    spec_ranking = SpecRanking.get(
+    spec_ranking = SpecRanking.get_or_create(
         spec_slug="druid-restoration",
         boss_slug="lords-of-dread",
         difficulty="mythic",
         metric="hps",
-        create=True,
     )
-    # print(spec_ranking.key)
+
+    # for player in spec_ranking.players:
+    #     print(player)
+    #     for cast in player.casts:
+    #         print(cast, cast.spell.name)
+    #     # return
     # return
 
     await spec_ranking.load(limit=5, clear_old=False)
-
     # print(spec_ranking)
     # print(spec_ranking.dict())
     spec_ranking.save()

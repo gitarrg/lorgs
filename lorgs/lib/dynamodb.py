@@ -12,13 +12,14 @@ from boto3.dynamodb.conditions import Attr
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
-from lorgs.logger import timeit
+from lorgs.logger import Timer
 
 if typing.TYPE_CHECKING:
     from mypy_boto3_dynamodb.service_resource import Table
 
 
 dynamodb = boto3.resource("dynamodb")
+
 
 TBaseModel = typing.TypeVar("TBaseModel", bound="BaseModel")
 
@@ -57,13 +58,13 @@ class BaseModel(pydantic.BaseModel):
     #
 
     @classmethod
-    @timeit
     def get(cls: typing.Type[TBaseModel], **kwargs: typing.Any) -> typing.Optional[TBaseModel]:
 
         table = cls.get_table()
         keys = cls.get_keys(**kwargs)
 
-        response = table.get_item(Key=keys)
+        with Timer(f"GET: {kwargs}"):
+            response = table.get_item(Key=keys)
         try:
             item = response["Item"]
         except KeyError:

@@ -1,4 +1,7 @@
 """Enpoints dealing with Rankings per Spec."""
+# IMPORT STANDARD LIBRARIES
+import typing
+
 # IMPORT THIRD PARTY LIBRARIES
 import fastapi
 
@@ -9,28 +12,27 @@ from lorgs.models import warcraftlogs_ranking
 from lorgs.models.wow_spec import WowSpec
 
 
-router = fastapi.APIRouter(tags=["spec_rankings"])
+router = fastapi.APIRouter(tags=["spec_rankings"], prefix="/spec_rankings")
 
 
-@router.get("/spec_ranking/{spec_slug}/{boss_slug}")
+@router.get("/{spec_slug}/{boss_slug}")
 async def get_spec_ranking(
     spec_slug: str,
     boss_slug: str,
     difficulty: str = "mythic",
     metric: str = "",
-):
+) -> dict[str, typing.Any]:
     """Get the Rankings for a given Spec and Boss."""
     if not metric:
         spec = WowSpec.get(full_name_slug=spec_slug)
         metric = spec.role.metric
 
     logger.info(f"{spec_slug}/{boss_slug} | start")
-    spec_ranking = warcraftlogs_ranking.SpecRanking.get(
+    spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(
         boss_slug=boss_slug,
         spec_slug=spec_slug,
         difficulty=difficulty,
         metric=metric,
-        create=True,
     )
     return spec_ranking.dict(exclude_unset=True)
 
@@ -40,7 +42,7 @@ async def get_spec_ranking(
 #
 
 
-@router.get("/spec_ranking/load")
+@router.get("/load")
 async def spec_ranking_load(
     spec_slug="all",
     boss_slug="all",
