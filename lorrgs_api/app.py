@@ -5,8 +5,7 @@
 import fastapi
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import data   # pylint: disable=unused-import
-from lorgs import db  # pylint: disable=unused-import
+from lorgs import data  # pylint: disable=unused-import
 from lorrgs_api.middlewares import cache_middleware
 from lorrgs_api.middlewares import cors_middleware
 from lorrgs_api.routes import api

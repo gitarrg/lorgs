@@ -68,12 +68,11 @@ async def test__load_from_disk():
 
 async def test__load_from_db():
 
-    spec_ranking = SpecRanking.get(
+    spec_ranking = SpecRanking.get_or_create(
         spec_slug="druid-restoration",
         boss_slug="lords-of-dread",
         difficulty="mythic",
         metric="hps",
-        create=True,
     )
     # print(spec_ranking)
     await spec_ranking.load(limit=5, clear_old=True)

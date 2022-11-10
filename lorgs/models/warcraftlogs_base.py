@@ -6,11 +6,9 @@ import json
 import re
 import typing
 
-# IMPORT THIRD PARTY LIBRARIES
-import mongoengine as me
-
 # IMPORT LOCAL LIBRARIES
 from lorgs.clients.wcl import WarcraftlogsClient
+from lorgs.lib import dynamodb
 
 
 VALID_OPS = ["eq", "lt", "lte", "gt", "gte"]
@@ -128,22 +126,5 @@ class wclclient_mixin:
             self.process_query_result(**result)
 
 
-class EmbeddedDocument(me.EmbeddedDocument, wclclient_mixin):
-    """docstring for Base"""
-
-    meta = {"allow_inheritance": True, "strict": False}  # ignore non existing properties
-
-
-T = TypeVar("T", bound="Document")
-
-
-class Document(me.Document, wclclient_mixin):
+class BaseModel(dynamodb.BaseModel, wclclient_mixin):
     """docstring for Document"""
-
-    meta = {"abstract": True, "strict": False}  # ignore non existing properties
-
-    @classmethod
-    def get_or_create(cls: Type[T], **kwargs: typing.Any) -> T:
-        obj = cls.objects(**kwargs).first()
-        obj = obj or cls(**kwargs)
-        return obj  # type: ignore

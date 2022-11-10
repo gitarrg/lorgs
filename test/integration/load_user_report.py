@@ -5,7 +5,6 @@ dotenv.load_dotenv() # pylint: disable=wrong-import-position
 
 import asyncio
 from lorgs import data
-from lorgs import db
 from lorgs.models.warcraftlogs_user_report import UserReport
 
 
