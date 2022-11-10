@@ -7,7 +7,7 @@ import textwrap
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
 from lorgs.clients import wcl
-from lorgs.lib import s3_store
+from lorgs.lib import dynamodb
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
 from lorgs.models.raid_boss import RaidBoss
@@ -26,7 +26,7 @@ DIFFICULTY_IDS = {
 }
 
 
-class SpecRanking(s3_store.BaseModel, warcraftlogs_base.wclclient_mixin):
+class SpecRanking(dynamodb.BaseModel, warcraftlogs_base.wclclient_mixin):
 
     # Fields
     spec_slug: str
@@ -36,7 +36,8 @@ class SpecRanking(s3_store.BaseModel, warcraftlogs_base.wclclient_mixin):
     reports: list[Report] = []
 
     # Config
-    key_fmt: typing.ClassVar[str] = "{spec_slug}/{boss_slug}__{difficulty}__{metric}"
+    pkey: typing.ClassVar[str] = "{spec_slug}#{boss_slug}"
+    skey: typing.ClassVar[str] = "{difficulty}#{metric}"
 
     def post_init(self) -> None:
         for report in self.reports:
