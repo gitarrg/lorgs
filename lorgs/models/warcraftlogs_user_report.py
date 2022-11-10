@@ -5,18 +5,25 @@ from datetime import datetime
 import typing
 
 # IMPORT LOCAL LIBRARIES
-from lorgs.lib import s3_store
+from lorgs.lib import dynamodb
 from lorgs.models.warcraftlogs_report import Report
 
 
-class UserReport(Report, s3_store.BaseModel):
-    """A single report loaded via the custom reports module."""
+class UserReport(Report, dynamodb.BaseModel):
+    """A single report loaded via the custom reports module.
+
+    Todo:
+        * Test performance when splitting each report into its own row,
+          saved with the same partion, but different secondary key
+
+    """
 
     # datetime: timetamp of last update
     updated: datetime = datetime.min
 
     # Config
-    key_fmt: typing.ClassVar[str] = "{report_id}"
+    pkey: typing.ClassVar[str] = "{report_id}"
+    skey: typing.ClassVar[str] = "overview"
 
     ################################
     # Properties
