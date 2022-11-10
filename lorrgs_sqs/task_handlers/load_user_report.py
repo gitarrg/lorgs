@@ -9,7 +9,6 @@ import typing
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import data  # pylint: disable=unused-import
-from lorgs import db
 from lorgs import events
 from lorgs.models.task import Task
 from lorgs.models.warcraftlogs_user_report import UserReport
@@ -43,7 +42,7 @@ async def load_user_report(report_id: str, fight_ids: list[int] = [], player_ids
 
     ################################
     # loading...
-    user_report = UserReport.get(report_id=report_id, create=True)
+    user_report = UserReport.get_or_create(report_id=report_id)
     await user_report.load_fights(fight_ids=fight_ids, player_ids=player_ids)
     user_report.save()
 
