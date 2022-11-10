@@ -1,16 +1,15 @@
 """Model to describe a User of Lorrgs."""
 
 # IMPORT THIRD PARTY LIBRARIES
+from datetime import datetime
 import typing
-import arrow
-import mongoengine as me
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.clients import discord
-from lorgs.lib import mongoengine_arrow
+from lorgs.lib import dynamodb
 
 
-LORRGS_SERVER_ID  = 885638678607708172
+LORRGS_SERVER_ID = "885638678607708172"
 """Server ID for the lorrgs discord."""
 
 
@@ -18,67 +17,51 @@ LORRGS_SERVER_ID  = 885638678607708172
 # simple map to control who can access which modules
 ROLE_PERMISSIONS = {
     "885660648510455839": ["user_reports", "mod", "admin"],  # Arrgmin
-    "885660390120362024": ["user_reports", "mod"],           # Morrgerator
-    "886595672525119538": ["user_reports"],                  # Investorrg
-    "887397111975518288": ["user_reports"],                  # Contributorrg
-    "908726333369110571": ["user_reports"],                  # User Reports Alpha Tester
-
+    "885660390120362024": ["user_reports", "mod"],  # Morrgerator
+    "886595672525119538": ["user_reports"],  # Investorrg
+    "887397111975518288": ["user_reports"],  # Contributorrg
+    "908726333369110571": ["user_reports"],  # User Reports Alpha Tester
     # special "role" for Liquid People
     "liquid": ["user_reports"],
 }
 
 
-class User(me.Document):
+class User(dynamodb.BaseModel):
 
-    meta = {
-        # ignore non existing properties
-        "strict": False,
-
-        'indexes': [
-            {'fields': ["discord_id", "discord_tag"]}
-        ]
-    }
-
-    discord_id: int = me.IntField()
+    discord_id: str
+    """The Users discord ID (stored as string to avoid large number issues)."""
 
     # Discord Hame+Hash: eg.: "Arrg#2048"
-    discord_tag: str = me.StringField()
+    discord_tag: str = ""
 
-    discord_avatar: str = me.StringField()
+    discord_avatar: str = ""
 
     # Role IDs
-    discord_roles: list[str] = me.ListField(me.StringField(), default=[]) 
+    discord_roles: list[str] = []
 
-    extra_roles: list[str] = me.ListField(me.StringField(), default=[]) 
-
-    # just for info
-    last_login: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField() 
+    extra_roles: list[str] = []
 
     # last time the roles have been checked
-    updated: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField() 
+    updated: datetime = datetime.min
 
-    @classmethod
-    def get_or_create(cls, discord_id=0, discord_tag="") -> "User":
-        user = cls.objects(discord_id=discord_id).first()
-        user = user or cls.objects(discord_tag=discord_tag).first()
-        user = user or cls(discord_id=discord_id, discord_tag=discord_tag)
-        return user  # type: ignore
+    # Config
+    pkey_fmt: typing.ClassVar[str] = "{discord_id}"
 
     ################################
     # Properties
     #
     @property
-    def name(self):
+    def name(self) -> str:
         """The Users Name only (eg.: Arrg#2048 -> Arrg)"""
         return self.discord_tag.split("#")[0]
 
     @property
-    def discriminator(self):
+    def discriminator(self) -> str:
         """The Users discriminator (eg.: Arrg#2048 -> 2048)"""
         return self.discord_tag.split("#")[-1]
 
     @property
-    def roles(self):
+    def roles(self) -> list[str]:
         """All Roles the User has."""
         return list(set(self.discord_roles + self.extra_roles))
 
@@ -91,16 +74,10 @@ class User(me.Document):
             permissions.update(role_permissions)
         return permissions
 
-    def to_dict(self):
+    def dict(self, **kwargs: typing.Any) -> dict[str, typing.Any]:
         return {
-            "id": str(self.discord_id),  # as string due to numerical issues
-            "name": self.discord_tag,
-
-            "avatar": self.discord_avatar,
+            **super().dict(**kwargs),
             "permissions": self.permissions,
-
-            # "last_login": self.last_login,
-            "updated": self.updated.isoformat()
         }
 
     ################################
@@ -117,4 +94,4 @@ class User(me.Document):
         self.discord_tag = user_info.tag
         self.discord_avatar = member_info.avatar or user_info.avatar or ""
         self.discord_roles = member_info.roles or []
-        self.updated = arrow.utcnow()
+        self.updated = datetime.utcnow()

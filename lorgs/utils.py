@@ -101,6 +101,11 @@ def slug(text: str, space="", delete_chars="(),'-") -> str:
     return text
 
 
+def to_snake_case(name) -> str:
+    """Convert CamelCase to snake case."""
+    return "".join("_%s" % c if c.isupper() else c for c in name).strip("_").lower()
+
+
 def str_int_list(string: str, sep=".") -> list[int]:
     """Converts string-list of intergers into an actual list.
 

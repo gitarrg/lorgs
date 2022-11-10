@@ -1,6 +1,7 @@
 import asyncio
 
 import dotenv
+
 dotenv.load_dotenv()  # pylint: disable=wrong-import-position
 
 from lorgs.clients import discord
@@ -9,6 +10,7 @@ from lorgs.clients import discord
 ################################################################################
 # Discord Client
 #
+
 
 async def test_exchange_code():
     """
@@ -24,35 +26,41 @@ async def test_get_user_profile():
     """
     get creds via `auth.exchange_code`
     """
-    creds = {'access_token': 'ACCESS_TOKEN', 'expires_in': 604800, 'refresh_token': '<REFRESH_TOKEN>', 'scope': 'identify', 'token_type': 'Bearer'}
-    access_token: str = creds["access_token"] # type: ignore
+    creds = {
+        "access_token": "ACCESS_TOKEN",
+        "expires_in": 604800,
+        "refresh_token": "<REFRESH_TOKEN>",
+        "scope": "identify",
+        "token_type": "Bearer",
+    }
+    access_token: str = creds["access_token"]  # type: ignore
     user_info = await discord.get_user_profile(access_token)
     print(user_info)
 
 
 async def test_get_user_info():
-    user_id = 392483139991240714  # thats me!
+    user_id = "392483139991240714"  # thats me!
     user_info = await discord.get_user_info(user_id)
     print(user_info)
 
 
 async def test_get_member_info():
-    user_id = 392483139991240714  # thats me!
-    server_id = 885638678607708172
+    user_id = "392483139991240714"  # thats me!
+    server_id = "885638678607708172"
     member_info = await discord.get_member_info(server_id, user_id)
     print(member_info)
 
 
 async def test_get_member_info_with_invalid_id():
-    user_id = 123123123
-    server_id = 885638678607708172
+    user_id = "123123123"
+    server_id = "885638678607708172"
     member_info = await discord.get_member_info(server_id, user_id)
     print(member_info)
 
 
 async def test_get_member_info_user_who_is_not_in_lorrgs():
-    user_id = 775774321318297630  # my test bot account
-    server_id = 885638678607708172
+    user_id = "775774321318297630"  # my test bot account
+    server_id = "885638678607708172"
     member_info = await discord.get_member_info(server_id, user_id)
     print(member_info)
 
@@ -61,21 +69,22 @@ async def test_get_member_info_user_who_is_not_in_lorrgs():
 # Auth Logic
 #
 
+
 async def test_get_member_roles():
-    user_id = 392483139991240714  # thats me!
+    user_id = "392483139991240714"  # thats me!
     roles = await auth.get_member_roles(user_id)
     print(roles)
 
+
 async def test_get_member_permissions():
-    user_id = 392483139991240714  # thats me!
-    user_id = 1321313  # thats me!
+    user_id = "392483139991240714"  # thats me!
+    user_id = "1321313"  # thats me!
 
     member_info = await auth.get_member_permissions(user_id)
     print(member_info)
 
 
-
-async def main():
+async def main() -> None:
     await test_exchange_code()
     # await test_get_user_profile()
     # await test_get_user_info()
