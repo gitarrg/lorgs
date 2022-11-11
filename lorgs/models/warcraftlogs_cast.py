@@ -1,5 +1,5 @@
 # IMPORT STANDARD LIBRARIES
-import typing
+from typing import TYPE_CHECKING, Any, Optional
 
 # IMPORT THIRD PARTY LIBRARIES
 import pydantic
@@ -9,7 +9,7 @@ from lorgs import utils
 from lorgs.models import base
 from lorgs.models.wow_spell import WowSpell
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from lorgs.clients import wcl
 
 
@@ -29,7 +29,7 @@ class Cast(base.BaseModel):
     timestamp: int
     """time the spell was cast, in milliseconds relative to the start of the fight."""
 
-    duration: typing.Optional[int] = None
+    duration: Optional[int] = None
     """time the spell/buff was active in milliseconds."""
 
     event_type: str = pydantic.Field(default="cast", exclude=True)
@@ -54,12 +54,12 @@ class Cast(base.BaseModel):
         time_fmt = utils.format_time(self.timestamp)
         return f"Cast(id={self.spell_id}, ts={time_fmt})"
 
-    def dict(self, **kwargs: typing.Any):
+    def dict(self, **kwargs: Any):
         data = super().dict(**kwargs)
         return utils.rename_dict_keys(data, json_aliases)
 
     @property
-    def spell(self) -> WowSpell:
+    def spell(self) -> Optional[WowSpell]:
         return WowSpell.get(spell_id=self.spell_id)
 
     def get_duration(self) -> int:

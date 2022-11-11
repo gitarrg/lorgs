@@ -46,8 +46,7 @@ class BaseActor(warcraftlogs_base.BaseModel):
         """Return true if a player has own casts (eg.: exclude raid wide buffs like bloodlust)."""
         for cast in self.casts:
             spell = WowSpell.get(spell_id=cast.spell_id)
-
-            if spell.spell_type != WowSpell.TYPE_BUFFS:
+            if spell and spell.spell_type != WowSpell.TYPE_BUFFS:
                 return True
         return False
 
