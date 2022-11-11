@@ -42,13 +42,13 @@ def calc_checksum(path):
     return hash.hexdigest()
 
 
-def zip_folder(src, tar):
+def zip_folder(src: str, tar: str) -> str:
     """Zip the content from `src` to `tar`."""
     zip_file = shutil.make_archive("tmp_zip", "zip", base_dir=src)
-    return shutil.move(zip_file, tar)
+    return shutil.move(zip_file, tar)  # type: ignore
 
 
-def checksum_compare(name: str, files: str, s3bucket=DEPLOY_BUCKET):
+def checksum_compare(name: str, files: str, s3bucket=DEPLOY_BUCKET) -> bool:
     """Compare the Checksum of `files` with an prev. version stored on S3.
 
     Returns True if they are the same.
@@ -60,8 +60,7 @@ def checksum_compare(name: str, files: str, s3bucket=DEPLOY_BUCKET):
         old_sha = ""
     else:
         body = old_obj.get("Body")
-        if body:
-            old_sha = body.read().decode('utf-8')
+        old_sha = body.read().decode("utf-8") if body else ""
 
     # calc new checksum
     new_sha = calc_checksum(files)
@@ -69,11 +68,7 @@ def checksum_compare(name: str, files: str, s3bucket=DEPLOY_BUCKET):
     # cache latest
     if old_sha != new_sha:
         print(name, "has changed", old_sha, ">", new_sha)
-        S3_CLIENT.put_object(
-            Bucket=s3bucket,
-            Key=f"{name}.md5",
-            Body=io.BytesIO(new_sha.encode("utf-8"))
-        )
+        S3_CLIENT.put_object(Bucket=s3bucket, Key=f"{name}.md5", Body=io.BytesIO(new_sha.encode("utf-8")))
     else:
         print(name, "did not change. :)")
 

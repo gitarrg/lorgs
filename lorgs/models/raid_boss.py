@@ -11,38 +11,37 @@ from lorgs.models.wow_actor import WowActor
 class RaidBoss(WowActor):
     """A raid boss in the Game."""
 
-    def __init__(self, id: int, name: str, nick: str = ""):
-        """Initialise a new Raid Boss
+    id: int
+    """The Encounter ID."""
 
-        Args:
-            id (int): Encounter ID
-            name (str): Nice Name
-            nick (str, optional): Nick Name. Defaults to `name`.
-        """
-        super().__init__()
+    name: str = ""
+    """Full Name of the Boss (eg.: "Halondrus the Reclaimer")."""
 
-        self.id = id
-        """The Encounter ID."""
-
-        self.full_name = name
-        """Full Name of the Boss (eg.: "Halondrus the Reclaimer")."""
-
-        self.name = nick or name
-        """Short commonlty used Nickname. eg.: "Halondrus"."""
-
-        self.full_name_slug = utils.slug(self.full_name, space="-")
-        """Complete Name slugified. eg.: `"halondrus-the-reclaimer"`."""
-
-        # alias
-        self.add_cast = self.add_spell
+    nick: str = ""
+    """Short commonlty used Nickname. eg.: "Halondrus"."""
 
     def __repr__(self):
         return f"<RaidBoss(id={self.id} name={self.name})>"
 
+    # alias
+    def add_cast(self, *args, **kwargs):
+        return self.add_spell(*args, **kwargs)
+
+    @property
+    def name_slug(self) -> str:
+        """Complete Name slugified. eg.: `"halondrus-the-reclaimer"`."""
+        return utils.slug(self.name, space="-")
+
+    # Alias to maintain the Actor-Interface
+    @property
+    def full_name_slug(self) -> str:
+        return self.name_slug
+
     def as_dict(self) -> dict[str, typing.Any]:
         return {
             "id": self.id,
-            "name": self.name,
-            "full_name": self.full_name,
-            "full_name_slug": self.full_name_slug,
+            # renames to match the "Actor"-Interface
+            "name": self.nick or self.name,
+            "full_name": self.name,
+            "full_name_slug": self.name_slug,
         }

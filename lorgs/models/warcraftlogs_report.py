@@ -6,9 +6,6 @@ import datetime
 import textwrap
 import typing
 
-# IMPORT THIRD PARTY LIBRARIES
-import pydantic
-
 # IMPORT LOCAL LIBRARIES
 from lorgs.clients import wcl
 from lorgs.logger import logger
@@ -19,7 +16,7 @@ from lorgs.models.warcraftlogs_fight import Fight
 from lorgs.models.warcraftlogs_player import Player
 
 
-class Report(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
+class Report(warcraftlogs_base.BaseModel):
     """Defines a Report read from WarcraftLogs.com and stores in our DB."""
 
     report_id: str

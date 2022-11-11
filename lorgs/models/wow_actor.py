@@ -1,10 +1,13 @@
+# IMPORT STANDARD LIBRARIES
 import typing
+
+# IMPORT LOCAL LIBRARIES
 from lorgs import utils
 from lorgs.models import base
 from lorgs.models.wow_spell import WowSpell
 
 
-class WowActor(base.Model):
+class WowActor(base.MemoryModel):
     """Base Class for any actor type in the game.
 
     Subclases can be playable specs or npc/bosses.
@@ -12,16 +15,17 @@ class WowActor(base.Model):
 
     """
 
-    def __init__(self) -> None:
-        self.spells: list[WowSpell] = []
-        self.buffs: list[WowSpell] = []
-        self.debuffs: list[WowSpell] = []
-        self.events: list[WowSpell] = []
+    spells: list[WowSpell] = []
+    buffs: list[WowSpell] = []
+    debuffs: list[WowSpell] = []
+    events: list[WowSpell] = []
 
-        self.parents: list["WowActor"] = []
-        """List of Parent Types. eg.: Classes are parents of Specs."""
+    parents: list["WowActor"] = []
+    """List of Parent Types. eg.: Classes are parents of Specs."""
 
-        self.full_name_slug: str = ""
+    @property
+    def full_name_slug(self) -> str:
+        return ""
 
     @property
     def all_spells(self) -> list[WowSpell]:

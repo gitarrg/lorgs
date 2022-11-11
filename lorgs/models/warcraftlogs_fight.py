@@ -42,7 +42,7 @@ def get_composition(players: typing.Iterable[Player]) -> dict:
     return comp
 
 
-class Fight(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
+class Fight(warcraftlogs_base.BaseModel):
 
     fight_id: int
 
@@ -52,7 +52,7 @@ class Fight(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
     duration: int = 0
     """fight duration in milliseconds."""
 
-    players: list[Player] = pydantic.Field(default_factory=list)
+    players: list[Player] = []
     boss: typing.Optional[Boss] = None
 
     composition: dict = {}
