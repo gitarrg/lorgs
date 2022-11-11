@@ -7,12 +7,11 @@ import typing
 
 # IMPORT THIRD PARTY LIBRARIES
 import boto3
-import pydantic
 from boto3.dynamodb.conditions import Attr
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import utils
 from lorgs.logger import Timer
+from lorgs.models.base import base
 
 if typing.TYPE_CHECKING:
     from mypy_boto3_dynamodb.service_resource import Table
@@ -21,26 +20,15 @@ if typing.TYPE_CHECKING:
 dynamodb = boto3.resource("dynamodb")
 
 
-TBaseModel = typing.TypeVar("TBaseModel", bound="BaseModel")
+TBaseModel = typing.TypeVar("TBaseModel", bound="DynamoDBModel")
 
 
-class BaseModel(pydantic.BaseModel):
+class DynamoDBModel(base.BaseModel):
 
     pkey_name: typing.ClassVar[str] = "pk"
     skey_name: typing.ClassVar[str] = "sk"
     pkey: typing.ClassVar[str] = "{id}"
     skey: typing.ClassVar[str] = ""
-
-    def __init__(self, **kwargs: typing.Any) -> None:
-        super().__init__(**kwargs)
-        self.post_init()
-
-    def post_init(self) -> None:
-        """Hook to implement some custom initialization logic."""
-
-    @classmethod
-    def get_table_name(cls) -> str:
-        return utils.to_snake_case(cls.__name__)
 
     @classmethod
     def get_table(cls) -> "Table":
@@ -70,12 +58,8 @@ class BaseModel(pydantic.BaseModel):
         except KeyError:
             return None
 
-        obj = cls.parse_obj(item)
-        return obj
-
-    @classmethod
-    def get_or_create(cls: typing.Type[TBaseModel], **kwargs: typing.Any) -> TBaseModel:
-        return cls.get(**kwargs) or cls(**kwargs)
+        with Timer(f"PARSE: {kwargs}"):
+            return cls.construct(**item)
 
     @classmethod
     def first(cls: typing.Type[TBaseModel], **kwargs: typing.Any) -> typing.Optional[TBaseModel]:
@@ -106,21 +90,24 @@ class BaseModel(pydantic.BaseModel):
     # Save to DB
     #
 
-    def save(self, exclude_unset: bool = True) -> None:
-
+    def json_dict(self, exclude_unset: bool = True) -> dict[str, typing.Any]:
         # convert into json compatible dict
         # this back and fort serialization makes sure all complex objects
         # are converted into json compatible formats.
         # There is some work done to simplify this: https://github.com/pydantic/pydantic/discussions/4456
-        data = json.loads(
+        return json.loads(  # type: ignore
             self.json(exclude_unset=exclude_unset),
             parse_float=decimal.Decimal,  # dynamodb wants floats as decimals
         )
 
-        # insert keys
-        data.update(self.get_keys(**data))
+    def save(self, exclude_unset: bool = True) -> None:
 
-        table_name = self.get_table_name()
-        table = dynamodb.Table(table_name)
+        data = self.json_dict(exclude_unset=exclude_unset)
 
+        # insert the keys
+        keys = self.get_keys(**data)
+        data.update(keys)
+
+        # save
+        table = self.get_table()
         table.put_item(Item=data)

@@ -3,31 +3,67 @@
 # IMPORT STANDARD LIBRARIES
 import typing
 
-# IMPORT LOCAL LIBRARIES
-from lorgs.models import base
 from lorgs import utils
 
+# IMPORT LOCAL LIBRARIES
+from lorgs.models import base
 
-class WowSpell(base.Model):
+
+class WowSpell(base.MemoryModel):
     """Container to define a spell."""
 
     # TODO: those should be constants somewhere
-    TYPE_RAID = "other-raid"
-    TYPE_PERSONAL = "personal"
-    TYPE_EXTERNAL = "external"
+    TYPE_RAID: typing.ClassVar[str] = "other-raid"
+    TYPE_PERSONAL: typing.ClassVar[str] = "personal"
+    TYPE_EXTERNAL: typing.ClassVar[str] = "external"
 
-    TYPE_BUFFS = "other-buffs"
-    TYPE_HERO = "other-hero"
-    TYPE_TRINKET = "other-trinkets"
-    TYPE_POTION = "other-potions"
+    TYPE_BUFFS: typing.ClassVar[str] = "other-buffs"
+    TYPE_HERO: typing.ClassVar[str] = "other-hero"
+    TYPE_TRINKET: typing.ClassVar[str] = "other-trinkets"
+    TYPE_POTION: typing.ClassVar[str] = "other-potions"
 
     # tags to indicate special properties
-    TAG_DYNAMIC_CD = "dynamic_cd"
+    TAG_DYNAMIC_CD: typing.ClassVar[str] = "dynamic_cd"
 
-    spell_variations: dict[int, int] = {}
+    spell_variations: typing.ClassVar[dict[int, int]] = {}
     """Map to track spell variations and their "master"-spells.
         `[key: id of the variation] = id of the "master"-spell`
     """
+
+    spell_id: int
+    cooldown: int = 0
+    duration: int = 0
+    icon: str = ""
+    name: str = ""
+    color: str = ""
+    show: bool = True
+
+    variations: list[int] = []
+    """Spell IDs for Variants of the same Spell. Eg.: Glyphs or Talents sometimes change the Spell ID."""
+
+    spell_type: str = ""
+    """type/category of spell. This is usuals the class or spec name.
+    But can also be things like "other-trinket" or "other-buffs" for Raid Buffs."""
+
+    tags: list[str] = []
+    """tags to indicate special properties. eg.: dynamic cooldown."""
+
+    event_type: str = "cast"
+    """type of event (eg.: "cast", "buff", debuff)."""
+
+    wowhead_data: str = ""
+    """Info used for the wowhead tooltips."""
+
+    until: typing.Optional["WowSpell"] = None
+    """Custom End-Event."""
+
+    extra_filter: str = ""
+    """Extra filter for the spell."""
+
+    def post_init(self) -> None:
+        self.wowhead_data = self.wowhead_data or f"spell={self.spell_id}"
+        self.add_variations(*self.variations)
+        return super().post_init()
 
     @staticmethod
     def spell_ids(spells: typing.List["WowSpell"]) -> typing.List[int]:
@@ -55,54 +91,6 @@ class WowSpell(base.Model):
     def resolve_spell_id(cls, spell_id: int) -> int:
         """Resolve a Spell ID for a spell variation to its main-spell."""
         return cls.spell_variations.get(spell_id) or spell_id
-
-    def __init__(
-        self,
-        spell_id: int,
-        cooldown: int = 0,
-        duration: int = 0,
-        show: bool = True,
-        icon: str = "",
-        name: str = "",
-        color: str = "",
-        variations: list[int] = [],
-        spell_type: str = "",
-        tags: list[str] = [],
-        event_type: str = "cast",
-        wowhead_data: str = "",
-        until: typing.Optional["WowSpell"] = None,
-        extra_filter: str = "",
-    ):
-        self.spell_id = spell_id
-        self.cooldown = cooldown
-        self.duration = duration
-        self.icon = icon
-        self.name = name
-        self.show = show
-        self.color = color
-
-        self.variations: list[int] = []
-        """Spell IDs for Variants of the same Spell. Eg.: Glyphs or Talents sometimes change the Spell ID."""
-        self.add_variations(*variations)
-
-        self.spell_type = spell_type
-        """type/category of spell. This is ussualy the class or spec name.
-        But can also be things like "other-trinket" or "other-buffs" for Raid Buffs."""
-
-        self.tags = tags
-        """tags to indicate special properties. eg.: dynamic cooldown."""
-
-        self.event_type = event_type
-        """type of event (eg.: "cast", "buff", debuff)."""
-
-        self.wowhead_data = wowhead_data or f"spell={self.spell_id}"
-        """Info used for the wowhead tooltips."""
-
-        self.until = until
-        """Custom End-Event."""
-
-        self.extra_filter = extra_filter
-        """Extra filter for the spell."""
 
     def __repr__(self):
         return f"<Spell({self.spell_id}, cd={self.cooldown})>"

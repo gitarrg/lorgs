@@ -1,13 +1,12 @@
 """Model to describe a User of Lorrgs."""
 
 # IMPORT THIRD PARTY LIBRARIES
-from datetime import datetime
 import typing
+from datetime import datetime
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.clients import discord
-from lorgs.lib import dynamodb
-
+from lorgs.models import base
 
 LORRGS_SERVER_ID = "885638678607708172"
 """Server ID for the lorrgs discord."""
@@ -26,7 +25,7 @@ ROLE_PERMISSIONS = {
 }
 
 
-class User(dynamodb.BaseModel):
+class User(base.DynamoDBModel):
 
     discord_id: str
     """The Users discord ID (stored as string to avoid large number issues)."""
@@ -78,6 +77,10 @@ class User(dynamodb.BaseModel):
         return {
             **super().dict(**kwargs),
             "permissions": self.permissions,
+            # aliases to keep things agnostic
+            "name": self.discord_tag,
+            "id": self.discord_id,
+            "avatar": self.discord_avatar,
         }
 
     ################################

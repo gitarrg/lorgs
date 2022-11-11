@@ -1,22 +1,21 @@
 """Models for Top Rankings for a given Spec."""
 
 # IMPORT STANDARD LIBRARIES
-import typing
 import textwrap
+import typing
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
 from lorgs.clients import wcl
-from lorgs.lib import dynamodb
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
+from lorgs.models.base.s3 import S3Model
 from lorgs.models.raid_boss import RaidBoss
 from lorgs.models.warcraftlogs_boss import Boss
 from lorgs.models.warcraftlogs_fight import Fight
 from lorgs.models.warcraftlogs_player import Player
 from lorgs.models.warcraftlogs_report import Report
 from lorgs.models.wow_spec import WowSpec
-
 
 # Map Difficulty Names to Integers used in WCL
 DIFFICULTY_IDS = {
@@ -26,7 +25,7 @@ DIFFICULTY_IDS = {
 }
 
 
-class SpecRanking(warcraftlogs_base.BaseModel):
+class SpecRanking(S3Model, warcraftlogs_base.wclclient_mixin):
 
     # Fields
     spec_slug: str
@@ -36,8 +35,7 @@ class SpecRanking(warcraftlogs_base.BaseModel):
     reports: list[Report] = []
 
     # Config
-    pkey: typing.ClassVar[str] = "{spec_slug}#{boss_slug}"
-    skey: typing.ClassVar[str] = "{difficulty}#{metric}"
+    key: typing.ClassVar[str] = "{spec_slug}/{boss_slug}__{difficulty}__{metric}"
 
     def post_init(self) -> None:
         for report in self.reports:

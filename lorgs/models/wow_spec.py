@@ -6,40 +6,46 @@ import typing
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
 from lorgs.models.wow_actor import WowActor
+from lorgs.models.wow_class import WowClass
+from lorgs.models.wow_role import WowRole
 from lorgs.models.wow_spell import WowSpell
-
-if typing.TYPE_CHECKING:
-    from lorgs.models.wow_role import WowRole
-    from lorgs.models.wow_class import WowClass
 
 
 class WowSpec(WowActor):
     """docstring for Spec"""
 
-    def __init__(self, wow_class: "WowClass", name: str, role: "WowRole", short_name: str = "") -> None:
-        super().__init__()
-        self.name = name
+    name: str
 
-        self.role = role
-        self.role.specs.append(self)
+    role: "WowRole"
 
-        self.wow_class = wow_class
-        self.wow_class.specs.append(self)
-        self.parents = [self.wow_class]
+    wow_class: "WowClass"
 
-        # Generate some names
-        self.full_name = f"{self.name} {self.wow_class.name}"
-        self.short_name = short_name or self.name  # to be overwritten
+    short_name: str = ""
+    """Short Version of the Name. eg.: "Prot" or "Resto". Defaults to `self.name`"""
 
-        # slugified names
-        self.name_slug = utils.slug(self.name)
-        self.full_name_slug = f"{self.wow_class.name_slug}-{self.name_slug}"
+    def post_init(self) -> None:
+        self.parents.append(self.wow_class)
+        return super().post_init()
 
-        # str: Spec Name without spaces, but still capCase.. eg.: "BeastMastery"
-        self.name_slug_cap = self.name.replace(" ", "")
+    @property
+    def name_slug(self) -> str:
+        """Slugified Version of the Name. eg.: "beastmastery"."""
+        return utils.slug(self.name)
 
-    def __repr__(self) -> str:
-        return f"<Spec({self.full_name})>"
+    @property
+    def name_slug_cap(self) -> str:
+        """PascalCase version. eg.: "BeastMastery."""
+        return self.name.replace(" ", "")
+
+    @property
+    def full_name(self) -> str:
+        """Complete Name including the parent Class. eg.: "Havoc Demon Hunter"."""
+        return f"{self.name} {self.wow_class.name}"
+
+    @property
+    def full_name_slug(self) -> str:
+        """Slugified version of the full name. eg.: "demonhunter-havoc"."""
+        return f"{self.wow_class.name_slug}-{self.name_slug}"
 
     def __lt__(self, other: "WowSpec") -> bool:
         def sort_key(obj: WowSpec) -> tuple["WowRole", "WowClass", str]:

@@ -1,15 +1,15 @@
 """Classes/Functions to manage Reports injected through user interaction."""
 
 # IMPORT STANDARD LIBRARIES
-from datetime import datetime
 import typing
+from datetime import datetime
 
 # IMPORT LOCAL LIBRARIES
-from lorgs.lib import dynamodb
+from lorgs.models import base
 from lorgs.models.warcraftlogs_report import Report
 
 
-class UserReport(Report, dynamodb.BaseModel):
+class UserReport(Report, base.DynamoDBModel):
     """A single report loaded via the custom reports module.
 
     Todo:

@@ -1,5 +1,4 @@
 # IMPORT STANRD LIBRARIES
-from typing import Type, TypeVar
 import abc
 import asyncio
 import json
@@ -8,8 +7,7 @@ import typing
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.clients.wcl import WarcraftlogsClient
-from lorgs.lib import dynamodb
-
+from lorgs.models import base
 
 VALID_OPS = ["eq", "lt", "lte", "gt", "gte"]
 RE_KEY = r"([\w\-]+)"  # expr to match the key/attr name. eg.: spec or role name
@@ -71,7 +69,7 @@ def query_args_to_mongo(*query_args: str, prefix="") -> dict[str, str]:
     return mongo_kwargs
 
 
-W = TypeVar("W", bound="wclclient_mixin")
+W = typing.TypeVar("W", bound="wclclient_mixin")
 
 
 class wclclient_mixin:
@@ -126,5 +124,5 @@ class wclclient_mixin:
             self.process_query_result(**result)
 
 
-class BaseModel(dynamodb.BaseModel, wclclient_mixin):
+class BaseModel(base.BaseModel, wclclient_mixin):
     """docstring for Document"""

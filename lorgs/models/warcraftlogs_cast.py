@@ -6,60 +6,57 @@ import pydantic
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
+from lorgs.models import base
 from lorgs.models.wow_spell import WowSpell
 
 if typing.TYPE_CHECKING:
     from lorgs.clients import wcl
 
 
-class Cast(pydantic.BaseModel):
+json_aliases = {
+    "spell_id": "id",
+    "timestamp": "ts",
+    "duration": "d",
+}
+
+
+class Cast(base.BaseModel):
     """An Instance of a Cast of a specific Spell in a Fight."""
 
-    spell_id: int = pydantic.Field(json_alias="id")
+    spell_id: int  #  = pydantic.Field(json_alias="id")
     """ID of the spell/aura."""
 
-    timestamp: int = pydantic.Field(json_alias="ts")
+    timestamp: int
     """time the spell was cast, in milliseconds relative to the start of the fight."""
 
-    duration: typing.Optional[int] = pydantic.Field(json_alias="d", default=None)
+    duration: typing.Optional[int] = None
     """time the spell/buff was active in milliseconds."""
 
     event_type: str = pydantic.Field(default="cast", exclude=True)
 
     @classmethod
-    def get_json_aliases(cls) -> dict[str, str]:
-        r = {}
-        for name, field in cls.__fields__.items():
-            alias = field.field_info.extra.get("json_alias")
-            if alias:
-                r[name] = alias
-        return r
-
-    @pydantic.validator("spell_id")
-    def resolve_spell_id(cls, spell_id: int) -> int:
-        return WowSpell.resolve_spell_id(spell_id)
-
-    @pydantic.root_validator(pre=True)
-    def rename_fields_in(cls, data: dict[str, typing.Any]) -> dict[str, typing.Any]:
-        return utils.rename_dict_keys(data, cls.get_json_aliases(), reverse=True)
+    def construct(cls, _fields_set=None, *, __recursive__=True, **values) -> "Cast":
+        values = utils.rename_dict_keys(values, json_aliases, reverse=True)
+        return cls(**values)
 
     #############################
 
     @classmethod
     def from_report_event(cls, event: "wcl.ReportEvent") -> "Cast":
+        spell_id = WowSpell.resolve_spell_id(event.abilityGameID)
         return cls(
-            spell_id=event.abilityGameID,
+            spell_id=spell_id,
             timestamp=event.timestamp,
             event_type=event.type,
         )
 
     def __str__(self):
         time_fmt = utils.format_time(self.timestamp)
-        return f"Cast({self.spell_id}, at={time_fmt})"
+        return f"Cast(id={self.spell_id}, ts={time_fmt})"
 
     def dict(self, **kwargs: typing.Any):
         data = super().dict(**kwargs)
-        return utils.rename_dict_keys(data, self.get_json_aliases())
+        return utils.rename_dict_keys(data, json_aliases)
 
     @property
     def spell(self) -> WowSpell:

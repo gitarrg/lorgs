@@ -12,7 +12,7 @@ from lorgs.models import warcraftlogs_ranking
 from lorgs.models.wow_spec import WowSpec
 
 
-router = fastapi.APIRouter(tags=["spec_rankings"], prefix="/spec_rankings")
+router = fastapi.APIRouter(tags=["spec_ranking"], prefix="/spec_ranking")
 
 
 @router.get("/{spec_slug}/{boss_slug}")
@@ -27,7 +27,7 @@ async def get_spec_ranking(
         spec = WowSpec.get(full_name_slug=spec_slug)
         metric = spec.role.metric
 
-    logger.info(f"{spec_slug}/{boss_slug} | start")
+    logger.info(f"{spec_slug}/{boss_slug} | start ({difficulty}/{metric})")
     spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(
         boss_slug=boss_slug,
         spec_slug=spec_slug,

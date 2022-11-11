@@ -7,8 +7,7 @@ import typing
 import pydantic
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import events
-from lorgs import utils
+from lorgs import events, utils
 from lorgs.clients import wcl
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
@@ -16,11 +15,11 @@ from lorgs.models.warcraftlogs_cast import Cast
 from lorgs.models.wow_spell import WowSpell, build_spell_query
 
 if typing.TYPE_CHECKING:
-    from lorgs.models.wow_actor import WowActor
     from lorgs.models.warcraftlogs_fight import Fight
+    from lorgs.models.wow_actor import WowActor
 
 
-class BaseActor(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
+class BaseActor(warcraftlogs_base.BaseModel):
     """Base Class for any Actor in a Fight.
 
     these are usually either Players or NPC/Bosses
@@ -39,11 +38,11 @@ class BaseActor(pydantic.BaseModel, warcraftlogs_base.wclclient_mixin):
     ############################################################################
 
     @property
-    def _has_source_id(self):
+    def _has_source_id(self) -> bool:
         return self.source_id >= 0
 
     @property
-    def has_own_casts(self):
+    def has_own_casts(self) -> bool:
         """Return true if a player has own casts (eg.: exclude raid wide buffs like bloodlust)."""
         for cast in self.casts:
             spell = WowSpell.get(spell_id=cast.spell_id)
