@@ -17,6 +17,7 @@ from lorgs.models.warcraftlogs_player import Player
 from lorgs.models.warcraftlogs_report import Report
 from lorgs.models.wow_spec import WowSpec
 
+
 # Map Difficulty Names to Integers used in WCL
 DIFFICULTY_IDS = {
     "normal": 3,
@@ -46,11 +47,11 @@ class SpecRanking(S3Model, warcraftlogs_base.wclclient_mixin):
     #
     @property
     def spec(self) -> WowSpec:
-        return WowSpec.get(full_name_slug=self.spec_slug)
+        return WowSpec.get(full_name_slug=self.spec_slug)  # type: ignore
 
     @property
     def boss(self) -> RaidBoss:
-        return RaidBoss.get(full_name_slug=self.boss_slug)
+        return RaidBoss.get(full_name_slug=self.boss_slug)  # type: ignore
 
     @property
     def fights(self) -> list[Fight]:

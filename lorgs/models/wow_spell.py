@@ -92,8 +92,8 @@ class WowSpell(base.MemoryModel):
         """Resolve a Spell ID for a spell variation to its main-spell."""
         return cls.spell_variations.get(spell_id) or spell_id
 
-    def __repr__(self):
-        return f"<Spell({self.spell_id}, cd={self.cooldown})>"
+    def __str__(self) -> str:
+        return f"<Spell({self.spell_id}, name={self.name})>"
 
     def is_item_spell(self) -> bool:
         """True if this spell from an item."""
