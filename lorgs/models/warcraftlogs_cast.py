@@ -9,6 +9,7 @@ from lorgs import utils
 from lorgs.models import base
 from lorgs.models.wow_spell import WowSpell
 
+
 if TYPE_CHECKING:
     from lorgs.clients import wcl
 

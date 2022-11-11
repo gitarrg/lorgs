@@ -10,9 +10,7 @@ import boto3
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
 from lorrgs_sqs import helpers
-from lorrgs_sqs.task_handlers import load_spec_rankings
-from lorrgs_sqs.task_handlers import load_user_report
-from lorrgs_sqs.task_handlers import send_discord_message
+from lorrgs_sqs.task_handlers import load_spec_rankings, load_user_report, send_discord_message
 
 
 TASK_HANDLERS = {
@@ -81,7 +79,8 @@ async def process_messages(messages: typing.List) -> dict[str, typing.Any]:
     for message in messages:
         try:
             await process_message(message)
-        except:
+        except Exception as e:
+            print(f"[ERROR] {e}")
             failures.append(message.get("MessageId"))
 
     return {
