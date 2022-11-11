@@ -47,7 +47,7 @@ class S3Model(base.BaseModel):
             content = cls.get_json(**kwargs)
         except KeyError:
             return None
-        return cls(**content)
+        return cls.construct(**content)
 
     def save(self, exclude_unset=True, **kwargs: typing.Any) -> None:
 
