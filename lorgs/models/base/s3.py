@@ -53,11 +53,10 @@ class S3Model(base.BaseModel):
 
         key = self.get_key(**self.dict())
         data = self.json(exclude_unset=exclude_unset, **kwargs)
-
+        print("saving to S3", self.bucket, key)
         self.s3client.put_object(
             Bucket=self.bucket,
             Key=key,
             Body=data,
             ContentType="application/json",
-            ACL="public-read",
         )
