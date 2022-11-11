@@ -11,7 +11,6 @@ from lorgs.logger import logger
 from lorgs.models import warcraftlogs_ranking
 from lorgs.models.wow_spec import WowSpec
 
-
 router = fastapi.APIRouter(tags=["spec_ranking"], prefix="/spec_ranking")
 
 
@@ -21,20 +20,23 @@ async def get_spec_ranking(
     boss_slug: str,
     difficulty: str = "mythic",
     metric: str = "",
-) -> dict[str, typing.Any]:
+) -> typing.Any:
     """Get the Rankings for a given Spec and Boss."""
     if not metric:
         spec = WowSpec.get(full_name_slug=spec_slug)
-        metric = spec.role.metric
+        metric = spec.role.metric if spec else "dps"
 
     logger.info(f"{spec_slug}/{boss_slug} | start ({difficulty}/{metric})")
-    spec_ranking = warcraftlogs_ranking.SpecRanking.get_or_create(
-        boss_slug=boss_slug,
-        spec_slug=spec_slug,
-        difficulty=difficulty,
-        metric=metric,
-    )
-    return spec_ranking.dict(exclude_unset=True)
+
+    try:
+        return warcraftlogs_ranking.SpecRanking.get_json(
+            boss_slug=boss_slug,
+            spec_slug=spec_slug,
+            difficulty=difficulty,
+            metric=metric,
+        )
+    except KeyError:
+        return "Not found.", 404
 
 
 ################################################################################

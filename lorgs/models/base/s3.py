@@ -29,20 +29,25 @@ class S3Model(base.BaseModel):
     #
 
     @classmethod
+    def get_json(cls, **kwargs: typing.Any) -> typing.Any:
+        key = cls.get_key(**kwargs)
+        try:
+            with Timer("s3.get_raw"):
+                data = cls.s3client.get_object(Bucket=cls.bucket, Key=key)
+        except ClientError:
+            raise KeyError("Invalid Key: %s", key)
+
+        body = data["Body"]
+        return json.loads(body.read())
+
+    @classmethod
     def get(cls, **kwargs: typing.Any) -> typing.Optional["S3Model"]:
         """Get an Item from the Store."""
-        key = cls.get_key(**kwargs)
-
-        with Timer("S3.get_object"):
-            try:
-                data = cls.s3client.get_object(Bucket=cls.bucket, Key=key)
-            except ClientError:
-                return None
-
-        # data found --> parse and return
-        body = data["Body"]
-        content = json.loads(body.read())
-        return cls.construct(**content)
+        try:
+            content = cls.get_json(**kwargs)
+        except KeyError:
+            return None
+        return cls(**content)
 
     def save(self, exclude_unset=True, **kwargs: typing.Any) -> None:
 
