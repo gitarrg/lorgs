@@ -1,11 +1,14 @@
 """Defines an Encounter/RaidBoss in the Game.."""
 
+from __future__ import annotations
+
 # IMPORT STANDARD LIBRARIES
 import typing
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
 from lorgs.models.wow_actor import WowActor
+from lorgs.models.wow_spell import WowSpell
 
 
 class RaidBoss(WowActor):
@@ -24,7 +27,7 @@ class RaidBoss(WowActor):
         return f"<RaidBoss(id={self.id} name={self.name})>"
 
     # alias
-    def add_cast(self, *args, **kwargs):
+    def add_cast(self, *args, **kwargs) -> WowSpell:
         return self.add_spell(*args, **kwargs)
 
     @property

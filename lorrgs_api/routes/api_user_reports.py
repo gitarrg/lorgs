@@ -58,7 +58,7 @@ async def get_fights(report_id: str, fight: str, player: str = ""):
 @router.get("/{report_id}/load_overview")
 async def load_user_report_overview(response: fastapi.Response, report_id: str, refresh: bool = False):
     """Load a Report's Overview/Masterdata."""
-    user_report = UserReport.get(report_id=report_id, create=True)
+    user_report = UserReport.get_or_create(report_id=report_id)
 
     needs_to_load = refresh or not user_report.is_loaded
     if needs_to_load:

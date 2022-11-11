@@ -47,11 +47,11 @@ class Player(BaseActor):
     #
     @property
     def class_(self) -> WowClass:
-        return WowClass.get(name_slug=self.class_slug)
+        return WowClass.get(name_slug=self.class_slug)  # type: ignore
 
     @property
     def spec(self) -> WowSpec:
-        return WowSpec.get(full_name_slug=self.spec_slug)
+        return WowSpec.get(full_name_slug=self.spec_slug)  # type: ignore
 
     def get_actor_type(self):
         return self.spec

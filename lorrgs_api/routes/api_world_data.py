@@ -14,6 +14,7 @@ from lorgs.models.wow_role import WowRole
 from lorgs.models.wow_spec import WowSpec
 from lorgs.models.wow_spell import WowSpell
 
+
 router = fastapi.APIRouter()
 
 
@@ -72,7 +73,7 @@ async def get_spec_spells(spec_slug: str):
         spec_slug (str): name of the spec
 
     """
-    spec: WowSpec = WowSpec.get(full_name_slug=spec_slug)
+    spec = WowSpec.get(full_name_slug=spec_slug)
     if not spec:
         return "Invalid Spec.", 404
 
