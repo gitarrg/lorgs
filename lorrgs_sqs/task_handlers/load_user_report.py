@@ -13,6 +13,7 @@ from lorgs import events
 from lorgs.models.task import Task
 from lorgs.models.warcraftlogs_user_report import UserReport
 
+
 if typing.TYPE_CHECKING:
     from lorgs.models import warcraftlogs_actor
 
@@ -66,5 +67,6 @@ async def main(message):
         await load_user_report(**message_payload)
     except:
         task.set(status=task.STATUS.FAILED)
+        raise
     else:
         task.set(status=task.STATUS.DONE)
