@@ -3,12 +3,11 @@
 
 # IMPORT THIRD PARTY LIBRARIES
 import fastapi
+from fastapi.middleware.gzip import GZipMiddleware
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import data   # pylint: disable=unused-import
-from lorgs import db  # pylint: disable=unused-import
-from lorrgs_api.middlewares import cache_middleware
-from lorrgs_api.middlewares import cors_middleware
+from lorgs import data  # pylint: disable=unused-import
+from lorrgs_api.middlewares import cache_middleware, cors_middleware
 from lorrgs_api.routes import api
 
 
@@ -29,5 +28,6 @@ def create_app() -> fastapi.FastAPI:
 
     cors_middleware.init(app)
     cache_middleware.init(app)
+    app.add_middleware(GZipMiddleware, minimum_size=100)
 
     return app

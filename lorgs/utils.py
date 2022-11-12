@@ -14,12 +14,24 @@ U = typing.TypeVar("U")
 
 def chunks(lst: list[T], n: int) -> typing.Generator[list[T], None, None]:
     """Yield successive n-sized chunks from lst."""
-    if n <= 0: # special case to allow unchucked
+    if n <= 0:  # special case to allow unchucked
         yield lst
         return
 
     for i in range(0, len(lst), n):
-        yield lst[i:i + n]
+        yield lst[i : i + n]
+
+
+def group_by(*items: T, keyfunc: typing.Callable[[T], U]) -> dict[U, list[T]]:
+    """Group items using keyfunc."""
+    d: dict[U, list[T]] = {}
+    for item in items:
+        key = keyfunc(item)
+        if key not in d:
+            d[key] = []
+        d[key].append(item)
+
+    return d
 
 
 def format_time(timestamp: int) -> str:
@@ -40,7 +52,7 @@ def format_time(timestamp: int) -> str:
 
     duration = datetime.timedelta(milliseconds=timestamp)
 
-    duration_str = str(duration) # "0:05:12.00000"
+    duration_str = str(duration)  # "0:05:12.00000"
     duration_str = duration_str[2:7]
     return sign + duration_str
 
@@ -64,7 +76,7 @@ def format_big_number(num: float) -> str:
         magnitude += 1
         num /= 1000.0
     # add more suffixes if you need them
-    suffix = ['', 'k', 'm', 'g', 't', 'p'][magnitude]
+    suffix = ["", "k", "m", "g", "t", "p"][magnitude]
     return f"{num:0.2f}{suffix}"
 
 
@@ -89,6 +101,11 @@ def slug(text: str, space="", delete_chars="(),'-") -> str:
     return text
 
 
+def to_snake_case(name) -> str:
+    """Convert CamelCase to snake case."""
+    return "".join("_%s" % c if c.isupper() else c for c in name).strip("_").lower()
+
+
 def str_int_list(string: str, sep=".") -> list[int]:
     """Converts string-list of intergers into an actual list.
 
@@ -103,17 +120,24 @@ def str_int_list(string: str, sep=".") -> list[int]:
     return [int(v) for v in string.split(sep)]
 
 
-def get_nested_value(dct: typing.Dict[str, typing.Any], *keys: str, default=None):
-    """Extra a value from nested dict."""
-    data = dct
-    for key in keys:
-        data = data or {}
-        try:
-            data = data[key]
-        except KeyError:
-            return default
+def rename_dict_keys(data: dict[str, typing.Any], names: dict[str, str], reverse=False) -> dict[str, typing.Any]:
+    """Renames keys in a dictornary.
 
-    return data
+    Examples:
+    >>> d = { "foo": 1234, "b": "value" }
+    >>> k = { "foo": "f", "bar": "b" }
+    >>> rename_dict_keys(d, k)
+    {'f': 1234, 'b': 'value'}
+    >>> rename_dict_keys(d, k, reverse=True)
+    {'foo': 1234, 'bar': 'value'}
+
+    """
+    name_map = dict(names)
+
+    if reverse:
+        name_map = {v: k for k, v in name_map.items()}
+
+    return {name_map.get(k, k): v for k, v in data.items()}
 
 
 def flatten(values: typing.Iterable[typing.Iterable[T]]) -> list[T]:
@@ -130,6 +154,7 @@ def flatten(values: typing.Iterable[typing.Iterable[T]]) -> list[T]:
 
 def as_list(func: typing.Callable[[U], typing.Generator[T, None, None]]) -> typing.Callable[[U], list[T]]:
     """Wrap a Generator to return a list."""
+
     @functools.wraps(func)
     def wrapped(*args: typing.Any, **kwargs: typing.Any) -> list[T]:
         return list(func(*args, **kwargs))
@@ -228,16 +253,13 @@ def get(iterable: typing.Iterable[T], **attrs) -> typing.Optional[T]:
     # Special case the single element call
     if len(attrs) == 1:
         k, v = attrs.popitem()
-        pred = attrget(k.replace('__', '.'))
+        pred = attrget(k.replace("__", "."))
         for elem in iterable:
             if pred(elem) == v:
                 return elem
         return None
 
-    converted = [
-        (attrget(attr.replace('__', '.')), value)
-        for attr, value in attrs.items()
-    ]
+    converted = [(attrget(attr.replace("__", ".")), value) for attr, value in attrs.items()]
 
     for elem in iterable:
         if _all(pred(elem) == value for pred, value in converted):
@@ -251,6 +273,7 @@ def run_in_executor(_func):
     We can use this to make blocking functions async (more or less)
 
     """
+
     @functools.wraps(_func)
     def wrapped(*args, **kwargs):
         loop = asyncio.get_event_loop()

@@ -1,18 +1,17 @@
-
 import typing
 from pydantic import BaseModel
 
 
 class DiscordUser(BaseModel):
     """
-        https://discord.com/developers/docs/resources/user#user-object
+    https://discord.com/developers/docs/resources/user#user-object
     """
 
-    id: int
+    id: str
     username: str
     discriminator: str
 
-    avatar: typing.Optional[str] = "" 
+    avatar: typing.Optional[str] = ""
     """the user's avatar hash."""
 
     @property
@@ -23,7 +22,7 @@ class DiscordUser(BaseModel):
 
 class DiscordGuildMember(BaseModel):
     """
-        https://discord.com/developers/docs/resources/guild#guild-member-object
+    https://discord.com/developers/docs/resources/guild#guild-member-object
     """
 
     user: DiscordUser
@@ -38,7 +37,7 @@ class DiscordGuildMember(BaseModel):
 
     joined_at: str  # ISO8601 timestamp
 
-    avatar: typing.Optional[str] = "" 
+    avatar: typing.Optional[str] = ""
 
 
 class DiscordAccessTokenResponse(typing.TypedDict):
@@ -60,10 +59,9 @@ class DiscordAccessTokenResponse(typing.TypedDict):
     token_type: str  # eg.: "Bearer",
     expires_in: typing.Optional[int]
     refresh_token: typing.Optional[str]
-    scope: typing.Optional[str] # eg.: "identify"
+    scope: typing.Optional[str]  # eg.: "identify"
 
 
 class DiscordErrorResponse(typing.TypedDict):
     error: str
     error_description: str
-

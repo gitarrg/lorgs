@@ -1,6 +1,7 @@
 """RaidZone and Bosses for the T26: Castle Nathria, the first Tier of Shadowlands."""
 # pylint: disable=line-too-long
 # pylint: disable=C0326  # spaces
+# fmt: off
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.models.raid_zone import RaidZone

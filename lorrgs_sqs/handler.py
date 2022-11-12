@@ -10,16 +10,13 @@ import boto3
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
 from lorrgs_sqs import helpers
-from lorrgs_sqs.task_handlers import load_spec_rankings
-from lorrgs_sqs.task_handlers import load_user_report
-from lorrgs_sqs.task_handlers import send_discord_message
+from lorrgs_sqs.task_handlers import load_spec_rankings, load_user_report, send_discord_message
 
 
 TASK_HANDLERS = {
     # for debugging
     "unknown": send_discord_message.main,
     "discord": send_discord_message.main,
-
     "load_user_report": load_user_report.main,
     "load_spec_rankings": load_spec_rankings.main,
 }
@@ -65,10 +62,7 @@ async def process_message(message):
     if len(payloads) > 1:
         queue_url = helpers.queue_arn_to_url(message.get("eventSourceARN"))
 
-        messages = [{
-            "MessageBody": json.dumps(payload),
-            "MessageGroupId": str(uuid.uuid4())
-        } for payload in payloads]
+        messages = [{"MessageBody": json.dumps(payload), "MessageGroupId": str(uuid.uuid4())} for payload in payloads]
 
         return submit_messages(queue_url, messages)
 
@@ -85,11 +79,12 @@ async def process_messages(messages: typing.List) -> dict[str, typing.Any]:
     for message in messages:
         try:
             await process_message(message)
-        except:
+        except Exception as e:
+            print(f"[ERROR] {e}")
             failures.append(message.get("MessageId"))
 
     return {
-        "batchItemFailures" : [f for f in failures if f],
+        "batchItemFailures": [f for f in failures if f],
     }
 
 

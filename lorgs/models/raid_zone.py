@@ -10,17 +10,21 @@ from lorgs.models import base
 from lorgs.models.raid_boss import RaidBoss
 
 
-class RaidZone(base.Model):
+class RaidZone(base.MemoryModel):
     """A raid zone in the Game."""
 
-    def __init__(self, id: int, name: str, bosses: typing.Optional[list[RaidBoss]] = None) -> None:
-        self.id: int = id
-        """ID of the Raid Zone. aka. T28, T29 (as used in WarcraftLogs)."""
-        self.name: str = name
-        """Full Name of the Zone. eg.: `Castle Nathria`."""
-        self.bosses = bosses or []
-        """All Bosses, in order, in this Zone."""
-        self.name_slug = utils.slug(self.name, space="-")
+    id: int
+    """ID of the Raid Zone. aka. T28, T29 (as used in WarcraftLogs)."""
+
+    name: str
+    """Full Name of the Zone. eg.: `Castle Nathria`."""
+
+    bosses: list[RaidBoss] = []
+    """All Bosses, in order, in this Zone."""
+
+    @property
+    def name_slug(self) -> str:
+        return utils.slug(self.name, space="-")
 
     def __repr__(self) -> str:
         return f"<RaidZone(id={self.id} name={self.name})>"
@@ -30,7 +34,7 @@ class RaidZone(base.Model):
             "id": self.id,
             "name": self.name,
             "name_slug": self.name_slug,
-            "bosses": [boss.as_dict() for boss in self.bosses]  # list to preserve the correct order
+            "bosses": [boss.as_dict() for boss in self.bosses],
         }
 
     def add_boss(self, boss: typing.Optional[RaidBoss] = None, **kwargs: typing.Any) -> RaidBoss:

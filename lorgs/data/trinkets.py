@@ -2,7 +2,7 @@
 # pylint: disable=line-too-long
 # pylint: disable=wildcard-import
 # pylint: disable=unused-wildcard-import
-# from lorgs.data.classes import *
+# fmt: off
 
 from lorgs.data.classes import *
 from lorgs.models.wow_spell import WowSpell
@@ -81,6 +81,6 @@ for s in [DRUID_FERAL, HUNTER_SURVIVAL, MONK_BREWMASTER, DRUID_GUARDIAN]:
 
 
 # hide all trinkets by default
-for spell in WowSpell.all:
+for spell in WowSpell.list():
     if spell.spell_type == TYPE_TRINKET:
         spell.show = False

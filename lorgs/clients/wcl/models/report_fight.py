@@ -42,7 +42,7 @@ class ReportFight(BaseModel):
 
     @root_validator(pre=True)
     def remove_nones(cls, values):
-        return {k: v for k, v in values.items() if v is not None }
+        return {k: v for k, v in values.items() if v is not None}
 
     @validator("fightPercentage", "bossPercentage")
     def fix_percentage(cls, value: float, values: dict[str, typing.Any]):

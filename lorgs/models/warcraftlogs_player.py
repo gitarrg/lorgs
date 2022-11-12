@@ -1,43 +1,34 @@
-
 # IMPORT STANRD LIBRARIES
 import typing
 
-# IMPORT THIRD PARTY LIBRARIES
-import mongoengine as me
-
 # IMPORT LOCAL LIBRARIES
-from lorgs import utils
 from lorgs.clients import wcl
 from lorgs.models.warcraftlogs_actor import BaseActor
+from lorgs.models.wow_class import WowClass
 from lorgs.models.wow_spec import WowSpec
-from lorgs.models.wow_spell import EventSource, WowSpell
+from lorgs.models.wow_spell import WowSpell
 
 
 class Player(BaseActor):
     """A PlayerCharater in a Fight (or report)."""
 
-    source_id: int = me.IntField(primary_key=True)
-    name: str = me.StringField(max_length=12) # names can be max 12 chars
-    total: int = me.IntField(default=0)
+    name: str = ""
+    class_slug: str = ""
+    spec_slug: str = ""
 
-    class_slug: str = me.StringField()
-    spec_slug: str = me.StringField(required=True)
+    total: float = 0
 
-    deaths = me.ListField(me.DictField())
-    resurrects = me.ListField(me.DictField())
+    deaths: list = []
+    resurrects: list = []
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Player(id={self.source_id} name={self.name} spec={self.spec})"
 
     def summary(self) -> dict[str, typing.Any]:
-
-        class_slug = self.class_slug or self.spec_slug.split("-")[0]
-
         return {
             "name": self.name,
             "source_id": self.source_id,
-            "class": class_slug,
-
+            "class": self.class_slug,
             "spec": self.spec_slug,
             "role": self.spec.role.code if self.spec else "",
         }
@@ -46,7 +37,7 @@ class Player(BaseActor):
         return {
             **self.summary(),
             "total": int(self.total),
-            "casts": [cast.as_dict() for cast in self.casts],
+            "casts": [cast.dict() for cast in self.casts],
             "deaths": self.deaths,
             "resurrects": self.resurrects,
         }
@@ -55,64 +46,62 @@ class Player(BaseActor):
     # Attributes
     #
     @property
+    def class_(self) -> WowClass:
+        return WowClass.get(name_slug=self.class_slug)  # type: ignore
+
+    @property
     def spec(self) -> WowSpec:
-        return WowSpec.get(full_name_slug=self.spec_slug)
+        return WowSpec.get(full_name_slug=self.spec_slug)  # type: ignore
+
+    def get_actor_type(self):
+        return self.spec
 
     ############################################################################
     # Query
     #
-    def get_cast_query(self, spells: list[WowSpell]):
-        cast_query = super().get_cast_query(spells=spells)
-        if cast_query and self.name:
-            cast_query = f"source.name='{self.name}' and {cast_query}"
-        return cast_query
+    def get_cast_query(self) -> str:
+        """Get a query for spells cast by this player."""
+        query = super().get_cast_query()
+        if query and self.name:
+            query = f"source.name='{self.name}' and {query}"
+        return query
 
-    def get_buff_query(self, spells: list[WowSpell]):
-        buffs_query = super().get_buff_query(spells=spells)
-        if buffs_query and self.name:
-            buffs_query = f"target.name='{self.name}' and {buffs_query}"
-        return buffs_query
+    def get_buff_query(self) -> str:
+        """Get a query for all buffs applied to this player."""
+        query = super().get_buff_query()
+        if query and self.name:
+            query = f"target.name='{self.name}' and {query}"
+        return query
 
-    def get_debuff_query(self, spells: list[WowSpell]):
-        debuffs_query = super().get_debuff_query(spells=spells)
-        if debuffs_query and self.name:
-            debuffs_query = f"source.name='{self.name}' and {debuffs_query}"
-        return debuffs_query
+    def get_debuff_query(self) -> str:
+        """Get a query for all debuffs applied by this player."""
+        query = super().get_debuff_query()
+        if query and self.name:
+            query = f"source.name='{self.name}' and {query}"
+        return query
 
-    def get_event_query(self, spells: list[WowSpell]):
+    def get_event_query(self) -> str:
+        """Get a query for custom events this player."""
+        query = super().get_events_query()
+        if query and self.name:
+            query = f"source.name='{self.name}' and {query}"
+        return query or ""
 
-        # 1) spells used by the player
-        player_query = ""
-        player_spells = [e for e in spells if e.source == EventSource.PLAYER]
-        if player_spells:
-            player_query = super().get_event_query(spells=player_spells)
-            if player_query and self.name:
-                player_query = f"source.name='{self.name}' and {player_query}"
-
-        return player_query or ""
-
-    def get_sub_query(self) -> str:
-        """Get the Query for fetch all relevant data for this player."""
-
-        filters = [
-            self.get_event_query(self.spec.all_events),
-            self.get_cast_query(self.spec.all_spells),
-            self.get_buff_query(self.spec.all_buffs),
-            self.get_debuff_query(self.spec.all_debuffs),
-        ]
-
+    def get_resurection_query(self) -> str:
+        """Get a query for resurrects given to this player."""
         # Resurrections
         if self.name:
-            resurect_query = f"target.name='{self.name}' and type='resurrect'"
-            filters.append(resurect_query)
+            return f"target.name='{self.name}' and type='resurrect'"
+        return ""
 
-        # combine all filters
-        filters = [f for f in filters if f]   # filter the filters
-        filters = [f"({f})" for f in filters] # wrap each filter into bracers
-        filters = [" or ".join(filters)]
+    def get_query_parts(self) -> list[str]:
+        parts = super().get_query_parts()
+        parts += [self.get_resurection_query()]
+        return parts
 
-        queries_combined = " and ".join(filters)
-        return f"({queries_combined})"
+    ############################################################################
+    # Process
+    #
 
     def process_death_events(self, death_events: list[wcl.DeathEvent]):
         """Add the Death Events the the Players.
@@ -158,20 +147,22 @@ class Player(BaseActor):
         # Look for the Source ID
         source_id = event.sourceID
         if self.fight and self.fight.report:
-            source_player = self.fight.report.players.get(str(source_id))
+            source_player = self.fight.get_player(source_id=source_id)
             if source_player:
                 data["source_name"] = source_player.name
                 data["source_class"] = source_player.class_slug
 
         self.resurrects.append(data)
 
-    def process_event(self, event: "wcl.ReportEvent"):
-        super().process_event(event)
+    def process_event(self, event: "wcl.ReportEvent") -> wcl.ReportEvent:
 
         # Ankh doesn't shows as a regular spell
         spell_id = event.abilityGameID
-        if spell_id in (21169,): # Ankh
+        if spell_id in (21169,):  # Ankh
             event.type = "resurrect"
 
         if event.type == "resurrect":
             self.process_event_resurrect(event)
+            event.abilityGameID = -1
+
+        return super().process_event(event)

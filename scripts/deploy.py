@@ -16,9 +16,13 @@ import typing
 import boto3
 
 
-LAMBDA_CLIENT = boto3.client('lambda')
-S3_CLIENT = boto3.client('s3')
-LAMBDA_FUNCTION_UPDATED_WAITER = LAMBDA_CLIENT.get_waiter('function_updated')
+if typing.TYPE_CHECKING:
+    from mypy_boto3_lambda.type_defs import LayerVersionsListItemTypeDef, PublishLayerVersionResponseTypeDef
+
+
+LAMBDA_CLIENT = boto3.client("lambda")
+S3_CLIENT = boto3.client("s3")
+LAMBDA_FUNCTION_UPDATED_WAITER = LAMBDA_CLIENT.get_waiter("function_updated")
 
 
 # SETTINGS
@@ -27,11 +31,15 @@ DEPLOY_BUCKET = os.getenv("DEPLOY_BUCKET") or "lorrgs-code"
 DEPLOY_DIR = "./.deploy"
 
 
+PREFIX = os.getenv("DEPLOY_PREFIX") or ""
+
+
 ################################################################################
 # Utils
 #
 
-def calc_checksum(path):
+
+def calc_checksum(path) -> str:
     """Calc an MD5 Checksum for a given path."""
     hash = hashlib.md5()
 
@@ -42,13 +50,13 @@ def calc_checksum(path):
     return hash.hexdigest()
 
 
-def zip_folder(src, tar):
+def zip_folder(src: str, tar: str) -> str:
     """Zip the content from `src` to `tar`."""
     zip_file = shutil.make_archive("tmp_zip", "zip", base_dir=src)
-    return shutil.move(zip_file, tar)
+    return shutil.move(zip_file, tar)  # type: ignore
 
 
-def checksum_compare(name: str, files: str, s3bucket=DEPLOY_BUCKET):
+def checksum_compare(name: str, files: str, s3bucket=DEPLOY_BUCKET) -> bool:
     """Compare the Checksum of `files` with an prev. version stored on S3.
 
     Returns True if they are the same.
@@ -60,8 +68,7 @@ def checksum_compare(name: str, files: str, s3bucket=DEPLOY_BUCKET):
         old_sha = ""
     else:
         body = old_obj.get("Body")
-        if body:
-            old_sha = body.read().decode('utf-8')
+        old_sha = body.read().decode("utf-8") if body else ""
 
     # calc new checksum
     new_sha = calc_checksum(files)
@@ -69,11 +76,7 @@ def checksum_compare(name: str, files: str, s3bucket=DEPLOY_BUCKET):
     # cache latest
     if old_sha != new_sha:
         print(name, "has changed", old_sha, ">", new_sha)
-        S3_CLIENT.put_object(
-            Bucket=s3bucket,
-            Key=f"{name}.md5",
-            Body=io.BytesIO(new_sha.encode("utf-8"))
-        )
+        S3_CLIENT.put_object(Bucket=s3bucket, Key=f"{name}.md5", Body=io.BytesIO(new_sha.encode("utf-8")))
     else:
         print(name, "did not change. :)")
 
@@ -82,97 +85,121 @@ def checksum_compare(name: str, files: str, s3bucket=DEPLOY_BUCKET):
 
 ################################################################################
 
-def get_layer_versions(name, max=50):
-    """List all versions for a given Lambda."""
-    response = LAMBDA_CLIENT.list_layer_versions(LayerName=name, MaxItems=max)
-    return response.get("LayerVersions") or []
 
+class LambdaLayer:
+    def __init__(self, name: str, src_dir: str = "") -> None:
+        self.name = name
+        self.src_dir = src_dir or self.name
 
-def _deploy_layer(name, path):
-    zip_file = shutil.make_archive(base_name=path, format="zip", root_dir=path)
-    S3_CLIENT.upload_file(zip_file, DEPLOY_BUCKET, f"{name}.zip")
-    return LAMBDA_CLIENT.publish_layer_version(
-        LayerName=name,
-        Content={
-            "S3Bucket": DEPLOY_BUCKET,
-            "S3Key": f"{name}.zip",
-        }
-    )
+        self.latest_version: typing.Union[
+            "LayerVersionsListItemTypeDef", "PublishLayerVersionResponseTypeDef", None
+        ] = None
 
+    @property
+    def full_name(self) -> str:
+        return f"{PREFIX}{self.name}"
 
-def delete_layer_versions(name):
-    """Deplete all version for a given Lambda."""
-    for layer_version in get_layer_versions(name):
-        version = layer_version.get("Version")
-        if version:
-            LAMBDA_CLIENT.delete_layer_version(LayerName=name, VersionNumber=version)
-            print(f"deleting {name}.{version}")
+    def get_versions(self, max=50) -> list["LayerVersionsListItemTypeDef"]:
+        """List all versions for a given Lambda."""
+        response = LAMBDA_CLIENT.list_layer_versions(LayerName=self.full_name, MaxItems=max)
+        return response.get("LayerVersions") or []
 
+    def get_latest_version_arn(self) -> str:
 
-def deploy_layer(name: str, src_dir: str):
-    """Deploy a Lambda Layer."""
-    if checksum_compare(name=name, files=f"{src_dir}/**/*.py"):
-        return
+        if not self.latest_version:
+            versions = self.get_versions(max=1)
+            if not versions:
+                raise ValueError(f"Layer: {self.full_name} has no versions.")
+            self.latest_version = versions[0]
+        return self.latest_version.get("LayerVersionArn") or ""
 
-    path = f"{DEPLOY_DIR}/{name}"
-    shutil.copytree(src_dir, f"{path}/python/{src_dir}")
-    delete_layer_versions(name)
-    return _deploy_layer(name, path)
+    def delete_layer_versions(self) -> None:
+        """Deplete all version for a given Lambda."""
+        for layer_version in self.get_versions():
+            version = layer_version.get("Version")
+            if version:
+                LAMBDA_CLIENT.delete_layer_version(LayerName=self.full_name, VersionNumber=version)
+                print(f"deleting {self.full_name}.{version}")
 
+    def deploy_version(self, path: str) -> "PublishLayerVersionResponseTypeDef":
 
-def deploy_requirements_layer(name="requirements"):
-    """Deploy a Lambda layer using a pip requirements file."""
-    if checksum_compare(name=name, files="requirements.txt"):
-        return
-
-    path = f"{DEPLOY_DIR}/{name}"
-
-    subprocess.call([
-        "pip",
-        "install", "-r", "requirements.txt",
-        f"--target={path}/python"
-    ])
-
-    delete_layer_versions(name)
-    return _deploy_layer(name, path)
-
-
-def deploy_lambda(name: str, src: str = ""):
-    """Update the Lambda with `name` to use the Code found in `src`."""
-    src = src or name.replace("-", "_")
-    if checksum_compare(name=name, files=f"{src}/**/*.py"):
-        return
-
-    # zip
-    zip_file = zip_folder(src=src, tar=f"{DEPLOY_DIR}/{name}.zip")
-
-    # upload and update
-    S3_CLIENT.upload_file(zip_file, DEPLOY_BUCKET, f"{name}.zip")
-    LAMBDA_CLIENT.update_function_code(FunctionName=name, S3Bucket=DEPLOY_BUCKET, S3Key=f"{name}.zip")
-
-    # Wait for the update to complete
-    print("[deploy_lambda]", name, "waiting...")
-    LAMBDA_FUNCTION_UPDATED_WAITER.wait(FunctionName=name, WaiterConfig={'Delay': 2})
-    print("[deploy_lambda]", name, "Done!")
-
-
-def update_used_layers(lambda_names: typing.List[str], layer_names: typing.List[str]):
-    """Update the given Lambdas to use the latest version of each Layer."""
-    layers = []
-    for layer in layer_names:
-        layer_versions = get_layer_versions(layer, max=1)
-        if layer_versions:
-            latest = layer_versions[0]  # seems to be sorted
-            arn = latest.get("LayerVersionArn")
-            if arn:
-                layers.append(arn)
-
-    for name in lambda_names:
-        print("Updting Layers for", name, layers)
-        LAMBDA_CLIENT.update_function_configuration(
-            FunctionName=name,
-            Layers=layers
+        zip_file = shutil.make_archive(base_name=path, format="zip", root_dir=path)
+        S3_CLIENT.upload_file(zip_file, DEPLOY_BUCKET, f"{self.full_name}.zip")
+        self.latest_version = LAMBDA_CLIENT.publish_layer_version(
+            LayerName=self.full_name,
+            Content={
+                "S3Bucket": DEPLOY_BUCKET,
+                "S3Key": f"{self.full_name}.zip",
+            },
         )
+        return self.latest_version
+
+    def deploy(self) -> None:
+        """Deploy a Lambda Layer."""
+        if checksum_compare(name=self.full_name, files=f"{self.src_dir}/**/*.py"):
+            return None
+
+        path = f"{DEPLOY_DIR}/{self.full_name}"
+        shutil.copytree(self.src_dir, f"{path}/python/{self.src_dir}")
+        self.delete_layer_versions()
+        self.deploy_version(path)
+
+
+class RequirementsLayer(LambdaLayer):
+    def __init__(self, name: str = "requirements") -> None:
+        super().__init__(name=name)
+
+    def deploy(self) -> None:
+        """Deploy a Lambda layer using a pip requirements file."""
+        if checksum_compare(name=self.full_name, files="requirements.txt"):
+            return
+
+        path = f"{DEPLOY_DIR}/{self.full_name}"
+
+        subprocess.call(["pip", "install", "-r", "requirements.txt", f"--target={path}/python"])
+        self.delete_layer_versions()
+        self.deploy_version(path)
+
+
+class Lambda:
+    def __init__(self, name: str) -> None:
+        self.client = LAMBDA_CLIENT
+        self.name = name
+
+    @property
+    def full_name(self):
+        return f"{PREFIX}{self.name}"
+
+    def deploy(self, src: str = "") -> None:
+        """Update the Lambda with `name` to use the Code found in `src`."""
+        src = src or self.name.replace("-", "_")
+        if checksum_compare(name=self.full_name, files=f"{src}/**/*.py"):
+            return
+
+        # zip
+        zip_file = zip_folder(src=src, tar=f"{DEPLOY_DIR}/{self.full_name}.zip")
+
+        # upload and update
+        S3_CLIENT.upload_file(zip_file, DEPLOY_BUCKET, f"{self.full_name}.zip")
+        LAMBDA_CLIENT.update_function_code(
+            FunctionName=self.full_name, S3Bucket=DEPLOY_BUCKET, S3Key=f"{self.full_name}.zip"
+        )
+
+        # Wait for the update to complete
+        print("[deploy_lambda]", self.full_name, "waiting...")
+        LAMBDA_FUNCTION_UPDATED_WAITER.wait(FunctionName=self.full_name, WaiterConfig={"Delay": 2})
+        print("[deploy_lambda]", self.full_name, "Done!")
+
+    def update_used_layers(self, *layers: LambdaLayer, force=False) -> None:
+        """Update the given Lambdas to use the latest version of each Layer."""
+
+        needs_update = force or any(layer.latest_version for layer in layers)
+        if not needs_update:
+            return
+
+        arns = [layer.get_latest_version_arn() for layer in layers]
+        print("Updting Layers for", self.name, arns)
+        LAMBDA_CLIENT.update_function_configuration(FunctionName=self.full_name, Layers=arns)
 
 
 ################################################################################
@@ -185,19 +212,23 @@ def main() -> None:
     os.mkdir(DEPLOY_DIR)
 
     # Layers
-    core_layer = deploy_layer("lorrgs-core", src_dir="lorgs")
-    reqs_layer = deploy_requirements_layer(name="lorrgs-requirements")
+    core_layer = LambdaLayer("lorrgs-core", src_dir="lorgs")
+    core_layer.deploy()
+
+    reqs_layer = RequirementsLayer(name="lorrgs-requirements")
+    reqs_layer.deploy()
 
     # Lambdas
-    deploy_lambda(name="lorrgs-api")
-    deploy_lambda(name="lorrgs-sqs")
+    api_lambda = Lambda(name="lorrgs-api")
+    api_lambda.deploy()
+
+    sqs_lambda = Lambda(name="lorrgs-sqs")
+    sqs_lambda.deploy()
 
     # Update if one of them got deployed
-    if core_layer or reqs_layer:
-        update_used_layers(
-            lambda_names=["lorrgs-api", "lorrgs-sqs"],
-            layer_names=["lorrgs-core", "lorrgs-requirements"]
-        )
+    api_lambda.update_used_layers(reqs_layer, core_layer)
+    sqs_lambda.update_used_layers(reqs_layer, core_layer)
+    return
 
 
 if __name__ == "__main__":

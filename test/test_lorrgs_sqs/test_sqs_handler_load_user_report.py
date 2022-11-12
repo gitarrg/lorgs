@@ -1,17 +1,15 @@
-
-
 import asyncio
-import json
 import itertools
-
+import json
 
 import dotenv
-dotenv.load_dotenv()
 
 from lorgs.models import warcraftlogs_user_report
-from lorrgs_sqs.handler import load_user_report
 from lorgs.models.task import Task
+from lorrgs_sqs.handler import load_user_report
 
+
+dotenv.load_dotenv()
 
 
 async def test1() -> None:
@@ -23,8 +21,8 @@ async def test1() -> None:
     player_ids = [1, 6, 15]
 
     # delete old to force refresh
-    user_report = warcraftlogs_user_report.UserReport.from_report_id(report_id=REPORT_ID, create=True)
-    user_report.report.fights = {}
+    user_report = warcraftlogs_user_report.UserReport.get_or_create(report_id=REPORT_ID)
+    user_report.fights = []
     user_report.save()
 
     # setup Task object
@@ -41,10 +39,7 @@ async def test1() -> None:
         "player_ids": player_ids,
     }
 
-    message = {
-        'messageId': message_id,
-        'body': json.dumps(body)
-    }
+    message = {"messageId": message_id, "body": json.dumps(body)}
     await load_user_report.main(message=message)
 
 
@@ -55,5 +50,3 @@ async def main():
 if __name__ == "__main__":
     # loop = asyncio.get_event_loop()
     asyncio.run(main())
-
-

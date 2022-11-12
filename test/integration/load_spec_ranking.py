@@ -1,49 +1,94 @@
-
-import dotenv
-dotenv.load_dotenv() # pylint: disable=wrong-import-position
 import asyncio
 
+import dotenv
 
 from lorgs import data  # pylint: disable=unused-import
-from lorgs import db   # pylint: disable=unused-import
-
 from lorgs.models.warcraftlogs_ranking import SpecRanking
 
 
+dotenv.load_dotenv()
+
+TEMP_FILE = "/mnt/d/tmp.json"
+
+
 async def test__load_rankings():
-    spec_ranking = SpecRanking.get_or_create(spec_slug="druid-restoration", boss_slug="fatescribe-rohkalo")
-    spec_ranking = SpecRanking.get_or_create(spec_slug="druid-restoration", boss_slug="painsmith-raznal")
-    spec_ranking = SpecRanking.get_or_create(spec_slug="druid-restoration", boss_slug="kelthuzad")
-    spec_ranking = SpecRanking.get_or_create(spec_slug="priest-discipline", boss_slug="sylvanas-windrunner")
-    # spec_ranking = SpecRanking.get_or_create(spec_slug="warlock-demonology", boss_slug="guardian-of-the-first-ones")
-    spec_ranking = SpecRanking.get_or_create(spec_slug="paladin-holy", boss_slug="the-nine")
 
     spec_ranking = SpecRanking.get_or_create(
-        spec_slug="shaman-restoration",
+        spec_slug="druid-restoration",
         boss_slug="lords-of-dread",
-        difficulty="heroic",
-        metric="hps",
+        difficulty="mythic",
+        metric="dps",
     )
 
-    await spec_ranking.load(limit=10, clear_old=True)
+    for player in spec_ranking.players:
+        print(player.name)
+        for cast in player.casts:
+            print("...", cast, cast.spell)
+        # return
+    # return
+
+    await spec_ranking.load(limit=25, clear_old=False)
     spec_ranking.save()
+    # return
+
+    # print(spec_ranking)
+    # print(spec_ranking.dict())
+    # spec_ranking.save()
+    # return
+
+    ##############
+    # Additional Formatting
+    # fights = spec_ranking.fights or []
+    # result = {
+    #     "updated": int(spec_ranking.updated.timestamp()),
+    #     "difficulty": difficulty,
+    #     "metric": metric,
+    # }
+    with open(TEMP_FILE, "w") as f:
+        f.write(spec_ranking.json(exclude_unset=True, indent=4))
+        # json.dump(, f, indent=4)
 
 
-async def test__load_all_rankings():
+async def test__load_from_disk():
 
-    spec_slug = "druid-restoration"
+    spec_ranking = SpecRanking.parse_file(TEMP_FILE)
+    spec_ranking.post_init()
 
-    for boss in data.CURRENT_ZONE.bosses:
-        spec_ranking = SpecRanking.get_or_create(spec_slug=spec_slug, boss_slug=boss.full_name_slug)
-        await spec_ranking.load(limit=5, clear_old=True)
-        spec_ranking.save()
+    for report in spec_ranking.reports:
+        print("R", report)
+        for fight in report.fights:
+            print("\tF", fight)
+            for player in fight.players:
+                print("\t\tP:", player)
+                print(player.get_query())
+            # print(fight.dict())
+    # print(spec_ranking)
+    # print(spec_ranking.dict())
+
+
+async def test__load_from_db():
+
+    spec_ranking = SpecRanking.get_or_create(
+        spec_slug="druid-restoration",
+        boss_slug="lords-of-dread",
+        difficulty="mythic",
+        metric="hps",
+    )
+    # print(spec_ranking)
+    await spec_ranking.load(limit=5, clear_old=True)
+    spec_ranking.save()
+    # print(spec_ranking)
+    # with open(TEMP_FILE, "w") as f:
+    #     f.write(spec_ranking.json(exclude_unset=True, indent=4))
+    #     # json.dump(, f, indent=4)
 
 
 async def main():
 
     # pass
     await test__load_rankings()
-    # await test__load_all_rankings()
+    # await test__load_from_disk()
+    # await test__load_from_db()
 
 
 if __name__ == "__main__":
