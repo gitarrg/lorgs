@@ -7,8 +7,8 @@ import fastapi
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
-from lorgs.clients.wcl import InvalidReport
 from lorgs.clients import sqs
+from lorgs.clients.wcl import InvalidReport
 from lorgs.models.task import Task
 from lorgs.models.warcraftlogs_user_report import UserReport
 
