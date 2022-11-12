@@ -32,7 +32,7 @@ class S3Model(base.BaseModel):
     def get_json(cls, **kwargs: typing.Any) -> typing.Any:
         key = cls.get_key(**kwargs)
         try:
-            with Timer("s3.get_raw"):
+            with Timer(f"s3.get_raw: {key}"):
                 data = cls.s3client.get_object(Bucket=cls.bucket, Key=key)
         except ClientError:
             raise KeyError("Invalid Key: %s", key)
