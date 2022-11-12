@@ -1,14 +1,12 @@
-import os
-import dotenv
-
-dotenv.load_dotenv()  # pylint: disable=wrong-import-position
 import asyncio
 
-from lorgs import data  # pylint: disable=unused-import
-from lorgs import db  # pylint: disable=unused-import
+import dotenv
 
+from lorgs import data  # pylint: disable=unused-import
 from lorgs.models.warcraftlogs_ranking import SpecRanking
 
+
+dotenv.load_dotenv()
 
 TEMP_FILE = "/mnt/d/tmp.json"
 
@@ -19,20 +17,22 @@ async def test__load_rankings():
         spec_slug="druid-restoration",
         boss_slug="lords-of-dread",
         difficulty="mythic",
-        metric="hps",
+        metric="dps",
     )
 
-    # for player in spec_ranking.players:
-    #     print(player)
-    #     for cast in player.casts:
-    #         print(cast, cast.spell.name)
-    #     # return
+    for player in spec_ranking.players:
+        print(player.name)
+        for cast in player.casts:
+            print("...", cast, cast.spell)
+        # return
     # return
 
-    await spec_ranking.load(limit=5, clear_old=False)
+    await spec_ranking.load(limit=25, clear_old=False)
+    spec_ranking.save()
+    # return
+
     # print(spec_ranking)
     # print(spec_ranking.dict())
-    spec_ranking.save()
     # spec_ranking.save()
     # return
 
