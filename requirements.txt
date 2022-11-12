@@ -7,10 +7,6 @@ fastapi==0.85.1
 # for user auth
 PyJWT==2.3.0
 
-# TMP
-mongoengine==0.24.2
-# dnspython==2.1.0  # for MongoEngine iirc
-
 # AWS
 mangum==0.15.1
 

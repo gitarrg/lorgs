@@ -1,6 +1,7 @@
 """RaidZone and Bosses for Patch 9.2 T29: Sepulcher of the First Ones, third tier of Shadowlands."""
 # pylint: disable=line-too-long
 # pylint: disable=C0326  # spaces
+# fmt: off
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.models.raid_zone import RaidZone
@@ -124,13 +125,11 @@ LORDS.add_cast(spell_id=360145, duration=2+8, name="Fearful Trepidation", color=
 LORDS.add_cast(spell_id=360006, duration=2.5, name="Cloud of Carrion", color="#51cc14", icon="spell_shadow_carrionswarm.jpg", show=False)
 
 # Among Us Intermission
-LORDS.add_event(
-    event_type="applydebuff",
-    spell_id=360418,
+LORDS.add_buff(
+    spell_id=360516,
     color="#cc29b1",
     name="Among Us",
-    icon="spell_nzinsanity_shortsighted.jpg", extra_filter="target.role='tank'",
-    until={"event_type": "removedebuff", "spell_id": 360418}
+    icon="spell_nzinsanity_shortsighted.jpg",
 )
 
 

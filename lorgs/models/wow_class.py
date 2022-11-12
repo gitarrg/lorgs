@@ -5,30 +5,39 @@ import typing
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
-from lorgs.models import base
-from lorgs.models.wow_spec import WowSpec
+from lorgs.models.wow_actor import WowActor
 from lorgs.models.wow_spell import WowSpell
 
+if typing.TYPE_CHECKING:
+    from lorgs.models.wow_spec import WowSpec
 
-class WowClass(base.Model):
+
+class WowClass(WowActor):
     """A playable class in wow."""
 
-    def __init__(self, id: int, name: str, color: str = "") -> None:
+    id: int
+    """int: class id, mostly used for sorting."""
 
-        # int: class id, mostly used for sorting
-        self.id = id
-        self.name = name
-        self.color = color
-        self.specs: list[WowSpec] = []
-        self.spells: list[WowSpell] = []
-        self.buffs: list[WowSpell] = []
-        self.debuffs: list[WowSpell] = []
+    name: str
+    """Human readable name. e.g. "Death Knight"."""
 
-        self.name_slug_cap = self.name.replace(" ", "")
-        self.name_slug = utils.slug(self.name)
+    color: str = ""
+    """Hexadecimal color code. e.g. "#FF7C0A"."""
 
-        #: bool: flag for the trinkets/potions groups
-        self.is_other = self.name.lower() == "other"
+    @property
+    def name_slug_cap(self) -> str:
+        """PascalCase version of the Name. eg. "DeathKnight"."""
+        return self.name.replace(" ", "")
+
+    @property
+    def name_slug(self) -> str:
+        """Slugified version of the Name. eg. "deathknight"."""
+        return utils.slug(self.name)
+
+    @property
+    def is_other(self) -> bool:
+        """bool: flag for the trinkets/potions groups"""
+        return self.name.lower() == "other"
 
     def __repr__(self) -> str:
         return f"<Class(name='{self.name}')>"
@@ -37,37 +46,33 @@ class WowClass(base.Model):
         return self.id < other.id
 
     def as_dict(self) -> dict[str, typing.Any]:
-        return {
-            "name": self.name,
-            "name_slug": self.name_slug,
-            "specs": [spec.full_name_slug for spec in self.specs]
-        }
+        return {"name": self.name, "name_slug": self.name_slug, "specs": [spec.full_name_slug for spec in self.specs]}
+
+    @property
+    def specs(self) -> list["WowSpec"]:
+        from lorgs.models.wow_spec import WowSpec
+
+        return [spec for spec in WowSpec.list() if spec.wow_class == self]
 
     ##########################
     # Methods
     #
-    def add_spell(self, **kwargs: typing.Any) -> WowSpell:
-        kwargs.setdefault("color", self.color)
+    def add_spell(self, spell: typing.Optional[WowSpell] = None, **kwargs: typing.Any) -> WowSpell:
         kwargs.setdefault("spell_type", self.name_slug)
+        kwargs.setdefault("color", self.color)
+        return super().add_spell(spell, **kwargs)
 
-        spell = WowSpell(**kwargs)
-        self.spells.append(spell)
-        return spell
+    def add_buff(self, spell: typing.Optional[WowSpell] = None, **kwargs: typing.Any) -> WowSpell:
+        kwargs.setdefault("spell_type", self.name_slug)
+        kwargs.setdefault("color", self.color)
+        return super().add_buff(spell, **kwargs)
 
-    def add_buff(self, spell: typing.Optional[WowSpell] = None, **kwargs: typing.Any) -> None:
+    def add_debuff(self, spell: typing.Optional[WowSpell] = None, **kwargs: typing.Any) -> WowSpell:
+        kwargs.setdefault("spell_type", self.name_slug)
+        kwargs.setdefault("color", self.color)
+        return super().add_debuff(spell, **kwargs)
 
-        if not spell:
-            kwargs.setdefault("color", self.color)
-            kwargs.setdefault("spell_type", self.name_slug)
-            spell = WowSpell(**kwargs)
-
-        self.buffs.append(spell)
-
-    def add_debuff(self, spell: typing.Optional[WowSpell] = None, **kwargs: typing.Any) -> None:
-
-        if not spell:
-            kwargs.setdefault("color", self.color)
-            kwargs.setdefault("spell_type", self.name_slug)
-            spell = WowSpell(**kwargs)
-
-        self.debuffs.append(spell)
+    def add_event(self, event: typing.Optional[WowSpell] = None, **kwargs: typing.Any) -> WowSpell:
+        kwargs.setdefault("spell_type", self.name_slug)
+        kwargs.setdefault("color", self.color)
+        return super().add_event(event, **kwargs)

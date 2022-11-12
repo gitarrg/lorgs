@@ -5,56 +5,49 @@ import typing
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
-from lorgs.models import base
+from lorgs.models.wow_actor import WowActor
+from lorgs.models.wow_class import WowClass
+from lorgs.models.wow_role import WowRole
 from lorgs.models.wow_spell import WowSpell
 
-if typing.TYPE_CHECKING:
-    from lorgs.models.wow_role import WowRole
-    from lorgs.models.wow_class import WowClass
 
-
-def spell_ids(spells: list[WowSpell]) -> list[int]:
-    """Converts a list of Spells to their spell_ids."""
-    return [spell.spell_id for spell in spells]
-
-
-class WowSpec(base.Model):
+class WowSpec(WowActor):
     """docstring for Spec"""
 
-    def __init__(self, wow_class: "WowClass", name: str, role: "WowRole", short_name: str = "") -> None:
-        super().__init__()
-        self.name = name
+    name: str
 
-        self.spells: list[WowSpell] = []
-        self.buffs: list[WowSpell] = []
-        self.debuffs: list[WowSpell] = []
-        self.events: list[WowSpell] = []
+    role: "WowRole"
 
-        self.role = role
-        self.role.specs.append(self)
+    wow_class: "WowClass"
 
-        self.wow_class = wow_class
-        self.wow_class.specs.append(self)
+    short_name: str = ""
+    """Short Version of the Name. eg.: "Prot" or "Resto". Defaults to `self.name`"""
 
-        # Generate some names
-        self.full_name = f"{self.name} {self.wow_class.name}"
-        self.short_name = short_name or self.name # to be overwritten
+    def post_init(self) -> None:
+        self.parents.append(self.wow_class)
+        return super().post_init()
 
-        # slugified names
-        self.name_slug = utils.slug(self.name)
-        self.full_name_slug = f"{self.wow_class.name_slug}-{self.name_slug}"
+    @property
+    def name_slug(self) -> str:
+        """Slugified Version of the Name. eg.: "beastmastery"."""
+        return utils.slug(self.name)
 
-        # str: Spec Name without spaces, but still capCase.. eg.: "BeastMastery"
-        self.name_slug_cap = self.name.replace(" ", "")
+    @property
+    def name_slug_cap(self) -> str:
+        """PascalCase version. eg.: "BeastMastery."""
+        return self.name.replace(" ", "")
 
-        # still used on the flask index page
-        self.icon = f"specs/{self.full_name_slug}.jpg"
+    @property
+    def full_name(self) -> str:
+        """Complete Name including the parent Class. eg.: "Havoc Demon Hunter"."""
+        return f"{self.name} {self.wow_class.name}"
 
-    def __repr__(self) -> str:
-        return f"<Spec({self.full_name})>"
+    @property
+    def full_name_slug(self) -> str:
+        """Slugified version of the full name. eg.: "demonhunter-havoc"."""
+        return f"{self.wow_class.name_slug}-{self.name_slug}"
 
     def __lt__(self, other: "WowSpec") -> bool:
-
         def sort_key(obj: WowSpec) -> tuple["WowRole", "WowClass", str]:
             return (obj.role, obj.wow_class, obj.name)
 
@@ -69,70 +62,24 @@ class WowSpec(base.Model):
             "class": {
                 "name": self.wow_class.name,  # required for the WCL-Header Link
                 "name_slug": self.wow_class.name_slug,
-            }
+            },
         }
-
-    @property
-    def all_spells(self) -> list[WowSpell]:
-        """Get all spells spec can use."""
-        return self.wow_class.spells + self.spells
-
-    @property
-    def all_buffs(self) -> list[WowSpell]:
-        """Get all buffs that are relavent for this spec."""
-        return self.wow_class.buffs + self.buffs
-
-    @property
-    def all_debuffs(self) -> list[WowSpell]:
-        """Get all debuffs that are relavent for this spec."""
-        return self.wow_class.debuffs + self.debuffs
-
-    @property
-    def all_events(self) -> list[WowSpell]:
-        """Get all events that are relavent for this spec."""
-        return self.events
 
     ##########################
     # Methods
     #
     def add_spell(self, spell: typing.Optional[WowSpell] = None, **kwargs: typing.Any) -> WowSpell:
-
-        if not spell:
-            kwargs.setdefault("color", self.wow_class.color)
-            kwargs.setdefault("spell_type", self.full_name_slug)
-            spell = WowSpell(**kwargs)
-
-        self.spells.append(spell)  # Important to keep a ref in memory
-        return spell
-
-    def add_spells(self, *spells: WowSpell) -> None:
-        self.spells.extend(spells)
+        kwargs.setdefault("color", self.wow_class.color)
+        return super().add_spell(spell, **kwargs)
 
     def add_buff(self, spell: typing.Optional[WowSpell] = None, **kwargs) -> WowSpell:
-
-        if not spell:
-            kwargs.setdefault("color", self.wow_class.color)
-            kwargs.setdefault("spell_type", self.full_name_slug)
-            spell = WowSpell(**kwargs)
-
-        self.buffs.append(spell)
-        return spell
-
-    def add_buffs(self, *spells: WowSpell) -> None:
-        self.buffs.extend(spells)
+        kwargs.setdefault("color", self.wow_class.color)
+        return super().add_buff(spell, **kwargs)
 
     def add_debuff(self, spell: typing.Optional[WowSpell] = None, **kwargs) -> WowSpell:
+        kwargs.setdefault("color", self.wow_class.color)
+        return super().add_debuff(spell, **kwargs)
 
-        if not spell:
-            kwargs.setdefault("color", self.wow_class.color)
-            kwargs.setdefault("spell_type", self.full_name_slug)
-            spell = WowSpell(**kwargs)
-
-        self.debuffs.append(spell)
-        return spell
-
-    def add_debuffs(self, *spells: WowSpell) -> None:
-        self.debuffs.extend(spells)
-
-    def add_events(self, *spells: WowSpell) -> None:
-        self.events.extend(spells)
+    def add_event(self, event: typing.Optional[WowSpell] = None, **kwargs: typing.Any) -> WowSpell:
+        kwargs.setdefault("color", self.wow_class.color)
+        return super().add_event(event, **kwargs)

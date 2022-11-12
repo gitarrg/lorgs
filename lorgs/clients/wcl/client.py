@@ -28,8 +28,7 @@ CONCURRENT_CONNECTIONS = int(os.getenv("CONCURRENT_CONNECTIONS") or 10)
 """int: Number of parallel Requests."""
 
 
-class BaseClient():
-
+class BaseClient:
 
     _sem = asyncio.Semaphore(value=CONCURRENT_CONNECTIONS)
     """Semaphore used to control the number of parallel Requests."""
@@ -55,7 +54,7 @@ class BaseClient():
         if cls._instance is None:
             logger.debug(f"creating new {cls.__name__} Instance.")
             cls._instance = cls(*args, **kwargs)
-        return cls._instance # type: ignore
+        return cls._instance  # type: ignore
 
     def __init__(self) -> None:
         self.headers: dict[str, typing.Any] = {}
@@ -63,7 +62,6 @@ class BaseClient():
         session_timeout = aiohttp.ClientTimeout(total=60)
         conn = aiohttp.TCPConnector(limit_per_host=CONCURRENT_CONNECTIONS)
         self.session = aiohttp.ClientSession(connector=conn, timeout=session_timeout)
-
 
     async def ensure_auth(self) -> None:
         """Ensure the Client is authenticated prior making any Requests."""
@@ -186,7 +184,7 @@ class WarcraftlogsClient(BaseClient):
         if raise_errors:
             self.raise_errors(result)
 
-        return result.get("data", {}) # type: ignore
+        return result.get("data", {})  # type: ignore
 
     async def multiquery(self, queries: list[str], raise_errors=True) -> list[typing.Any]:
         """Execute a list of queries as a batch.
@@ -199,4 +197,4 @@ class WarcraftlogsClient(BaseClient):
 
         """
         tasks = [self.query(query, raise_errors=raise_errors) for query in queries]
-        return await asyncio.gather(*tasks) # type: ignore
+        return await asyncio.gather(*tasks)  # type: ignore

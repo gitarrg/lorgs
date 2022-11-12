@@ -1,58 +1,54 @@
 """Class and Functions to manage Report-Instances."""
 
 # IMPORT STANRD LIBRARIES
-import typing
-import textwrap
 import asyncio
-
-# IMPORT THIRD PARTY LIBRARIES
-import arrow
-import mongoengine as me
+import datetime
+import textwrap
+import typing
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import utils
 from lorgs.clients import wcl
-from lorgs.lib import mongoengine_arrow
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
+from lorgs.models.raid_boss import RaidBoss
 from lorgs.models.warcraftlogs_boss import Boss
 from lorgs.models.warcraftlogs_fight import Fight
 from lorgs.models.warcraftlogs_player import Player
 
 
-class Report(warcraftlogs_base.EmbeddedDocument):
+class Report(warcraftlogs_base.BaseModel):
     """Defines a Report read from WarcraftLogs.com and stores in our DB."""
 
-    # 16 digit unique id/code as used on warcraftlogs
-    report_id: str = me.StringField(primary_key=True)
+    report_id: str
+    """16 digit unique id/code as used on warcraftlogs."""
 
-    # time the report (!) has started. The first fight might start later
-    start_time: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField(default=lambda: arrow.get(0))
+    start_time: datetime.datetime = datetime.datetime.min
+    """time the report itself has started. The first fight might start later."""
 
-    # title of the report
-    title: str = me.StringField()
+    title: str = ""
+    """title of the report."""
 
-    zone_id: int = me.IntField(default=0)
+    zone_id: int = 0
 
-    # The guild that the report belongs to. None if it was a logged as a personal report
-    guild: str = me.StringField(default="")
+    guild: str = ""
+    """The guild that the report belongs to. None if it was a logged as a personal report."""
 
-    # The user that uploaded the report.
-    owner: str = me.StringField(default="")
+    owner: str = ""
+    """The user that uploaded the report."""
 
-    # fights in this report keyed by fight_id. (they may or may not be loaded)
-    fights: dict[str, Fight] = me.MapField(me.EmbeddedDocumentField(Fight), default={})
+    fights: list[Fight] = []
+    """fights in this report keyed by fight_id. (they may or may not be loaded)."""
 
-    # players in this report.
-    #   Note: not every player might participate in every fight.
-    players: dict[str, Player] = me.MapField(me.EmbeddedDocumentField(Player), default={})
+    players: list[Player] = []
+    """players in this report.
+    Note: not every player might participate in every fight."""
 
-    def __init__(self, *args: typing.Any, **kwargs: typing.Any):
-        super().__init__(*args, **kwargs)
-        for fight in self.fights.values():
+    def post_init(self) -> None:
+        for fight in self.fights:
             fight.report = self
+            fight.post_init()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"<BaseReport({self.report_id}, num_fights={len(self.fights)})>"
 
     ##########################
@@ -70,8 +66,8 @@ class Report(warcraftlogs_base.EmbeddedDocument):
         }
 
         # for players and fights we only include essential data
-        info["fights"] = {fight.fight_id: fight.summary() for fight in self.fights.values()}
-        info["players"] = {player.source_id: player.summary() for player in self.players.values()}
+        info["fights"] = {fight.fight_id: fight.summary() for fight in self.fights}
+        info["players"] = {player.source_id: player.summary() for player in self.players}
         return info
 
     ##########################
@@ -83,36 +79,35 @@ class Report(warcraftlogs_base.EmbeddedDocument):
         if not fight_data.encounterID:
             return
 
-        fight = Fight()
-        fight.fight_id = fight_data.id
-        fight.report = self
-
-        fight.percent = fight_data.fightPercentage
-        fight.kill = fight_data.kill
-
-        # Fight: Time/Duration
-        start_time = fight_data.startTime / 1000
-        end_time = fight_data.endTime / 1000
-        fight.start_time = self.start_time.shift(seconds=start_time)
-        fight.duration = int((end_time - start_time) * 1000)
+        fight = Fight(
+            fight_id=fight_data.id,
+            percent=fight_data.fightPercentage,
+            kill=fight_data.kill,
+            start_time=self.start_time + datetime.timedelta(milliseconds=fight_data.startTime),
+            duration=fight_data.endTime - fight_data.startTime + 1,  # somehow there is 1ms missing
+        )
+        fight.report = self  # TODO: replace in favor of `post_init()``
 
         # Fight: Boss
-        fight.boss = Boss(boss_id=fight_data.encounterID)
-        if fight.boss: # could be a boss unknown to Lorrgs
+        raid_boss = RaidBoss.get(id=fight_data.encounterID)
+        if raid_boss:
+            fight.boss = Boss.from_raid_boss(raid_boss)
             fight.boss.fight = fight
 
         # store and return
-        self.fights[str(fight.fight_id)] = fight
+        self.fights.append(fight)
         return fight
 
     def get_fight(self, fight_id: int):
         """Get a single fight from this Report."""
-        return self.fights.get(str(fight_id))
+        for fight in self.fights:
+            if fight.fight_id == fight_id:
+                return fight
 
-    def get_fights(self, *fight_ids: int):
+    def get_fights(self, *fight_ids: int) -> list[Fight]:
         """Get a multiple fights based of their fight ids."""
         fights = [self.get_fight(fight_id) for fight_id in fight_ids]
-        return [f for f in fights if f] # filter out nones
+        return [f for f in fights if f]
 
     def add_player(self, actor_data: wcl.ReportActor):
 
@@ -130,22 +125,24 @@ class Report(warcraftlogs_base.EmbeddedDocument):
         player = Player(
             source_id=actor_data.id,
             name=actor_data.name,
-            class_slug = actor_data.subType.lower(),
+            class_slug=actor_data.subType.lower(),
             spec_slug=spec_slug,
         )
-        if player.spec == None:
+
+        if player.class_ == None:
             logger.debug("Skipping unknown Player: %s", player)
             return
 
         # add to to the report
-        self.players[str(player.source_id)] = player
+        self.players.append(player)
 
     ############################################################################
     # Query
     #
     def get_query(self):
         """Get the Query to load this Reports Overview."""
-        return textwrap.dedent(f"""
+        return textwrap.dedent(
+            f"""
         reportData
         {{
             report(code: "{self.report_id}")
@@ -183,20 +180,20 @@ class Report(warcraftlogs_base.EmbeddedDocument):
                 }}
             }}
         }}
-        """)
+        """
+        )
 
-    def process_master_data(self, master_data: wcl.ReportMasterData):
+    def process_master_data(self, master_data: wcl.ReportMasterData) -> None:
         """Create the Players from the passed Report-MasterData"""
         # clear out any old instances
-        self.players = {}
-
+        self.players = []
         for actor_data in master_data.actors:
             self.add_player(actor_data)
 
-    def process_report_fights(self, fights: list[wcl.ReportFight]):
+    def process_report_fights(self, fights: list[wcl.ReportFight]) -> None:
         """Update the Fights in this report."""
         # clear out any old data
-        self.fights = {}
+        self.fights = []
         for fight in fights:
             self.add_fight(fight)
 
@@ -206,7 +203,7 @@ class Report(warcraftlogs_base.EmbeddedDocument):
 
         # Update the Report itself
         self.title = report.title
-        self.start_time = arrow.get(report.startTime)
+        self.start_time = report.startTime
         self.zone_id = report.zone.id
         self.owner = report.owner.name
 
@@ -217,23 +214,20 @@ class Report(warcraftlogs_base.EmbeddedDocument):
             self.process_master_data(report.masterData)
         self.process_report_fights(report.fights)
 
-    async def load_summary(self, raise_errors=False) -> None:
-        await self.load(raise_errors=raise_errors)
-
     async def load_fight(self, fight_id: int, player_ids: list[int]):
         """Load a single Fight from this Report."""
-        fight = self.fights[str(fight_id)]
+        fight = self.get_fight(fight_id=fight_id)
         if not fight:
             raise ValueError("invalid fight id")
 
         await fight.load_players(player_ids=player_ids)
 
-    async def load_fights(self, fight_ids: typing.List[int], player_ids: typing.List[int]):
+    async def load_fights(self, fight_ids: list[int], player_ids: list[int]) -> None:
 
         if not self.fights:
-            await self.load_summary()
+            await self.load()
 
         # queue all tasks at once.
-        # the client will make sure its throttled accordingly 
+        # the client will make sure its throttled accordingly
         tasks = [self.load_fight(fight_id=fight_id, player_ids=player_ids) for fight_id in fight_ids]
         await asyncio.gather(*tasks)

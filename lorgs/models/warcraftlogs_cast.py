@@ -1,70 +1,80 @@
+# IMPORT STANDARD LIBRARIES
+from typing import TYPE_CHECKING, Any, Optional
 
 # IMPORT THIRD PARTY LIBRARIES
-from email.policy import default
-import typing
-import mongoengine as me
+import pydantic
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
+from lorgs.models import base
 from lorgs.models.wow_spell import WowSpell
 
 
-class Cast(me.EmbeddedDocument):
+if TYPE_CHECKING:
+    from lorgs.clients import wcl
+
+
+json_aliases = {
+    "spell_id": "id",
+    "timestamp": "ts",
+    "duration": "d",
+}
+
+
+class Cast(base.BaseModel):
     """An Instance of a Cast of a specific Spell in a Fight."""
 
-    spell_id: int = me.IntField()
+    spell_id: int  #  = pydantic.Field(json_alias="id")
     """ID of the spell/aura."""
 
-    timestamp: int = me.IntField()
+    timestamp: int
     """time the spell was cast, in milliseconds relative to the start of the fight."""
 
-    duration: int = me.IntField()
+    duration: Optional[int] = None
     """time the spell/buff was active in milliseconds."""
 
-    def __init__(self, spell_id: int, timestamp: int, duration=0, event_type: str = "cast", **kwargs):
-        super().__init__(spell_id=spell_id, timestamp=timestamp, duration=duration)
-        self.spell_id = WowSpell.resolve_spell_id(self.spell_id)
-        self.event_type = event_type
+    event_type: str = pydantic.Field(default="cast", exclude=True)
+
+    @classmethod
+    def construct(cls, _fields_set=None, *, __recursive__=True, **values) -> "Cast":
+        values = utils.rename_dict_keys(values, json_aliases, reverse=True)
+        return cls(**values)
+
+    #############################
+
+    @classmethod
+    def from_report_event(cls, event: "wcl.ReportEvent") -> "Cast":
+        spell_id = WowSpell.resolve_spell_id(event.abilityGameID)
+        return cls(
+            spell_id=spell_id,
+            timestamp=event.timestamp,
+            event_type=event.type,
+        )
 
     def __str__(self):
         time_fmt = utils.format_time(self.timestamp)
-        return f"Cast({self.spell_id}, at={time_fmt})"
+        return f"Cast(id={self.spell_id}, ts={time_fmt})"
 
-    def as_dict(self) -> dict[str, typing.Any]:
-        info = {
-            "ts": self.timestamp,
-            "id": self.spell_id,
-        }
-        if self.duration:
-            info["d"] = self.duration
-        return info
+    def dict(self, **kwargs: Any):
+        data = super().dict(**kwargs)
+        return utils.rename_dict_keys(data, json_aliases)
 
-    ##########################
-    # Attributes
-    #
     @property
-    def spell(self) -> WowSpell:
+    def spell(self) -> Optional[WowSpell]:
         return WowSpell.get(spell_id=self.spell_id)
 
-    # @property
-    # def end_time(self):
-    #     """"Time the Spell/Aura faded. (relative to Fight Start, in milliseconds)."""
-    #     return self.timestamp + self.duration
-
-    # @end_time.setter
-    # def end_time(self, value: int) -> None:
-    #     self.duration = (value - self.timestamp)
-
     def get_duration(self) -> int:
-        """TODO: use a property + setter."""
         if self.duration:
             return self.duration
 
         if self.spell:
             return self.spell.duration * 1000
-        
+
         return 0
 
+    ############################################################################
+    # Cast Processing functions
+    #
     def convert_to_start_event(self) -> None:
         """Convert this Cast into a start event.
 
@@ -73,3 +83,60 @@ class Cast(me.EmbeddedDocument):
         """
         self.event_type = self.event_type.replace("remove", "apply")
         self.timestamp -= self.get_duration()
+
+    @staticmethod
+    def process_auras(events: list["Cast"]) -> list["Cast"]:
+        """Calculate Aura Durations from "applybuff" to "applydebuff".
+
+        Also converts "removebuff" events without matching "apply"
+        eg.: a "removebuff" from an Aura that got applied prepull
+
+        """
+        # spell id --> application event
+        active_buffs: dict[int, Cast] = {}
+
+        for event in events:
+            spell_id = event.spell_id
+
+            # track the applications (pref initial)
+            if event.event_type in ("applybuff", "applydebuff"):
+                if event.spell_id in active_buffs:  # this is already tracked
+                    event.spell_id = -1
+                    continue
+
+                active_buffs[spell_id] = event
+                continue
+
+            if event.event_type in ("removebuff", "removedebuff"):
+                start_event = active_buffs.get(spell_id)
+
+                # calc dynamic duration from start -> end
+                if start_event:
+                    start_event.duration = event.timestamp - start_event.timestamp
+                    active_buffs.pop(event.spell_id)
+                    event.spell_id = -1
+                else:
+                    # Automatically create start event
+                    event.convert_to_start_event()
+
+        return [event for event in events if event.spell_id >= 0]
+
+    @staticmethod
+    def process_until_events(casts: list["Cast"]) -> list["Cast"]:
+        """Dynamically set the duration from the corresponding "until"-event."""
+
+        for cast in casts:
+            spell = cast.spell
+            if not (spell and spell.until):
+                continue
+
+            # find valid "until"-events
+            end_events = [e for e in casts if (e.timestamp > cast.timestamp) and (e.spell_id == spell.until.spell_id)]
+            if not end_events:
+                continue
+
+            end_event = end_events[0]
+            end_event.spell_id = -1  # flag for filtering
+            cast.duration = end_event.timestamp - cast.timestamp
+
+        return [c for c in casts if c.spell_id > 0]

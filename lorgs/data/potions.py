@@ -2,6 +2,7 @@
 # pylint: disable=line-too-long
 # pylint: disable=wildcard-import
 # pylint: disable=unused-wildcard-import
+# fmt: off
 from lorgs.data.classes import *
 from lorgs.models.wow_spell import WowSpell
 
@@ -45,6 +46,6 @@ for s in HEAL.specs:
 
 
 # hide all potions by default
-for spell in WowSpell.all:
+for spell in WowSpell.list():
     if spell.spell_type in (TYPE_POTION, TYPE_BUFFS):
         spell.show = False

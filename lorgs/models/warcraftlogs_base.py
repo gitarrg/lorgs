@@ -1,24 +1,20 @@
-
 # IMPORT STANRD LIBRARIES
 import abc
-import re
+import asyncio
 import json
-from typing import Any, Type, TypeVar
+import re
 import typing
-
-# IMPORT THIRD PARTY LIBRARIES
-import mongoengine as me
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.clients.wcl import WarcraftlogsClient
-
+from lorgs.models import base
 
 VALID_OPS = ["eq", "lt", "lte", "gt", "gte"]
 RE_KEY = r"([\w\-]+)"  # expr to match the key/attr name. eg.: spec or role name
 RE_OPS = r"|".join(VALID_OPS)
 RE_VAL = r"\d+"
 
-QUERY_ARG_RE = fr"(?P<key>{RE_KEY})\.((?P<op>{RE_OPS})\.)?(?P<value>{RE_VAL})"
+QUERY_ARG_RE = rf"(?P<key>{RE_KEY})\.((?P<op>{RE_OPS})\.)?(?P<value>{RE_VAL})"
 
 
 def query_args_to_mongo(*query_args: str, prefix="") -> dict[str, str]:
@@ -54,7 +50,7 @@ def query_args_to_mongo(*query_args: str, prefix="") -> dict[str, str]:
 
         # special case for equals
         if op == "eq":
-            op = "" # no operator suffix.
+            op = ""  # no operator suffix.
 
             # unless...
             # check for non existence, as there will be no field with value 0
@@ -63,7 +59,7 @@ def query_args_to_mongo(*query_args: str, prefix="") -> dict[str, str]:
 
         # assamble the parts
         parts = [prefix, key, op]
-        parts = [part for part in parts if part] # filter eg.: no-prefix or no-op
+        parts = [part for part in parts if part]  # filter eg.: no-prefix or no-op
         key = ".".join(parts)
         key = key.replace(".", "__")
 
@@ -73,11 +69,10 @@ def query_args_to_mongo(*query_args: str, prefix="") -> dict[str, str]:
     return mongo_kwargs
 
 
-W = TypeVar('W', bound="wclclient_mixin")
+W = typing.TypeVar("W", bound="wclclient_mixin")
 
 
-class wclclient_mixin():
-
+class wclclient_mixin:
     @property
     def client(self) -> WarcraftlogsClient:
         return WarcraftlogsClient.get_instance()
@@ -97,8 +92,8 @@ class wclclient_mixin():
 
         """
         # combine all filters
-        queries = [q for q in queries if q]   # type: ignore # filter out empty statements
-        queries = [f"({q})" for q in queries] # type: ignore # wrap each into bracers
+        queries = [q for q in queries if q]  # type: ignore # filter out empty statements
+        queries = [f"({q})" for q in queries]  # type: ignore # wrap each into bracers
 
         queries_combined = f" {op} ".join(queries)
         return f"({queries_combined})"
@@ -115,38 +110,19 @@ class wclclient_mixin():
             chunks_size[int, optional]: load in chunks of this size.
 
         """
-        queries = [item.get_query() for item in items]
+        tasks = [item.load(raise_errors=raise_errors) for item in items]
+        await asyncio.gather(*tasks)
 
-        results = await self.client.multiquery(queries, raise_errors=raise_errors)
-        for obj, result in zip(items, results):
-            if result:
-                obj.process_query_result(**result)
+    async def load(self, raise_errors=False) -> None:
+        query = self.get_query()
+        if not query:
+            return
 
-    async def load(self, *args: Any, **kwargs: Any) -> None:
-        return await self.load_many([self], *args, **kwargs)
+        result = await self.client.query(query=query, raise_errors=raise_errors)
 
-
-class EmbeddedDocument(me.EmbeddedDocument, wclclient_mixin):
-    """docstring for Base"""
-    meta = {
-        "allow_inheritance": True,
-        "strict": False # ignore non existing properties
-    }
+        if result:
+            self.process_query_result(**result)
 
 
-T = TypeVar('T', bound="Document")
-
-
-class Document(me.Document, wclclient_mixin):
+class BaseModel(base.BaseModel, wclclient_mixin):
     """docstring for Document"""
-
-    meta = {
-        'abstract': True,
-        "strict": False # ignore non existing properties
-    }
-
-    @classmethod
-    def get_or_create(cls: Type[T], **kwargs: typing.Any) -> T:
-        obj = cls.objects(**kwargs).first()
-        obj = obj or cls(**kwargs)
-        return obj  # type: ignore

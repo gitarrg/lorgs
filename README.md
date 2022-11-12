@@ -14,3 +14,10 @@ Please make sure to update tests as appropriate.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
+
+
+## Formats:
+
+- Dates/Timestamps: ISO 8601
+- Durations: Integers representing Milliseconds (spells store their duration in seconds)
+

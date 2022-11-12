@@ -1,11 +1,10 @@
-
 import dotenv
-dotenv.load_dotenv() # pylint: disable=wrong-import-position
+
+dotenv.load_dotenv()  # pylint: disable=wrong-import-position
 import asyncio
 
 
 from lorgs import data  # pylint: disable=unused-import
-from lorgs import db   # pylint: disable=unused-import
 
 from lorgs.models.warcraftlogs_comp_ranking import CompRanking
 

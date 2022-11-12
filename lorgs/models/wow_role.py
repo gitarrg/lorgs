@@ -10,23 +10,22 @@ if typing.TYPE_CHECKING:
     from lorgs.models.wow_spec import WowSpec
 
 
-class WowRole(base.Model):
+class WowRole(base.MemoryModel):
     """A role like Tank, Healer, DPS."""
 
-    def __init__(self, id: int, name: str, code: str = "") -> None:
-        self.id = id  #used for sorting
-        self.name = name
+    id: int  # used for sorting
 
-        self.code = code or name.lower()
-        """Lowercase short Version. eg.: `tank`, `heal`, `mdps` or `rdps`."""
+    name: str
+    """Full Name of the role. eg.: "Healer"."""
 
-        self.specs: list["WowSpec"] = []
+    code: str
+    """Lowercase short Version. eg.: `tank`, `heal`, `mdps` or `rdps`."""
 
-    def __repr__(self) -> str:
-        return f"<Role({self.name})>"
+    @property
+    def specs(self) -> list["WowSpec"]:
+        from lorgs.models.wow_spec import WowSpec
 
-    def __str__(self) -> str:
-        return self.code
+        return [spec for spec in WowSpec.list() if spec.role == self]
 
     def __lt__(self, other: "WowRole") -> bool:
         return self.id < other.id
@@ -36,7 +35,7 @@ class WowRole(base.Model):
             "id": self.id,
             "name": self.name,
             "code": self.code,
-            "specs": [spec.full_name_slug for spec in self.specs]
+            "specs": [spec.full_name_slug for spec in self.specs],
         }
 
     @property

@@ -1,27 +1,24 @@
 # IMPORT STANRD LIBRARIES
 from collections import defaultdict
-import asyncio
 import datetime
 import textwrap
 import typing
 
 # IMPORT THIRD PARTY LIBRARIES
-import arrow
-import mongoengine as me
-from lorgs import utils
+import pydantic
 
 # IMPORT LOCAL LIBRARIES
+from lorgs import utils
 from lorgs.clients import wcl
-from lorgs.lib import mongoengine_arrow
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
-from lorgs.models.raid_boss import RaidBoss
 from lorgs.models.warcraftlogs_boss import Boss
 from lorgs.models.warcraftlogs_player import Player
 from lorgs.models.wow_spec import WowSpec
 
 if typing.TYPE_CHECKING:
     from lorgs.models.warcraftlogs_report import Report
+    from lorgs.models.warcraftlogs_actor import BaseActor
 
 
 def get_composition(players: typing.Iterable[Player]) -> dict:
@@ -45,39 +42,34 @@ def get_composition(players: typing.Iterable[Player]) -> dict:
     return comp
 
 
-class Fight(warcraftlogs_base.EmbeddedDocument):
+class Fight(warcraftlogs_base.BaseModel):
 
-    fight_id = me.IntField(primary_key=True)
+    fight_id: int
 
-    start_time: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField()
+    start_time: datetime.datetime
     """Encounter Start."""
 
-    duration: int = me.IntField(default=0)
+    duration: int = 0
     """fight duration in milliseconds."""
 
-    # deprecated in favor of "duration".
-    end_time_old: arrow.Arrow = mongoengine_arrow.ArrowDateTimeField(db_field="end_time")
+    players: list[Player] = []
+    boss: typing.Optional[Boss] = None
 
-    boss_id = me.IntField()
-    players: typing.Dict[str, Player] = me.MapField(me.EmbeddedDocumentField(Player))
-    boss: typing.Optional[Boss] = me.EmbeddedDocumentField(Boss)
+    composition: dict = {}
+    deaths: int = 0
+    damage_taken: int = 0
 
-    composition = me.DictField()
-    deaths = me.IntField(default=0)
-    ilvl = me.FloatField(default=0)
-    damage_taken = me.IntField(default=0)
+    percent: float = 0
+    """boss percentage at the end of the fight."""
+    kill: bool = True
 
-    # boss percentage at the end.
-    percent = me.FloatField(default=0)
-    kill = me.BooleanField(default=True)
+    report: typing.Optional["Report"] = pydantic.Field(default=None, exclude=True)
 
-    def __init__(self, *args: typing.Any, **kwargs: typing.Any):
-        super().__init__(*args, **kwargs)
-        self.report: typing.Optional["Report"] = None
-        if self.boss:
-            self.boss.fight = self
-        for player in self.players.values():
-            player.fight = self
+    def post_init(self) -> None:
+        actors = self.players + [self.boss]
+        for actor in actors:
+            if actor:
+                actor.fight = self
 
     def __str__(self):
         return f"{self.__class__.__name__}(id={self.fight_id}, players={len(self.players)})"
@@ -89,7 +81,6 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
         return {
             # required for spec rankings
             "report_id": self.report and self.report.report_id or "",
-
             "fight_id": self.fight_id,
             "percent": self.percent,
             "kill": self.kill,
@@ -101,7 +92,7 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
     def as_dict(self, player_ids: list[int] = []) -> dict:
 
         # Get players
-        players = list(self.players.values())
+        players = self.players
         if player_ids:
             players = [player for player in players if player.source_id in player_ids]
         players = sorted(players, key=lambda player: (player.spec.role, player.spec, player.name))
@@ -116,13 +107,8 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
     ##########################
     # Attributes
     @property
-    def end_time(self) -> arrow.Arrow:
-        return self.start_time.shift(seconds=self.duration / 1000)
-
-    @end_time.setter
-    def end_time(self, value: datetime.datetime):
-        delta = value - self.start_time
-        self.duration = int(delta.total_seconds() * 1000)
+    def end_time(self) -> datetime.datetime:
+        return self.start_time + datetime.timedelta(milliseconds=self.duration)
 
     @property
     def start_time_rel(self) -> int:
@@ -134,32 +120,22 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
     def end_time_rel(self) -> int:
         """fight end time, relative to the report (in milliseconds)."""
         t = self.report.start_time.timestamp() if self.report else 0
-        return int(1000 * (self.end_time.timestamp() -  t))
-
-    @property
-    def raid_boss(self) -> RaidBoss:
-        return RaidBoss.get(id=self.boss_id)
+        return int(1000 * (self.end_time.timestamp() - t))
 
     #################################
     # Methods
     #
-    def get_player(self, **kwargs) -> Player:
+    def get_player(self, **kwargs) -> typing.Optional[Player]:
         """Returns a single Player based on the kwargs."""
-        return utils.get(self.players.values(), **kwargs) # type: ignore
+        return utils.get(self.players, **kwargs)
 
-    def get_players(self, source_ids: typing.Optional[list[int]] = None):
+    def get_players(self, *source_ids: int) -> list[Player]:
         """Gets multiple players based on source id."""
-        players = list(self.players.values())
+        players = self.players
         if source_ids:
             players = [player for player in players if player.source_id in source_ids]
 
         return [player for player in players if player]
-
-    def add_boss(self, boss_id: int) -> RaidBoss:
-        self.boss_id = boss_id
-        self.boss = Boss(boss_id=boss_id)
-        self.boss.fight = self
-        return self.boss
 
     ############################################################################
     # Query
@@ -179,7 +155,8 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
         if not self.report:
             raise ValueError("Missing Parent Report")
 
-        return textwrap.dedent(f"""\
+        return textwrap.dedent(
+            f"""\
             reportData
             {{
                 report(code: "{self.report.report_id}")
@@ -187,7 +164,8 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
                     summary: table({self.table_query_args}, dataType: Summary)
                 }}
             }}
-        """)
+        """
+        )
 
     def process_players(self, summary_data: "wcl.ReportSummary"):
 
@@ -219,17 +197,19 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
                 total = 0
 
             # create and return yield player object
-            player = Player()
+            player = Player(
+                source_id=composition_data.id,
+                name=composition_data.name,
+                class_slug=spec.wow_class.name_slug,
+                spec_slug=spec.full_name_slug,
+                total=int(total),
+            )
             player.fight = self
-            player.spec_slug = spec.full_name_slug
-            player.source_id = composition_data.id
-            player.name = composition_data.name
-            player.total = int(total)
             player.process_death_events(summary_data.deathEvents)
-            self.players[str(player.source_id)] = player
+            self.players.append(player)
 
         # call this before filtering to always get the full comp
-        self.composition = get_composition(self.players.values())
+        self.composition = get_composition(self.players)
 
     def process_query_result(self, **query_result: typing.Any):
         """Process the data retured from an Overview-Query."""
@@ -240,25 +220,6 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
         summary_data = report_data.report.summary
         self.duration = self.duration or summary_data.totalTime
         self.process_players(summary_data)
-
-    async def load_summary(self, force=False) -> None:
-        """Load this fights Summary.
-
-        Args:
-            force(boolean, optional): load even if its already loaded
-
-        """
-        if force:
-            self.players = {}
-
-        if self.players:
-            return
-
-        query = self.get_query()
-        result = await self.client.query(query)
-
-        query_data = wcl.Query(**result)
-        self.process_overview(query_data)
 
     ############################################################################
     #   Load Player:
@@ -271,19 +232,15 @@ class Fight(warcraftlogs_base.EmbeddedDocument):
             await self.load()
 
         # Get Players to load
-        players_to_load = self.get_players(player_ids)
-        players_to_load = [player for player in players_to_load if not player.casts]
-
-        # see if we need to load the boss
-        boss = [] if (self.boss and self.boss.casts) else [self.boss]
-
-        if not (players_to_load or boss):
+        actors_to_load: list["BaseActor"] = []
+        actors_to_load += self.get_players(*player_ids)
+        actors_to_load += [self.boss] if self.boss else []
+        actors_to_load = [actor for actor in actors_to_load if not actor.casts]
+        if not actors_to_load:
             return
 
         # load
-        tasks = [actor.load() for actor in players_to_load + boss]
-        await asyncio.gather(*tasks)
+        await self.load_many(actors_to_load)  # type: ignore
 
-        # re-add them to the dict, as otherwise we get some mongodb issues
-        for actor in players_to_load:
-            self.players[str(actor.source_id)] = actor
+        # Create a new list (otherwise pydantic would consider it as unset )
+        self.players = [p for p in self.players]
