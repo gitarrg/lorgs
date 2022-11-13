@@ -43,7 +43,7 @@ async def test1() -> None:
     await load_user_report.main(message=message)
 
 
-async def main():
+async def main() -> None:
     await test1()
 
 
