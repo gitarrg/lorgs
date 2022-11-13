@@ -2,17 +2,20 @@
 import abc
 import textwrap
 import typing
+from typing import ClassVar, Optional
 
 # IMPORT THIRD PARTY LIBRARIES
+import blinker
 import pydantic
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import events, utils
+from lorgs import utils
 from lorgs.clients import wcl
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
 from lorgs.models.warcraftlogs_cast import Cast, process_auras, process_until_events
 from lorgs.models.wow_spell import WowSpell, build_spell_query
+
 
 if typing.TYPE_CHECKING:
     from lorgs.models.warcraftlogs_fight import Fight
@@ -29,7 +32,10 @@ class BaseActor(warcraftlogs_base.BaseModel):
     source_id: int = -1
     casts: list[Cast] = []
 
-    fight: typing.Optional["Fight"] = pydantic.Field(exclude=True, default=None, repr=False)
+    fight: Optional["Fight"] = pydantic.Field(exclude=True, default=None, repr=False)
+
+    # Events
+    event_actor_load: ClassVar[blinker.Signal] = blinker.signal("actor.load")
 
     ############################################################################
     #
@@ -59,14 +65,14 @@ class BaseActor(warcraftlogs_base.BaseModel):
         return self.get_actor_type()
 
     async def load(self, *args: typing.Any, **kwargs: typing.Any) -> None:
-        await events.submit("actor.load.start", actor=self)
+        self.event_actor_load.send(self, status="start")
         try:
             await super().load(*args, **kwargs)
         except:
-            await events.submit("actor.load.failed", actor=self)
+            self.event_actor_load.send(self, status="failed")
             raise
         else:
-            await events.submit("actor.load.done", actor=self)
+            self.event_actor_load.send(self, status="success")
 
     ############################################################################
     #

@@ -11,3 +11,4 @@ PyJWT==2.3.0
 mangum==0.15.1
 
 redis==4.3.4
+blinker==1.5
