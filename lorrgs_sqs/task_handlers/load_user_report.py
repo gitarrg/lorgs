@@ -23,7 +23,7 @@ def set_task_item_status(task: Task):
         "success": task.STATUS.DONE,
     }
 
-    async def handler(actor: warcraftlogs_actor.BaseActor, status: str) -> None:
+    def handler(actor: warcraftlogs_actor.BaseActor, status: str) -> None:
         # actor: typing.Optional["warcraftlogs_actor.BaseActor"] = event.payload.get("actor")
         if not actor:
             return
