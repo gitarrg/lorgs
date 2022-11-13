@@ -85,6 +85,7 @@ class BaseModel(pydantic.BaseModel):
     @classmethod
     def get_key(cls, **kwargs) -> str:
         """Generate a `key` based on the given `kwargs`."""
+        kwargs.setdefault("table_name", cls.get_table_name())
         return cls.key.format(**kwargs)
 
     @classmethod

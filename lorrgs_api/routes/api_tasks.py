@@ -5,6 +5,7 @@ import fastapi
 # IMPORT LOCAL LIBRARIES
 from lorgs.models.task import Task
 
+
 router = fastapi.APIRouter(tags=["tasks"], prefix="/tasks")
 
 
@@ -15,7 +16,7 @@ router = fastapi.APIRouter(tags=["tasks"], prefix="/tasks")
 async def get_task(response: fastapi.Response, task_id):
     response.headers["Cache-Control"] = "no-cache"
 
-    task = Task.get(key=task_id)
+    task = Task.get(task_id=task_id)
     if not task:
         return "Task not found.", 404
 

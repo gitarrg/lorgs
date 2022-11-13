@@ -103,7 +103,7 @@ async def load_user_report(response: fastapi.Response, report_id: str, fight: st
     message_id = message["MessageId"]
 
     # task object to help track the progress
-    task = Task(key=message_id, status=Task.STATUS.WAITING)
+    task = Task(task_id=message_id, status=Task.STATUS.WAITING)
 
     # Add subitems to track the status more granual
     for (f, p) in itertools.product(fight_ids, player_ids):

@@ -132,11 +132,11 @@ async def test_load_with_progress() -> None:
 
     from lorgs.models.task import Task
 
-    task = Task.get(key="dev")
+    task = Task.get_or_create(task_id="dev")
     # task.items["1.5"]["status"] = Task.STATUS.IN_PROGRESS
 
     # task.set("items.1_5", {"status": "changed"})
-    task.set("items.1_5.status", "changed9")
+    # task.set("items.1_5.status", "changed9")
 
     REPORT_ID = "LAjpTGtv7FZrP9YH"
     FIGHT_IDS = [2, 3, 4, 6, 7, 8, 9]
@@ -144,7 +144,7 @@ async def test_load_with_progress() -> None:
 
     ################################
     # Create Status Object
-    task = Task(key="dev", status=Task.STATUS.WAITING)
+    task = Task(task_id="dev", status=Task.STATUS.WAITING)
     task.items = {}
     for (f, p) in itertools.product(FIGHT_IDS, PLAYER_IDS):
         task.items[f"{f}_{p}"] = {"fight": f, "player": p, "status": task.status}
@@ -152,8 +152,8 @@ async def test_load_with_progress() -> None:
 
     ################################
     # Main
-    user_report = UserReport.from_report_id(report_id=REPORT_ID, create=True)
-    await user_report.report.load_fights(fight_ids=FIGHT_IDS, player_ids=PLAYER_IDS)
+    user_report = UserReport.get_or_create(report_id=REPORT_ID)
+    await user_report.load_fights(fight_ids=FIGHT_IDS, player_ids=PLAYER_IDS)
 
 
 async def main():
@@ -163,8 +163,8 @@ async def main():
     # await test_load_single_player()
     # await test_load_multiple_players()
     # await test_load_multiple_fights()
-    await test_load()
-    # await test_load_with_progress()
+    # await test_load()
+    await test_load_with_progress()
 
 
 if __name__ == "__main__":

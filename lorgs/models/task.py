@@ -1,14 +1,14 @@
 """Model to Store Task Status."""
 
 # IMPORT STANDARD LIBRARIES
-import typing
 import datetime
+import typing
 
 # IMPORT LOCAL LIBRARIES
-from lorgs.clients import redis_store
+from lorgs.models.base import redis
 
 
-class Task(redis_store.RedisModel):
+class Task(redis.RedisModel):
     """"""
 
     class STATUS:
@@ -18,10 +18,14 @@ class Task(redis_store.RedisModel):
         DONE = "done"
         FAILED = "failed"
 
-    # expire time for the tasks (1 hour)
-    ttl = 60 * 60
-
+    task_id: str
     status: str = STATUS.NEW
     updated: datetime.datetime = datetime.datetime.now()
     message: str = ""
     items: dict[str, typing.Any] = {}
+
+    # Config
+
+    key: typing.ClassVar[str] = "{table_name}:{task_id}"
+    # expire time for the tasks (1 hour)
+    ttl: typing.ClassVar[int] = 60 * 60

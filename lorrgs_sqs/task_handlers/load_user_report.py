@@ -55,7 +55,7 @@ async def main(message) -> None:
 
     # task status Updates
     message_id = message.get("messageId")
-    task = Task.get(key=message_id, create=True)
+    task = Task.get_or_create(task_id=message_id)
     task.set(status=task.STATUS.IN_PROGRESS)
 
     task_updater = set_task_item_status(task)
