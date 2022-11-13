@@ -84,59 +84,59 @@ class Cast(base.BaseModel):
         self.event_type = self.event_type.replace("remove", "apply")
         self.timestamp -= self.get_duration()
 
-    @staticmethod
-    def process_auras(events: list["Cast"]) -> list["Cast"]:
-        """Calculate Aura Durations from "applybuff" to "applydebuff".
 
-        Also converts "removebuff" events without matching "apply"
-        eg.: a "removebuff" from an Aura that got applied prepull
+def process_auras(events: list[Cast]) -> list[Cast]:
+    """Calculate Aura Durations from "applybuff" to "applydebuff".
 
-        """
-        # spell id --> application event
-        active_buffs: dict[int, Cast] = {}
+    Also converts "removebuff" events without matching "apply"
+    eg.: a "removebuff" from an Aura that got applied prepull
 
-        for event in events:
-            spell_id = event.spell_id
+    """
+    # spell id --> application event
+    active_buffs: dict[int, Cast] = {}
 
-            # track the applications (pref initial)
-            if event.event_type in ("applybuff", "applydebuff"):
-                if event.spell_id in active_buffs:  # this is already tracked
-                    event.spell_id = -1
-                    continue
+    for event in events:
+        spell_id = event.spell_id
 
-                active_buffs[spell_id] = event
+        # track the applications (pref initial)
+        if event.event_type in ("applybuff", "applydebuff"):
+            if event.spell_id in active_buffs:  # this is already tracked
+                event.spell_id = -1
                 continue
 
-            if event.event_type in ("removebuff", "removedebuff"):
-                start_event = active_buffs.get(spell_id)
+            active_buffs[spell_id] = event
+            continue
 
-                # calc dynamic duration from start -> end
-                if start_event:
-                    start_event.duration = event.timestamp - start_event.timestamp
-                    active_buffs.pop(event.spell_id)
-                    event.spell_id = -1
-                else:
-                    # Automatically create start event
-                    event.convert_to_start_event()
+        if event.event_type in ("removebuff", "removedebuff"):
+            start_event = active_buffs.get(spell_id)
 
-        return [event for event in events if event.spell_id >= 0]
+            # calc dynamic duration from start -> end
+            if start_event:
+                start_event.duration = event.timestamp - start_event.timestamp
+                active_buffs.pop(event.spell_id)
+                event.spell_id = -1
+            else:
+                # Automatically create start event
+                event.convert_to_start_event()
 
-    @staticmethod
-    def process_until_events(casts: list["Cast"]) -> list["Cast"]:
-        """Dynamically set the duration from the corresponding "until"-event."""
+    return [event for event in events if event.spell_id >= 0]
 
-        for cast in casts:
-            spell = cast.spell
-            if not (spell and spell.until):
-                continue
 
-            # find valid "until"-events
-            end_events = [e for e in casts if (e.timestamp > cast.timestamp) and (e.spell_id == spell.until.spell_id)]
-            if not end_events:
-                continue
+def process_until_events(casts: list[Cast]) -> list[Cast]:
+    """Dynamically set the duration from the corresponding "until"-event."""
 
-            end_event = end_events[0]
-            end_event.spell_id = -1  # flag for filtering
-            cast.duration = end_event.timestamp - cast.timestamp
+    for cast in casts:
+        spell = cast.spell
+        if not (spell and spell.until):
+            continue
 
-        return [c for c in casts if c.spell_id > 0]
+        # find valid "until"-events
+        end_events = [e for e in casts if (e.timestamp > cast.timestamp) and (e.spell_id == spell.until.spell_id)]
+        if not end_events:
+            continue
+
+        end_event = end_events[0]
+        end_event.spell_id = -1  # flag for filtering
+        cast.duration = end_event.timestamp - cast.timestamp
+
+    return [c for c in casts if c.spell_id > 0]

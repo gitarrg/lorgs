@@ -11,7 +11,7 @@ from lorgs import events, utils
 from lorgs.clients import wcl
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
-from lorgs.models.warcraftlogs_cast import Cast
+from lorgs.models.warcraftlogs_cast import Cast, process_auras, process_until_events
 from lorgs.models.wow_spell import WowSpell, build_spell_query
 
 if typing.TYPE_CHECKING:
@@ -190,8 +190,8 @@ class BaseActor(warcraftlogs_base.BaseModel):
 
         ##############################
         # Post Processing
-        self.casts = Cast.process_until_events(self.casts)
-        self.casts = Cast.process_auras(self.casts)
+        self.casts = process_until_events(self.casts)
+        self.casts = process_auras(self.casts)
 
         # Filter out same event at the same time (eg.: raid wide debuff apply)
         self.casts = utils.uniqify(self.casts, key=lambda cast: (cast.spell_id, int(cast.timestamp / 1000)))
