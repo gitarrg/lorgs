@@ -5,24 +5,26 @@ to be triggered via SQS
 """
 # IMPORT STANDARD LIBRARIES
 import json
-import typing
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import data  # pylint: disable=unused-import
-from lorgs import events
+from lorgs.models import warcraftlogs_actor
 from lorgs.models.task import Task
 from lorgs.models.warcraftlogs_user_report import UserReport
 
 
-if typing.TYPE_CHECKING:
-    from lorgs.models import warcraftlogs_actor
+def set_task_item_status(task: Task):
+    """Create a Callback to update an Item in Task."""
 
+    # map event names to task status
+    event_to_status = {
+        "start": task.STATUS.IN_PROGRESS,
+        "failed": task.STATUS.FAILED,
+        "success": task.STATUS.DONE,
+    }
 
-def set_task_item_status(task: Task, status: str):
-    """Create a Callback to update an Item in Task to the given Status."""
-
-    async def setter(event: events.Event) -> None:
-        actor: typing.Optional["warcraftlogs_actor.BaseActor"] = event.payload.get("actor")
+    async def handler(actor: warcraftlogs_actor.BaseActor, status: str) -> None:
+        # actor: typing.Optional["warcraftlogs_actor.BaseActor"] = event.payload.get("actor")
         if not actor:
             return
 
@@ -31,9 +33,10 @@ def set_task_item_status(task: Task, status: str):
         if (fight_id <= 0) or (source_id <= 0):
             return
 
+        status = event_to_status.get(status, status)
         task.set(**{f"items.{fight_id}_{source_id}.status": status})
 
-    return setter
+    return handler
 
 
 async def load_user_report(report_id: str, fight_ids: list[int] = [], player_ids: list[int] = [], **kwargs) -> None:
@@ -48,15 +51,15 @@ async def load_user_report(report_id: str, fight_ids: list[int] = [], player_ids
     user_report.save()
 
 
-async def main(message):
+async def main(message) -> None:
 
     # task status Updates
     message_id = message.get("messageId")
     task = Task.get(key=message_id, create=True)
     task.set(status=task.STATUS.IN_PROGRESS)
-    events.register("actor.load.start", set_task_item_status(task, task.STATUS.IN_PROGRESS))
-    events.register("actor.load.done", set_task_item_status(task, task.STATUS.DONE))
-    events.register("actor.load.failed", set_task_item_status(task, task.STATUS.FAILED))
+
+    task_updater = set_task_item_status(task)
+    warcraftlogs_actor.BaseActor.event_actor_load.connect(task_updater)
 
     # parse input
     message_body = message.get("body")
