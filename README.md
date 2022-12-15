@@ -4,7 +4,7 @@ simple webapp to analyze and compare cooldown usage in top logs by spec/comp.
 
 ## Link
 
-👉 [lorrgs.nw.r.appspot.com](https://lorrgs.nw.r.appspot.com/).
+👉 [lorrgs.io](https://lorrgs.io/).
 
 
 ## Contributing
