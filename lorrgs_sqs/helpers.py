@@ -5,7 +5,7 @@ from lorgs.data.raids import VAULT_OF_THE_INCARNATES
 PAYLOAD_EXPANDERS = {
     "spec_slug": [spec.full_name_slug for spec in ALL_SPECS],
     "boss_slug": [boss.full_name_slug for boss in VAULT_OF_THE_INCARNATES.bosses],
-    "difficulty": ["mythic"],
+    "difficulty": ["heroic", "mythic"],
     "metric": ["dps", "hps", "bossdps"],
 }
 
