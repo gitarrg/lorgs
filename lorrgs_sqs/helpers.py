@@ -1,13 +1,10 @@
 from lorgs.data.classes import ALL_SPECS
-from lorgs.data.raids import CASTLE_NATHRIA, SANCTUM_OF_DOMINATION, SEPULCHER_OF_THE_FIRST_ONES
-
-
-fated_bosses = CASTLE_NATHRIA.bosses + SANCTUM_OF_DOMINATION.bosses + SEPULCHER_OF_THE_FIRST_ONES.bosses
+from lorgs.data.raids import VAULT_OF_THE_INCARNATES
 
 
 PAYLOAD_EXPANDERS = {
     "spec_slug": [spec.full_name_slug for spec in ALL_SPECS],
-    "boss_slug": [boss.full_name_slug for boss in fated_bosses],
+    "boss_slug": [boss.full_name_slug for boss in VAULT_OF_THE_INCARNATES.bosses],
     "difficulty": ["mythic"],
     "metric": ["dps", "hps", "bossdps"],
 }
