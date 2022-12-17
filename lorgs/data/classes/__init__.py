@@ -1,4 +1,6 @@
 """All Playable Classes in the Game."""
+from __future__ import annotations
+
 from lorgs.data.classes.deathknight import *
 from lorgs.data.classes.demonhunter import *
 from lorgs.data.classes.druid import *

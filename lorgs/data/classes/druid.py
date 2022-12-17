@@ -29,7 +29,7 @@ DRUID_RESTORATION = WowSpec(role=HEAL, wow_class=DRUID, name="Restoration", shor
 ################################################################################
 # Spells
 #
-DRUID.add_spell(             spell_id=323764, cooldown=60,  duration=4,  color=COL_NF,    name="Convoke the Spirits",            icon="ability_ardenweald_druid.jpg")
+DRUID.add_spell(             spell_id=391528, cooldown=60,  duration=4,  color=COL_NF,    name="Convoke the Spirits",            icon="ability_ardenweald_druid.jpg")
 DRUID.add_spell(             spell_id=323546, cooldown=180, duration=20, color=COL_VENTR, name="Ravenous Frenzy",                icon="ability_revendreth_druid.jpg",              show=False)
 
 # Utils
@@ -66,7 +66,7 @@ DRUID_GUARDIAN.add_spell(    spell_id=22812,  cooldown=60,  duration=8,         
 
 DRUID_RESTORATION.add_spell( spell_id=197721, cooldown=90,  duration=8,  color="#7ec44d", name="Flourish",                       icon="spell_druid_wildburst.jpg",                 show=False)
 DRUID_RESTORATION.add_spell( spell_id=740,    cooldown=180, duration=6,  color="#6cbfd9", name="Tranquility",                    icon="spell_nature_tranquility.jpg")
-DRUID_RESTORATION.add_buff(  spell_id=117679, cooldown=180, duration=30,                  name="Incarnation: Tree of Life",      icon="ability_druid_improvedtreeform.jpg", wowhead_data="spell=33891")
+DRUID_RESTORATION.add_buff(  spell_id=33891,  cooldown=0,   duration=9,                   name="Incarnation: Tree of Life",      icon="ability_druid_improvedtreeform.jpg", wowhead_data="spell=33891")
 
 
 # Additional Spells (not tracked)
