@@ -33,11 +33,9 @@ class RedisModel(base.BaseModel):
     def get(cls: Type[TRedisModel], **kwargs: Any) -> Optional[TRedisModel]:
         """Get a Object using its Key."""
         key = cls.get_key(**kwargs)
-        print("GET", key)
         data = redis_client.json().get(key) or {}
-
         if data:
-            return cls.construct(data)
+            return cls(**data)
         else:
             return None
 
@@ -68,4 +66,5 @@ class RedisModel(base.BaseModel):
         for path, value in kwargs.items():
             if not path.startswith("."):
                 path = f".{path}"
+
             redis_client.json().set(name=key, path=path, obj=value)

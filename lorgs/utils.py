@@ -1,11 +1,13 @@
 """A Collection of very generic Helper Functions."""
 # pylint: disable=invalid-name
-from operator import attrgetter
+from __future__ import annotations
+
 import asyncio
 import datetime
 import functools
 import itertools
 import typing
+from operator import attrgetter
 
 
 T = typing.TypeVar("T")

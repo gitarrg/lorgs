@@ -2,14 +2,16 @@ import asyncio
 import itertools
 import json
 
+# fmt: off
 import dotenv
+
+
+dotenv.load_dotenv() 
+# fmt: on
 
 from lorgs.models import warcraftlogs_user_report
 from lorgs.models.task import Task
 from lorrgs_sqs.handler import load_user_report
-
-
-dotenv.load_dotenv()
 
 
 async def test1() -> None:
