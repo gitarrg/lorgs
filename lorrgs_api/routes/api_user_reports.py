@@ -112,6 +112,6 @@ async def load_user_report(response: fastapi.Response, report_id: str, fight: st
     task.save()
 
     return {
-        "task_id": task.get_key(**task.dict()),
+        "task_id": message_id,
         "queue": "aws",
     }
