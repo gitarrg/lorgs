@@ -1,8 +1,12 @@
 """Model to Store Task Status."""
+from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
 import datetime
 import typing
+
+# IMPORT THIRD PARTY LIBRARIES
+import pydantic
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.models.base import redis
@@ -18,9 +22,9 @@ class Task(redis.RedisModel):
         DONE = "done"
         FAILED = "failed"
 
-    task_id: str
+    task_id: str = ""
     status: str = STATUS.NEW
-    updated: datetime.datetime = datetime.datetime.now()
+    updated: datetime.datetime = pydantic.Field(default_factory=datetime.datetime.now)
     message: str = ""
     items: dict[str, typing.Any] = {}
 

@@ -3,6 +3,8 @@
 to be triggered via SQS
 
 """
+from __future__ import annotations
+
 # IMPORT STANDARD LIBRARIES
 import json
 

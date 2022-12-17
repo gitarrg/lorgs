@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 # IMPORT STANDARD LIBRARIES
 import asyncio
 import json
