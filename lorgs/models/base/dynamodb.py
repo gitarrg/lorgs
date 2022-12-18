@@ -1,4 +1,5 @@
 """Client to store Objects in DynamoDB."""
+from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
 import decimal
@@ -12,6 +13,7 @@ from boto3.dynamodb.conditions import Attr
 # IMPORT LOCAL LIBRARIES
 from lorgs.logger import Timer
 from lorgs.models.base import base
+
 
 if typing.TYPE_CHECKING:
     from mypy_boto3_dynamodb.service_resource import Table

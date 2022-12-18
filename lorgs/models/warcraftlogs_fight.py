@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 # IMPORT STANRD LIBRARIES
-from collections import defaultdict
 import datetime
 import textwrap
 import typing
+from collections import defaultdict
 
 # IMPORT THIRD PARTY LIBRARIES
 import pydantic
@@ -16,9 +18,10 @@ from lorgs.models.warcraftlogs_boss import Boss
 from lorgs.models.warcraftlogs_player import Player
 from lorgs.models.wow_spec import WowSpec
 
+
 if typing.TYPE_CHECKING:
-    from lorgs.models.warcraftlogs_report import Report
     from lorgs.models.warcraftlogs_actor import BaseActor
+    from lorgs.models.warcraftlogs_report import Report
 
 
 def get_composition(players: typing.Iterable[Player]) -> dict:

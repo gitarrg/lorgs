@@ -1,4 +1,5 @@
 """Very Basic Discord "client"."""
+from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
 import os
@@ -8,11 +9,12 @@ import typing
 import aiohttp
 
 from lorgs.clients.discord.models import (
-    DiscordGuildMember,
-    DiscordUser,
     DiscordAccessTokenResponse,
     DiscordErrorResponse,
+    DiscordGuildMember,
+    DiscordUser,
 )
+
 
 API_URL = "https://discordapp.com/api"
 

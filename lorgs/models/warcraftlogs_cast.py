@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 # IMPORT STANDARD LIBRARIES
 from typing import TYPE_CHECKING, Any, Optional
 

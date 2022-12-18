@@ -1,4 +1,5 @@
 """API Routes to get and update Comp Rankings."""
+from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
 import typing
@@ -8,8 +9,8 @@ import fastapi
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import data
-from lorgs.models.raid_boss import RaidBoss
 from lorgs.models import warcraftlogs_comp_ranking
+from lorgs.models.raid_boss import RaidBoss
 from lorrgs_api.routes import api_tasks
 
 

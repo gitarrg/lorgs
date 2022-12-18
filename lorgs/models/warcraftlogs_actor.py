@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 # IMPORT STANRD LIBRARIES
 import abc
 import textwrap

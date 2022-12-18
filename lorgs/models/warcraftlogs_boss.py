@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 # IMPORT THIRD PARTY LIBRARIES
 import typing
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.models import warcraftlogs_actor
 from lorgs.models.raid_boss import RaidBoss
+
 
 if typing.TYPE_CHECKING:
     from lorgs.models.wow_actor import WowActor

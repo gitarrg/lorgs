@@ -1,4 +1,5 @@
 """Model to describe a User of Lorrgs."""
+from __future__ import annotations
 
 # IMPORT THIRD PARTY LIBRARIES
 import typing
@@ -7,6 +8,7 @@ from datetime import datetime
 # IMPORT LOCAL LIBRARIES
 from lorgs.clients import discord
 from lorgs.models import base
+
 
 LORRGS_SERVER_ID = "885638678607708172"
 """Server ID for the lorrgs discord."""

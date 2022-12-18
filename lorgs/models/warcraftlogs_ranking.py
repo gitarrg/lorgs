@@ -1,4 +1,5 @@
 """Models for Top Rankings for a given Spec."""
+from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
 import textwrap

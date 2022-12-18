@@ -1,4 +1,5 @@
 """Endpoints dealing with user authentication."""
+from __future__ import annotations
 
 # IMPORT STANDARD LIBARIES
 import os

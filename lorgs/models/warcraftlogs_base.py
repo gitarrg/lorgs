@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 # IMPORT STANRD LIBRARIES
 import abc
 import asyncio
@@ -8,6 +10,7 @@ import typing
 # IMPORT LOCAL LIBRARIES
 from lorgs.clients.wcl import WarcraftlogsClient
 from lorgs.models import base
+
 
 VALID_OPS = ["eq", "lt", "lte", "gt", "gte"]
 RE_KEY = r"([\w\-]+)"  # expr to match the key/attr name. eg.: spec or role name

@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 # IMPORT STANDARD LIBRARIES
 import datetime
 import typing
 
 # IMPORT THIRD PARTY LIBRARIES
-from pydantic import BaseModel, validator, root_validator
+from pydantic import BaseModel, root_validator, validator
 
 # IMPORT LOCAL LIBRARIES
 from .guild import Guild

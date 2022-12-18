@@ -1,4 +1,5 @@
 """Class and Functions to manage Report-Instances."""
+from __future__ import annotations
 
 # IMPORT STANRD LIBRARIES
 import asyncio
