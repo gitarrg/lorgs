@@ -36,6 +36,7 @@ async def get_token(response: fastapi.Response, code: str):
 
     # load user info
     access_token: str = user_credentials.get("access_token")  # type: ignore
+    print("user_credentials", user_credentials)
     info = await discord.get_user_profile(access_token)
     # try:
     # except PermissionError:

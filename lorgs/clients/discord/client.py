@@ -65,6 +65,9 @@ async def exchange_code(code: str, redirect_uri: str) -> typing.Union[DiscordAcc
         "redirect_uri": redirect_uri,
         "scope": "identify",
     }
+
+    print("exchange_code", DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET)
+
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
     return await api_request(  # type: ignore
         endpoint="oauth2/token",
