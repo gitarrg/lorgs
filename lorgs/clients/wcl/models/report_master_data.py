@@ -1,6 +1,6 @@
+from __future__ import annotations
 
 from pydantic import BaseModel
-
 
 from .report_actor import ReportActor
 

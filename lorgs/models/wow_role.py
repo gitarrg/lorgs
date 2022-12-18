@@ -1,10 +1,12 @@
 """Models for a Role in the Game."""
+from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
 import typing
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.models import base
+
 
 if typing.TYPE_CHECKING:
     from lorgs.models.wow_spec import WowSpec

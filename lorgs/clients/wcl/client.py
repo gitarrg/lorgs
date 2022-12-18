@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Warcaftlogs API Client."""
+from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
 import asyncio

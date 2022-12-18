@@ -4,6 +4,8 @@ This model keeps a reference to all its instance in memory using a weakref-set,
 proving us with database-like access to the objects.
 
 """
+from __future__ import annotations
+
 # IMPORT STANDARD LIBRARIES
 import typing
 import weakref
@@ -12,6 +14,7 @@ from collections import defaultdict
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
 from lorgs.models.base import base
+
 
 T = typing.TypeVar("T", bound="MemoryModel")
 

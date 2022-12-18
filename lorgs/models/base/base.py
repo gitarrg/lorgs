@@ -1,4 +1,6 @@
 """Base Class for all Models in our System."""
+from __future__ import annotations
+
 # IMPORT STANDARD LIBRARIES
 from datetime import date, datetime, time, timedelta
 from typing import Any, Callable, ClassVar, Optional, Type, TypeVar

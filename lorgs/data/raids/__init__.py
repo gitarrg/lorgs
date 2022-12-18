@@ -4,4 +4,5 @@ from lorgs.data.raids.t28_sanctum_of_domination import *
 from lorgs.data.raids.t29_sepulcher_of_the_first_ones import *
 from lorgs.data.raids.t31_vault_of_the_incarnates import *
 
+
 CURRENT_ZONE = VAULT_OF_THE_INCARNATES

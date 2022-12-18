@@ -1,5 +1,5 @@
 """Defines a Raid in the Game."""
-# pylint: disable=too-few-public-methods
+from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
 import typing
@@ -9,6 +9,8 @@ from lorgs import utils
 from lorgs.models import base
 from lorgs.models.raid_boss import RaidBoss
 
+
+# pylint: disable=too-few-public-methods
 
 class RaidZone(base.MemoryModel):
     """A raid zone in the Game."""

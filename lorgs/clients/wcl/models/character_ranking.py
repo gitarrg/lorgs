@@ -1,6 +1,8 @@
 """Models represeting the Data we recive from WCL under the worldData.encounter.charaterRankings."""
+from __future__ import annotations
 
 import datetime
+
 from pydantic import BaseModel
 
 

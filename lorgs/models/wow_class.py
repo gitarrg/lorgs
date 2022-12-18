@@ -1,4 +1,5 @@
 """Playable (and some non playble) Classes in WoW."""
+from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
 import typing
@@ -7,6 +8,7 @@ import typing
 from lorgs import utils
 from lorgs.models.wow_actor import WowActor
 from lorgs.models.wow_spell import WowSpell
+
 
 if typing.TYPE_CHECKING:
     from lorgs.models.wow_spec import WowSpec

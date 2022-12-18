@@ -156,7 +156,7 @@ async def test_load_with_progress() -> None:
     await user_report.load_fights(fight_ids=FIGHT_IDS, player_ids=PLAYER_IDS)
 
 
-async def main():
+async def main() -> None:
 
     # await test_load_summary()
     # await test_load_fight_summary()
