@@ -29,7 +29,6 @@ MONK_WINDWALKER = WowSpec(role=MDPS, wow_class=MONK, name="Windwalker")
 #
 MONK.add_spell(           spell_id=310454, cooldown=120, duration=30, color=COL_KYR,   name="Weapons of Order",                icon="ability_bastion_monk.jpg",            show=False)
 MONK.add_spell(           spell_id=325216, cooldown=60,  duration=10, color=COL_NECRO, name="Bonedust Brew",                   icon="ability_maldraxxus_monk.jpg",         show=False)
-MONK.add_spell(           spell_id=326860, cooldown=180, duration=24, color=COL_VENTR, name="Fallen Order",                    icon="ability_revendreth_monk.jpg",         show=True)
 MONK.add_spell(           spell_id=327104, cooldown=30,  duration=30, color=COL_NF,    name="Faeline Stomp",                   icon="ability_ardenweald_monk.jpg",         show=False)
 
 
@@ -55,6 +54,8 @@ MONK_MISTWEAVER.add_spell(spell_id=116680, cooldown=30,               color="#22
 MONK_WINDWALKER.add_spell(spell_id=123904, cooldown=120, duration=24, color="#8cdbbc", name="Invoke Xuen, the White Tiger",    icon="ability_monk_summontigerstatue.jpg")
 MONK_WINDWALKER.add_spell(spell_id=137639, cooldown=90,  duration=15, color="#be53db", name="Storm, Earth, and Fire",          icon="spell_nature_giftofthewild.jpg")
 MONK_WINDWALKER.add_spell(spell_id=122470, cooldown=90,  duration=10, color="#8afbff", name="Touch of Karma",                  icon="ability_monk_touchofkarma.jpg", show=False)
+MONK_WINDWALKER.add_spell(spell_id=152173, cooldown=90,  duration=12,                  name="Serenity"      ,                  icon="ability_monk_serenity.jpg", show=False)
+
 
 MONK_BREWMASTER.add_spell(spell_id=322507, cooldown=60,  duration=0,  color="#45f9ff", name="Celestial Brew",                  icon="ability_monk_ironskinbrew.jpg",        show=False)
 MONK_BREWMASTER.add_spell(spell_id=132578, cooldown=105, duration=25,                  name="Invoke Niuzao the Black Ox",      icon="spell_monk_brewmaster_spec.jpg",       tags=[TAG_DYNAMIC_CD])  # base cd =3min / reduced with conduit
