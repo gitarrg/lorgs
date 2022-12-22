@@ -30,7 +30,7 @@ MAGE_FROST  = WowSpec(role=RDPS, wow_class=MAGE, name="Frost")
 # Covenant & Shared
 MAGE.add_spell(        spell_id=314793, cooldown=90,  duration=25, color=COL_VENTR, name="Mirrors of Torment", icon="ability_revendreth_mage.jpg")
 MAGE.add_spell(        spell_id=314791, cooldown=60,  duration=3,  color=COL_NF,    name="Shifting Power",     icon="ability_ardenweald_mage.jpg",               show=False)
-MAGE.add_spell(        spell_id=307443, cooldown=30,  duration=10, color=COL_KYR,   name="Radiant Spark",      icon="ability_bastion_mage.jpg",                  show=False)
+MAGE.add_spell(        spell_id=376103, cooldown=30,  duration=10, color=COL_KYR,   name="Radiant Spark",      icon="ability_bastion_mage.jpg",                  show=False)
 MAGE.add_spell(        spell_id=324220, cooldown=180, duration=25, color=COL_NECRO, name="Deathborne",         icon="ability_maldraxxus_mage.jpg")
 
 
@@ -55,6 +55,7 @@ MAGE_FIRE.add_buff(    spell_id=333315,                                         
 
 MAGE_ARCANE.add_spell( spell_id=12042,  cooldown=100, duration=10,                  name="Arcane Power",       icon="spell_nature_lightning.jpg")  # 2min base cd / reduced by conduit
 MAGE_ARCANE.add_spell( spell_id=321507, cooldown=45,  duration=8,                   name="Touch of the Magi",  icon="spell_mage_icenova.jpg")
+MAGE_ARCANE.add_spell( spell_id=365350, cooldown=90,  duration=12,                  name="Arcane Surge",       icon="ability_mage_arcanesurge.jpg")
 
 MAGE_FROST.add_spell(  spell_id=12472,  cooldown=60,  duration=20,                  name="Icy Veins",          icon="spell_frost_coldhearted.jpg",    tags=[TAG_DYNAMIC_CD]) # 3min base cd / reduced by conduit
 MAGE_FROST.add_spell(  spell_id=257537, cooldown=45,                                name="Ebonbolt",           icon="artifactability_frostmage_ebonbolt.jpg")
