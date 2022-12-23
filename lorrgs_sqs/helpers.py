@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from lorgs.data.classes import ALL_SPECS
 from lorgs.data.raids import VAULT_OF_THE_INCARNATES
 
