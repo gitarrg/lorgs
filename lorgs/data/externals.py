@@ -1,8 +1,8 @@
 """Buffs/Spells from other Specs. eg.: Power Infusion or PainSup."""
 
 # IMPORT LOCAL LIBRARIES
-from lorgs.data.classes import ALL_SPECS
 from lorgs.data.classes import *  # for Colors
+from lorgs.data.classes import ALL_SPECS
 from lorgs.data.classes.other import OTHER_BUFFS
 from lorgs.data.constants import *
 
@@ -25,13 +25,12 @@ OTHER_BUFFS.add_buff(color=PALADIN.color, spell_id=6940,   cooldown=120,        
 OTHER_BUFFS.add_buff(color=MONK.color,    spell_id=116849, cooldown=120,              name="Life Cocoon",             icon="ability_monk_chicocoon.jpg")
 OTHER_BUFFS.add_buff(color=WARRIOR.color, spell_id=335198, cooldown=30,               name="Safeguard",               icon="ability_warrior_safeguard.jpg")  # Warrior Intervene Conduit
 
-
 ################################################################################
 # External Power Gains
 #
 POWER_INFUSION    = OTHER_BUFFS.add_buff(color="#f7c625", spell_id=10060,  cooldown=120, duration=20, name="Power Infusion",      icon="spell_holy_powerinfusion.jpg")
 INNERVATE         = OTHER_BUFFS.add_buff(color="#3b97ed", spell_id=29166,  cooldown=180, duration=10, name="Innervate",           icon="spell_nature_lightning.jpg")
-
+BLESSING_OF_AUTUMN = OTHER_BUFFS.add_buff(color=PALADIN.color, spell_id=388010, cooldown=45, duration=30, name="Blessing of Autumn", icon="ability_ardenweald_paladin_autumn.jpg")
 
 ################################################################################
 
