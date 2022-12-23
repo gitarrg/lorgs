@@ -19,7 +19,7 @@ TYPE_BUFFS = WowSpell.TYPE_BUFFS  # remove?
 # generic pots for all specs
 for s in ALL_SPECS:
     s.add_spell(spell_type=TYPE_POTION, spell_id=6262,                              color="#63cf48", name="Healthstone",                  icon="warlock_-healthstone.jpg", wowhead_data="item=5512")
-    s.add_spell(spell_type=TYPE_POTION, spell_id=370511, cooldown=300,              color="#e35f5f", name="Refreshing Healing Potion",    icon="inv_10_alchemy_bottle_shape4_red.jpg",   wowhead_data="item=191378")
+    s.add_spell(spell_type=TYPE_POTION, spell_id=370511, cooldown=300,              color="#e35f5f", name="Refreshing Healing Potion",    icon="inv_10_alchemy_bottle_shape4_red.jpg",   wowhead_data="item=191380")
     s.add_spell(spell_type=TYPE_POTION, spell_id=371024, cooldown=300, duration=25, color="#297acc", name="Potion of Phantom Fire",       icon="trade_alchemy_dpotion_b10.jpg", wowhead_data="item=191389")
 
 # Intellect users
