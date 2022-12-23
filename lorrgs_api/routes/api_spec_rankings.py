@@ -11,11 +11,13 @@ from lorgs.logger import logger
 from lorgs.models import warcraftlogs_ranking
 from lorgs.models.wow_spec import WowSpec
 
+
 router = fastapi.APIRouter(tags=["spec_ranking"], prefix="/spec_ranking")
 
 
 @router.get("/{spec_slug}/{boss_slug}")
 async def get_spec_ranking(
+    response: fastapi.Response,
     spec_slug: str,
     boss_slug: str,
     difficulty: str = "mythic",
@@ -27,6 +29,9 @@ async def get_spec_ranking(
         metric = spec.role.metric if spec else "dps"
 
     logger.info(f"{spec_slug}/{boss_slug} | start ({difficulty}/{metric})")
+
+    # shorter cache timeout for the start of the tier (where frequent changes happen)
+    response.headers["Cache-Control"] = "max-age=300"
 
     try:
         return warcraftlogs_ranking.SpecRanking.get_json(
@@ -46,6 +51,7 @@ async def get_spec_ranking(
 
 @router.get("/load")
 async def spec_ranking_load(
+    response: fastapi.Response,
     spec_slug="all",
     boss_slug="all",
     difficulty="all",
@@ -54,6 +60,8 @@ async def spec_ranking_load(
     clear: bool = False,
 ):
     """Queue an update for the given specs and bosses."""
+    response.headers["Cache-Control"] = "no-cache"
+
     payload = {
         "task": "load_spec_rankings",
         "spec_slug": spec_slug,
