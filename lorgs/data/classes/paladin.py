@@ -33,7 +33,7 @@ PALADIN.add_spell(             spell_id=316958, cooldown=240, duration=30, color
 PALADIN.add_spell(             spell_id=328204, cooldown=30,               color=COL_NECRO, name="Vanquisher's Hammer",             icon="ability_maldraxxus_paladin.jpg", show=False)
 
 # Shared
-PALADIN.add_spell(             spell_id=31884,  cooldown=60,  duration=20, color="#ffc107", name="Avenging Wrath",                  icon="spell_holy_avenginewrath.jpg", tags=[WowSpell.TAG_DYNAMIC_CD])
+PALADIN.add_spell(             spell_id=31884,  cooldown=60,  duration=20, color="#ffc107", name="Avenging Wrath",                  icon="spell_holy_avenginewrath.jpg", variations=[231895])
 PALADIN.add_spell(             spell_id=6940,   cooldown=120, duration=12,                  name="Blessing of Sacrifice",           icon="spell_holy_sealofsacrifice.jpg", show=False)
 
 # Defensive
