@@ -40,3 +40,8 @@ class Boss(warcraftlogs_actor.BaseActor):
 
     def as_dict(self) -> dict[str, typing.Any]:
         return {"name": self.raid_boss and self.raid_boss.full_name_slug, "casts": [cast.dict() for cast in self.casts]}
+
+
+    def set_source_id_from_events(self, *args, **kwargs):
+        """Do nothing here, to avoid issues with Council Boss Fights."""
+        pass
