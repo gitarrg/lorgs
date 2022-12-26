@@ -29,3 +29,9 @@ TERROS.add_cast(
     duration=6.5,
     color="#2dd635", icon="spell_shaman_improvedfirenova.jpg",
 )
+
+TERROS.add_cast(
+    spell_id=396351, name="Infused Fallout", # Mythic Debuff
+    duration=2,
+    color="#9e4ecc", icon="spell_quicksand.jpg",
+)
