@@ -15,7 +15,7 @@ from lorgs.models.user import User
 
 
 SECRET_KEY = os.getenv("SECRET_KEY") or "my-super-secret-key"
-REDIRECT_URI = os.getenv("REDIRECT_URI") or "http://localhost:9001/login"
+REDIRECT_URI = os.getenv("REDIRECT_URI") or "https://lorrgs.io/login"
 
 
 router = fastapi.APIRouter()
