@@ -66,8 +66,6 @@ async def exchange_code(code: str, redirect_uri: str) -> typing.Union[DiscordAcc
         "scope": "identify",
     }
 
-    print("exchange_code", DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET)
-
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
     return await api_request(  # type: ignore
         endpoint="oauth2/token",
@@ -155,8 +153,6 @@ async def get_member_info(server_id: str, user_id: str) -> DiscordGuildMember:
             "joined_at": "2015-04-26T06:26:56.936000+00:00",
         }
     """
-    print("GET_MEMBER_INFO", server_id, user_id)
-
     url = f"guilds/{server_id}/members/{user_id}"
     response = await bot_request(url)
 

@@ -3,8 +3,8 @@ import unittest
 from unittest import mock
 
 import pytest
-from lorgs.models.warcraftlogs_cast import Cast
 
+from lorgs.models.warcraftlogs_cast import Cast, process_auras, process_until_events
 from lorgs.models.wow_spell import WowSpell
 
 
@@ -22,7 +22,7 @@ class Test_Cast(unittest.TestCase):
         ]
         expected = [Cast(spell_id=10, timestamp=100, duration=150, event_type="applybuff")]
 
-        result = Cast.process_auras(events)
+        result = process_auras(events)
         assert result == expected
 
     def test__process_auras__multiple_applications(self):
@@ -34,7 +34,7 @@ class Test_Cast(unittest.TestCase):
         ]
         expected = [Cast(spell_id=10, timestamp=110, duration=140, event_type="applybuff")]
 
-        result = Cast.process_auras(events)
+        result = process_auras(events)
         assert len(result) == 1  # the removebuff event should be dropped
         assert result == expected
 
@@ -50,7 +50,7 @@ class Test_Cast(unittest.TestCase):
             Cast(spell_id=10, timestamp=200, event_type="applybuff", duration=60),
         ]
 
-        result = Cast.process_auras(events)
+        result = process_auras(events)
         assert len(result) == 2  # the removebuff event should be dropped
         assert result == expected
 
@@ -66,7 +66,7 @@ class Test_Cast(unittest.TestCase):
             Cast(spell_id=20, timestamp=120, event_type="applybuff", duration=140),  # 120 - 260
         ]
 
-        result = Cast.process_auras(events)
+        result = process_auras(events)
         assert len(result) == 2
         assert result == expected
 
@@ -82,7 +82,7 @@ class Test_Cast(unittest.TestCase):
             mock_get_spell.return_value.duration = 6
 
             # Run
-            result = Cast.process_auras(events)
+            result = process_auras(events)
 
         assert len(result) == 1  # still one entry
         event = result[0]
@@ -107,7 +107,7 @@ class Test_Cast(unittest.TestCase):
         ]
 
         # run
-        result = Cast.process_until_events(events)
+        result = process_until_events(events)
         assert len(result) == 1
         cast = result[0]
         assert cast.timestamp == 2000  # make sure its the first event
@@ -128,7 +128,7 @@ class Test_Cast(unittest.TestCase):
         ]
 
         # run
-        result = Cast.process_until_events(events)
+        result = process_until_events(events)
 
         # validate
         expected = [
@@ -152,7 +152,7 @@ class Test_Cast(unittest.TestCase):
         ]
 
         # run
-        result = Cast.process_until_events(events)
+        result = process_until_events(events)
 
         # validate
         expected = [

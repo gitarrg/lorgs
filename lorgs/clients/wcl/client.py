@@ -136,8 +136,7 @@ class WarcraftlogsClient(BaseClient):
             return
         await self.update_auth_token()
 
-    async def get_points_left(self) -> int:
-        """Points left until we hit the rate limit."""
+    async def get_rate_info(self) -> dict[str, int]:
         query = """
         rateLimitData
         {
@@ -147,7 +146,11 @@ class WarcraftlogsClient(BaseClient):
         }
         """
         result = await self.query(query)
-        info: dict[str, int] = result.get("rateLimitData", {})
+        return result.get("rateLimitData") or {}
+
+    async def get_points_left(self) -> int:
+        """Points left until we hit the rate limit."""
+        info = await self.get_rate_info()
         return info.get("limitPerHour", 0) - info.get("pointsSpentThisHour", 0)
 
     def raise_errors(self, result: dict[str, typing.Any]) -> None:
