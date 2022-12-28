@@ -1,67 +1,46 @@
 """Models to store our list of full reports.."""
+from __future__ import annotations
 
-# mypy: ignore-errors
-
+import textwrap
 
 # IMPORT STANDARD LIBRARIES
-import datetime
 import typing
-
-# IMPORT THIRD PARTY LIBRARIES
-import arrow
-import mongoengine as me
+from datetime import datetime
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
-from lorgs.models import warcraftlogs_base
-from lorgs.models.warcraftlogs_fight import Fight
-from lorgs.models import warcraftlogs_report
+from lorgs.clients import wcl
+from lorgs.models import base, warcraftlogs_base, warcraftlogs_report
 from lorgs.models.raid_boss import RaidBoss
+from lorgs.models.warcraftlogs_fight import Fight
+from lorgs.models.warcraftlogs_report import Report
 from lorgs.models.wow_spec import WowSpec
 from lorgs.models.wow_spell import WowSpell
 
 
-class CompRankingReport(warcraftlogs_base.Document):
-    """Wrapper around a Report"""
+class CompRankingFight(Fight):
+    """A single Fight showing in the Comp Rankings"""
 
-    report: warcraftlogs_report.Report = me.EmbeddedDocumentField(warcraftlogs_report.Report)
-    updated: datetime.datetime = me.DateTimeField(default=datetime.datetime.utcnow)
-
-    def __repr__(self):
-        return f"<{type(self).__name__} {self.key}>"
-
-    def as_dict(self) -> dict:
-        d = {}
-        d["fight"] = self.fight.as_dict() if self.fight else {}
-        return d
-
-    ##########################
-    # Attributes
-    #
-    @property
-    def key(self):
-        """tuple: a unique key to identify this report."""
-        return (self.report.report_id, self.fight.fight_id)
-
-    @property
-    def fight(self) -> typing.Optional[Fight]:
-        """First Fight found in this report (there should only be one)."""
-        for fight in self.report.fights.values():
-            return fight
-        return None
+    # Config
+    pkey: typing.ClassVar[str] = "{report_id}.{fight_id}"
+    skey: typing.ClassVar[str] = "overview"
 
 
-class CompRanking(warcraftlogs_base.Document):
+class CompRanking(base.DynamoDBModel, warcraftlogs_base.wclclient_mixin):
     """A Group/List of reports for a given Boss."""
 
-    # str: the name of the boss
-    boss_slug = me.StringField(required=True)
+    boss_slug: str
+    # the nameslug of the boss
 
     # datetime: timetamp of last update
-    updated = me.DateTimeField(default=datetime.datetime.utcnow)
+    updated: datetime = datetime.min
 
-    # list(CompRankingReport): reports for this boss
-    reports = me.ListField(me.ReferenceField(CompRankingReport))
+    reports: list[Report] = []
+    """all reports for this boss."""
+
+    # Config
+    pkey: typing.ClassVar[str] = "{boss_slug}"
+    skey: typing.ClassVar[str] = "overview"
 
     ##########################
     # Attributes
@@ -79,7 +58,7 @@ class CompRanking(warcraftlogs_base.Document):
     ##########################
     # Methods
     #
-    def get_reports(self, search: dict = None, limit: int = 50) -> typing.List[CompRankingReport]:
+    def get_reports(self, search: dict | None = None, limit: int = 50) -> list[Report]:
         """list: reports for this group."""
 
         filter_kwargs = {}
@@ -96,22 +75,20 @@ class CompRanking(warcraftlogs_base.Document):
             filter_kwargs.update(search_kwargs)
 
         # Query
-        reports = CompRankingReport.objects  # todo: find a way to use the self.reports list field instead
+        reports = (
+            CompRankingReport.objects
+        )  # todo: find a way to use the self.reports list field instead
         reports = reports.filter(**filter_kwargs)
-        reports = reports.order_by("+report__fights__deaths", "+report__fights__duration")
+        reports = reports.order_by(
+            "+report__fights__deaths", "+report__fights__duration"
+        )
         reports = reports[:limit] if limit else reports
         return reports
-
-    def save(self, *args, **kwargs):
-        """Custom Cascade safe."""
-        for report in self.reports:
-            report.save()
-        return super().save(*args, **kwargs)
 
     ############################################################################
     # Query
     #
-    def _get_healing_cooldowns(self) -> str: # typing.List[WowSpell]:
+    def _get_healing_cooldowns(self) -> str:  # typing.List[WowSpell]:
         """All Spells that are considered Healing-Cooldowns.
 
         Right now, this simply returns every spell healers have
@@ -120,21 +97,24 @@ class CompRanking(warcraftlogs_base.Document):
             share logic with <BaseActor> ?
 
         """
+
         def join(*parts: str):
             return " and ".join(parts)
 
         queries: typing.List[str] = []
-        healers: typing.List[WowSpec] = [spec for spec in WowSpec.all if spec.role.code == "heal"]
+        healers: typing.List[WowSpec] = [
+            spec for spec in WowSpec.all if spec.role.code == "heal"
+        ]
 
         # Casts
-        casts: typing.List[WowSpell] = utils.flatten(spec.all_spells for spec in healers)
+        casts: typing.List[WowSpell] = utils.flatten(
+            spec.all_spells for spec in healers
+        )
         casts = [cast for cast in casts if cast.is_healing_cooldown()]
         if casts:
             cast_ids = WowSpell.spell_ids_str(casts)
             buffs_q = join(
-                "source.role='healer'",
-                "type='cast'",
-                f"ability.id in ({cast_ids})"
+                "source.role='healer'", "type='cast'", f"ability.id in ({cast_ids})"
             )
             queries.append(buffs_q)
 
@@ -146,7 +126,7 @@ class CompRanking(warcraftlogs_base.Document):
             buffs_q = join(
                 "target.role='healer'",
                 "type in ('applybuff', 'removebuff')",
-                f"ability.id in ({buffs_ids})"
+                f"ability.id in ({buffs_ids})",
             )
             queries.append(buffs_q)
 
@@ -156,18 +136,22 @@ class CompRanking(warcraftlogs_base.Document):
     def _get_raid_cds() -> typing.List[WowSpell]:
         """All spells of type RAID_CD.
 
-            eg.: Darkness, RallyCry, AMZ
+        eg.: Darkness, RallyCry, AMZ
         """
-        spells = [spell for spell in WowSpell.all if spell.spell_type == spell.TYPE_RAID]
+        spells = [
+            spell for spell in WowSpell.all if spell.spell_type == spell.TYPE_RAID
+        ]
         return utils.uniqify(spells, key=lambda spell: spell.spell_id)
 
     @staticmethod
     def _get_raid_buffs() -> typing.List[WowSpell]:
         """All spells of type RAID_CD.
 
-            eg.: Darkness, RallyCry, AMZ
+        eg.: Darkness, RallyCry, AMZ
         """
-        spells = [spell for spell in WowSpell.all if spell.spell_type == spell.TYPE_BUFFS]
+        spells = [
+            spell for spell in WowSpell.all if spell.spell_type == spell.TYPE_BUFFS
+        ]
         return utils.uniqify(spells, key=lambda spell: spell.spell_id)
 
     def get_filter(self) -> str:
@@ -180,12 +164,18 @@ class CompRanking(warcraftlogs_base.Document):
 
         raid_buffs = self._get_raid_buffs()
         raid_buffs_str = WowSpell.spell_ids_str(raid_buffs)
-        raid_buffs_filter = f"type in ('applybuff', 'removebuff') and ability.id in ({raid_buffs_str})"
+        raid_buffs_filter = (
+            f"type in ('applybuff', 'removebuff') and ability.id in ({raid_buffs_str})"
+        )
 
-        return self.combine_queries(filter_healing_cds, raid_cds_filter, raid_buffs_filter)
+        return self.combine_queries(
+            filter_healing_cds, raid_cds_filter, raid_buffs_filter
+        )
 
-    def get_query(self, metric="execution", page=0) -> str:
-        return f"""
+    def get_query(self, metric: str = "execution", page: int = 1) -> str:
+        """Get the Query to load this Fight Rankings."""
+        return textwrap.dedent(
+            f"""
             worldData
             {{
                 encounter(id: {self.boss.id})
@@ -197,6 +187,7 @@ class CompRanking(warcraftlogs_base.Document):
                 }}
             }}
             """
+        )
 
     def _create_new_report(self, ranking_data):
         ################
@@ -230,11 +221,27 @@ class CompRanking(warcraftlogs_base.Document):
 
         return comp_report
 
-    async def load_new_reports(self, metric="execution", limit=5) -> typing.List[CompRankingReport]:
+    def add_fight(self, fight_data: wcl.FightRankingsFight):
+        print("Adding", fight_data)
+
+        fight = CompRankingFight(
+            # essential attributes
+            fight_id=fight_data.report.fightID,
+            start_time=fight_data.startTime,
+            duration=fight_data.duration,
+            # additional attributes
+            deaths=fight_data.deaths,
+        )
+
+        fight_data
+
+    async def load_new_reports(
+        self, metric: str = "execution", limit=50
+    ) -> list[Report]:
         """Get Top Fights for a given encounter."""
         limit = limit or 50  # in case limit defaults to 0 somewhere
 
-        new_reports = []
+        new_reports: list[Report] = []
         load_more = True
         page = 0
         while load_more:  # nobody likes while loops
@@ -242,8 +249,23 @@ class CompRanking(warcraftlogs_base.Document):
 
             # execute the query
             query = self.get_query(metric=metric, page=page)
-            data = await self.client.query(query)
-            data = data.get("worldData", {}).get("encounter", {}).get("fightRankings", {})
+            query_result = await self.client.query(query)
+            query_result = query_result["worldData"]
+            # print("query_result", query_result)
+
+            world_data = wcl.WorldData(**query_result)
+
+            rankings = world_data.encounter.fightRankings
+            load_more = rankings.hasMorePages
+
+            for fight in rankings.rankings:
+                self.add_fight(fight)
+
+            return
+
+            data = (
+                data.get("worldData", {}).get("encounter", {}).get("fightRankings", {})
+            )
 
             load_more = data.get("hasMorePages", False)
 
@@ -279,9 +301,11 @@ class CompRanking(warcraftlogs_base.Document):
 
         await fight.boss.load()
 
-        fight.players = {k: player for k, player in fight.players.items() if player.has_own_casts}
+        fight.players = {
+            k: player for k, player in fight.players.items() if player.has_own_casts
+        }
 
-    async def load(self, limit=50, clear_old=False):
+    async def load(self, limit: int = 50, clear_old: bool = False):
         """Fetch reports for this BossRanking.
 
         params:
@@ -291,34 +315,35 @@ class CompRanking(warcraftlogs_base.Document):
         """
         # old reports
         if clear_old:
-            for r in  self.reports:
-                try:
-                    r.delete()
-                except AttributeError:
-                    pass
             self.reports = []
 
         # new reports
         new_reports = await self.load_new_reports(limit=limit)
 
+        return
+
         # compare old vs new reports
-        old_report_keys = [report.key for report  in self.reports]
-        new_reports = [report for report in new_reports if report.key not in old_report_keys]
+        old_report_keys = [report.key for report in self.reports]
+        new_reports = [
+            report for report in new_reports if report.key not in old_report_keys
+        ]
 
         # load only the fights that need to be loaded
         fights = [report.fight for report in new_reports]
         fights = [fight for fight in fights if not fight.players]
-        fights = fights[:limit] # should already be enforced from the "load_new_reports"... but better safe then sorry
+        fights = fights[
+            :limit
+        ]  # should already be enforced from the "load_new_reports"... but better safe then sorry
 
         try:
-            await self.load_many(fights, chunk_size=5)
+            await self.load_many(fights)
         except PermissionError:
-            pass # private report
+            pass  # private report
 
         for fight in fights:
             try:
                 await self.load_fight(fight)
             except PermissionError:
-                pass # private report
+                pass  # private report
 
         self.reports += new_reports

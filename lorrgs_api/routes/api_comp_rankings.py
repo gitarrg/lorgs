@@ -8,7 +8,6 @@ import typing
 import fastapi
 
 # IMPORT LOCAL LIBRARIES
-from lorgs import data
 from lorgs.models import warcraftlogs_comp_ranking
 from lorgs.models.raid_boss import RaidBoss
 from lorrgs_api.routes import api_tasks
