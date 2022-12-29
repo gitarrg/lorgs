@@ -38,7 +38,7 @@ for s in ALL_SPECS:
 for s in HEAL.specs:
     # TODO: track all ranks? (or maybe rank3 only.. those IDs are afaik r2)
     s.add_spell(spell_type=TYPE_POTION, spell_id=370607, cooldown=300,              color=COL_MANA,  name="Aerated Mana Potion",        icon="inv_10_alchemy_bottle_shape1_blue.jpg", wowhead_data="item=191386")
-    s.add_spell(spell_type=TYPE_POTION, spell_id=371151, cooldown=300, duration=10, color=COL_MANA,  name="Potion of Spiritual Clarity",  icon="inv_10_alchemy_bottle_shape4_green.jpg", wowhead_data="item=191367")
+    s.add_spell(spell_type=TYPE_POTION, spell_id=371152, cooldown=300, duration=10, color=COL_MANA,  name="Potion of Spiritual Clarity",  icon="inv_10_alchemy_bottle_shape4_green.jpg", wowhead_data="item=191367")
     s.add_spell(spell_type=TYPE_POTION, spell_id=371033, cooldown=300, duration=10, color=COL_MANA,  name="Potion of Frozen Focus",  icon="inv_10_alchemy_bottle_shape4_blue.jpg", wowhead_data="item=191363")
 
 
