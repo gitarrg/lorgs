@@ -29,7 +29,7 @@ DEATHKNIGHT_UNHOLY = WowSpec(role=MDPS, wow_class=DEATHKNIGHT, name="Unholy")
 # Spells
 #
 DEATHKNIGHT.add_spell(         spell_id=383269, cooldown=120, duration=12, color=COL_NECRO, name="Abomination Limb",      icon="ability_maldraxxus_deathknight.jpg",       show=False)
-DEATHKNIGHT.add_spell(         spell_id=47568,  cooldown=120, duration=20, color="#88e8f2", name="Empower Rune Weapon",   icon="inv_sword_62.jpg")
+DEATHKNIGHT.add_spell(         spell_id=47568,  cooldown=120, duration=20, color="#88e8f2", name="Empower Rune Weapon",   icon="inv_sword_62.jpg",                         show=False)
 
 # Utility
 DEATHKNIGHT.add_spell(         spell_id=48265,  cooldown=45,  duration=10, color="#b82cbf", name="Death's Advance",       icon="spell_shadow_demonicempathy.jpg",           show=False)
