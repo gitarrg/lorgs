@@ -3,6 +3,7 @@
 # pylint: disable=bad-whitespace
 # pylint: disable=wildcard-import
 # pylint: disable=unused-wildcard-import
+# fmt: off
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.data.constants import *

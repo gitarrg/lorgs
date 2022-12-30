@@ -53,4 +53,4 @@ ROGUE_OUTLAW.add_spell(        spell_id=315508,               duration=30, color
 ROGUE_OUTLAW.add_spell(        spell_id=385408, cooldown=90,               color=COL_NF,    name="Sepsis",              icon="ability_ardenweald_rogue.jpg",             show=False)
 ROGUE_OUTLAW.add_spell(        spell_id=51690,  cooldown=120,                               name="Killing Spree",       icon="ability_rogue_murderspree.jpg")
 ROGUE_OUTLAW.add_spell(        spell_id=343142, cooldown=120, duration=8,  color="#3d9991", name="Dreadblades",         icon="inv_sword_1h_artifactskywall_d_01dual.jpg", show=False)
-ROGUE_OUTLAW.add_spell(        spell_id=381989, cooldown=0,   duration=30, color="#b3702d",  name="Keep It Rolling",     icon="ability_rogue_keepitrolling.jpg")
+ROGUE_OUTLAW.add_spell(        spell_id=381989, cooldown=0,   duration=30, color="#b3702d", name="Keep It Rolling",     icon="ability_rogue_keepitrolling.jpg")
