@@ -174,6 +174,9 @@ class CompRanking(base.DynamoDBModel, warcraftlogs_base.wclclient_mixin):
 
     def get_query(self, metric: str = "execution", page: int = 1) -> str:
         """Get the Query to load this Fight Rankings."""
+        if not self.boss:
+            raise ValueError(f"Unknown Boss: {self.boss_slug}")
+
         return textwrap.dedent(
             f"""
             worldData
@@ -189,57 +192,37 @@ class CompRanking(base.DynamoDBModel, warcraftlogs_base.wclclient_mixin):
             """
         )
 
-    def _create_new_report(self, ranking_data):
-        ################
-        # Wrapper
-        comp_report = CompRankingReport()
-        comp_report.report = warcraftlogs_report.Report()
+    ############################################################################
+    # Query
+    #
 
-        ################
-        # Report
-        report_data = ranking_data.get("report", {})
-        report = comp_report.report
-        report.report_id = report_data.get("code", "")
-        start_time = report_data.get("startTime", 0)
-        report.start_time = arrow.get(start_time)  # wcl returns it in ms
-
-        ################
-        # Fight
-        fight = report.add_fight(encounterID=self.boss.id)
-        fight.fight_id = report_data.get("fightID")
-        fight_start = ranking_data.get("startTime", 0)
-        fight.start_time = arrow.get(fight_start)
-        fight.duration = ranking_data.get("duration", 0)
-
-        fight.deaths = ranking_data.get("deaths", 0)
-        fight.damage_taken = ranking_data.get("damageTaken", 0)
-        fight.damage_taken = ranking_data.get("damageTaken", 0)
-        fight.ilvl = ranking_data.get("bracketData", 0)
-
-        # Boss
-        fight.add_boss(self.boss.id)
-
-        return comp_report
-
-    def add_fight(self, fight_data: wcl.FightRankingsFight):
-        print("Adding", fight_data)
+    def add_report(self, fight_data: wcl.FightRankingsFight):
+        # print("Adding", fight_data)
 
         fight = CompRankingFight(
-            # essential attributes
             fight_id=fight_data.report.fightID,
             start_time=fight_data.startTime,
             duration=fight_data.duration,
-            # additional attributes
-            deaths=fight_data.deaths,
+            players=[],
         )
 
-        fight_data
+        report = Report(
+            report_id=fight_data.report.code,
+            start_time=fight_data.report.startTime,
+            fights=[fight],
+        )
 
-    async def load_new_reports(
-        self, metric: str = "execution", limit=50
-    ) -> list[Report]:
+        self.reports.append(report)
+
+    async def load_new_reports(self, metric: str = "execution", limit=50) -> list[Report]:
         """Get Top Fights for a given encounter."""
         limit = limit or 50  # in case limit defaults to 0 somewhere
+
+        # build a list of old Reports
+        old_reports: list[tuple[str, int]] = []
+        for report in self.reports:
+            for fight in report.fights:
+                old_reports.append((report.report_id, fight.fight_id))
 
         new_reports: list[Report] = []
         load_more = True
@@ -253,31 +236,26 @@ class CompRanking(base.DynamoDBModel, warcraftlogs_base.wclclient_mixin):
             query_result = query_result["worldData"]
             # print("query_result", query_result)
 
+            # parse data
             world_data = wcl.WorldData(**query_result)
-
             rankings = world_data.encounter.fightRankings
             load_more = rankings.hasMorePages
 
-            for fight in rankings.rankings:
-                self.add_fight(fight)
+            # add fights
+            for fight_data in rankings.rankings:
 
-            return
+                # check if already in the list
+                key = (fight_data.report.code, fight_data.report.fightID)
+                if key in old_reports:
+                    continue
+                self.add_report(fight_data)
 
-            data = (
-                data.get("worldData", {}).get("encounter", {}).get("fightRankings", {})
-            )
+            # stop if limit is reached
+            if len(self.reports) >= limit:
+                load_more = False
+                break
 
-            load_more = data.get("hasMorePages", False)
-
-            # process the result
-            for ranking_data in data.get("rankings", []):
-
-                new_report = self._create_new_report(ranking_data)
-                new_reports.append(new_report)
-                if len(new_reports) >= limit:
-                    load_more = False
-                    break
-
+        self.reports = self.reports[:limit]
         return new_reports
 
     async def load_fight(self, fight: Fight):

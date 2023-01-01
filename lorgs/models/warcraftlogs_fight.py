@@ -150,6 +150,9 @@ class Fight(warcraftlogs_base.BaseModel):
     ############################################################################
     #   Summary
     #
+    def get_query_parts(self) -> list[str]:
+        return [f"summary: table({self.table_query_args}, dataType: Summary)"]
+
     def get_query(self) -> str:
         """Get the Query to load the fights summary."""
         if self.players:
@@ -213,10 +216,10 @@ class Fight(warcraftlogs_base.BaseModel):
 
         # call this before filtering to always get the full comp
         self.composition = get_composition(self.players)
+        self.players.sort(key=lambda player: (player.spec.role, player.spec, player.name))
 
     def process_query_result(self, **query_result: typing.Any):
         """Process the data retured from an Overview-Query."""
-
         report_data = wcl.ReportData(**query_result)
         if not report_data.report.summary:
             return
