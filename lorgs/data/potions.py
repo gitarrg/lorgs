@@ -8,8 +8,7 @@ from lorgs.models.wow_spell import WowSpell
 
 
 # alias
-TYPE_POTION = WowSpell.TYPE_POTION
-TYPE_BUFFS = WowSpell.TYPE_BUFFS  # remove?
+TYPE_POTION = SpellType.POTION
 
 
 ################################################################################
@@ -44,5 +43,5 @@ for s in HEAL.specs:
 
 # hide all potions by default
 for spell in WowSpell.list():
-    if spell.spell_type in (TYPE_POTION, TYPE_BUFFS):
+    if spell.spell_type in (TYPE_POTION, ):
         spell.show = False

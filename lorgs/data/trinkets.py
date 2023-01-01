@@ -14,7 +14,7 @@ mythic = "&bonus=6646"
 
 
 def add_trinket(*specs: WowSpec, **kwargs: Any):
-    kwargs.setdefault("spell_type", WowSpell.TYPE_TRINKET)
+    kwargs.setdefault("spell_type", SpellType.TRINKET)
     kwargs.setdefault("show", False)
     spell = WowSpell(**kwargs)
 
@@ -26,14 +26,15 @@ def add_trinket(*specs: WowSpec, **kwargs: Any):
 
 
 add_trinket(
-    *AGI_SPECS, *STR_SPECS,
+    *AGI_SPECS,
+    *STR_SPECS,
     spell_id=383781,
     color="#b34747",
     cooldown=180,
     duration=20,
     name="Algeth'ar Puzzle Box",
     icon="inv_misc_enggizmos_18.jpg",
-    wowhead_data=f"item=193701{mythic}&ilvl=372"
+    wowhead_data=f"item=193701{mythic}&ilvl=372",
 )
 
 
@@ -45,7 +46,7 @@ add_trinket(
     duration=30,
     name="Horn of Valor",
     icon="inv_misc_horn_03.jpg",
-    wowhead_data=f"item=133642{mythic}&ilvl=372"
+    wowhead_data=f"item=133642{mythic}&ilvl=372",
 )
 
 
@@ -57,14 +58,15 @@ add_trinket(
     duration=20,  # 20sec buff + 20sec debuff
     name="Time-Breaching Talon",
     icon="inv_10_dungeonjewelry_explorer_trinket_3_color3.jpg",
-    wowhead_data=f"item=193791{mythic}&ilvl=372"
+    wowhead_data=f"item=193791{mythic}&ilvl=372",
 )
 
 
 ##################################### RAID #####################################
 
 add_trinket(
-    *AGI_SPECS, *STR_SPECS,
+    *AGI_SPECS,
+    *STR_SPECS,
     spell_id=377453,
     color="#53b6bd",
     cooldown=180,
@@ -75,11 +77,13 @@ add_trinket(
 
 
 add_trinket(
-    *AGI_SPECS, *STR_SPECS,
+    *AGI_SPECS,
+    *STR_SPECS,
     spell_id=377463,
     color="#8ec6d4",
-    cooldown=120, duration=2,
+    cooldown=120,
+    duration=2,
     name="Manic Grieftorch",
     icon="shaman_talent_unleashedfury.jpg",
-    wowhead_data=f"item=194308{mythic}&ilvl=424"
+    wowhead_data=f"item=194308{mythic}&ilvl=424",
 )

@@ -3,12 +3,14 @@
 # pylint: disable=bad-whitespace
 # pylint: disable=wildcard-import
 # pylint: disable=unused-wildcard-import
+# fmt: off
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.data.constants import *
 from lorgs.data.roles import *
 from lorgs.models.wow_class import WowClass
 from lorgs.models.wow_spec import WowSpec
+from lorgs.models.wow_spell import SpellTag
 
 
 COLOR_BRONZE = "#e8bf46"
@@ -36,7 +38,7 @@ EVOKER_PRESERVATION = WowSpec(role=HEAL, wow_class=EVOKER, name="Preservation")
 EVOKER.add_spell(spell_id=363916, name="Obsidian Scales",    cooldown=150, duration=12, color=COLOR_BLACK,  icon="inv_artifact_dragonscales.jpg")
 EVOKER.add_spell(spell_id=374348, name="Renewing Blaze",     cooldown=150, duration=8,  color=COLOR_RED,    icon="ability_evoker_masterylifebinder_red.jpg")
 EVOKER.add_spell(spell_id=370553, name="Tip the Scales",     cooldown=120,              color=COLOR_BRONZE, icon="ability_evoker_tipthescales.jpg")
-EVOKER.add_spell(spell_id=374227, name="Zephyr",             cooldown=120, duration=8,  color="#d6b969",    icon="ability_evoker_hoverblack.jpg")
+EVOKER.add_spell(spell_id=374227, name="Zephyr",             cooldown=120, duration=8,  color="#d6b969",    icon="ability_evoker_hoverblack.jpg", tags=[SpellTag.RAID_CD])
 
 
 # DPS
@@ -45,7 +47,7 @@ EVOKER_DEVASTATION.add_spell(spell_id=375087, name="Dragonrage", cooldown=120, d
 
 
 # HEAL
-EVOKER_PRESERVATION.add_spell(spell_id=370960, name="Emerald Communion",  cooldown=180, duration=5,                      icon="ability_evoker_green_01.jpg")
-EVOKER_PRESERVATION.add_spell(spell_id=363534, name="Rewind",             cooldown=240,              color=COLOR_BRONZE, icon="ability_evoker_rewind.jpg")
-EVOKER_PRESERVATION.add_spell(spell_id=359816, name="Dreamflight",        cooldown=240, duration=15, color="#33a36d",    icon="ability_evoker_dreamflight.jpg")
-EVOKER_PRESERVATION.add_buff( spell_id=370562, name="Stasis",             cooldown=90,               color=COLOR_BRONZE, icon="ability_evoker_stasis.jpg")
+EVOKER_PRESERVATION.add_spell(spell_id=370960, name="Emerald Communion",  cooldown=180, duration=5,                      icon="ability_evoker_green_01.jpg", tags=[SpellTag.RAID_CD])
+EVOKER_PRESERVATION.add_spell(spell_id=363534, name="Rewind",             cooldown=240,              color=COLOR_BRONZE, icon="ability_evoker_rewind.jpg", tags=[SpellTag.RAID_CD])
+EVOKER_PRESERVATION.add_spell(spell_id=359816, name="Dreamflight",        cooldown=240, duration=15, color="#33a36d",    icon="ability_evoker_dreamflight.jpg", tags=[SpellTag.RAID_CD])
+EVOKER_PRESERVATION.add_buff( spell_id=370562, name="Stasis",             cooldown=90,               color=COLOR_BRONZE, icon="ability_evoker_stasis.jpg", tags=[SpellTag.RAID_CD])

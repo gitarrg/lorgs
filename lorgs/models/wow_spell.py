@@ -10,21 +10,37 @@ from lorgs import utils
 from lorgs.models import base
 
 
+class SpellType:
+    """Enum for Spell Types.
+
+    Note: This is not a real enum, as there are many more types not listed here.
+    eg.: each Clas / Spec / Boss also defines a type
+    """
+
+    RAID = "other-raid"
+    PERSONAL = "personal"
+    EXTERNAL = "external"
+
+    BUFF = "other-buffs"
+    HERO = "other-hero"
+    TRINKET = "other-trinkets"
+    POTION = "other-potions"
+
+
+class SpellTag:
+    """Tags to annotate special properties of a spell.
+
+    a single spell may have multiple (or zero) tags.
+    """
+
+    DYNAMIC_CD = "dynamic_cd"
+    """Hint for spells whichs cooldown is reduced dynamically. eg.: Salvation"""
+
+    RAID_CD = "raid_cd"
+
+
 class WowSpell(base.MemoryModel):
     """Container to define a spell."""
-
-    # TODO: those should be constants somewhere
-    TYPE_RAID: typing.ClassVar[str] = "other-raid"
-    TYPE_PERSONAL: typing.ClassVar[str] = "personal"
-    TYPE_EXTERNAL: typing.ClassVar[str] = "external"
-
-    TYPE_BUFFS: typing.ClassVar[str] = "other-buffs"
-    TYPE_HERO: typing.ClassVar[str] = "other-hero"
-    TYPE_TRINKET: typing.ClassVar[str] = "other-trinkets"
-    TYPE_POTION: typing.ClassVar[str] = "other-potions"
-
-    # tags to indicate special properties
-    TAG_DYNAMIC_CD: typing.ClassVar[str] = "dynamic_cd"
 
     spell_variations: typing.ClassVar[dict[int, int]] = {}
     """Map to track spell variations and their "master"-spells.

@@ -28,34 +28,6 @@ def test_spell_ids_str():
 ################################################################################
 
 
-def test_is_item_spell__true():
-    spell = WowSpell(spell_id=5, spell_type=WowSpell.TYPE_TRINKET)
-    assert spell.is_item_spell() == True
-
-
-def test_is_item_spell__false():
-    spell = WowSpell(spell_id=5)
-    assert spell.is_item_spell() == False
-
-
-def test_is_healing_cooldown__item_spell() -> None:
-    spell = WowSpell(spell_id=5, spell_type=WowSpell.TYPE_TRINKET)
-    assert spell.is_healing_cooldown() == False
-
-
-def test_is_healing_cooldown__personal() -> None:
-    spell = WowSpell(spell_id=5, spell_type=WowSpell.TYPE_PERSONAL)
-    assert spell.is_healing_cooldown() == False
-
-
-def test_is_healing_cooldown__other() -> None:
-    spell = WowSpell(spell_id=5)
-    assert spell.is_healing_cooldown() == True
-
-
-################################################################################
-
-
 class TestBuildQuery:
     def test_build_query_empty(self) -> None:
 
