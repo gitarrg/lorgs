@@ -30,7 +30,7 @@ WARRIOR_PROTECTION    = WowSpec(role=TANK, wow_class=WARRIOR,      name="Protect
 #
 WARRIOR.add_spell(             spell_id=376080, cooldown=90,               color=COL_KYR,   name="Spear of Bastion",    icon="ability_bastion_warrior.jpg")
 WARRIOR.add_spell(             spell_id=384318, cooldown=90,  duration=8,  color="#d13b59", name="Thunderous Roar",     icon="ability_warrior_dragonroar.jpg",            show=False)
-WARRIOR.add_spell(             spell_id=97462,  cooldown=180, duration=10,                  name="Rallying Cry",        icon="ability_warrior_rallyingcry.jpg",           show=False, spell_type=SpellType.RAID)
+WARRIOR.add_spell(             spell_id=97462,  cooldown=180, duration=10,                  name="Rallying Cry",        icon="ability_warrior_rallyingcry.jpg",           show=False, spell_type=SpellType.RAID, tags=[SpellTag.RAID_CD])
 WARRIOR.add_spell(             spell_id=23920,  cooldown=10,  duration=5,                   name="Spell Reflection",    icon="ability_warrior_shieldreflection.jpg",      show=False)
 WARRIOR.add_spell(             spell_id=107574, cooldown=90,  duration=20,                  name="Avatar",              icon="warrior_talent_icon_avatar.jpg",            show=False)
 
