@@ -5,12 +5,13 @@ Ref: https://www.wowhead.com/spells/racial-traits
 # pylint: disable=line-too-long
 # pylint: disable=wildcard-import
 # pylint: disable=unused-wildcard-import
+# fmt: off
 from lorgs.data.classes import *
-from lorgs.models.wow_spell import WowSpell
+from lorgs.models.wow_spell import SpellType
 
 
 # for now, lets just use the Trinket Type
-SPELL_TYPE = WowSpell.TYPE_TRINKET
+SPELL_TYPE = SpellType.TRINKET
 
 RACIALS = WowClass(id=1003, name="Racials")  # dummy container
 

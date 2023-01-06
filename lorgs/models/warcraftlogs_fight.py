@@ -227,6 +227,9 @@ class Fight(warcraftlogs_base.BaseModel):
         self.duration = self.duration or summary_data.totalTime
         self.process_players(summary_data)
 
+        for player in self.players:
+            player.process_query_result(**query_result)
+
     ############################################################################
     #   Load Player:
     #
