@@ -3,6 +3,7 @@
 # pylint: disable=bad-whitespace
 # pylint: disable=wildcard-import
 # pylint: disable=unused-wildcard-import
+# fmt: off
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.data.constants import *
@@ -26,6 +27,7 @@ MAGE_FROST  = WowSpec(role=RDPS, wow_class=MAGE, name="Frost")
 ################################################################################
 # Spells
 #
+MAGE.add_spell(        spell_id=382445, cooldown=60,  duration=4,  color=COL_NF,    name="Shifting Power",     icon="ability_ardenweald_mage.jpg",               show=False)
 
 # Defensives
 MAGE.add_buff(         spell_id=45438,  cooldown=240,                               name="Ice Block",          icon="spell_frost_frost.jpg",                     show=False)
@@ -49,7 +51,6 @@ MAGE_FIRE.add_buff(    spell_id=333315,                                         
 MAGE_ARCANE.add_spell( spell_id=321507, cooldown=45,  duration=8,                   name="Touch of the Magi",  icon="ability_mage_netherwindpresence.jpg")
 MAGE_ARCANE.add_spell( spell_id=365350, cooldown=90,  duration=12,                  name="Arcane Surge",       icon="ability_mage_arcanesurge.jpg")
 MAGE_ARCANE.add_spell( spell_id=12051,  cooldown=90,  duration=6,                   name="Evocation",          icon="spell_nature_purge.jpg")
-MAGE_ARCANE.add_spell( spell_id=382440, cooldown=60,  duration=3,  color=COL_NF,    name="Shifting Power",     icon="ability_ardenweald_mage.jpg",               show=False)
 MAGE_ARCANE.add_spell( spell_id=376103, cooldown=30,  duration=10, color=COL_KYR,   name="Radiant Spark",      icon="ability_bastion_mage.jpg",                  show=False)
 
 MAGE_FROST.add_spell(  spell_id=12472,  cooldown=60,  duration=20,                  name="Icy Veins",          icon="spell_frost_coldhearted.jpg",    tags=[TAG_DYNAMIC_CD]) # 3min base cd / reduced by conduit
