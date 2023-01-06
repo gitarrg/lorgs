@@ -13,6 +13,7 @@ BLOODLUST.add_variation(80353)  # Time Warp
 BLOODLUST.add_variation(264667) # Primal Rage
 BLOODLUST.add_variation(272678) # Primal Rage
 BLOODLUST.add_variation(272678) # Primal Rage
+BLOODLUST.add_variation(390386) # Fury of the Aspects
 
 ################################################################################
 # External Defensive
