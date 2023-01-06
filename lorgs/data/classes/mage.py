@@ -27,7 +27,8 @@ MAGE_FROST  = WowSpec(role=RDPS, wow_class=MAGE, name="Frost")
 ################################################################################
 # Spells
 #
-MAGE.add_spell(        spell_id=382445, cooldown=60,  duration=4,  color=COL_NF,    name="Shifting Power",     icon="ability_ardenweald_mage.jpg",               show=False)
+# tracked as buff (channel shows up as 4 individual casts)
+MAGE.add_buff(        spell_id=382440, cooldown=60,  duration=4,  color=COL_NF,    name="Shifting Power",     icon="ability_ardenweald_mage.jpg",               show=False)
 
 # Defensives
 MAGE.add_buff(         spell_id=45438,  cooldown=240,                               name="Ice Block",          icon="spell_frost_frost.jpg",                     show=False)
