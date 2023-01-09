@@ -34,6 +34,7 @@ DRUID.add_spell(             spell_id=323546, cooldown=180, duration=20, color=C
 
 # Utils
 DRUID.add_spell(             spell_id=106898, cooldown=120, duration=11,                  name="Stampeding Roar",                icon="spell_druid_stampedingroar_cat.jpg",        show=False, variations=[77764, 77761])   # duration includes Conduit
+DRUID.add_spell(             spell_id=124974, cooldown=90,  duration=30,                  name="Nature's Vigil",                 icon="achievement_zone_feralas.jpg",              show=False)
 
 
 # Defensives
