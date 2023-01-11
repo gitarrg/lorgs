@@ -32,7 +32,7 @@ def add_potion(*specs: WowSpec, **kwargs: Any):
 add_potion(
     *ALL_SPECS,
     spell_id=6262,
-    cooldown=None,  # no cooldown per se. One per fight use.
+    cooldown=0,  # no cooldown per se. One per fight use.
     color="#63cf48",
     name="Healthstone",
     icon="warlock_-healthstone.jpg",
