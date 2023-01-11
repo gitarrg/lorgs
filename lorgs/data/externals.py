@@ -1,4 +1,5 @@
 """Buffs/Spells from other Specs. eg.: Power Infusion or PainSup."""
+# fmt: off
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.data.classes import *  # for Colors
