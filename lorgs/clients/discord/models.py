@@ -38,7 +38,7 @@ class DiscordGuildMember(BaseModel):
     I found it safer to convert them to string instead.
     """
 
-    joined_at: str  # ISO8601 timestamp
+    joined_at: str = ""  # ISO8601 timestamp
 
     avatar: typing.Optional[str] = ""
 
