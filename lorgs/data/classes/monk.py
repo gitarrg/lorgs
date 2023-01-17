@@ -10,7 +10,7 @@ from lorgs.data.constants import *
 from lorgs.data.roles import *
 from lorgs.models.wow_class import WowClass
 from lorgs.models.wow_spec import WowSpec
-from lorgs.models.wow_spell import WowSpell
+from lorgs.models.wow_spell import SpellTag, WowSpell
 
 
 ################################################################################
@@ -48,9 +48,9 @@ MONK_WINDWALKER.add_spells(FORT_BREW, DIFFUSE)
 MONK.add_spell(           spell_id=322109, cooldown=180,              color="#c72649", name="Touch of Death",                  icon="ability_monk_touchofdeath.jpg")
 MONK.add_spell(           spell_id=388686, cooldown=120,              color="#8dd6bf", name="Summon White Tiger Statue",       icon="ability_monk_summonwhitetigerstatue.jpg", show=False)
 
-MONK_MISTWEAVER.add_spell(spell_id=322118, cooldown=180, duration=3.5,                 name="Invoke Yu'lon, the Jade Serpent", icon="ability_monk_dragonkick.jpg")
-MONK_MISTWEAVER.add_spell(spell_id=115310, cooldown=180,              color="#00FF98", name="Revival",                         icon="spell_monk_revival.jpg")
-MONK_MISTWEAVER.add_spell(spell_id=325197, cooldown=180, duration=25, color="#e0bb36", name="Invoke Chi-Ji, the Red Crane",    icon="inv_pet_cranegod.jpg")
+MONK_MISTWEAVER.add_spell(spell_id=322118, cooldown=180, duration=3.5,                 name="Invoke Yu'lon, the Jade Serpent", icon="ability_monk_dragonkick.jpg", tags=[SpellTag.RAID_CD])
+MONK_MISTWEAVER.add_spell(spell_id=115310, cooldown=180,              color="#00FF98", name="Revival",                         icon="spell_monk_revival.jpg", tags=[SpellTag.RAID_CD])
+MONK_MISTWEAVER.add_spell(spell_id=325197, cooldown=180, duration=25, color="#e0bb36", name="Invoke Chi-Ji, the Red Crane",    icon="inv_pet_cranegod.jpg", tags=[SpellTag.RAID_CD])
 MONK_MISTWEAVER.add_spell(spell_id=116680, cooldown=30,               color="#22a5e6", name="Thunder Focus Tea",               icon="ability_monk_thunderfocustea.jpg", show=False)
 
 MONK_WINDWALKER.add_spell(spell_id=123904, cooldown=120, duration=24, color="#8cdbbc", name="Invoke Xuen, the White Tiger",    icon="ability_monk_summontigerstatue.jpg")
@@ -60,6 +60,6 @@ MONK_WINDWALKER.add_spell(spell_id=152173, cooldown=90,  duration=12,           
 
 
 MONK_BREWMASTER.add_spell(spell_id=322507, cooldown=60,  duration=0,  color="#45f9ff", name="Celestial Brew",                  icon="ability_monk_ironskinbrew.jpg",        show=False)
-MONK_BREWMASTER.add_spell(spell_id=132578, cooldown=105, duration=25,                  name="Invoke Niuzao the Black Ox",      icon="spell_monk_brewmaster_spec.jpg",       tags=[TAG_DYNAMIC_CD])  # base cd =3min / reduced with conduit
+MONK_BREWMASTER.add_spell(spell_id=132578, cooldown=180, duration=25,                  name="Invoke Niuzao the Black Ox",      icon="spell_monk_brewmaster_spec.jpg")
 MONK_BREWMASTER.add_spell(spell_id=115176, cooldown=300, duration=8,                   name="Zen Meditation",                  icon="ability_monk_zenmeditation.jpg")
 MONK_BREWMASTER.add_spell(spell_id=115203, cooldown=360, duration=15, color="#ffb145", name="Fortifying Brew",                 icon="ability_monk_fortifyingale_new.jpg")

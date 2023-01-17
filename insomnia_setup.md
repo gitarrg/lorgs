@@ -15,8 +15,8 @@ Insomnia:
 - Manage Envs (Ctrl+E)
 - "TOKEN: <value>" (only TOKEN. Remove the "Bearer" Keyword)
 
-
 - Request:
+    - URL: https://www.warcraftlogs.com/api/v2/client
     - Auth: Bearer
     - Ctrl+Space --> `_.TOKEN`
 

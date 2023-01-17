@@ -16,7 +16,7 @@ from lorgs.clients import wcl
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
 from lorgs.models.warcraftlogs_cast import Cast, process_auras, process_until_events
-from lorgs.models.wow_spell import WowSpell, build_spell_query
+from lorgs.models.wow_spell import SpellType, WowSpell, build_spell_query
 
 
 if typing.TYPE_CHECKING:
@@ -54,7 +54,7 @@ class BaseActor(warcraftlogs_base.BaseModel):
         """Return true if a player has own casts (eg.: exclude raid wide buffs like bloodlust)."""
         for cast in self.casts:
             spell = WowSpell.get(spell_id=cast.spell_id)
-            if spell and spell.spell_type != WowSpell.TYPE_BUFFS:
+            if spell and spell.spell_type != SpellType.BUFF:
                 return True
         return False
 

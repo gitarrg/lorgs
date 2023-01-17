@@ -3,12 +3,14 @@
 # pylint: disable=bad-whitespace
 # pylint: disable=wildcard-import
 # pylint: disable=unused-wildcard-import
+# fmt: off
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.data.constants import *
 from lorgs.data.roles import *
 from lorgs.models.wow_class import WowClass
 from lorgs.models.wow_spec import WowSpec
+from lorgs.models.wow_spell import SpellTag
 
 
 ################################################################################
@@ -33,7 +35,7 @@ PALADIN.add_spell(             spell_id=316958, cooldown=240, duration=30, color
 PALADIN.add_spell(             spell_id=328204, cooldown=30,               color=COL_NECRO, name="Vanquisher's Hammer",             icon="ability_maldraxxus_paladin.jpg", show=False)
 
 # Shared
-PALADIN.add_spell(             spell_id=31884,  cooldown=60,  duration=20, color="#ffc107", name="Avenging Wrath",                  icon="spell_holy_avenginewrath.jpg", variations=[231895])
+PALADIN.add_spell(             spell_id=31884,  cooldown=120, duration=20, color="#ffc107", name="Avenging Wrath",                  icon="spell_holy_avenginewrath.jpg", variations=[231895], tags=[SpellTag.RAID_CD])
 PALADIN.add_spell(             spell_id=6940,   cooldown=120, duration=12,                  name="Blessing of Sacrifice",           icon="spell_holy_sealofsacrifice.jpg", show=False)
 
 # Defensive
@@ -41,11 +43,11 @@ PALADIN.add_spell(             spell_id=642,    cooldown=300, duration=8,       
 PALADIN_HOLY.add_spell(        spell_id=498,    cooldown=60,  duration=8,                   name="Divine Protection",               icon="spell_holy_divineprotection.jpg", show=False)
 
 # Offensive
-PALADIN_HOLY.add_spell(        spell_id=31821,  cooldown=180, duration=8,  color="#dc65f5", name="Aura Mastery",                    icon="spell_holy_auramastery.jpg")
+PALADIN_HOLY.add_spell(        spell_id=31821,  cooldown=180, duration=8,  color="#dc65f5", name="Aura Mastery",                    icon="spell_holy_auramastery.jpg", tags=[SpellTag.RAID_CD])
 PALADIN_HOLY.add_spell(        spell_id=200025, cooldown=15,  duration=8,  color="#e3ca09", name="Beacon of Virtue",                icon="ability_paladin_beaconofinsight.jpg", show=False)
 
 
-PALADIN_PROTECTION.add_buff(   spell_id=31850,  cooldown=60,  duration=8,  color="#fcea74", name="Ardent Defender",                 icon="spell_holy_ardentdefender.jpg", tags=[WowSpell.TAG_DYNAMIC_CD])
+PALADIN_PROTECTION.add_buff(   spell_id=31850,  cooldown=120, duration=8,  color="#fcea74", name="Ardent Defender",                 icon="spell_holy_ardentdefender.jpg")
 PALADIN_PROTECTION.add_spell(  spell_id=212641, cooldown=300, duration=8,                   name="Guardian of Ancient Kings",       icon="spell_holy_heroism.jpg", variations=[86659])
 PALADIN_PROTECTION.add_spell(  spell_id=152262, cooldown=60,  duration=15, color="#0a60ff", name="Seraphim",                        icon="ability_paladin_seraphim.jpg")
 
