@@ -29,7 +29,7 @@ MONK_WINDWALKER = WowSpec(role=MDPS, wow_class=MONK, name="Windwalker")
 # Spells
 #
 MONK.add_spell(           spell_id=310454, cooldown=120, duration=30, color=COL_KYR,   name="Weapons of Order",                icon="ability_bastion_monk.jpg",            show=False)
-MONK.add_spell(           spell_id=325216, cooldown=60,  duration=10, color=COL_NECRO, name="Bonedust Brew",                   icon="ability_maldraxxus_monk.jpg",         show=False)
+MONK.add_spell(           spell_id=386276, cooldown=60,  duration=10, color=COL_NECRO, name="Bonedust Brew",                   icon="ability_maldraxxus_monk.jpg",         show=False)
 MONK.add_spell(           spell_id=327104, cooldown=30,  duration=30, color=COL_NF,    name="Faeline Stomp",                   icon="ability_ardenweald_monk.jpg",         show=False)
 
 
@@ -46,6 +46,7 @@ MONK_WINDWALKER.add_spells(FORT_BREW, DIFFUSE)
 
 # Offensive
 MONK.add_spell(           spell_id=322109, cooldown=180,              color="#c72649", name="Touch of Death",                  icon="ability_monk_touchofdeath.jpg")
+MONK.add_spell(           spell_id=388686, cooldown=120,              color="#8dd6bf", name="Summon White Tiger Statue",       icon="ability_monk_summonwhitetigerstatue.jpg", show=False)
 
 MONK_MISTWEAVER.add_spell(spell_id=322118, cooldown=180, duration=3.5,                 name="Invoke Yu'lon, the Jade Serpent", icon="ability_monk_dragonkick.jpg", tags=[SpellTag.RAID_CD])
 MONK_MISTWEAVER.add_spell(spell_id=115310, cooldown=180,              color="#00FF98", name="Revival",                         icon="spell_monk_revival.jpg", tags=[SpellTag.RAID_CD])

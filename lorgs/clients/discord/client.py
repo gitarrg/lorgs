@@ -157,6 +157,10 @@ async def get_member_info(server_id: str, user_id: str) -> DiscordGuildMember:
     response = await bot_request(url)
 
     message = response.get("message")
+
+    # eg.: Users logging in on lorrgs without beeing in the discord
+    if message == "Unknown Member":
+        raise ValueError(message)
     if message:
         raise ValueError(message)
 
