@@ -28,15 +28,12 @@ async def get_token(response: fastapi.Response, code: str):
 
     # get the discord access token
     user_credentials = await discord.exchange_code(code, redirect_uri=REDIRECT_URI)
-    print("user_credentials", REDIRECT_URI, code)
-    error = user_credentials.get("error")
     if user_credentials.get("error"):
         error = user_credentials.get("error_description") or user_credentials.get("error") or ""
         raise fastapi.HTTPException(status_code=401, detail=error)
 
     # load user info
     access_token: str = user_credentials.get("access_token")  # type: ignore
-    print("user_credentials", user_credentials)
     info = await discord.get_user_profile(access_token)
     # try:
     # except PermissionError:
@@ -50,7 +47,10 @@ async def get_token(response: fastapi.Response, code: str):
     # grap info from signin (in case users arn't members of the discord server)
     user.discord_id = info.id
     user.discord_tag = info.tag
-    await user.refresh()
+    try:
+        await user.refresh()
+    except ValueError:
+        pass
     user.save()
 
     # encode everything into JWT

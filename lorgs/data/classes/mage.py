@@ -28,11 +28,13 @@ MAGE_FROST  = WowSpec(role=RDPS, wow_class=MAGE, name="Frost")
 ################################################################################
 # Spells
 #
+# tracked as buff (channel shows up as 4 individual casts)
+MAGE.add_buff(        spell_id=382440, cooldown=60,  duration=4,  color=COL_NF,    name="Shifting Power",     icon="ability_ardenweald_mage.jpg",               show=False)
 
 # Defensives
 MAGE.add_buff(         spell_id=45438,  cooldown=240,                               name="Ice Block",          icon="spell_frost_frost.jpg",                     show=False)
 MAGE.add_buff(         spell_id=55342,  cooldown=120,                               name="Mirror Image",       icon="spell_magic_lesserinvisibilty.jpg",         show=False)
-MAGE.add_buff(         spell_id=110909, cooldown=60,                                name="Alter Time",         icon="spell_mage_altertime.jpg",                  show=False, variations=[342246])
+MAGE.add_buff(         spell_id=342246, cooldown=60,                                name="Alter Time",         icon="spell_mage_altertime.jpg",                  show=False, variations=[342246])
 
 MAGE_ARCANE.add_buff(  spell_id=113862, cooldown=120,                               name="Greater Invisibility",icon="ability_mage_greaterinvisibility.jpg",     show=False)
 MAGE_ARCANE.add_buff(  spell_id=235450, cooldown=25,                                name="Prismatic Barrier",  icon="spell_magearmor.jpg",                       show=False)
@@ -51,7 +53,6 @@ MAGE_FIRE.add_buff(    spell_id=333315,                                         
 MAGE_ARCANE.add_spell( spell_id=321507, cooldown=45,  duration=8,                   name="Touch of the Magi",  icon="ability_mage_netherwindpresence.jpg")
 MAGE_ARCANE.add_spell( spell_id=365350, cooldown=90,  duration=12,                  name="Arcane Surge",       icon="ability_mage_arcanesurge.jpg")
 MAGE_ARCANE.add_spell( spell_id=12051,  cooldown=90,  duration=6,                   name="Evocation",          icon="spell_nature_purge.jpg")
-MAGE_ARCANE.add_spell( spell_id=382440, cooldown=60,  duration=3,  color=COL_NF,    name="Shifting Power",     icon="ability_ardenweald_mage.jpg",               show=False)
 MAGE_ARCANE.add_spell( spell_id=376103, cooldown=30,  duration=10, color=COL_KYR,   name="Radiant Spark",      icon="ability_bastion_mage.jpg",                  show=False)
 
 MAGE_FROST.add_spell(  spell_id=12472,  cooldown=60,  duration=20,                  name="Icy Veins",          icon="spell_frost_coldhearted.jpg")

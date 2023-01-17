@@ -3,12 +3,14 @@
 # pylint: disable=bad-whitespace
 # pylint: disable=wildcard-import
 # pylint: disable=unused-wildcard-import
+# fmt: off
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.data.constants import *
 from lorgs.data.roles import *
 from lorgs.models.wow_class import WowClass
 from lorgs.models.wow_spec import WowSpec
+
 
 ################################################################################
 # Class
@@ -49,7 +51,6 @@ ROGUE_SUBTLETY.add_spell(      spell_id=212283, cooldown=25,  duration=10,      
 ROGUE_OUTLAW.add_spell(        spell_id=13750,  cooldown=0,   duration=20,                  name="Adrenaline Rush",     icon="spell_shadow_shadowworddominate.jpg")
 ROGUE_OUTLAW.add_spell(        spell_id=315508,               duration=30, color="#c7813c", name="Roll the Bones",      icon="ability_rogue_rollthebones.jpg",           show=False)
 ROGUE_OUTLAW.add_spell(        spell_id=385408, cooldown=90,               color=COL_NF,    name="Sepsis",              icon="ability_ardenweald_rogue.jpg",             show=False)
-ROGUE_OUTLAW.add_spell(        spell_id=271877, cooldown=0,                                 name="Blade Rush",          icon="ability_arakkoa_spinning_blade.jpg",       show=False)
 ROGUE_OUTLAW.add_spell(        spell_id=51690,  cooldown=120,                               name="Killing Spree",       icon="ability_rogue_murderspree.jpg")
 ROGUE_OUTLAW.add_spell(        spell_id=343142, cooldown=120, duration=8,  color="#3d9991", name="Dreadblades",         icon="inv_sword_1h_artifactskywall_d_01dual.jpg", show=False)
-ROGUE_OUTLAW.add_spell(        spell_id=381989, cooldown=0,   duration=30, color="#b3702d",  name="Keep It Rolling",     icon="ability_rogue_keepitrolling.jpg")
+ROGUE_OUTLAW.add_spell(        spell_id=381989, cooldown=0,   duration=30, color="#b3702d", name="Keep It Rolling",     icon="ability_rogue_keepitrolling.jpg")

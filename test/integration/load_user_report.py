@@ -86,9 +86,9 @@ async def test_load_multiple_fights():
 async def test_load() -> None:
 
     # Inputs
-    REPORT_ID = "LAjpTGtv7FZrP9YH"
-    fight_ids = [2, 3, 4, 6, 7]
-    player_ids = [3, 8, 5, 7]
+    REPORT_ID = "MNx321XvCR7JrpQj"
+    fight_ids = [40, 41]
+    player_ids = [12]
 
     # LOAD
     user_report = UserReport.get_or_create(report_id=REPORT_ID, create=True)
@@ -102,7 +102,7 @@ async def test_load() -> None:
     # user_report.save()
     # print(user_report.dict())
 
-    return
+    # return
     # user_report.post_init()
 
     # print(user_report.get_query())
@@ -163,8 +163,8 @@ async def main() -> None:
     # await test_load_single_player()
     # await test_load_multiple_players()
     # await test_load_multiple_fights()
-    # await test_load()
-    await test_load_with_progress()
+    await test_load()
+    # await test_load_with_progress()
 
 
 if __name__ == "__main__":
