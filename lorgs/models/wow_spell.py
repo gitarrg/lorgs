@@ -112,18 +112,6 @@ class WowSpell(base.MemoryModel):
     def __str__(self) -> str:
         return f"<Spell({self.spell_id}, name={self.name})>"
 
-    def is_item_spell(self) -> bool:
-        """True if this spell from an item."""
-        return self.spell_type in (self.TYPE_TRINKET, self.TYPE_POTION)
-
-    def is_healing_cooldown(self) -> bool:
-        """True if a spell is what we call a healer cooldown."""
-        if self.is_item_spell():
-            return False
-        if self.spell_type in (self.TYPE_PERSONAL,):
-            return False
-        return True
-
     ##########################
     # Methods
     #

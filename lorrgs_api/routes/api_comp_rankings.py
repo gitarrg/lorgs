@@ -1,23 +1,28 @@
 """API Routes to get and update Comp Rankings."""
 from __future__ import annotations
 
-# IMPORT STANDARD LIBRARIES
-import typing
-
 # IMPORT THIRD PARTY LIBRARIES
 import fastapi
 
 # IMPORT LOCAL LIBRARIES
-from lorgs.models import warcraftlogs_comp_ranking
-from lorgs.models.raid_boss import RaidBoss
-from lorrgs_api.routes import api_tasks
+from lorgs.clients import sqs
+from lorgs.models.warcraftlogs_comp_ranking import CompRanking, CompRankingFight, FilterExpression
 
 
 router = fastapi.APIRouter()
 
 
 @router.get("/comp_ranking/{boss_slug}")
-async def get_comp_ranking(response: fastapi.Response, boss_slug: str):
+async def get_comp_ranking(
+    response: fastapi.Response,
+    boss_slug: str,
+    # Query Params
+    limit: int = 20,
+    roles: list[str] = fastapi.Query([], alias="role"),
+    specs: list[str] = fastapi.Query([], alias="spec"),
+    # killtime_min: int = 0,
+    # killtime_max: int = 0,
+):
     """Fetch comp rankings for a given boss encounter.
 
     Args:
@@ -25,35 +30,58 @@ async def get_comp_ranking(response: fastapi.Response, boss_slug: str):
     """
     # shorter cache timeout for the start of the tier (where frequent changes happen)
     response.headers["Cache-Control"] = "max-age=300"
-    try:
-        # NOTE: we return the raw json,
-        # no need to parse the data
-        return warcraftlogs_comp_ranking.CompRanking.get_json(boss_slug=boss_slug)
-    except KeyError:
-        raise fastapi.HTTPException(status_code=404, detail="Invalid Boss")
+
+    # fetch the data
+    comp_ranking = CompRanking.get(boss_slug=boss_slug)
+    if not comp_ranking:
+        raise fastapi.HTTPException(status_code=404, detail="Not Found.")
+
+    def fight_filter(fight: CompRankingFight):
+
+        if not fight.composition:
+            return False
+
+        for spec_expr in specs:
+            expr = FilterExpression.parse_str(spec_expr)
+            if not expr.run(fight.composition["specs"]):
+                return False
+
+        for role_expr in roles:
+            expr = FilterExpression.parse_str(role_expr)
+            if not expr.run(fight.composition["roles"]):
+                return False
+
+        return True
+
+    for report in comp_ranking.reports:
+        report.fights = [fight for fight in report.fights if fight_filter(fight)]
+
+    comp_ranking.reports = [r for r in comp_ranking.reports if r.fights]
+    comp_ranking.reports = comp_ranking.reports[:limit]
+
+    return comp_ranking.dict(exclude_unset=True)
 
 
 ################################################################################
 # Tasks
 #
-@router.get("/task/load_comp_ranking/{boss_slug}")
-async def task_load_comp_rankings(boss_slug: str = "all", limit: int = 50, clear: bool = False):
+@router.get("/comp_ranking/load/{boss_slug}")
+async def task_load_comp_rankings(
+    response: fastapi.Response, boss_slug: str = "all", limit: int = 50, clear: bool = False
+):
     """Submit a scheduled task to update a single or all Comp Rankings."""
-    kwargs = {"limit": limit, "clear": clear}
+    response.headers["Cache-Control"] = "no-cache"
 
-    # expand bosses
-    if boss_slug == "all":
-        # bosses = [boss.full_name_slug for boss in data.CURRENT_ZONE.bosses]
-        bosses = [boss.full_name_slug for boss in RaidBoss.all]
-    else:
-        bosses = [boss_slug]
+    payload = {
+        "task": "load_comp_rankings",
+        "boss_slug": boss_slug,
+        "limit": limit,
+        "clear": clear,
+    }
+    message = sqs.send_message(payload=payload)
 
-    # create tasks
-    # for boss_slug in bosses:
-    #     await api_tasks.create_cloud_function_task(
-    #         function_name="load_comp_rankings",
-    #         boss_slug=boss_slug,
-    #         **kwargs
-    #     )
-
-    return {"message": "tasks queued", "bosses": bosses}
+    return {
+        "message": "task queued",
+        "task": message.get("MessageId"),
+        "payload": payload,
+    }

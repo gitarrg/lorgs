@@ -86,9 +86,9 @@ async def test_load_multiple_fights():
 async def test_load() -> None:
 
     # Inputs
-    REPORT_ID = "MNx321XvCR7JrpQj"
-    fight_ids = [40, 41]
-    player_ids = [12]
+    REPORT_ID = "pkGRVFywbhD7famW"
+    fight_ids = [60]
+    player_ids = [692]
 
     # LOAD
     user_report = UserReport.get_or_create(report_id=REPORT_ID, create=True)
@@ -138,9 +138,9 @@ async def test_load_with_progress() -> None:
     # task.set("items.1_5", {"status": "changed"})
     # task.set("items.1_5.status", "changed9")
 
-    REPORT_ID = "LAjpTGtv7FZrP9YH"
-    FIGHT_IDS = [2, 3, 4, 6, 7, 8, 9]
-    PLAYER_IDS = [3, 8, 5, 1, 2, 3, 4]
+    REPORT_ID = "BCFzH4vaRYpDTrqP"
+    FIGHT_IDS = [23]
+    PLAYER_IDS = [1]
 
     ################################
     # Create Status Object

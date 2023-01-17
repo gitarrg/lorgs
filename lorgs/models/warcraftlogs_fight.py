@@ -4,7 +4,7 @@ from __future__ import annotations
 import datetime
 import textwrap
 import typing
-from collections import defaultdict
+from typing import Optional
 
 # IMPORT THIRD PARTY LIBRARIES
 import pydantic
@@ -24,27 +24,6 @@ if typing.TYPE_CHECKING:
     from lorgs.models.warcraftlogs_report import Report
 
 
-def get_composition(players: typing.Iterable[Player]) -> dict:
-    """Generate a Composition Dict from a list of Players."""
-    players = players or []
-
-    comp: typing.Dict[str, dict] = {
-        "roles": defaultdict(int),
-        "specs": defaultdict(int),
-        "classes": defaultdict(int),
-    }
-
-    for player in players:
-        comp["roles"][player.spec.role.code] += 1
-        comp["classes"][player.spec.wow_class.name_slug] += 1
-        comp["specs"][player.spec.full_name_slug] += 1
-
-    comp["roles"] = dict(comp["roles"])
-    comp["classes"] = dict(comp["classes"])
-    comp["specs"] = dict(comp["specs"])
-    return comp
-
-
 class Fight(warcraftlogs_base.BaseModel):
 
     fight_id: int
@@ -56,9 +35,8 @@ class Fight(warcraftlogs_base.BaseModel):
     """fight duration in milliseconds."""
 
     players: list[Player] = []
-    boss: typing.Optional[Boss] = None
+    boss: Optional[Boss] = None
 
-    composition: dict = {}
     deaths: int = 0
     damage_taken: int = 0
 
@@ -161,13 +139,15 @@ class Fight(warcraftlogs_base.BaseModel):
         if not self.report:
             raise ValueError("Missing Parent Report")
 
+        parts = "\n".join(self.get_query_parts())
+
         return textwrap.dedent(
             f"""\
             reportData
             {{
                 report(code: "{self.report.report_id}")
                 {{
-                    summary: table({self.table_query_args}, dataType: Summary)
+                    {parts}
                 }}
             }}
         """
@@ -214,8 +194,6 @@ class Fight(warcraftlogs_base.BaseModel):
             player.process_death_events(summary_data.deathEvents)
             self.players.append(player)
 
-        # call this before filtering to always get the full comp
-        self.composition = get_composition(self.players)
         self.players.sort(key=lambda player: (player.spec.role, player.spec, player.name))
 
     def process_query_result(self, **query_result: typing.Any):

@@ -14,10 +14,10 @@ TEMP_FILE = "/mnt/d/tmp.json"
 async def test__load_rankings():
 
     spec_ranking = SpecRanking.get_or_create(
-        spec_slug="druid-restoration",
-        boss_slug="lords-of-dread",
-        difficulty="mythic",
-        metric="dps",
+        spec_slug="deathknight-unholy",
+        boss_slug="terros",
+        difficulty="heroic",
+        metric="hps",
     )
 
     for player in spec_ranking.players:
@@ -27,7 +27,7 @@ async def test__load_rankings():
         # return
     # return
 
-    await spec_ranking.load(limit=25, clear_old=False)
+    await spec_ranking.load(limit=5, clear_old=True)
     spec_ranking.save()
     # return
 

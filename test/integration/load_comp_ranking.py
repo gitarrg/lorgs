@@ -9,15 +9,26 @@ from lorgs.models.warcraftlogs_comp_ranking import CompRanking
 
 
 async def test__load_rankings() -> None:
-    comp_ranking = CompRanking.get_or_create(boss_slug="terros")
+    comp_ranking = CompRanking(boss_slug="terros")
+    # get_or_create
 
     # q = comp_ranking.get_query()
     # print(q)
 
     # x = comp_ranking.get_reports()
     # print(x)
-    await comp_ranking.load(limit=20, clear_old=True)
-    # comp_ranking.save()
+    await comp_ranking.load(limit=3, clear_old=True)
+    comp_ranking.save()
+
+    for report in comp_ranking.reports:
+        # print("R", report.report_id)
+        for fight in report.fights:
+            fight.players = []
+            # print(fight.get_query())
+
+            # print("\tF", fight.fight_id)
+            # for player in fight.players:
+            #     print("\t\tP", player.name, len(player.casts))
 
 
 async def main() -> None:
