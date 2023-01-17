@@ -173,7 +173,7 @@ class CompRanking(base.S3Model, warcraftlogs_base.wclclient_mixin):
             players=[],
         )
 
-        report = Report(
+        report = CompRankingReport(
             report_id=fight_data.report.code,
             start_time=fight_data.report.startTime,
             fights=[fight],
