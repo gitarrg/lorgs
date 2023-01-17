@@ -1,5 +1,7 @@
 """Handler to Load Spec Rankings."""
 
+from __future__ import annotations
+
 # IMPORT STANDARD LIBRARIES
 import json
 

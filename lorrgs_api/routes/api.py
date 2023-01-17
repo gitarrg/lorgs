@@ -4,13 +4,15 @@
 import fastapi
 
 # IMPORT LOCAL LIBRARIES
-# from lorrgs_api.routes import api_comp_rankings
-from lorrgs_api.routes import api_spec_rankings
-from lorrgs_api.routes import api_tasks
-from lorrgs_api.routes import api_user_reports
-from lorrgs_api.routes import api_world_data
-from lorrgs_api.routes import auth
-from lorrgs_api.routes import debug
+from lorrgs_api.routes import (
+    api_comp_rankings,
+    api_spec_rankings,
+    api_tasks,
+    api_user_reports,
+    api_world_data,
+    auth,
+    debug,
+)
 
 
 router = fastapi.APIRouter()
@@ -18,7 +20,7 @@ router = fastapi.APIRouter()
 
 ################################################################################
 # Child Blueprints
-# router.include_router(api_comp_rankings.router)
+router.include_router(api_comp_rankings.router)
 router.include_router(api_spec_rankings.router)
 router.include_router(api_tasks.router)
 router.include_router(api_user_reports.router, prefix="/user_reports")

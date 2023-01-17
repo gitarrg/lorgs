@@ -10,12 +10,11 @@ from lorgs.models.wow_spell import WowSpell
 
 
 # alias
-TYPE_POTION = WowSpell.TYPE_POTION
-TYPE_BUFFS = WowSpell.TYPE_BUFFS  # remove?
+TYPE_POTION = SpellType.POTION
 
 
 def add_potion(*specs: WowSpec, **kwargs: Any):
-    kwargs.setdefault("spell_type", WowSpell.TYPE_POTION)
+    kwargs.setdefault("spell_type", SpellType.POTION)
     kwargs.setdefault("cooldown", 300)
     kwargs.setdefault("show", False)
     spell = WowSpell(**kwargs)
@@ -94,5 +93,5 @@ for s in HEAL.specs:
 
 # hide all potions by default
 for spell in WowSpell.list():
-    if spell.spell_type in (TYPE_POTION, TYPE_BUFFS):
+    if spell.spell_type in (TYPE_POTION, ):
         spell.show = False

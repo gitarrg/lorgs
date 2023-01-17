@@ -5,13 +5,14 @@ import typing
 from pydantic import BaseModel
 
 # IMPORT LOCAL LIBRARIES
-from .zone import Zone
 from .character_ranking import CharacterRankings
+from .fight_rankings import FightRankings
+from .zone import Zone
 
 
 class Encounter(BaseModel):
     """A single encounter for the game.."""
-    
+
     id: int = 0
     """The ID of the encounter."""
 
@@ -23,3 +24,6 @@ class Encounter(BaseModel):
 
     characterRankings: CharacterRankings = CharacterRankings()
     """Player rankings information for a encounter."""
+
+    fightRankings: FightRankings = FightRankings()
+    """Fight rankings information for a zone."""

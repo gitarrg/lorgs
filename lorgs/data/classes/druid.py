@@ -10,7 +10,7 @@ from lorgs.data.constants import *
 from lorgs.data.roles import *
 from lorgs.models.wow_class import WowClass
 from lorgs.models.wow_spec import WowSpec
-from lorgs.models.wow_spell import WowSpell
+from lorgs.models.wow_spell import SpellTag, WowSpell
 
 
 ################################################################################
@@ -29,7 +29,7 @@ DRUID_RESTORATION = WowSpec(role=HEAL, wow_class=DRUID, name="Restoration", shor
 ################################################################################
 # Spells
 #
-DRUID.add_spell(             spell_id=391528, cooldown=60,  duration=4,  color=COL_NF,    name="Convoke the Spirits",            icon="ability_ardenweald_druid.jpg")
+DRUID.add_spell(             spell_id=391528, cooldown=60,  duration=4,  color=COL_NF,    name="Convoke the Spirits",            icon="ability_ardenweald_druid.jpg", tags=[SpellTag.RAID_CD])
 DRUID.add_spell(             spell_id=323546, cooldown=180, duration=20, color=COL_VENTR, name="Ravenous Frenzy",                icon="ability_revendreth_druid.jpg",              show=False)
 
 # Utils
@@ -64,9 +64,9 @@ DRUID_GUARDIAN.add_spell(    spell_id=61336,  cooldown=180, duration=6,         
 DRUID_GUARDIAN.add_spell(    spell_id=102558, cooldown=180, duration=30,                  name="Incarnation: Guardian of Ursoc", icon="spell_druid_incarnation.jpg", variations=[50334])
 DRUID_GUARDIAN.add_spell(    spell_id=22812,  cooldown=60,  duration=8,                   name="Barkskin",                       icon="spell_nature_stoneclawtotem.jpg",           show=False)
 
-DRUID_RESTORATION.add_spell( spell_id=197721, cooldown=90,  duration=8,  color="#7ec44d", name="Flourish",                       icon="spell_druid_wildburst.jpg",                 show=False)
-DRUID_RESTORATION.add_spell( spell_id=740,    cooldown=120, duration=6,  color="#6cbfd9", name="Tranquility",                    icon="spell_nature_tranquility.jpg")
-DRUID_RESTORATION.add_buff(  spell_id=33891,  cooldown=0,   duration=0,                   name="Incarnation: Tree of Life",      icon="ability_druid_improvedtreeform.jpg", wowhead_data="spell=33891")
+DRUID_RESTORATION.add_spell( spell_id=197721, cooldown=90,  duration=8,  color="#7ec44d", name="Flourish",                       icon="spell_druid_wildburst.jpg",                 show=False, tags=[SpellTag.RAID_CD])
+DRUID_RESTORATION.add_spell( spell_id=740,    cooldown=120, duration=6,  color="#6cbfd9", name="Tranquility",                    icon="spell_nature_tranquility.jpg", tags=[SpellTag.RAID_CD])
+DRUID_RESTORATION.add_buff(  spell_id=33891,  cooldown=0,   duration=0,                   name="Incarnation: Tree of Life",      icon="ability_druid_improvedtreeform.jpg", wowhead_data="spell=33891", tags=[SpellTag.RAID_CD])
 
 
 # Additional Spells (not tracked)
