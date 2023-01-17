@@ -2,23 +2,97 @@
 from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
+import operator
+import re
 import textwrap
 import typing
+from collections import defaultdict
 from datetime import datetime
+from typing import Any, Callable, ClassVar, Optional, TypedDict
+
+# IMPORT THIRD PARTY LIBRARIES
+import pydantic
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.clients import wcl
 from lorgs.logger import logger
-from lorgs.models import base, warcraftlogs_base
+from lorgs.models import base, warcraftlogs_base, warcraftlogs_report
 from lorgs.models.raid_boss import RaidBoss
 from lorgs.models.warcraftlogs_boss import Boss
 from lorgs.models.warcraftlogs_fight import Fight
+from lorgs.models.warcraftlogs_player import Player
 from lorgs.models.warcraftlogs_report import Report
 from lorgs.models.wow_spell import SpellTag, WowSpell, build_spell_query
 
 
+class FilterExpression(pydantic.BaseModel):
+
+    attr: str
+    op: str
+    value: int
+
+    OPS: ClassVar[dict[str, Callable[[Any, Any], bool]]] = {
+        "eq": operator.eq,
+        "lt": operator.lt,
+        "lte": lambda a, b: bool(a <= b),
+        "gt": operator.gt,
+        "gte": lambda a, b: bool(a >= b),
+    }
+
+    VALID_OPS: ClassVar[list[str]] = list(OPS.keys())
+    RE_KEY: ClassVar[str] = r"([\w\-]+)"  # expr to match the key/attr name. eg.: spec or role name
+    RE_OPS: ClassVar[str] = r"|".join(VALID_OPS)
+    RE_VAL: ClassVar[str] = r"\d+"
+    QUERY_ARG_RE: ClassVar[str] = rf"(?P<attr>{RE_KEY})\.((?P<op>{RE_OPS})\.)?(?P<value>{RE_VAL})"
+
+    @classmethod
+    def parse_str(cls, expr: str) -> "FilterExpression":
+        """
+        query: filter/check expression. eg.: "my_attr.lt.3" => "my_attr" is less than 3.
+
+        """
+        m = re.match(cls.QUERY_ARG_RE, expr)
+        if not m:
+            raise ValueError(f"invalid query arg: {expr}")
+        return cls.parse_obj(m.groupdict())
+
+    def run(self, values: dict) -> bool:
+        op = self.OPS[self.op]
+        return op(values.get(self.attr, 0), self.value)
+
+
+class FightComposition(TypedDict):
+
+    roles: dict[str, int]
+    specs: dict[str, int]
+    classes: dict[str, int]
+
+
+def get_composition(players: typing.Iterable[Player]) -> FightComposition:
+    """Generate a Composition Dict from a list of Players."""
+    players = players or []
+
+    comp: FightComposition = {
+        "roles": defaultdict(int),
+        "specs": defaultdict(int),
+        "classes": defaultdict(int),
+    }
+
+    for player in players:
+        comp["roles"][player.spec.role.code] += 1
+        comp["classes"][player.spec.wow_class.name_slug] += 1
+        comp["specs"][player.spec.full_name_slug] += 1
+
+    comp["roles"] = dict(comp["roles"])
+    comp["classes"] = dict(comp["classes"])
+    comp["specs"] = dict(comp["specs"])
+    return comp
+
+
 class CompRankingFight(Fight):
-    """A single Fight showing in the Comp Rankings"""
+    """A single Fight showing in the Comp Rankings."""
+
+    composition: Optional[FightComposition] = None
 
     def get_query_parts(self) -> list[str]:
 
@@ -35,6 +109,15 @@ class CompRankingFight(Fight):
         if self.boss:
             await self.boss.load(*args, **kwargs)
 
+    def process_query_result(self, **query_result: typing.Any):
+        super().process_query_result(**query_result)
+        self.composition = get_composition(self.players)
+
+
+class CompRankingReport(warcraftlogs_report.Report):
+
+    fights: list[CompRankingFight] = []  # type: ignore # mypy doesn't like reassignment
+
 
 class CompRanking(base.S3Model, warcraftlogs_base.wclclient_mixin):
     """A Group/List of reports for a given Boss."""
@@ -45,7 +128,7 @@ class CompRanking(base.S3Model, warcraftlogs_base.wclclient_mixin):
     # datetime: timetamp of last update
     updated: datetime = datetime.min
 
-    reports: list[Report] = []
+    reports: list[CompRankingReport] = []
     """all reports for this boss."""
 
     # Config
@@ -137,31 +220,6 @@ class CompRanking(base.S3Model, warcraftlogs_base.wclclient_mixin):
 
         self.reports = self.reports[:limit]
         return new_reports
-
-    async def load_fight(self, fight: Fight):
-
-        query = f"""
-            reportData
-            {{
-                report(code: "{fight.report.report_id}")
-                {{
-                    events(
-                        {fight.table_query_args},
-                        filterExpression: "{self.get_filter()}"
-                    )
-                    {{data}}
-                }}
-            }}
-        """
-        query_result = await self.client.query(query=query)
-        for actor in fight.players.values():
-            actor.process_query_result(query_result)
-
-        await fight.boss.load()
-
-        fight.players = {
-            k: player for k, player in fight.players.items() if player.has_own_casts
-        }
 
     async def load(self, limit: int = 5, clear_old: bool = False):
         """Fetch reports for this BossRanking.

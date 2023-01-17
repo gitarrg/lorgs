@@ -1,9 +1,11 @@
 """Store Objects in S3."""
 
+from __future__ import annotations
+
 # IMPORT STANDARD LIBRARIES
 import json
 import os
-import typing
+from typing import Any, ClassVar, Optional, Type, TypeVar
 
 # IMPORT THIRD PARTY LIBRARIES
 import boto3
@@ -14,10 +16,15 @@ from lorgs.logger import Timer
 from lorgs.models.base import base
 
 
+T = TypeVar("T", bound="S3Model")
+
+
+s3client = boto3.client("s3")
+
+
 class S3Model(base.BaseModel):
 
-    bucket: typing.ClassVar[str] = os.getenv("DATA_BUCKET") or "lorrgs"
-    s3client: typing.ClassVar = boto3.client("s3")
+    bucket: ClassVar[str] = os.getenv("DATA_BUCKET") or "lorrgs"
 
     @classmethod
     def get_key(cls, **kwargs) -> str:
@@ -29,11 +36,11 @@ class S3Model(base.BaseModel):
     #
 
     @classmethod
-    def get_json(cls, **kwargs: typing.Any) -> typing.Any:
+    def get_json(cls, **kwargs: Any) -> Any:
         key = cls.get_key(**kwargs)
         try:
             with Timer(f"s3.get_raw: {key}"):
-                data = cls.s3client.get_object(Bucket=cls.bucket, Key=key)
+                data = s3client.get_object(Bucket=cls.bucket, Key=key)
         except ClientError:
             raise KeyError("Invalid Key: %s", key)
 
@@ -41,7 +48,7 @@ class S3Model(base.BaseModel):
         return json.loads(body.read())
 
     @classmethod
-    def get(cls, **kwargs: typing.Any) -> typing.Optional["S3Model"]:
+    def get(cls: Type[T], **kwargs: Any) -> Optional[T]:
         """Get an Item from the Store."""
         try:
             content = cls.get_json(**kwargs)
@@ -49,12 +56,12 @@ class S3Model(base.BaseModel):
             return None
         return cls.construct(**content)
 
-    def save(self, exclude_unset=True, **kwargs: typing.Any) -> None:
+    def save(self, exclude_unset=True, **kwargs: Any) -> None:
 
         key = self.get_key(**self.dict())
         data = self.json(exclude_unset=exclude_unset, **kwargs)
         print("saving to S3", self.bucket, key)
-        self.s3client.put_object(
+        s3client.put_object(
             Bucket=self.bucket,
             Key=key,
             Body=data,

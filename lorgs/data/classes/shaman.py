@@ -10,7 +10,7 @@ from lorgs.data.constants import *
 from lorgs.data.roles import *
 from lorgs.models.wow_class import WowClass
 from lorgs.models.wow_spec import WowSpec
-from lorgs.models.wow_spell import SpellTag
+from lorgs.models.wow_spell import SpellTag, SpellType
 
 
 ################################################################################
@@ -46,7 +46,7 @@ SHAMAN.add_buff(               spell_id=337984, cooldown=90,  duration=12,      
 SHAMAN_ELEMENTAL.add_spell(    spell_id=191634, cooldown=60,               color="#00bfff", name="Stormkeeper",                icon="ability_thunderking_lightningwhip.jpg")
 SHAMAN_ELEMENTAL.add_spell(    spell_id=198067, cooldown=150, duration=30, color="#ffa500", name="Fire Elemental",             icon="spell_fire_elemental_totem.jpg")
 SHAMAN_ELEMENTAL.add_spell(    spell_id=192249, cooldown=150, duration=30, color="#64b8d9", name="Storm Elemental",            icon="inv_stormelemental.jpg")
-SHAMAN_ELEMENTAL.add_spell(    spell_id=108281, cooldown=120, duration=10, color="#64b8d9", name="Ancestral Guidance",         icon="ability_shaman_ancestralguidance.jpg", tags=[SpellTag.RAID_CD])
+SHAMAN_ELEMENTAL.add_spell(    spell_id=108281, cooldown=120, duration=10, color="#64b8d9", name="Ancestral Guidance",         icon="ability_shaman_ancestralguidance.jpg", spell_type=SpellType.RAID, tags=[SpellTag.RAID_CD], show=False)
 SHAMAN_ELEMENTAL.add_buff(     spell_id=114050,               duration=15, color="#ffcb6b", name="Ascendance",                 icon="spell_fire_elementaldevastation.jpg")  # The Buff
 
 SHAMAN_ENHANCEMENT.add_spell(  spell_id=114051, cooldown=180,              color="#ffcb6b", name="Ascendance",                 icon="spell_fire_elementaldevastation.jpg")

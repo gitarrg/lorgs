@@ -14,7 +14,7 @@ TYPE_POTION = SpellType.POTION
 
 
 def add_potion(*specs: WowSpec, **kwargs: Any):
-    kwargs.setdefault("spell_type", WowSpell.TYPE_POTION)
+    kwargs.setdefault("spell_type", SpellType.POTION)
     kwargs.setdefault("cooldown", 300)
     kwargs.setdefault("show", False)
     spell = WowSpell(**kwargs)
