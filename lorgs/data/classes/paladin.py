@@ -29,12 +29,8 @@ PALADIN_RETRIBUTION = WowSpec(role=MDPS, wow_class=PALADIN, name="Retribution", 
 # Spells
 #
 
-# Covenant
-PALADIN.add_spell(             spell_id=304971, cooldown=60,               color=COL_KYR,   name="Divine Toll",                     icon="ability_bastion_paladin.jpg",               show=False)
-PALADIN.add_spell(             spell_id=316958, cooldown=240, duration=30, color=COL_VENTR, name="Ashen Hallow",                    icon="ability_revendreth_paladin.jpg")
-PALADIN.add_spell(             spell_id=328204, cooldown=30,               color=COL_NECRO, name="Vanquisher's Hammer",             icon="ability_maldraxxus_paladin.jpg", show=False)
-
 # Shared
+PALADIN.add_spell(             spell_id=375576, cooldown=60,               color=COL_KYR,   name="Divine Toll",                     icon="ability_bastion_paladin.jpg",               show=False)
 PALADIN.add_spell(             spell_id=31884,  cooldown=120, duration=20, color="#ffc107", name="Avenging Wrath",                  icon="spell_holy_avenginewrath.jpg", variations=[231895], tags=[SpellTag.RAID_CD])
 PALADIN.add_spell(             spell_id=6940,   cooldown=120, duration=12,                  name="Blessing of Sacrifice",           icon="spell_holy_sealofsacrifice.jpg", show=False)
 
