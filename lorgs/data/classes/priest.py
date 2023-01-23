@@ -54,7 +54,8 @@ PRIEST_HOLY.add_spell(         spell_id=64901, cooldown=300, duration=5,   color
 
 PRIEST_SHADOW.add_spell(       spell_id=228260, cooldown=90,  duration=15, color="#b330e3", name="Voidform",              icon="spell_priest_voidform.jpg")  # tooltip: 228264
 PRIEST_SHADOW.add_spell(       spell_id=263165, cooldown=30,  duration=3,                   name="Void Torrent",          icon="spell_priest_voidsear.jpg",       show=False)
-PRIEST_SHADOW.add_spell(       spell_id=47585, cooldown=120,  duration=6,                   name="Dispersion",            icon="spell_shadow_dispersion.jpg",    show=False)
+PRIEST_SHADOW.add_spell(       spell_id=47585,  cooldown=120, duration=6,                   name="Dispersion",            icon="spell_shadow_dispersion.jpg",    show=False)
+PRIEST_SHADOW.add_spell(       spell_id=391109, cooldown=60,  duration=20, color="#308fbf", name="Dark Ascension",        icon="ability_priest_darkarchangel.jpg",    show=False)
 
 
 # Shadowfiend/Mindbeder Variations (with different glyphs etc)
