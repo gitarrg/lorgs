@@ -26,6 +26,8 @@ OTHER_BUFFS.add_buff(color=PALADIN.color, spell_id=1022,   cooldown=300, duratio
 OTHER_BUFFS.add_buff(color=PALADIN.color, spell_id=6940,   cooldown=120,              name="Blessing of Sacrifice",   icon="spell_holy_sealofsacrifice.jpg")
 OTHER_BUFFS.add_buff(color=MONK.color,    spell_id=116849, cooldown=120,              name="Life Cocoon",             icon="ability_monk_chicocoon.jpg")
 OTHER_BUFFS.add_buff(color=WARRIOR.color, spell_id=335198, cooldown=30,               name="Safeguard",               icon="ability_warrior_safeguard.jpg")  # Warrior Intervene Conduit
+OTHER_BUFFS.add_buff(color=EVOKER.color,  spell_id=357170, cooldown=60,  duration=8,  name="Time Dilation",           icon="ability_evoker_timedilation.jpg")
+
 
 ################################################################################
 # External Power Gains
