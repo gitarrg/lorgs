@@ -9,7 +9,7 @@ from lorgs.clients import sqs
 from lorgs.models.warcraftlogs_comp_ranking import CompRanking, CompRankingFight, FilterExpression
 
 
-router = fastapi.APIRouter()
+router = fastapi.APIRouter(tags=["comp_ranking"])
 
 
 @router.get("/comp_ranking/{boss_slug}")
@@ -83,13 +83,13 @@ async def task_load_comp_rankings(
             }
         )
 
-    pages = limit // 50  # 50 reports per page
-    for page in range(1, pages + 1):
+    pages = (limit // 50) + 1  # 50 reports per page. +1 becaus we need to round up
+    for page in range(pages):
         payloads.append(
             {
                 "task": "load_comp_rankings",
                 "boss_slug": boss_slug,
-                "page": page,
+                "page": page + 1,  # +1 because pages start at one.
             }
         )
 
