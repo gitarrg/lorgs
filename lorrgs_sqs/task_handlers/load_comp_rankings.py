@@ -10,15 +10,11 @@ from lorgs import data  # pylint: disable=unused-import
 from lorgs.models import warcraftlogs_comp_ranking
 
 
-async def load_comp_rankings(
-    boss_slug: str,
-    limit=50,
-    clear=False,
-) -> tuple[bool, str]:
+async def load_comp_rankings(boss_slug: str, page=1, clear=False) -> tuple[bool, str]:
     """Load the Comp Ranking Data from Warcraftlogs and save it to the Database."""
     ################################
     # Get inputs
-    print(f"loading: {boss_slug} / limit={limit} / clear={clear})")
+    print(f"loading: {boss_slug} / page={page} / clear={clear})")
     if boss_slug is None:
         return False, f"missing boss: {boss_slug}"
 
@@ -30,7 +26,7 @@ async def load_comp_rankings(
 
     ################################
     # load and save
-    await ranking.load(limit=limit, clear_old=clear)
+    await ranking.load(page=page, clear_old=clear)
     ranking.save()
     return True, "done"
 
@@ -46,6 +42,6 @@ async def main(message: dict[str, str]):
 
     return await load_comp_rankings(
         boss_slug=payload.get("boss_slug"),
-        limit=payload.get("limit", 50),
+        page=payload.get("page", 1),
         clear=payload.get("clear", False),
     )

@@ -72,16 +72,31 @@ async def task_load_comp_rankings(
     """Submit a scheduled task to update a single or all Comp Rankings."""
     response.headers["Cache-Control"] = "no-cache"
 
-    payload = {
-        "task": "load_comp_rankings",
-        "boss_slug": boss_slug,
-        "limit": limit,
-        "clear": clear,
-    }
-    message = sqs.send_message(payload=payload)
+    payloads = []
+
+    if clear:
+        payloads.append(
+            {
+                "task": "load_comp_rankings",
+                "boss_slug": boss_slug,
+                "clear": True,
+            }
+        )
+
+    pages = limit // 50  # 50 reports per page
+    for page in range(1, pages + 1):
+        payloads.append(
+            {
+                "task": "load_comp_rankings",
+                "boss_slug": boss_slug,
+                "page": page,
+            }
+        )
+
+    if payloads:
+        sqs.send_message_batch(payloads=payloads)
 
     return {
         "message": "task queued",
-        "task": message.get("MessageId"),
-        "payload": payload,
+        "payloads": payloads,
     }
