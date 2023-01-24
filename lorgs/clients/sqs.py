@@ -43,6 +43,6 @@ def send_message_batch(payloads: List[Dict[str, Any]], queue_url="", chunk_size=
     # Send
     for entries in utils.chunks(messages, n=chunk_size):
         SQS_CLIENT.send_message_batch(
-            QueueUrl=queue_url,
+            QueueUrl=queue_url or SQS_QUEUE_URL,
             Entries=entries,  # type: ignore
         )
