@@ -10,7 +10,7 @@ from lorgs.models.warcraftlogs_comp_ranking import CompRanking
 
 async def test__load_rankings() -> None:
     comp_ranking = CompRanking.get_or_create(boss_slug="eranog")
-    await comp_ranking.load(limit=50, clear_old=True)
+    await comp_ranking.load(page=1, clear_old=False)
     comp_ranking.save()
 
 

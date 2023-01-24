@@ -181,9 +181,8 @@ class CompRanking(base.S3Model, warcraftlogs_base.wclclient_mixin):
 
         self.reports.append(report)
 
-    async def load_new_reports(self, metric: str = "execution", limit=50) -> list[Report]:
+    async def load_page(self, page=0, metric: str = "execution"):
         """Get Top Fights for a given encounter."""
-        limit = limit or 50  # in case limit defaults to 0 somewhere
 
         # build a list of old Reports
         old_reports: list[tuple[str, int]] = []
@@ -191,48 +190,36 @@ class CompRanking(base.S3Model, warcraftlogs_base.wclclient_mixin):
             for fight in report.fights:
                 old_reports.append((report.report_id, fight.fight_id))
 
-        new_reports: list[Report] = []
-        load_more = True
-        page = 0
-        while load_more:  # nobody likes while loops
-            page += 1
+        # execute the query
+        query = self.get_query(metric=metric, page=page)
+        query_result = await self.client.query(query)
+        query_result = query_result["worldData"]
 
-            # execute the query
-            query = self.get_query(metric=metric, page=page)
-            query_result = await self.client.query(query)
-            query_result = query_result["worldData"]
+        # parse data
+        world_data = wcl.WorldData(**query_result)
+        rankings = world_data.encounter.fightRankings
 
-            # parse data
-            world_data = wcl.WorldData(**query_result)
-            rankings = world_data.encounter.fightRankings
-            load_more = rankings.hasMorePages
+        # add fights
+        for fight_data in rankings.rankings:
+            key = (fight_data.report.code, fight_data.report.fightID)
+            if key not in old_reports:
+                self.add_report(fight_data)
 
-            # add fights
-            for fight_data in rankings.rankings:
-                key = (fight_data.report.code, fight_data.report.fightID)
-                if key not in old_reports:
-                    self.add_report(fight_data)
-
-            # stop if limit is reached
-            if len(self.reports) >= limit:
-                load_more = False
-                break
-
-        self.reports = self.reports[:limit]
-        return new_reports
-
-    async def load(self, limit: int = 5, clear_old: bool = False):
+    async def load(self, limit: int = 0, clear_old: bool = False, page=1):
         """Fetch reports for this BossRanking.
 
         params:
             limit (int): maximum number of reports to load.
+            page (int): page number to load (starts from 1).
             clear_old (bool): if true old reports will be deleted.
 
         """
         # old reports
         if clear_old:
             self.reports = []
-        await self.load_new_reports(limit=limit)
+        await self.load_page(page=page)
+        if limit:
+            self.reports = self.reports[:limit]
 
         # 1) Load Fights
         fights_to_load = []
@@ -243,5 +230,4 @@ class CompRanking(base.S3Model, warcraftlogs_base.wclclient_mixin):
 
         logger.info(f"Load {len(fights_to_load)} Fights")
         await self.load_many(fights_to_load, raise_errors=False)  # type: ignore
-
         self.updated = datetime.utcnow()
