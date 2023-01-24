@@ -1,6 +1,7 @@
 """Routes related to UserReports."""
 # IMPORT STANDARD LIBRARIES
 import itertools
+import os
 
 # IMPORT THIRD PARTY LIBRARIES
 import fastapi
@@ -14,6 +15,9 @@ from lorgs.models.warcraftlogs_user_report import UserReport
 
 
 router = fastapi.APIRouter()
+
+
+SQS_USER_QUEUE_URL = os.getenv("SQS_USER_QUEUE_URL") or ""
 
 
 @router.get("/{report_id}")
@@ -99,7 +103,7 @@ async def load_user_report(response: fastapi.Response, report_id: str, fight: st
         "player_ids": utils.str_int_list(player),
     }
 
-    message = sqs.send_message(payload=payload)
+    message = sqs.send_message(queue_url=SQS_USER_QUEUE_URL, payload=payload)
     message_id = message["MessageId"]
 
     # task object to help track the progress
