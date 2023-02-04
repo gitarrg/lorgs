@@ -44,6 +44,6 @@ HUNTER_BEASTMASTERY.add_spell( spell_id=19574,  cooldown=30,  duration=15, color
 HUNTER_MARKSMANSHIP.add_spell( spell_id=288613, cooldown=120, duration=15,                  name="Trueshot",            icon="ability_trueshot.jpg")
 HUNTER_MARKSMANSHIP.add_spell( spell_id=260243, cooldown=45,  duration=6, color="#bf8686",  name="Volley",              icon="ability_hunter_rapidkilling.jpg",          show=False)
 
-HUNTER_SURVIVAL.add_spell(     spell_id=266779, cooldown=120, duration=20,                  name="Coordinated Assault", icon="inv_coordinatedassault.jpg")
-HUNTER_SURVIVAL.add_spell(     spell_id=260331, cooldown=0,   duration=0,                   name="Birds of Prey",       icon="spell_hunter_aspectofthehawk.jpg")
+HUNTER_SURVIVAL.add_spell(     spell_id=360952, cooldown=120, duration=20,                  name="Coordinated Assault", icon="inv_coordinatedassault.jpg")
 HUNTER_SURVIVAL.add_spell(     spell_id=186289, cooldown=90,  duration=15,                  name="Aspect of the Eagle", icon="spell_hunter_aspectoftheironhawk.jpg")
+HUNTER_SURVIVAL.add_spell(     spell_id=360966, cooldown=90,  duration=12, color="#3aa65e", name="Spearhead",           icon="ability_hunter_spearhead.jpg")
