@@ -28,13 +28,13 @@ WARLOCK_DESTRUCTION = WowSpec(role=RDPS, wow_class=WARLOCK, name="Destruction", 
 ################################################################################
 # Spells
 #
-WARLOCK.add_spell(             spell_id=325640, cooldown=60,  duration=8,  color=COL_NF,    name="Soul Rot",               icon="ability_ardenweald_warlock.jpg",  show=False)
 WARLOCK.add_spell(             spell_id=104773, cooldown=300, duration=8,                   name="Unending Resolve",       icon="spell_shadow_demonictactics.jpg", show=False)
 WARLOCK.add_buff(              spell_id=108416, cooldown=60,                                name="Dark Pact",              icon="spell_shadow_deathpact.jpg",      show=False) # auto duration
 
 WARLOCK_AFFLICTION.add_spell(  spell_id=205180, cooldown=120, duration=8,  color="#49ad6e", name="Summon Darkglare",       icon="inv_beholderwarlock.jpg")
-WARLOCK_AFFLICTION.add_spell(  spell_id=113860, cooldown=120, duration=20, color="#c35ec4", name="Dark Soul: Misery",      icon="spell_warlock_soulburn.jpg")
 WARLOCK_AFFLICTION.add_spell(  spell_id=205179, cooldown=45,  duration=16, color="#7833b0", name="Phantom Singularity",    icon="inv_enchant_voidsphere.jpg")
+WARLOCK_AFFLICTION.add_spell(  spell_id=386997, cooldown=60,  duration=8,  color=COL_NF,    name="Soul Rot",               icon="ability_ardenweald_warlock.jpg",  show=False)
+WARLOCK_AFFLICTION.add_spell(  spell_id=278350, cooldown=30,  duration=8,  color="#c35ec4", name="Vile Taint",             icon="sha_spell_shadow_shadesofdarkness_nightborne.jpg", show=False)
 
 WARLOCK_DEMONOLOGY.add_spell(  spell_id=265187, cooldown=60,  duration=15, color="#9150ad", name="Summon Demonic Tyrant",  icon="inv_summondemonictyrant.jpg", tags=[SpellTag.DYNAMIC_CD])
 WARLOCK_DEMONOLOGY.add_spell(  spell_id=111898, cooldown=120, duration=17, color="#c46837", name="Grimoire: Felguard",     icon="spell_shadow_summonfelguard.jpg")
