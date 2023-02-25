@@ -60,6 +60,7 @@ DEATHKNIGHT_FROST.add_spell(   spell_id=51271,  cooldown=60,  duration=12,      
 DEATHKNIGHT_FROST.add_spell(   spell_id=46585,  cooldown=120, duration=60, color="#c7ba28", name="Raise Dead",            icon="inv_pet_ghoul.jpg",                        show=False)
 DEATHKNIGHT_FROST.add_spell(   spell_id=152279, cooldown=120, duration=30, color="#52abff", name="Breath of Sindragosa",  icon="spell_deathknight_breathofsindragosa.jpg")
 DEATHKNIGHT_FROST.add_spell(   spell_id=279302, cooldown=180,                               name="Frostwyrm's Fury",      icon="achievement_boss_sindragosa.jpg")
+DEATHKNIGHT_FROST.add_spell(   spell_id=57330,  cooldown=45,               color="#806996", name="Horn of Winter",        icon="inv_misc_horn_02.jpg", show=False)
 
 # Additional Spells (not tracked)
 RAISE_ALLY = WowSpell(spell_id=61999, name="Raise Ally", icon="spell_shadow_deadofnight.jpg")
