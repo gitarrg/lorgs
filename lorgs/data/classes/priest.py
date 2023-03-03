@@ -58,6 +58,7 @@ PRIEST_SHADOW.add_spell(       spell_id=228260, cooldown=90,  duration=15, color
 PRIEST_SHADOW.add_spell(       spell_id=263165, cooldown=30,  duration=3,                   name="Void Torrent",          icon="spell_priest_voidsear.jpg",       show=False)
 PRIEST_SHADOW.add_spell(       spell_id=47585,  cooldown=120, duration=6,                   name="Dispersion",            icon="spell_shadow_dispersion.jpg",    show=False)
 PRIEST_SHADOW.add_spell(       spell_id=391109, cooldown=60,  duration=20, color="#308fbf", name="Dark Ascension",        icon="ability_priest_darkarchangel.jpg",    show=False)
+PRIEST_SHADOW.add_spell(       spell_id=15286,  cooldown=120, duration=15, color="#446fc7", name="Vampiric Embrace",        icon="spell_shadow_unsummonbuilding.jpg",    show=False, tags=[SpellTag.RAID_CD])
 
 
 # Shadowfiend/Mindbeder Variations (with different glyphs etc)
