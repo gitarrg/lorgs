@@ -46,6 +46,7 @@ PALADIN_HOLY.add_spell(        spell_id=200025, cooldown=15,  duration=8,  color
 PALADIN_PROTECTION.add_buff(   spell_id=31850,  cooldown=120, duration=8,  color="#fcea74", name="Ardent Defender",                 icon="spell_holy_ardentdefender.jpg")
 PALADIN_PROTECTION.add_spell(  spell_id=212641, cooldown=300, duration=8,                   name="Guardian of Ancient Kings",       icon="spell_holy_heroism.jpg", variations=[86659])
 PALADIN_PROTECTION.add_spell(  spell_id=152262, cooldown=60,  duration=15, color="#0a60ff", name="Seraphim",                        icon="ability_paladin_seraphim.jpg")
+PALADIN_PROTECTION.add_spell(  spell_id=387174, cooldown=60,  duration=9,  color="#40bfff", name="Eye of Tyr",                        icon="inv_shield_1h_artifactnorgannon_d_01.jpg")
 
 
 PALADIN_RETRIBUTION.add_spell( spell_id=255937, cooldown=45,  duration=15, color="#ff6e07", name="Wake of Ashes",      icon="inv_sword_2h_artifactashbringerfire_d_03.jpg")
