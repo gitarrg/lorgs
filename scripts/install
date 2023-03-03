@@ -19,7 +19,7 @@ venv_dir=./venv
 if [ ! -d "$venv_dir" ]
 then
     echo "creating virtualenv: ${venv_dir}"
-    virtualenv --python=/usr/bin/python3.9 $venv_dir
+    python3.11 -m venv venv
 fi
 source $venv_dir/bin/activate
 
