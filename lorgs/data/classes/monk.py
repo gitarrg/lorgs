@@ -35,14 +35,8 @@ MONK.add_spell(           spell_id=327104, cooldown=30,  duration=30, color=COL_
 
 # Defensive
 MONK.add_spell(spell_id=122278, cooldown=120, duration=10, color="#fcba03", name="Dampen Harm",                     icon="ability_monk_dampenharm.jpg", show=False)
-
-# MW and WW get a reduced CD with rank2
-FORT_BREW = WowSpell(spell_type=MONK.name_slug, spell_id=243435, cooldown=180, duration=15, color="#ffb145", name="Fortifying Brew", icon="ability_monk_fortifyingale_new.jpg", show=False)
-DIFFUSE   = WowSpell(spell_type=MONK.name_slug, spell_id=122783, cooldown=90,  duration=6, color=MONK.color, name="Diffuse Magic",   icon="spell_monk_diffusemagic.jpg",        show=False)
-
-MONK_MISTWEAVER.add_spells(FORT_BREW, DIFFUSE)
-MONK_WINDWALKER.add_spells(FORT_BREW, DIFFUSE)
-
+MONK.add_spell(spell_id=122783, cooldown=90,  duration=6,  color="#f5d142", name="Diffuse Magic", icon="spell_monk_diffusemagic.jpg", show=False)
+MONK.add_spell(spell_id=115203, cooldown=180, duration=15, color="#ffb145", name="Fortifying Brew", icon="ability_monk_fortifyingale_new.jpg", show=False)
 
 # Offensive
 MONK.add_spell(           spell_id=322109, cooldown=180,              color="#c72649", name="Touch of Death",                  icon="ability_monk_touchofdeath.jpg")
