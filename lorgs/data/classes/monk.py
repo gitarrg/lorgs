@@ -28,7 +28,7 @@ MONK_WINDWALKER = WowSpec(role=MDPS, wow_class=MONK, name="Windwalker")
 ################################################################################
 # Spells
 #
-MONK.add_spell(           spell_id=310454, cooldown=120, duration=30, color=COL_KYR,   name="Weapons of Order",                icon="ability_bastion_monk.jpg",            show=False)
+MONK.add_spell(           spell_id=387184, cooldown=120, duration=30, color=COL_KYR,   name="Weapons of Order",                icon="ability_bastion_monk.jpg",            show=False)
 MONK.add_spell(           spell_id=386276, cooldown=60,  duration=10, color=COL_NECRO, name="Bonedust Brew",                   icon="ability_maldraxxus_monk.jpg",         show=False)
 MONK.add_spell(           spell_id=327104, cooldown=30,  duration=30, color=COL_NF,    name="Faeline Stomp",                   icon="ability_ardenweald_monk.jpg",         show=False)
 
