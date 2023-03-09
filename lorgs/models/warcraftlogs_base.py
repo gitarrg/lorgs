@@ -7,8 +7,12 @@ import json
 import re
 import typing
 
+# IMPORT THIRD PARTY LIBRARIES
+import pydantic
+
 # IMPORT LOCAL LIBRARIES
 from lorgs.clients.wcl import WarcraftlogsClient
+from lorgs.logger import logger
 from lorgs.models import base
 
 
@@ -123,8 +127,13 @@ class wclclient_mixin:
 
         result = await self.client.query(query=query, raise_errors=raise_errors)
 
-        if result:
+        if not result:
+            return
+        
+        try:
             self.process_query_result(**result)
+        except pydantic.ValidationError as e:
+            logger.warning(e)
 
 
 class BaseModel(base.BaseModel, wclclient_mixin):
