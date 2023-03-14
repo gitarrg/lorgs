@@ -35,8 +35,8 @@ EVOKER_PRESERVATION = WowSpec(role=HEAL, wow_class=EVOKER, name="Preservation")
 #
 
 # Defensives
-EVOKER.add_spell(spell_id=363916, name="Obsidian Scales",    cooldown=150, duration=12, color=COLOR_BLACK,  icon="inv_artifact_dragonscales.jpg")
-EVOKER.add_spell(spell_id=374348, name="Renewing Blaze",     cooldown=150, duration=8,  color=COLOR_RED,    icon="ability_evoker_masterylifebinder_red.jpg")
+EVOKER.add_spell(spell_id=363916, name="Obsidian Scales",    cooldown=150, duration=12, color=COLOR_BLACK,  icon="inv_artifact_dragonscales.jpg", show=False)
+EVOKER.add_spell(spell_id=374348, name="Renewing Blaze",     cooldown=150, duration=8,  color=COLOR_RED,    icon="ability_evoker_masterylifebinder_red.jpg", show=False)
 EVOKER.add_spell(spell_id=370553, name="Tip the Scales",     cooldown=120,              color=COLOR_BRONZE, icon="ability_evoker_tipthescales.jpg")
 EVOKER.add_spell(spell_id=374227, name="Zephyr",             cooldown=120, duration=8,  color="#d6b969",    icon="ability_evoker_hoverblack.jpg", tags=[SpellTag.RAID_CD])
 EVOKER.add_spell(spell_id=374968, name="Time Spiral",        cooldown=120, duration=10, color="#c4d669",    icon="ability_evoker_timespiral.jpg", tags=[SpellTag.RAID_CD], show=False)
@@ -44,6 +44,12 @@ EVOKER.add_spell(spell_id=374968, name="Time Spiral",        cooldown=120, durat
 # DPS
 EVOKER_DEVASTATION.add_spell(spell_id=368847, name="Firestorm",  cooldown=20,  duration=12, color=COLOR_RED, icon="ability_evoker_firestorm.jpg")
 EVOKER_DEVASTATION.add_spell(spell_id=375087, name="Dragonrage", cooldown=120, duration=14, color=COLOR_RED, icon="ability_evoker_dragonrage.jpg")
+
+
+_filter_tip_the_scales = "IN RANGE FROM type = 'applybuff' AND ability.name = 'Tip the Scales' TO type = 'removebuff' AND ability.name = 'Tip the Scales' END"
+tooltip_tip_the_scales_buffed = "Tip the Scales buffed."
+EVOKER_DEVASTATION.add_spell(spell_id=382266, name="Fire Breath", cooldown=30, color=COLOR_RED, icon="ability_evoker_firebreath.jpg", extra_filter=_filter_tip_the_scales, tooltip=tooltip_tip_the_scales_buffed)
+EVOKER_DEVASTATION.add_spell(spell_id=382411, name="Eternity Surge", cooldown=30, color="#308fbf", icon="ability_evoker_eternitysurge.jpg", extra_filter=_filter_tip_the_scales, tooltip=tooltip_tip_the_scales_buffed)
 
 
 # HEAL
