@@ -65,7 +65,7 @@ class Player(BaseActor):
         """Get a query for spells cast by this player."""
         query = super().get_cast_query()
         if query and self.name:
-            query = f"source.name='{self.name}' and {query}"
+            query = f"source.name='{self.name}' and ({query})"
         return query
 
     def get_buff_query(self) -> str:
