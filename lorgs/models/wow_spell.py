@@ -77,6 +77,9 @@ class WowSpell(base.MemoryModel):
     extra_filter: str = ""
     """Extra filter for the spell."""
 
+    tooltip: str = ""
+    """Custom/Additional Tooltip for this Spell."""
+
     def post_init(self) -> None:
         self.wowhead_data = self.wowhead_data or f"spell={self.spell_id}"
         self.add_variations(*self.variations)
@@ -126,6 +129,7 @@ class WowSpell(base.MemoryModel):
             "icon": self.icon,
             "color": self.color,
             "show": self.show,
+            "tooltip": self.tooltip,
             "tooltip_info": self.wowhead_data,
             "tags": self.tags,
         }
@@ -171,6 +175,15 @@ def build_spell_query(spells: list[WowSpell]) -> str:
     spells = utils.flatten([spell.expand_events() for spell in spells])
 
     queries: list[str] = []
+
+    # splitting the spells, so we can handle the ones with `extra_filter` separately
+    spells_with_extra_filter = [spell for spell in spells if spell.extra_filter]
+    spells = [spell for spell in spells if not spell.extra_filter]
+
+    for spell in spells_with_extra_filter:
+        event_query = f"type='{spell.event_type}' and ability.id = {spell.spell_id} and {spell.extra_filter}"
+        event_query = f"({event_query})"
+        queries.append(event_query)
 
     spells_by_type = utils.group_by(*spells, keyfunc=lambda spell: spell.event_type)
     for event_type, event_spells in spells_by_type.items():
