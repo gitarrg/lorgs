@@ -149,6 +149,9 @@ class Player(BaseActor):
             data["spell_name"] = spell.name
             data["spell_icon"] = spell.icon
 
+        # new list so that pydantic's "exclude unset" doesn't exclude it.
+        self.resurrects = []
+
         # Look for the Source ID
         source_id = event.sourceID
         if self.fight and self.fight.report:
