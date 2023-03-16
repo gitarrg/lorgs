@@ -118,6 +118,9 @@ class Player(BaseActor):
         # ABILITY_OVERWRITES[1] = {"name": "Melee", "guid": 260421, "abilityIcon": "ability_meleedamage.jpg"}
         # ABILITY_OVERWRITES[3] = {"name": "Fall Damage"}
 
+        # new list so that pydantic's "exclude unset" doesn't exclude it.
+        self.deaths = []
+
         for death_event in death_events:
             target_id = death_event.id
             if self._has_source_id and (target_id != self.source_id):
