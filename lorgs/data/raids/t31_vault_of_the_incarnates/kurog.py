@@ -22,6 +22,7 @@ KUROG.add_cast(spell_id=372456, name="Absolute Zero", duration=2+6, color="#bf30
 KUROG.add_cast(spell_id=390796, name="Erupting Bedrock", duration=5, color="#bf8330", icon="spell_shaman_earthquake.jpg", show=False)
 KUROG.add_cast(spell_id=391055, name="Enveloping Earth", duration=1.5, color="#bf8330", icon="inv_elementalearth2.jpg")
 KUROG.add_cast(spell_id=374691, name="Seismic Rupture", duration=5, color="#bf3030", icon="spell_nature_earthquake.jpg") # Dance
+KUROG.add_cast(spell_id=391268, name="Earth Smite", duration=3, color="#62e3be", icon="ability_deathknight_brittlebones.jpg", show=False) # Tank Hit from Adds
 
 # Storm
 KUROG.add_cast(spell_id=390920, name="Shocking Burst", duration=5, color="#30bfa0", icon="spell_nature_unrelentingstorm.jpg")
