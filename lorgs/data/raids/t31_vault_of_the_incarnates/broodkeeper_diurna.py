@@ -51,3 +51,13 @@ DIURNA.add_buff(
     icon="ability_warrior_focusedrage.jpg",
     show=False,
 )
+
+
+DIURNA.add_cast(
+    spell_id=396269,
+    name="Mortal Stoneslam",
+    color="#ccc",
+    duration=1.5,
+    icon="inv_misc_monsterclaw_01.jpg",
+    show=False,
+)
