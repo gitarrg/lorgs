@@ -41,6 +41,16 @@ RASZAGETH.add_cast(
     icon="spell_nature_stormreach.jpg",
 )
 
+# Tank Hit
+RASZAGETH.add_cast(
+    spell_id=377658,
+    name="Electrified Jaws",
+    duration=33,
+    color="#74dbf2",
+    icon="ability_thunderking_balllightning.jpg",
+    show=False,
+)
+
 
 ##################### Intermission 1: The Primalist Strike #####################
 
