@@ -35,6 +35,17 @@ PRIMAL_COUNCIL.add_cast(
     icon="ability_earthen_pillar.jpg",
 )
 
+
+PRIMAL_COUNCIL.add_cast(
+    spell_id=372056,
+    name="Crush",
+    duration=1.5,
+    color="#c28530",
+    icon="ability_warrior_shieldbreak.jpg",
+    show=False,
+)
+
+
 # Firepath:
 PRIMAL_COUNCIL.add_cast(
     spell_id=374038,
