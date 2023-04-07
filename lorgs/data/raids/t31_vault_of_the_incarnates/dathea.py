@@ -39,7 +39,7 @@ DATHEA.add_cast(
 DATHEA.add_cast(
     spell_id=387849,
     name="Coalescing Storm",
-    duration=5 + 45, # ~45sec in mythic
+    duration=5 + 45,  # ~45sec in mythic
     color="#47663d",
     icon="inv_10_elementalspiritfoozles_air.jpg",
 )
@@ -51,4 +51,14 @@ DATHEA.add_cast(
     duration=4,
     color="#d18726",
     icon="inv_misc_volatileair.jpg",
+)
+
+
+DATHEA.add_cast(
+    spell_id=375580,
+    name="Zephyr Slam",  # # Tank Hit
+    duration=1.5,
+    color="#74f0f2",
+    icon="ability_skyreach_wind_wall.jpg",
+    show=False,
 )
