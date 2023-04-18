@@ -30,7 +30,7 @@ SHAMAN_RESTORATION = WowSpec(role=HEAL, wow_class=SHAMAN, name="Restoration",   
 #
 # SHAMAN.add_spell(              spell_id=320674, cooldown=90,               color=COL_VENTR, name="Chain Harvest",              icon="ability_revendreth_shaman.jpg",             show=False)
 # SHAMAN.add_spell(              spell_id=328923, cooldown=120, duration=3,  color=COL_NF,    name="Fae Transfusion",            icon="ability_ardenweald_shaman.jpg",             show=True)
-# SHAMAN.add_spell(              spell_id=326059, cooldown=45,               color=COL_NECRO, name="Primordial Wave",            icon="ability_maldraxxus_shaman.jpg",             show=False)
+SHAMAN.add_spell(              spell_id=375982, cooldown=45,               color=COL_NECRO, name="Primordial Wave",            icon="ability_maldraxxus_shaman.jpg",             show=False)
 
 # Utils
 SHAMAN.add_spell(              spell_id=108281, cooldown=120, duration=10,                  name="Ancestral Guidance",         icon="ability_shaman_ancestralguidance.jpg",      show=False)
