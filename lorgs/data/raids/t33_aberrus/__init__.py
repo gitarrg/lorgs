@@ -3,7 +3,7 @@
 # IMPORT LOCAL LIBRARIES
 from lorgs.models.raid_zone import RaidZone
 from lorgs.data.raids.t33_aberrus.kazzara import KAZZARA
-from lorgs.data.raids.t33_aberrus.molgoth import MOLGOTH
+from lorgs.data.raids.t33_aberrus.amalgamation_chamber import AMALGAMATION_CHAMBER
 from lorgs.data.raids.t33_aberrus.forgotten_experiments import FORGOTTEN_EXPERIMENTS
 from lorgs.data.raids.t33_aberrus.assault_of_the_zaqali import ASSAULT_OF_THE_ZAQALI
 from lorgs.data.raids.t33_aberrus.rashok import RASHOK
@@ -23,7 +23,7 @@ ABERRUS = RaidZone(
     name="Aberrus, the Shadowed Crucible",
     bosses=[
         KAZZARA,
-        MOLGOTH,
+        AMALGAMATION_CHAMBER,
         FORGOTTEN_EXPERIMENTS,
         ASSAULT_OF_THE_ZAQALI,
         RASHOK,
