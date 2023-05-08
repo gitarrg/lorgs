@@ -6,4 +6,4 @@ from lorgs.data.raids.t31_vault_of_the_incarnates import *
 from lorgs.data.raids.t33_aberrus import *
 
 
-CURRENT_ZONE = VAULT_OF_THE_INCARNATES
+CURRENT_ZONE = ABERRUS
