@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from lorgs.data.classes import ALL_SPECS
-from lorgs.data.raids import VAULT_OF_THE_INCARNATES
+from lorgs.data.raids import CURRENT_ZONE
 
 
 PAYLOAD_EXPANDERS = {
     "spec_slug": [spec.full_name_slug for spec in ALL_SPECS],
-    "boss_slug": [boss.full_name_slug for boss in VAULT_OF_THE_INCARNATES.bosses],
+    "boss_slug": [boss.full_name_slug for boss in CURRENT_ZONE.bosses],
     "difficulty": ["heroic", "mythic"],
     "metric": ["dps", "hps", "bossdps"],
 }
