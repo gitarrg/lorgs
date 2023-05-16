@@ -214,6 +214,10 @@ class CompRanking(base.S3Model, warcraftlogs_base.wclclient_mixin):
             clear_old (bool): if true old reports will be deleted.
 
         """
+
+        # copy the list, to make pydantic belive it has changed
+        self.reports = self.reports[:]
+
         # old reports
         if clear_old:
             self.reports = []
