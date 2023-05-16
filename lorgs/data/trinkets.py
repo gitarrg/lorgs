@@ -22,7 +22,7 @@ def add_trinket(*specs: WowSpec, **kwargs: Any):
         spec.add_spells(spell)
 
 
-################################### DUNGEONS ###################################
+################################## S1 DUNGEONS #################################
 
 
 add_trinket(
@@ -62,7 +62,28 @@ add_trinket(
 )
 
 
-##################################### RAID #####################################
+################################## S2 DUNGEONS #################################
+
+
+# Vial of Animated Blood
+# tracking via buff, since there does not seem to be a cast associated with the trinket
+vial_of_animated_blood = WowSpell(
+    spell_id=268836,
+    color="#ba5bb5",
+    spell_type=SpellType.TRINKET,
+    cooldown=90,
+    duration=18,
+    name="Vial of Animated Blood",
+    icon="inv_misc_food_legion_leyblood.jpg",
+    wowhead_data=f"item=159625{mythic}&ilvl=372",
+    show=False,
+    event_type="applybuff",
+)
+for spec in STR_SPECS:
+    spec.add_buff(vial_of_animated_blood)
+
+
+################################### T31 RAID ###################################
 
 add_trinket(
     *AGI_SPECS,
