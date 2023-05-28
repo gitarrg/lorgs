@@ -121,3 +121,13 @@ add_trinket(
     icon="inv_staff_2h_dragondungeon_c_02.jpg",
     wowhead_data=f"item=195519{mythic}&ilvl=424",
 )
+
+add_trinket(
+    *ALL_SPECS,
+    spell_id=402583,
+    color="#6e38eb",
+    cooldown=150,
+    name="Beacon to the Beyond",
+    icon="inv_cosmicvoid_orb.jpg",
+    wowhead_data=f"item=203963{mythic}&ilvl=450",
+)
