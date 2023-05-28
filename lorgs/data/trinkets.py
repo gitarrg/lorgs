@@ -122,6 +122,20 @@ add_trinket(
     wowhead_data=f"item=195519{mythic}&ilvl=424",
 )
 
+
+################################### T33 RAID ###################################
+
+add_trinket(
+    *AGI_SPECS,
+    *STR_SPECS,
+    spell_id=401306,
+    color="#66ad96",
+    cooldown=60,
+    name="Elementium Pocket Anvil",
+    icon="inv_blacksmithing_khazgoriananvil.jpg",
+    wowhead_data=f"item=202617{mythic}&ilvl=441",
+)
+
 add_trinket(
     *ALL_SPECS,
     spell_id=402583,
