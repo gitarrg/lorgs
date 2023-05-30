@@ -55,6 +55,8 @@ DEATHKNIGHT_UNHOLY.add_spell(  spell_id=275699, cooldown=45,  duration=15,      
 DEATHKNIGHT_UNHOLY.add_spell(  spell_id=63560,  cooldown=45,  duration=15,                  name="Dark Transformation",   icon="achievement_boss_festergutrotface.jpg",               tags=[SpellTag.DYNAMIC_CD])
 DEATHKNIGHT_UNHOLY.add_spell(  spell_id=115989, cooldown=45,  duration=14, color="#58c437", name="Unholy Blight",         icon="spell_shadow_contagion.jpg")
 DEATHKNIGHT_UNHOLY.add_spell(  spell_id=49206,  cooldown=180, duration=25, color="#7a37bd", name="Summon Gargoyle",       icon="ability_deathknight_summongargoyle.jpg", variations=[207349])
+DEATHKNIGHT_UNHOLY.add_spell(  spell_id=207289, cooldown=90,  duration=20, color="#e0a8a8", name="Unholy Assault",        icon="spell_shadow_unholyfrenzy.jpg", show=False)
+
 
 DEATHKNIGHT_FROST.add_spell(   spell_id=51271,  cooldown=60,  duration=12,                  name="Pillar of Frost",       icon="ability_deathknight_pillaroffrost.jpg",    show=False)
 DEATHKNIGHT_FROST.add_spell(   spell_id=46585,  cooldown=120, duration=60, color="#c7ba28", name="Raise Dead",            icon="inv_pet_ghoul.jpg",                        show=False)
