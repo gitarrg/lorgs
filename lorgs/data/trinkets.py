@@ -50,6 +50,9 @@ add_trinket(
 )
 
 
+################################## S2 DUNGEONS #################################
+
+
 add_trinket(
     *INT_SPECS,
     spell_id=385884,
@@ -58,11 +61,20 @@ add_trinket(
     duration=20,  # 20sec buff + 20sec debuff
     name="Time-Breaching Talon",
     icon="inv_10_dungeonjewelry_explorer_trinket_3_color3.jpg",
-    wowhead_data=f"item=193791{mythic}&ilvl=372",
+    wowhead_data=f"item=193791{mythic}&ilvl=441",
 )
 
 
-################################## S2 DUNGEONS #################################
+add_trinket(
+    *ALL_SPECS,
+    spell_id=383941,
+    color="#ab9671",
+    cooldown=300,
+    duration=20,
+    name="Irideus Fragment",
+    icon="inv_10_dungeonjewelry_titan_trinket_1facefragment_color3.jpg",
+    wowhead_data=f"item=193743{mythic}&ilvl=441",
+)
 
 
 # Vial of Animated Blood
