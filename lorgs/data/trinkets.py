@@ -69,7 +69,7 @@ add_trinket(
     *ALL_SPECS,
     spell_id=383941,
     color="#ab9671",
-    cooldown=300,
+    cooldown=180,
     duration=20,
     name="Irideus Fragment",
     icon="inv_10_dungeonjewelry_titan_trinket_1facefragment_color3.jpg",
