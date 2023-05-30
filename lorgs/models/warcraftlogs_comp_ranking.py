@@ -26,7 +26,6 @@ from lorgs.models.wow_spell import SpellTag, WowSpell, build_spell_query
 
 
 class FilterExpression(pydantic.BaseModel):
-
     attr: str
     op: str
     value: int
@@ -62,7 +61,6 @@ class FilterExpression(pydantic.BaseModel):
 
 
 class FightComposition(TypedDict):
-
     roles: dict[str, int]
     specs: dict[str, int]
     classes: dict[str, int]
@@ -94,8 +92,10 @@ class CompRankingFight(Fight):
 
     composition: Optional[FightComposition] = None
 
-    def get_query_parts(self) -> list[str]:
+    damage_taken: int = 0
+    deaths: int = 0
 
+    def get_query_parts(self) -> list[str]:
         spells = [spell for spell in WowSpell.list() if SpellTag.RAID_CD in spell.tags]
         filter_expr = build_spell_query(spells)
         query = f'events({self.table_query_args}, filterExpression: "{filter_expr}") {{data}}'
@@ -115,7 +115,6 @@ class CompRankingFight(Fight):
 
 
 class CompRankingReport(warcraftlogs_report.Report):
-
     fights: list[CompRankingFight] = []  # type: ignore # mypy doesn't like reassignment
 
 
@@ -171,6 +170,8 @@ class CompRanking(base.S3Model, warcraftlogs_base.wclclient_mixin):
             duration=fight_data.duration,
             boss=boss,
             players=[],
+            damage_taken=fight_data.damageTaken,
+            deaths=fight_data.deaths,
         )
 
         report = CompRankingReport(
@@ -234,4 +235,19 @@ class CompRanking(base.S3Model, warcraftlogs_base.wclclient_mixin):
 
         logger.info(f"Load {len(fights_to_load)} Fights")
         await self.load_many(fights_to_load, raise_errors=False)  # type: ignore
+
+        self.sort_reports()
         self.updated = datetime.utcnow()
+
+    def sort_reports(self) -> None:
+        self.reports = sort_reports(self.reports)
+
+
+def sort_reports(reports: list[CompRankingReport]) -> list[CompRankingReport]:
+    def key(report: CompRankingReport):
+        if not report.fights:
+            return ()
+        fight = report.fights[0]
+        return (fight.deaths, fight.damage_taken, fight.duration)
+
+    return sorted(reports, key=key)
