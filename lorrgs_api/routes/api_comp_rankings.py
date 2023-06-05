@@ -20,8 +20,8 @@ async def get_comp_ranking(
     limit: int = 20,
     roles: list[str] = fastapi.Query([], alias="role"),
     specs: list[str] = fastapi.Query([], alias="spec"),
-    # killtime_min: int = 0,
-    # killtime_max: int = 0,
+    killtime_min: int = 0,
+    killtime_max: int = 0,
 ):
     """Fetch comp rankings for a given boss encounter.
 
@@ -37,6 +37,12 @@ async def get_comp_ranking(
         raise fastapi.HTTPException(status_code=404, detail="Not Found.")
 
     def fight_filter(fight: CompRankingFight):
+        if killtime_min:
+            if fight.duration < (killtime_min * 1000):
+                return False
+        if killtime_max:
+            if fight.duration > (killtime_max * 1000):
+                return False
 
         if not fight.composition:
             return False
