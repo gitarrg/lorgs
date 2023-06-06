@@ -77,6 +77,23 @@ add_trinket(
 )
 
 
+add_trinket(
+    *MAGE.specs,
+    *WARLOCK.specs,
+    PRIEST_SHADOW,
+    SHAMAN_ELEMENTAL,
+    DRUID_BALANCE,
+    EVOKER_DEVASTATION,
+    spell_id=381768,
+    color="#5dcdde",
+    cooldown=120,
+    duration=20,
+    name="Spoils of Neltharus",
+    icon="inv_10_dungeonjewelry_dragon_trinket_4_bronze.jpg",
+    wowhead_data=f"item=193773{mythic}&ilvl=441",
+)
+
+
 # Vial of Animated Blood
 # tracking via buff, since there does not seem to be a cast associated with the trinket
 vial_of_animated_blood = WowSpell(
