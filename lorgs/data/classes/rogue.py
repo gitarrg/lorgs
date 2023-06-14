@@ -36,6 +36,7 @@ ROGUE.add_buff(                spell_id=45182,  cooldown=360, duration=3,       
 ROGUE.add_spell(               spell_id=5277,   cooldown=120, duration=10,                  name="Evasion",             icon="spell_shadow_shadowward.jpg",              show=False)
 ROGUE.add_spell(               spell_id=185311, cooldown=30,  duration=4,                   name="Crimson Vial",        icon="ability_rogue_crimsonvial.jpg",            show=False)
 ROGUE.add_spell(               spell_id=1966,   cooldown=15,  duration=6,                   name="Feint",               icon="ability_rogue_feint.jpg",                  show=False)
+ROGUE.add_spell(               spell_id=385408, cooldown=90,               color=COL_NF,    name="Sepsis",              icon="ability_ardenweald_rogue.jpg",             show=False)
 
 ROGUE_ASSASSINATION.add_spell( spell_id=5938,   cooldown=25,                                name="Shiv",                icon="inv_throwingknife_04.jpg",                 show=False)
 ROGUE_ASSASSINATION.add_spell( spell_id=360194, cooldown=120, duration=16, color="#cc5466", name="Deathmark",           icon="ability_rogue_deathmark.jpg")
@@ -45,12 +46,10 @@ ROGUE_ASSASSINATION.add_spell( spell_id=200806, cooldown=128, duration=14, color
 ROGUE_SUBTLETY.add_spell(      spell_id=121471, cooldown=180, duration=20, color="#9a1be3", name="Shadow Blades",       icon="inv_knife_1h_grimbatolraid_d_03.jpg")
 ROGUE_SUBTLETY.add_spell(      spell_id=280719, cooldown=60,               color="#3638d6", name="Secret Technique",    icon="ability_rogue_sinistercalling.jpg",        show=False)
 ROGUE_SUBTLETY.add_spell(      spell_id=384631, cooldown=90, duration=12,  color=COL_VENTR, name="Flagellation",        icon="ability_revendreth_rogue.jpg")
-ROGUE_SUBTLETY.add_spell(      spell_id=385408, cooldown=90,               color=COL_NF,    name="Sepsis",              icon="ability_ardenweald_rogue.jpg",             show=False)
 ROGUE_SUBTLETY.add_spell(      spell_id=212283, cooldown=25,  duration=10,                  name="Symbols of Death",    icon="spell_shadow_rune.jpg",                    show=False)
 
 ROGUE_OUTLAW.add_spell(        spell_id=13750,  cooldown=0,   duration=20,                  name="Adrenaline Rush",     icon="spell_shadow_shadowworddominate.jpg")
 ROGUE_OUTLAW.add_spell(        spell_id=315508,               duration=30, color="#c7813c", name="Roll the Bones",      icon="ability_rogue_rollthebones.jpg",           show=False)
-ROGUE_OUTLAW.add_spell(        spell_id=385408, cooldown=90,               color=COL_NF,    name="Sepsis",              icon="ability_ardenweald_rogue.jpg",             show=False)
 ROGUE_OUTLAW.add_spell(        spell_id=51690,  cooldown=120,                               name="Killing Spree",       icon="ability_rogue_murderspree.jpg")
 ROGUE_OUTLAW.add_spell(        spell_id=343142, cooldown=120, duration=8,  color="#3d9991", name="Dreadblades",         icon="inv_sword_1h_artifactskywall_d_01dual.jpg", show=False)
 ROGUE_OUTLAW.add_spell(        spell_id=381989, cooldown=0,   duration=30, color="#b3702d", name="Keep It Rolling",     icon="ability_rogue_keepitrolling.jpg")
