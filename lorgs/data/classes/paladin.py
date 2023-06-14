@@ -41,7 +41,7 @@ PALADIN_HOLY.add_spell(        spell_id=498,    cooldown=60,  duration=8,       
 # Offensive
 PALADIN_HOLY.add_spell(        spell_id=31821,  cooldown=180, duration=8,  color="#dc65f5", name="Aura Mastery",                    icon="spell_holy_auramastery.jpg", tags=[SpellTag.RAID_CD])
 PALADIN_HOLY.add_spell(        spell_id=200025, cooldown=15,  duration=8,  color="#e3ca09", name="Beacon of Virtue",                icon="ability_paladin_beaconofinsight.jpg", show=False)
-PALADIN_HOLY.add_spell(        spell_id=216331, cooldown=45,  duration=12, color="#ffc107", name="Avenging Crusader",               icon="ability_paladin_veneration.jpg")
+PALADIN_HOLY.add_spell(        spell_id=216331, cooldown=45,  duration=12, color="#ffc107", name="Avenging Crusader",               icon="ability_paladin_veneration.jpg", tags=[SpellTag.RAID_CD])
 PALADIN_HOLY.add_spell(        spell_id=114158, cooldown=60,  duration=14, color="#fcea74", name="Light's Hammer",                  icon="spell_paladin_lightshammer.jpg", show=False)
 
 
