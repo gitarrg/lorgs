@@ -52,7 +52,12 @@ DRUID_RESTORATION.add_buff(BEAR_FORM)
 DRUID_BALANCE.add_spell(     spell_id=194223, cooldown=180, duration=20,                  name="Celestial Alignment",            icon="spell_nature_natureguardian.jpg")
 DRUID_BALANCE.add_spell(     spell_id=102560, cooldown=180, duration=30,                  name="Incarnation: Chosen of Elune",   icon="spell_druid_incarnation.jpg", variations=[383410])
 DRUID_BALANCE.add_spell(     spell_id=205636, cooldown=60,  duration=10,                  name="Force of Nature",                icon="ability_druid_forceofnature.jpg",           show=False)
-DRUID_BALANCE.add_spell(     spell_id=202770, cooldown=60,  duration=8,                   name="Fury of Elune",                  icon="ability_druid_dreamstate.jpg",              show=False)
+DRUID_BALANCE.add_spell(     spell_id=202770, cooldown=60,  duration=8,  color="#749cdb", name="Fury of Elune",                  icon="ability_druid_dreamstate.jpg",              show=False)
+
+# Incarn Procs (eg.: using Arcanic Pulsar)
+# Have to use the spell ID from a different Buff because the real spell ID is used to track the manual casted Incarns
+DRUID_BALANCE.add_buff(      spell_id=405069,                          color="#bb74db", name="Incarnation: Chosen of Elune",   icon="spell_arcane_arcane03.jpg", show=False, tooltip="Regular Casts + Procs", wowhead_data="spell=393960")
+
 
 DRUID_FERAL.add_spell(       spell_id=106951, cooldown=120, duration=15,                  name="Berserk",                        icon="ability_druid_berserk.jpg", variations=[102543])
 DRUID_FERAL.add_spell(       spell_id=58984,  cooldown=120,              color="#999999", name="Shadowmeld ",                    icon="ability_ambush.jpg",                        show=False)
