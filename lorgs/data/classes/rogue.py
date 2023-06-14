@@ -36,7 +36,7 @@ ROGUE.add_buff(                spell_id=45182,  cooldown=360, duration=3,       
 ROGUE.add_spell(               spell_id=5277,   cooldown=120, duration=10,                  name="Evasion",             icon="spell_shadow_shadowward.jpg",              show=False)
 ROGUE.add_spell(               spell_id=185311, cooldown=30,  duration=4,                   name="Crimson Vial",        icon="ability_rogue_crimsonvial.jpg",            show=False)
 ROGUE.add_spell(               spell_id=1966,   cooldown=15,  duration=6,                   name="Feint",               icon="ability_rogue_feint.jpg",                  show=False)
-ROGUE.add_spell(               spell_id=385408, cooldown=90,               color=COL_NF,    name="Sepsis",              icon="ability_ardenweald_rogue.jpg",             show=False)
+ROGUE.add_spell(               spell_id=385408, cooldown=90,  duration=10, color=COL_NF,    name="Sepsis",              icon="ability_ardenweald_rogue.jpg",             show=False)
 
 ROGUE_ASSASSINATION.add_spell( spell_id=5938,   cooldown=25,                                name="Shiv",                icon="inv_throwingknife_04.jpg",                 show=False)
 ROGUE_ASSASSINATION.add_spell( spell_id=360194, cooldown=120, duration=16, color="#cc5466", name="Deathmark",           icon="ability_rogue_deathmark.jpg")
