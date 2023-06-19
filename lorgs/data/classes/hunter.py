@@ -60,7 +60,7 @@ def split_trueshot_procs(actor: warcraftlogs_actor.BaseActor, status: str):
         return
     
     for cast in actor.casts:
-        if cast.spell_id == 288613 and cast.duration and cast.duration < 10_000:
+        if cast.spell_id == 288613 and cast.duration and cast.duration < 14_000:
             cast.spell_id = 378905
 
 warcraftlogs_actor.BaseActor.event_actor_load.connect(split_trueshot_procs)
