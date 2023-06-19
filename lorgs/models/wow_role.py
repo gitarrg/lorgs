@@ -23,6 +23,11 @@ class WowRole(base.MemoryModel):
     code: str
     """Lowercase short Version. eg.: `tank`, `heal`, `mdps` or `rdps`."""
 
+    metric: str = "dps"
+    """Default Metric. dps for all. hps for healers."""
+
+    metrics: list[str] = ["dps", "hps", "bossdps"]
+
     @property
     def specs(self) -> list["WowSpec"]:
         from lorgs.models.wow_spec import WowSpec
@@ -38,9 +43,5 @@ class WowRole(base.MemoryModel):
             "name": self.name,
             "code": self.code,
             "specs": [spec.full_name_slug for spec in self.specs],
+            "metrics": self.metrics,
         }
-
-    @property
-    def metric(self) -> str:
-        """str: the preferred metric. aka: dps for all. hps for healers."""
-        return "hps" if self.code == "heal" else "dps"
