@@ -8,6 +8,7 @@
 # IMPORT LOCAL LIBRARIES
 from lorgs.data.constants import *
 from lorgs.data.roles import *
+from lorgs.models import warcraftlogs_actor
 from lorgs.models.wow_class import WowClass
 from lorgs.models.wow_spec import WowSpec
 
@@ -43,10 +44,23 @@ HUNTER_BEASTMASTERY.add_spell( spell_id=19574,  cooldown=30,  duration=15, color
 HUNTER_BEASTMASTERY.add_spell( spell_id=321530, cooldown=60,  duration=18, color="#b34747", name="Bloodshed",           icon="ability_druid_primaltenacity.jpg")
 HUNTER_BEASTMASTERY.add_spell( spell_id=272679, cooldown=120, duration=10,                  name="Fortitude of the Bear", icon="spell_druid_bearhug.jpg", show=False)
 
-HUNTER_MARKSMANSHIP.add_spell( spell_id=288613, cooldown=120, duration=15,                  name="Trueshot",            icon="ability_trueshot.jpg")
-HUNTER_MARKSMANSHIP.add_buff(  spell_id=389450,               duration=15,                  name="Trueshot",            icon="ability_trueshot.jpg", show=False, tooltip="including Procs")
+HUNTER_MARKSMANSHIP.add_buff( spell_id=288613, cooldown=120,                                name="Trueshot",            icon="ability_trueshot.jpg")
+HUNTER_MARKSMANSHIP.add_buff( spell_id=378905,                                              name="Windrunner's Guidance", icon="ability_hunter_laceration.jpg", show=False, query=True)
 HUNTER_MARKSMANSHIP.add_spell( spell_id=260243, cooldown=45,  duration=6, color="#bf8686",  name="Volley",              icon="ability_hunter_rapidkilling.jpg", show=False)
 
 HUNTER_SURVIVAL.add_spell(     spell_id=360952, cooldown=120, duration=20,                  name="Coordinated Assault", icon="inv_coordinatedassault.jpg")
 HUNTER_SURVIVAL.add_spell(     spell_id=186289, cooldown=90,  duration=15,                  name="Aspect of the Eagle", icon="spell_hunter_aspectoftheironhawk.jpg")
 HUNTER_SURVIVAL.add_spell(     spell_id=360966, cooldown=90,  duration=12, color="#3aa65e", name="Spearhead",           icon="ability_hunter_spearhead.jpg")
+
+
+def split_trueshot_procs(actor: warcraftlogs_actor.BaseActor, status: str):
+    if status != "success":
+        return
+    if not actor:
+        return
+    
+    for cast in actor.casts:
+        if cast.spell_id == 288613 and cast.duration and cast.duration < 10_000:
+            cast.spell_id = 378905
+
+warcraftlogs_actor.BaseActor.event_actor_load.connect(split_trueshot_procs)
