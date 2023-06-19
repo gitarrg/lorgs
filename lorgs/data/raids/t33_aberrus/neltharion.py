@@ -8,13 +8,30 @@ boss = NELTHARION
 
 ################################################################################
 # Phase 1:
-# Rushing Shadows ==> random players --> knockback --> breaks wall
 boss.add_cast(
     spell_id=407207,
     name="Rushing Darkness",
     duration=5,
     icon="inv_cosmicvoid_missile.jpg",
     color="#3a79f0",
+    show=False,
+)
+
+
+boss.add_cast(
+    spell_id=410968,
+    name="Volcanic Heart",
+    duration=7,
+    icon="inv_ragnaros_heart.jpg",
+    color="#c94949",
+)
+
+boss.add_cast(
+    spell_id=403272,
+    name="Echoing Fissure",
+    duration=5,
+    icon="spell_nature_earthquake.jpg",
+    color="#bf8143",
 )
 
 
@@ -42,12 +59,19 @@ boss.add_cast(
     duration=10,
     icon="inv_cosmicvoid_debuff.jpg",
     color="#60b336",
+    show=False,
 )
 
 
-# Adds Spawn
-# Corruption --> corrupteed players break shield
-# --> all players kill add
+boss.add_cast(
+    spell_id=405433,
+    name="Umbral Annihilation",
+    duration=3,
+    icon="inv_cosmicvoid_groundsate.jpg",
+    color="#426bd4",
+    show=True,
+)
+
 
 # Tank Hit:
 # split soul --> use to break walls
@@ -65,4 +89,11 @@ boss.add_cast(
 # Phase 3
 #
 
-# Rygelon Portals
+boss.add_cast(
+    spell_id=407917,
+    name="Ebon Destruction",
+    duration=6,
+    icon="inv_misc_head_dragon_black_nightmare.jpg",
+    color="#7b69d6",
+    show=True,
+)
