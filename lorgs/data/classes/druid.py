@@ -8,6 +8,7 @@
 # IMPORT LOCAL LIBRARIES
 from lorgs.data.constants import *
 from lorgs.data.roles import *
+from lorgs.models import warcraftlogs_actor
 from lorgs.models.wow_class import WowClass
 from lorgs.models.wow_spec import WowSpec
 from lorgs.models.wow_spell import SpellTag, WowSpell
@@ -50,13 +51,10 @@ DRUID_RESTORATION.add_buff(BEAR_FORM)
 
 # Offensive
 DRUID_BALANCE.add_spell(     spell_id=194223, cooldown=180, duration=20,                  name="Celestial Alignment",            icon="spell_nature_natureguardian.jpg")
-DRUID_BALANCE.add_spell(     spell_id=102560, cooldown=180, duration=30,                  name="Incarnation: Chosen of Elune",   icon="spell_druid_incarnation.jpg", variations=[383410])
+DRUID_BALANCE.add_buff(      spell_id=102560, cooldown=180,                               name="Incarnation: Chosen of Elune",   icon="spell_druid_incarnation.jpg", variations=[383410])
 DRUID_BALANCE.add_spell(     spell_id=205636, cooldown=60,  duration=10,                  name="Force of Nature",                icon="ability_druid_forceofnature.jpg",           show=False)
 DRUID_BALANCE.add_spell(     spell_id=202770, cooldown=60,  duration=8,  color="#749cdb", name="Fury of Elune",                  icon="ability_druid_dreamstate.jpg",              show=False)
-
-# Incarn Procs (eg.: using Arcanic Pulsar)
-# Have to use the spell ID from a different Buff because the real spell ID is used to track the manual casted Incarns
-DRUID_BALANCE.add_buff(      spell_id=405069,                          color="#bb74db", name="Incarnation: Chosen of Elune",   icon="spell_arcane_arcane03.jpg", show=False, tooltip="Regular Casts + Procs", wowhead_data="spell=393960")
+DRUID_BALANCE.add_buff(      spell_id=393960,                            color="#bb74db", name="Arcanic Pulsar",                 icon="spell_arcane_arcane03.jpg", show=False, query=False)
 
 
 DRUID_FERAL.add_spell(       spell_id=106951, cooldown=120, duration=15,                  name="Berserk",                        icon="ability_druid_berserk.jpg", variations=[102543])
@@ -76,3 +74,16 @@ DRUID_RESTORATION.add_buff(  spell_id=33891,  cooldown=0,   duration=0,         
 
 # Additional Spells (not tracked)
 REBIRTH = WowSpell(spell_id=20484, name="Rebirth", icon="spell_nature_reincarnation.jpg")
+
+
+def split_pulsar_procs(actor: warcraftlogs_actor.BaseActor, status: str):
+    if status != "success":
+        return
+    if not actor:
+        return
+    
+    for cast in actor.casts:
+        if cast.spell_id in (102560, 383410) and cast.duration and cast.duration < 20_000:
+            cast.spell_id = 393960
+
+warcraftlogs_actor.BaseActor.event_actor_load.connect(split_pulsar_procs)
