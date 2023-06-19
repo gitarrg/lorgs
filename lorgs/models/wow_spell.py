@@ -80,6 +80,9 @@ class WowSpell(base.MemoryModel):
     tooltip: str = ""
     """Custom/Additional Tooltip for this Spell."""
 
+    query: bool = True
+    """Whether to query for the spell or not. Default is True."""
+
     def post_init(self) -> None:
         self.wowhead_data = self.wowhead_data or f"spell={self.spell_id}"
         self.add_variations(*self.variations)
@@ -149,7 +152,6 @@ class WowSpell(base.MemoryModel):
             self.add_variation(spell_id)
 
     def expand_events(self) -> list["WowSpell"]:
-
         # dedicated "until-event"
         if self.until:
             return [self, self.until]
@@ -168,9 +170,10 @@ class WowSpell(base.MemoryModel):
 
 
 def build_spell_query(spells: list[WowSpell]) -> str:
-
     if not spells:
         return ""
+
+    spells = [spells for spells in spells if spells.query]
 
     spells = utils.flatten([spell.expand_events() for spell in spells])
 
