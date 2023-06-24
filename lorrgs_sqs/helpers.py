@@ -1,16 +1,10 @@
 from __future__ import annotations
+from typing import Any, Callable
 
 from lorgs.data.classes import ALL_SPECS
 from lorgs.data.raids import CURRENT_ZONE
 from lorgs.models.wow_role import WowRole
 from lorgs.models.wow_spec import WowSpec
-
-
-PAYLOAD_EXPANDERS = {
-    "spec_slug": [spec.full_name_slug for spec in ALL_SPECS],
-    "boss_slug": [boss.full_name_slug for boss in CURRENT_ZONE.bosses],
-    "difficulty": ["heroic", "mythic"],
-}
 
 
 def expand_metric(payload: dict) -> list[str]:
@@ -21,15 +15,22 @@ def expand_metric(payload: dict) -> list[str]:
     return role and role.metrics or []
 
 
+PAYLOAD_EXPANDERS: dict[str, list[str] | Callable[[Any], list[str]]] = {
+    "spec_slug": [spec.full_name_slug for spec in ALL_SPECS],
+    "boss_slug": [boss.full_name_slug for boss in CURRENT_ZONE.bosses],
+    "difficulty": ["heroic", "mythic"],
+    "metric": expand_metric,
+}
+
+
 def expand_payload(keyword: str, payload: dict) -> list[dict]:
     """"""
     if payload.get(keyword) != "all":
         return [payload]
 
-    if keyword == "metric":
-        values = expand_metric(payload)
-    else:
-        values = PAYLOAD_EXPANDERS[keyword]
+    values = PAYLOAD_EXPANDERS[keyword]
+    if callable(values):
+        values = values(payload)
 
     return [{**payload, keyword: value} for value in values]
 
