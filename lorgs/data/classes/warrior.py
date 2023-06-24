@@ -28,7 +28,7 @@ WARRIOR_PROTECTION    = WowSpec(role=TANK, wow_class=WARRIOR,      name="Protect
 ################################################################################
 # Spells
 #
-WARRIOR.add_spell(             spell_id=376079, cooldown=90,               color=COL_KYR,   name="Spear of Bastion",    icon="ability_bastion_warrior.jpg")
+WARRIOR.add_spell(             spell_id=376079, cooldown=90,  duration=4,  color=COL_KYR,   name="Spear of Bastion",    icon="ability_bastion_warrior.jpg")
 WARRIOR.add_spell(             spell_id=384318, cooldown=90,  duration=8,  color="#d13b59", name="Thunderous Roar",     icon="ability_warrior_dragonroar.jpg",            show=False)
 WARRIOR.add_spell(             spell_id=97462,  cooldown=180, duration=10,                  name="Rallying Cry",        icon="ability_warrior_rallyingcry.jpg",           show=False, spell_type=SpellType.RAID, tags=[SpellTag.RAID_CD])
 WARRIOR.add_spell(             spell_id=23920,  cooldown=10,  duration=5,                   name="Spell Reflection",    icon="ability_warrior_shieldreflection.jpg",      show=False)
@@ -42,7 +42,6 @@ WARRIOR_ARMS.add_spell(        spell_id=118038, cooldown=120, duration=8,       
 WARRIOR_ARMS.add_buff(         spell_id=197690, cooldown=6,                                 name="Defensive Stance",    icon="ability_warrior_defensivestance.jpg",       show=False)
 
 WARRIOR_FURY.add_spell(        spell_id=1719,   cooldown=60,  duration=10,                  name="Recklessness",        icon="warrior_talent_icon_innerrage.jpg")
-WARRIOR_FURY.add_spell(        spell_id=46924,  cooldown=60,  duration=4,                   name="Bladestorm",          icon="ability_warrior_bladestorm.jpg")
 WARRIOR_FURY.add_spell(        spell_id=184364, cooldown=180, duration=8,                   name="Enraged Regeneration",icon="ability_warrior_focusedrage.jpg",           show=False)
 WARRIOR_FURY.add_spell(        spell_id=385059, cooldown=45,  duration=4,  color="#ffbf29", name="Odyn's Fury",         icon="inv_sword_1h_artifactvigfus_d_01.jpg",      show=False)
 WARRIOR_FURY.add_spell(        spell_id=167105, cooldown=45,  duration=10, color="#ffbf29", name="Colossus Smash",      icon="ability_warrior_colossussmash.jpg",         show=False)
