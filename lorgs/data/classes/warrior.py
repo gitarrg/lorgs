@@ -38,13 +38,13 @@ WARRIOR.add_spell(             spell_id=228920, cooldown=90,  duration=12, color
 WARRIOR_ARMS.add_spell(        spell_id=389774, cooldown=90,  duration=6,                   name="Bladestorm",          icon="ability_warrior_bladestorm.jpg")
 WARRIOR_ARMS.add_spell(        spell_id=262161, cooldown=45,  duration=10,                  name="Warbreaker",          icon="inv_warbreaker.jpg",                        show=False)
 WARRIOR_ARMS.add_spell(        spell_id=772,    cooldown=15,                                name="Rend",                icon="ability_gouge.jpg",                         show=False)
+WARRIOR_ARMS.add_spell(        spell_id=167105, cooldown=45,  duration=10, color="#ffbf29", name="Colossus Smash",      icon="ability_warrior_colossussmash.jpg",         show=False)
 WARRIOR_ARMS.add_spell(        spell_id=118038, cooldown=120, duration=8,                   name="Die by the Sword",    icon="ability_warrior_challange.jpg",             show=False)
 WARRIOR_ARMS.add_buff(         spell_id=197690, cooldown=6,                                 name="Defensive Stance",    icon="ability_warrior_defensivestance.jpg",       show=False)
 
 WARRIOR_FURY.add_spell(        spell_id=1719,   cooldown=60,  duration=10,                  name="Recklessness",        icon="warrior_talent_icon_innerrage.jpg")
 WARRIOR_FURY.add_spell(        spell_id=184364, cooldown=180, duration=8,                   name="Enraged Regeneration",icon="ability_warrior_focusedrage.jpg",           show=False)
 WARRIOR_FURY.add_spell(        spell_id=385059, cooldown=45,  duration=4,  color="#ffbf29", name="Odyn's Fury",         icon="inv_sword_1h_artifactvigfus_d_01.jpg",      show=False)
-WARRIOR_FURY.add_spell(        spell_id=167105, cooldown=45,  duration=10, color="#ffbf29", name="Colossus Smash",      icon="ability_warrior_colossussmash.jpg",         show=False)
 
 WARRIOR_PROTECTION.add_spell(  spell_id=385954, cooldown=45,               color="#b34747", name="Shield Charge",       icon="ability_warrior_shieldcharge.jpg",          show=False)
 WARRIOR_PROTECTION.add_spell(  spell_id=12975,  cooldown=180, duration=15, color="#ffbf29", name="Last Stand",          icon="spell_holy_ashestoashes.jpg")
