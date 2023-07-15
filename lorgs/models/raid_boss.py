@@ -4,6 +4,7 @@ from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
 import typing
+from typing import Any
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
@@ -27,7 +28,7 @@ class RaidBoss(WowActor):
         return f"<RaidBoss(id={self.id} name={self.name})>"
 
     # alias
-    def add_cast(self, *args, **kwargs) -> WowSpell:
+    def add_cast(self, *args: Any, **kwargs: Any) -> WowSpell:
         return self.add_spell(*args, **kwargs)
 
     @property
