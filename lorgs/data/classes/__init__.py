@@ -18,7 +18,8 @@ from lorgs.data.classes.warrior import *
 
 
 # a few collections used to assign trinkets and consumables
+# fmt: off
 ALL_SPECS = TANK.specs + HEAL.specs + MDPS.specs + RDPS.specs
-INT_SPECS: list["WowSpec"] = HEAL.specs +  MAGE.specs + WARLOCK.specs + [PRIEST_SHADOW, SHAMAN_ELEMENTAL, DRUID_BALANCE, EVOKER_DEVASTATION]
+INT_SPECS: list["WowSpec"] = HEAL.specs +  MAGE.specs + WARLOCK.specs + [PRIEST_SHADOW, SHAMAN_ELEMENTAL, DRUID_BALANCE, EVOKER_DEVASTATION, EVOKER_AUGMENTATION]
 AGI_SPECS: list["WowSpec"] = HUNTER.specs + ROGUE.specs + [SHAMAN_ENHANCEMENT, MONK_BREWMASTER, MONK_WINDWALKER, DRUID_FERAL] + DEMONHUNTER.specs
 STR_SPECS: list["WowSpec"] = WARRIOR.specs + [PALADIN_PROTECTION, PALADIN_RETRIBUTION] + DEATHKNIGHT.specs
