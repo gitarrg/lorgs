@@ -24,7 +24,7 @@ def add_trinket(*specs: WowSpec, **kwargs: Any):
 
 ################################## S1 DUNGEONS #################################
 
-
+"""
 add_trinket(
     *AGI_SPECS,
     *STR_SPECS,
@@ -48,7 +48,7 @@ add_trinket(
     icon="inv_misc_horn_03.jpg",
     wowhead_data=f"item=133642{mythic}&ilvl=372",
 )
-
+"""
 
 ################################## S2 DUNGEONS #################################
 
@@ -112,8 +112,32 @@ for spec in STR_SPECS:
     spec.add_buff(vial_of_animated_blood)
 
 
-################################### T31 RAID ###################################
+############################### 10.1 Megadungeon ###############################
 
+add_trinket(
+    *HEAL.specs,
+    spell_id=417939,
+    color="#ff8a1d",
+    cooldown=120,
+    name="Echoing Tyrstone",
+    icon="ability_paladin_lightofthemartyr.jpg",
+    wowhead_data=f"item=207552{mythic}&ilvl=441",
+)
+
+add_trinket(
+    *RDPS.specs,
+    *MDPS.specs,
+    spell_id=418527,
+    color="#40d1be",
+    cooldown=180,
+    name="Mirror of Fractured Tomorrows",
+    icon="achievement_dungeon_ulduarraid_misc_06.jpg",
+    wowhead_data=f"item=207581{mythic}&ilvl=441",
+)
+
+
+################################### T31 RAID ###################################
+"""
 add_trinket(
     *AGI_SPECS,
     *STR_SPECS,
@@ -150,7 +174,7 @@ add_trinket(
     icon="inv_staff_2h_dragondungeon_c_02.jpg",
     wowhead_data=f"item=195519{mythic}&ilvl=424",
 )
-
+"""
 
 ################################### T33 RAID ###################################
 
