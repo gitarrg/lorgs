@@ -1,3 +1,4 @@
+import re
 import dotenv
 
 from lorgs.logger import timeit
@@ -19,7 +20,6 @@ REPORT_ID = "4KZGNP8HtxWRkyJ9"
 
 
 async def test_load_summary():
-
     user_report = UserReport(report_id=REPORT_ID)
 
     # load
@@ -36,7 +36,6 @@ async def test_load_summary():
 
 @timeit
 async def test_load_fight_summary():
-
     user_report = UserReport.get(report_id=REPORT_ID)
     fight = user_report.report.get_fight(13)
     await fight.load_summary()
@@ -53,7 +52,6 @@ async def test_load_single_player():
 
 
 async def test_load_multiple_players():
-
     user_report = UserReport.get(report_id=REPORT_ID)
     fight = user_report.report.get_fight(13)
 
@@ -70,7 +68,6 @@ async def test_load_multiple_players():
 
 
 async def test_load_multiple_fights():
-
     ids = range(1, 20)
 
     user_report = UserReport.from_report_id(report_id=REPORT_ID)
@@ -83,12 +80,28 @@ async def test_load_multiple_fights():
     await save()
 
 
-async def test_load() -> None:
+def info_from_url(url: str) -> tuple[str, int, int]:
+    report_id_match = re.search(r"reports\/(\w{16})", url)
+    fight_id_match = re.search(r"fight=(\d+)", url)
+    player_id_match = re.search(r"source=(\d+)", url)
 
+    report_id = report_id_match.group(1) if report_id_match else ""
+    fight_id = int(fight_id_match.group(1)) if fight_id_match else -1
+    player_id = int(player_id_match.group(1)) if player_id_match else -1
+
+    return (report_id, fight_id, player_id)
+
+
+async def test_load() -> None:
     # Inputs
-    REPORT_ID = "pkGRVFywbhD7famW"
-    fight_ids = [60]
-    player_ids = [692]
+    # REPORT_ID = "L9fV1XwaRTNzkjA4"
+    # fight_ids = [2]
+    # player_ids = [3]
+
+    url = "https://www.warcraftlogs.com/reports/63WTgawLkf2FzP9A#fight=29&type=summary&source=19"
+    REPORT_ID, fight_id, player_id = info_from_url(url)
+    fight_ids = [fight_id]
+    player_ids = [player_id]
 
     # LOAD
     user_report = UserReport.get_or_create(report_id=REPORT_ID, create=True)
@@ -138,15 +151,15 @@ async def test_load_with_progress() -> None:
     # task.set("items.1_5", {"status": "changed"})
     # task.set("items.1_5.status", "changed9")
 
-    REPORT_ID = "BCFzH4vaRYpDTrqP"
-    FIGHT_IDS = [23]
-    PLAYER_IDS = [1]
+    REPORT_ID = "QYvHMnjhy9x6dZg4"
+    FIGHT_IDS = [25]
+    PLAYER_IDS = [14]
 
     ################################
     # Create Status Object
     task = Task(task_id="dev", status=Task.STATUS.WAITING)
     task.items = {}
-    for (f, p) in itertools.product(FIGHT_IDS, PLAYER_IDS):
+    for f, p in itertools.product(FIGHT_IDS, PLAYER_IDS):
         task.items[f"{f}_{p}"] = {"fight": f, "player": p, "status": task.status}
     task.save()
 
@@ -157,7 +170,6 @@ async def test_load_with_progress() -> None:
 
 
 async def main() -> None:
-
     # await test_load_summary()
     # await test_load_fight_summary()
     # await test_load_single_player()

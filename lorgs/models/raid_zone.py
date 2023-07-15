@@ -12,6 +12,7 @@ from lorgs.models.raid_boss import RaidBoss
 
 # pylint: disable=too-few-public-methods
 
+
 class RaidZone(base.MemoryModel):
     """A raid zone in the Game."""
 
