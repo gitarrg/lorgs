@@ -25,8 +25,15 @@ jobs:
           python-version: '3.9'
           cache: 'pip' # caching pip dependencies
 
-      # install Dependencies
-      - run: pip install boto3
+      - run: pip install -r requirements.txt
+
+      # install Deploy Dependencies
+      - run: pip install boto3 requests
+
+      # Update Images
+      - run: python scripts/load_images.py
+        env:
+          PYTHONPATH: "."
 
       # Deploy Main
       - run: python scripts/deploy.py
