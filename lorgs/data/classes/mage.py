@@ -37,9 +37,9 @@ MAGE.add_buff(         spell_id=55342,  cooldown=120,                           
 MAGE.add_buff(         spell_id=342246, cooldown=60,                                name="Alter Time",         icon="spell_mage_altertime.jpg",                  show=False, variations=[342246])
 MAGE.add_spell(        spell_id=414660, cooldown=120,                               name="Mass Barrier",       icon="ability_racial_magicalresistance.jpg",      show=False)
 MAGE.add_spell(        spell_id=414658, cooldown=240, duration=6,                   name="Ice Cold",           icon="spell_fire_bluefire.jpg",                   show=False)
+MAGE.add_buff(         spell_id=113862, cooldown=120,                               name="Greater Invisibility",icon="ability_mage_greaterinvisibility.jpg",     show=False)
 
 
-MAGE_ARCANE.add_buff(  spell_id=113862, cooldown=120,                               name="Greater Invisibility",icon="ability_mage_greaterinvisibility.jpg",     show=False)
 MAGE_ARCANE.add_buff(  spell_id=235450, cooldown=25,                                name="Prismatic Barrier",  icon="spell_magearmor.jpg",                       show=False)
 MAGE_FIRE.add_buff(    spell_id=235313, cooldown=25,                                name="Blazing Barrier",    icon="ability_mage_moltenarmor.jpg",              show=False)
 MAGE_FIRE.add_debuff(  spell_id=87023,  cooldown=300, duration=6,                   name="Cauterize",          icon="spell_fire_rune.jpg",                       show=False)
