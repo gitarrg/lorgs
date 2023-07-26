@@ -54,4 +54,5 @@ for spell in WowSpell.list():
     if icon in images:
         continue
 
+    print(f"uploading: {icon} for {spell.name}")
     upload(icon)
