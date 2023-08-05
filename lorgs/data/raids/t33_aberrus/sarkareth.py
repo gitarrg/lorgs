@@ -33,8 +33,16 @@ boss.add_cast(
     show=False,
 )
 
+boss.add_cast(
+    spell_id=401325,
+    name="Burning Claws",
+    duration=27,
+    color="#478fb3",
+    icon="inv_10_specialreagentfoozles_tuskclaw_fire.jpg",
+    show=False,
+)
+
 # https://www.wowhead.com/spell=401500/scorching-bomb
-# https://www.wowhead.com/spell=401325/burning-claws
 # https://www.wowhead.com/spell=401642/mass-disintegrate
 
 
@@ -57,7 +65,16 @@ boss.add_cast(
 )
 
 
-# https://www.wowhead.com/spell=411236/void-claws
+boss.add_cast(
+    spell_id=411236,
+    name="Void Claws",
+    duration=28,
+    color="#478fb3",
+    icon="inv_cosmicvoid_wave.jpg",
+    show=False,
+)
+
+
 # https://www.wowhead.com/spell=404403/desolate-blossom
 # https://www.wowhead.com/spell=404027/void-bomb
 
