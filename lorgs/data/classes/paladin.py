@@ -36,7 +36,7 @@ PALADIN.add_spell(             spell_id=6940,   cooldown=120, duration=12,      
 
 # Defensive
 PALADIN.add_spell(             spell_id=642,    cooldown=300, duration=8,                   name="Divine Shield",                   icon="spell_holy_divineshield.jpg",     show=False)
-PALADIN_HOLY.add_spell(        spell_id=498,    cooldown=60,  duration=8,                   name="Divine Protection",               icon="spell_holy_divineprotection.jpg", show=False)
+PALADIN.add_spell(             spell_id=498,    cooldown=60,  duration=8,                   name="Divine Protection",               icon="spell_holy_divineprotection.jpg", show=False, variations=[403876])
 
 # Offensive
 PALADIN_HOLY.add_spell(        spell_id=31821,  cooldown=180, duration=8,  color="#dc65f5", name="Aura Mastery",                    icon="spell_holy_auramastery.jpg", tags=[SpellTag.RAID_CD])
