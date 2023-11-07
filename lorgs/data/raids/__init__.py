@@ -4,6 +4,7 @@ from lorgs.data.raids.t28_sanctum_of_domination import *
 from lorgs.data.raids.t29_sepulcher_of_the_first_ones import *
 from lorgs.data.raids.t31_vault_of_the_incarnates import *
 from lorgs.data.raids.t33_aberrus import *
+from lorgs.data.raids.t35_amdrassil import *
 
 
-CURRENT_ZONE = ABERRUS
+CURRENT_ZONE = AMIRDRASSIL

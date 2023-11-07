@@ -129,6 +129,7 @@ add_trinket(
     *MDPS.specs,
     spell_id=418527,
     color="#40d1be",
+    duration=20,
     cooldown=180,
     name="Mirror of Fractured Tomorrows",
     icon="achievement_dungeon_ulduarraid_misc_06.jpg",
