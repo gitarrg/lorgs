@@ -32,15 +32,23 @@ OTHER_BUFFS.add_buff(color=EVOKER.color,  spell_id=357170, cooldown=60,  duratio
 # External Power Gains
 #
 POWER_INFUSION    = OTHER_BUFFS.add_buff(color="#f7c625", spell_id=10060,  cooldown=120, duration=20, name="Power Infusion",      icon="spell_holy_powerinfusion.jpg")
-INNERVATE         = OTHER_BUFFS.add_buff(color="#3b97ed", spell_id=29166,  cooldown=180, duration=10, name="Innervate",           icon="spell_nature_lightning.jpg")
 BLESSING_OF_AUTUMN = OTHER_BUFFS.add_buff(color=PALADIN.color, spell_id=388010, cooldown=45, duration=30, name="Blessing of Autumn", icon="ability_ardenweald_paladin_autumn.jpg")
+
+for s in ALL_SPECS:
+    s.add_spells(*OTHER_BUFFS.spells)
+    s.add_buffs(*OTHER_BUFFS.buffs)
+
+
+################################################################################
+# Healer Only
+#
+INNERVATE          = OTHER_BUFFS.add_buff(color="#3b97ed", spell_id=29166,  cooldown=180, duration=8, name="Innervate",           icon="spell_nature_lightning.jpg")
+SPATIAL_PARADOX    = OTHER_BUFFS.add_buff(color=EVOKER.color, spell_id=406789, cooldown=120, duration=10, name="Spatial Paradox", icon="ability_evoker_stretchtime.jpg")
+for s in HEAL.specs:
+    s.add_spells(INNERVATE, SPATIAL_PARADOX)
+
 
 ################################################################################
 
 for spell in (OTHER_BUFFS.spells + OTHER_BUFFS.buffs):
     spell.show = False
-
-
-for s in ALL_SPECS:
-    s.add_spells(*OTHER_BUFFS.spells)
-    s.add_buffs(*OTHER_BUFFS.buffs)
