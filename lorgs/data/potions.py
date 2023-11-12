@@ -45,7 +45,10 @@ add_potion(*ALL_SPECS,
     color="#e35f5f",
     name="Refreshing Healing Potion",
     icon="inv_10_alchemy_bottle_shape4_red.jpg",
-    wowhead_data="item=191380"
+    wowhead_data="item=191380",
+    variations=[
+        415569, # Dreamwalker's Healing Potion
+    ],
 )
 
 
