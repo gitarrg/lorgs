@@ -43,6 +43,8 @@ HUNTER_BEASTMASTERY.add_spell( spell_id=193530, cooldown=180, duration=20,      
 HUNTER_BEASTMASTERY.add_spell( spell_id=19574,  cooldown=30,  duration=15, color="#e6960f", name="Bestial Wrath",       icon="ability_druid_ferociousbite.jpg",        show=False)
 HUNTER_BEASTMASTERY.add_spell( spell_id=321530, cooldown=60,  duration=18, color="#b34747", name="Bloodshed",           icon="ability_druid_primaltenacity.jpg")
 HUNTER_BEASTMASTERY.add_spell( spell_id=272679, cooldown=120, duration=10,                  name="Fortitude of the Bear", icon="spell_druid_bearhug.jpg", show=False)
+HUNTER_BEASTMASTERY.add_spell( spell_id=359844, cooldown=120, duration=20,                  name="Call of the Wild", icon="ability_hunter_callofthewild.jpg")
+
 
 HUNTER_MARKSMANSHIP.add_buff( spell_id=288613, cooldown=120,                                name="Trueshot",            icon="ability_trueshot.jpg")
 HUNTER_MARKSMANSHIP.add_buff( spell_id=378905,                                              name="Windrunner's Guidance", icon="ability_hunter_laceration.jpg", show=False, query=True)
