@@ -41,6 +41,7 @@ PRIEST.add_spell(              spell_id=586,   cooldown=30,  duration=5,      na
 
 # Offensive
 PRIEST_DISCIPLINE.add_spell(   spell_id=62618,  cooldown=180, duration=10, color="#b3ad91", name="Power Word: Barrier",   icon="spell_holy_powerwordbarrier.jpg", tags=[SpellTag.RAID_CD])
+PRIEST_DISCIPLINE.add_spell(   spell_id=271466, cooldown=180, duration=10, color="#b3ad91", name="Luminous Barrier",      icon="spell_priest_burningwill.jpg", tags=[SpellTag.RAID_CD])
 PRIEST_DISCIPLINE.add_spell(   spell_id=109964, cooldown=60,  duration=10, color="#d7abdb", name="Spirit Shell",          icon="ability_shaman_astralshift.jpg", tags=[SpellTag.RAID_CD])
 PRIEST_DISCIPLINE.add_spell(   spell_id=47536,  cooldown=90,  duration=8,                   name="Rapture",               icon="spell_holy_rapture.jpg",          show=False, tags=[SpellTag.RAID_CD])
 PRIEST_DISCIPLINE.add_spell(   spell_id=246287, cooldown=90,                                name="Evangelism",            icon="spell_holy_divineillumination.jpg", tags=[SpellTag.RAID_CD])
