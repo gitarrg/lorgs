@@ -36,18 +36,6 @@ add_trinket(
     icon="inv_misc_enggizmos_18.jpg",
     wowhead_data=f"item=193701{mythic}&ilvl=372",
 )
-
-
-add_trinket(
-    *ALL_SPECS,
-    spell_id=215956,
-    color="#6b6bb3",
-    cooldown=120,
-    duration=30,
-    name="Horn of Valor",
-    icon="inv_misc_horn_03.jpg",
-    wowhead_data=f"item=133642{mythic}&ilvl=372",
-)
 """
 
 ################################## S2 DUNGEONS #################################
@@ -137,46 +125,6 @@ add_trinket(
 )
 
 
-################################### T31 RAID ###################################
-"""
-add_trinket(
-    *AGI_SPECS,
-    *STR_SPECS,
-    spell_id=377453,
-    color="#53b6bd",
-    cooldown=180,
-    name="Storm-Eater's Boon",
-    icon="inv_10_elementalspiritfoozles_air.jpg",
-    wowhead_data=f"item=194302{mythic}&ilvl=421",
-)
-
-
-add_trinket(
-    *AGI_SPECS,
-    *STR_SPECS,
-    spell_id=377463,
-    color="#8ec6d4",
-    cooldown=120,
-    duration=2,
-    name="Manic Grieftorch",
-    icon="shaman_talent_unleashedfury.jpg",
-    wowhead_data=f"item=194308{mythic}&ilvl=424",
-)
-
-
-add_trinket(
-    EVOKER_DEVASTATION,
-    EVOKER_PRESERVATION,
-    spell_id=394927,
-    color="#af4dff",
-    cooldown=180,
-    duration=3,
-    name="Kharnalex, The First Light",
-    icon="inv_staff_2h_dragondungeon_c_02.jpg",
-    wowhead_data=f"item=195519{mythic}&ilvl=424",
-)
-"""
-
 ################################### T33 RAID ###################################
 
 add_trinket(
@@ -199,3 +147,93 @@ add_trinket(
     icon="inv_cosmicvoid_orb.jpg",
     wowhead_data=f"item=203963{mythic}&ilvl=450",
 )
+
+
+################################# S3 Dungeons ##################################
+
+add_trinket(
+    *AGI_SPECS,
+    spell_id=265954,
+    color="#d3d01a",
+    cooldown=90,
+    name="My'das Talisman",
+    icon="inv_offhand_draenei_a_02.jpg",
+    wowhead_data=f"item=158319{mythic}&ilvl=483",
+)
+
+add_trinket(
+    *AGI_SPECS,
+    spell_id=429257,
+    color="#39d31a",
+    cooldown=90,
+    name="Witherbark's Branch",
+    icon="inv_misc_branch_01.jpg",
+    wowhead_data=f"item=109999{mythic}&ilvl=483",
+)
+
+
+# tracking via buff, since there does not seem to be a cast associated with the trinket
+balefire_branch = WowSpell(
+    spell_id=268998,
+    color="#8434df",
+    spell_type=SpellType.TRINKET,
+    cooldown=90,
+    name="Balefire Branch",
+    icon="inv_staff_26.jpg",
+    wowhead_data=f"item=159630{mythic}&ilvl=483",
+    show=False,
+    event_type="applybuff",
+)
+for spec in INT_SPECS:
+    spec.add_buff(balefire_branch)
+
+
+################################### T35 RAID ###################################
+
+add_trinket(
+    *ALL_SPECS,
+    spell_id=423611,
+    color="#eb3838",
+    duration=20,
+    cooldown=120,
+    name="Ashes of the Embersoul",
+    icon="sha_spell_fire_felfire_nightmare.jpg",
+    wowhead_data=f"item=207167{mythic}&ilvl=483",
+)
+
+add_trinket(
+    *AGI_SPECS,
+    spell_id=422303,
+    color="#eb3838",
+    duration=3,
+    cooldown=90,
+    name="Bandolier of Twisted Blades",
+    icon="inv_cape_special_knifebandolier_c_01.jpg",
+    wowhead_data=f"item=207165{mythic}&ilvl=483",
+)
+
+add_trinket(
+    *INT_SPECS,
+    spell_id=422146,
+    color="#eb8938",
+    duration=12,
+    cooldown=120,
+    name="Belor'relos, the Suncaller",
+    icon="inv_wand_1h_firelandsraid_d_01.jpg",
+    wowhead_data=f"item=207172{mythic}&ilvl=483",
+)
+
+add_trinket(
+    *INT_SPECS,
+    spell_id=422956,
+    color="#9c67f1",
+    duration=18,
+    cooldown=120,
+    name="Nymue's Unraveling Spindle",
+    icon="inv_cloth_outdooremeralddream_d_01_buckle.jpg",
+    wowhead_data=f"item=208615{mythic}&ilvl=483",
+)
+
+# TODO:
+# [Branch of the Tormented Ancient] = STR
+# [Fyrakk's Tainted Rageheart]
