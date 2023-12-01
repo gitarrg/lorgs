@@ -24,3 +24,13 @@ boss.add_cast(
     color="#d1c21f",
     icon="spell_shaman_lavasurge.jpg",
 )
+
+
+boss.add_cast(
+    spell_id=423117,
+    name="Cataclysm Jaws",
+    duration=2.5,
+    color="#478fb3",
+    icon="ability_deathwing_cataclysm.jpg",
+    show=False,
+)

@@ -25,6 +25,16 @@ boss.add_cast(
 )
 
 
+boss.add_cast(
+    spell_id=424352,
+    name="Dreadfire Barrage",
+    duration=4,
+    color="#478fb3",
+    icon="inv_shadowflame_buff.jpg",
+    show=False,
+)
+
+
 ################################################################################
 # Phase 2
 #

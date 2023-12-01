@@ -40,6 +40,9 @@ boss.add_cast(
     duration=1.5 + 9,  # duration not fixed.
     color="hsl(220, 80%, 70%)",
     icon="spell_druid_wildmushroom_frenzy.jpg",
+    variations=[
+        426669,  # Mythic Spell ID
+    ],
 )
 
 
