@@ -39,6 +39,16 @@ boss.add_cast(
 # Barrier Blossoms = Circle -> Area Denial == Drop Far
 
 
+boss.add_cast(
+    spell_id=426519,
+    name="Weaver's Burden",
+    duration=2 + 12,
+    color="#478fb3",
+    icon="inv_10_enchanting2_magicswirl_green.jpg",
+    show=False,
+)
+
+
 ################################################################################
 # Intermission
 #

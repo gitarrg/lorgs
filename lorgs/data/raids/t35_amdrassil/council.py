@@ -26,6 +26,16 @@ boss.add_cast(
 )
 
 
+boss.add_cast(
+    spell_id=421020,
+    name="Agonizing Claws",
+    duration=18,
+    color="#478fb3",
+    icon="spell_druid_bloodythrash.jpg",
+    show=False,
+)
+
+
 ####################################
 # Aerwynn
 

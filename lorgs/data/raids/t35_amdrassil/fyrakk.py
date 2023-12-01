@@ -58,3 +58,13 @@ boss.add_cast(
     color="hsl(0, 50%, 50%)",
     icon="inv_misc_head_dragon_red.jpg",
 )
+
+
+boss.add_cast(
+    spell_id=425492,
+    name="Infernal Maw",
+    duration=1,
+    color="#478fb3",
+    icon="ability_physical_taunt.jpg",
+    show=False,
+)
