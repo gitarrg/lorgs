@@ -25,6 +25,15 @@ boss.add_cast(
 )
 
 
+boss.add_cast(
+    spell_id=417431,
+    name="Fyr'alath's Bite",
+    duration=2.43,
+    color="#478fb3",
+    icon="inv_axe_2h_fyrakk_d_01_shadowflame.jpg",
+    show=False,
+)
+
 # Small puddles --> drop and move
 # Dream Rend: big AOE
 # Blze: Move out
