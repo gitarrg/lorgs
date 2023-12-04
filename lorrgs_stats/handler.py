@@ -41,7 +41,6 @@ async def send_metric(prefix: str, **values: int) -> None:
 
 
 async def get_rate_info() -> dict[str, int]:
-
     wcl_client = wcl.WarcraftlogsClient()
     query = """
         rateLimitData
@@ -58,7 +57,6 @@ async def get_rate_info() -> dict[str, int]:
 
 
 async def main() -> None:
-
     rate_info = await get_rate_info()
     print(rate_info)
 
