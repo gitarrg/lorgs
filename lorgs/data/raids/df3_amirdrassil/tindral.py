@@ -30,7 +30,23 @@ boss.add_cast(
 )
 
 
-# Fiery Growth = Spread + Dispel -> leave patch on ground
+boss.add_cast(
+    spell_id=424581,
+    name="Fiery Growth",
+    duration=12,  # aprox 3x4sec between the dispells
+    color="hsl(270, 50%, 60%)",
+    icon="spell_burningsoul.jpg",
+)
+
+
+boss.add_cast(
+    spell_id=420236,
+    name="Falling Star",
+    duration=2,
+    color="hsl(240, 80%, 70%)",
+    icon="ability_druid_starfall.jpg",
+    show=False,
+)
 
 
 # Wild Mushrooms = Tank Soak?
