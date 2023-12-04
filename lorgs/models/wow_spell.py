@@ -23,6 +23,7 @@ class SpellType:
 
     BUFF = "other-buffs"
     HERO = "other-hero"
+    ITEM = "other-item"
     TRINKET = "other-trinkets"
     POTION = "other-potions"
 

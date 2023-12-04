@@ -10,12 +10,11 @@ but at the end of the day, this was the most straight forward way and the easies
 from lorgs.data.roles import *
 from lorgs.data.classes import *
 
-# Consumables, Gear and similar
-from lorgs.data.potions import *
-from lorgs.data.trinkets import *
 from lorgs.data.racials import *
 from lorgs.data.externals import *
 
+# Consumables, Gear and similar
+from lorgs.data.items import *
+
 # Raids
 from lorgs.data.raids import *
-
