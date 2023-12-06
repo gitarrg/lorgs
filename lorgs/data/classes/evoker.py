@@ -55,7 +55,7 @@ EVOKER_DEVASTATION.add_spell(spell_id=382411, name="Eternity Surge", cooldown=30
 
 # HEAL
 EVOKER_PRESERVATION.add_spell(spell_id=370960, name="Emerald Communion",  cooldown=180, duration=5,                      icon="ability_evoker_green_01.jpg", tags=[SpellTag.RAID_CD])
-EVOKER_PRESERVATION.add_spell(spell_id=363534, name="Rewind",             cooldown=240,              color=COLOR_BRONZE, icon="ability_evoker_rewind.jpg", tags=[SpellTag.RAID_CD])
+EVOKER_PRESERVATION.add_spell(spell_id=363534, name="Rewind",             cooldown=180,              color=COLOR_BRONZE, icon="ability_evoker_rewind.jpg", tags=[SpellTag.RAID_CD])
 EVOKER_PRESERVATION.add_spell(spell_id=359816, name="Dreamflight",        cooldown=240, duration=15, color="#33a36d",    icon="ability_evoker_dreamflight.jpg", tags=[SpellTag.RAID_CD])
 EVOKER_PRESERVATION.add_buff( spell_id=370562, name="Stasis",             cooldown=90,               color=COLOR_BRONZE, icon="ability_evoker_stasis.jpg", tags=[SpellTag.RAID_CD])
 
