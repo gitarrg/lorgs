@@ -48,7 +48,12 @@ class WowClass(WowActor):
         return self.id < other.id
 
     def as_dict(self) -> dict[str, typing.Any]:
-        return {"name": self.name, "name_slug": self.name_slug, "specs": [spec.full_name_slug for spec in self.specs]}
+        return {
+            "name": self.name,
+            "name_slug": self.name_slug,
+            "specs": [spec.full_name_slug for spec in self.specs],
+            "color": self.color,
+        }
 
     @property
     def specs(self) -> list["WowSpec"]:
