@@ -34,7 +34,8 @@ DEMONHUNTER.add_spell(         spell_id=198793, cooldown=25,                colo
 
 DEMONHUNTER_HAVOC.add_spell(   spell_id=198589, cooldown=60,   duration=10,                  name="Blur",            icon="ability_demonhunter_blur.jpg", show=False)
 DEMONHUNTER_HAVOC.add_spell(   spell_id=258860, cooldown=40,   duration=4,  color="#9177fc", name="Essence Break",   icon="spell_shadow_ritualofsacrifice.jpg",               show=False)
-DEMONHUNTER_HAVOC.add_spell(   spell_id=200166, cooldown=180,  duration=20, color="#348540", name="Metamorphosis",   icon="ability_demonhunter_metamorphasisdps.jpg")
+DEMONHUNTER_HAVOC.add_spell(   spell_id=200166, cooldown=120,  duration=20, color="#348540", name="Metamorphosis",   icon="ability_demonhunter_metamorphasisdps.jpg")
+DEMONHUNTER_HAVOC.add_spell(   spell_id=258925, cooldown=90,   duration=8,  color="#1dd3ab", name="Fel Barrage", icon="inv_felbarrage.jpg")
 
 DEMONHUNTER_VENGEANCE.add_spell(spell_id=204021, cooldown=60,  duration=10,  color="#7aeb34", name="Fiery Brand",     icon="ability_demonhunter_fierybrand.jpg")
 DEMONHUNTER_VENGEANCE.add_spell(spell_id=212084, cooldown=40,  duration=2,  color="#34ebe1", name="Fel Devastation", icon="ability_demonhunter_feldevastation.jpg",    show=False)
