@@ -6,6 +6,7 @@ import requests
 # IMPORT LOCAL LIBRARIES
 from lorgs import data
 from lorgs.models.wow_spell import WowSpell
+from lorgs.models.wow_trinket import WowTrinket
 
 
 # S3_CLIENT = boto3.client("s3")
