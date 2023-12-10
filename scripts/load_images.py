@@ -44,7 +44,9 @@ def upload(filname: str) -> None:
 
 images = get_images(FOLDER)
 
-for spell in WowSpell.list():
+spells = WowSpell.list() + WowTrinket.list()
+
+for spell in spells:
     icon = spell.icon
 
     if not icon:
