@@ -52,3 +52,16 @@ WowTrinket(
     item=208615,
     ilvl=483,
 )
+
+
+WowTrinket(
+    *HEAL.specs,
+    spell_id=422083,
+    color="#5ac927",
+    duration=12 + 12,  # 12sec Seed + 12sec Mastery
+    cooldown=120,
+    name="Smoldering Seedling",
+    icon="inv_treepet.jpg",
+    item=207170,
+    ilvl=483,
+)
