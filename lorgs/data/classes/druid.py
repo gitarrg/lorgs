@@ -49,6 +49,8 @@ DRUID_FERAL.add_buff(BEAR_FORM)
 DRUID_RESTORATION.add_buff(BEAR_FORM)
 
 SURVIVAL_INSTINCTS = WowSpell(spell_id=61336,  cooldown=180, duration=6,                   name="Survival Instincts",             icon="ability_druid_tigersroar.jpg")
+SURVIVAL_INSTINCTS.spell_type = DRUID.name_slug
+SURVIVAL_INSTINCTS.color = DRUID.color
 DRUID_FERAL.add_spell(SURVIVAL_INSTINCTS)
 DRUID_GUARDIAN.add_spell(SURVIVAL_INSTINCTS)
 
