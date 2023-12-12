@@ -74,8 +74,8 @@ boss.add_buff(
 )
 
 # Supernova = Shield + AoE
-boss.add_debuff(
-    spell_id=424180,
+boss.add_buff(
+    spell_id=424140,
     name="Supernova",
     color="hsl(340, 70%, 50%)",
     icon="spell_fire_felflamering_red.jpg",
