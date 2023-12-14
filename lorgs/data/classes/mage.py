@@ -59,6 +59,5 @@ MAGE_ARCANE.add_spell( spell_id=12051,  cooldown=90,  duration=6,               
 MAGE_ARCANE.add_spell( spell_id=376103, cooldown=30,  duration=10, color=COL_KYR,   name="Radiant Spark",      icon="ability_bastion_mage.jpg",                  show=False)
 
 MAGE_FROST.add_spell(  spell_id=12472,  cooldown=60,  duration=20,                  name="Icy Veins",          icon="spell_frost_coldhearted.jpg")
-MAGE_FROST.add_spell(  spell_id=257537, cooldown=45,                                name="Ebonbolt",           icon="artifactability_frostmage_ebonbolt.jpg")
 MAGE_FROST.add_spell(  spell_id=84714,  cooldown=60,                                name="Frozen Orb",         icon="spell_frost_frozenorb.jpg")
 MAGE_FROST.add_spell(  spell_id=205021, cooldown=60, duration=5,                    name="Ray of Frost",         icon="ability_mage_rayoffrost.jpg")
