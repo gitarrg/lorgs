@@ -56,10 +56,10 @@ PRIEST_HOLY.add_spell(         spell_id=200183, cooldown=120, duration=20,      
 PRIEST_HOLY.add_buff(          spell_id=27827,                             color="#82eeff", name="Spirit of Redemption",  icon="inv_enchant_essenceeternallarge.jpg",    show=True)
 PRIEST_HOLY.add_spell(         spell_id=64901, cooldown=300, duration=5,   color="#4dd196", name="Symbol of Hope",        icon="spell_holy_symbolofhope.jpg",    show=False, tags=[SpellTag.RAID_CD])
 
-PRIEST_SHADOW.add_spell(       spell_id=228260, cooldown=90,  duration=15, color="#b330e3", name="Voidform",              icon="spell_priest_voidform.jpg")  # tooltip: 228264
+PRIEST_SHADOW.add_spell(       spell_id=228260, cooldown=120, duration=15, color="#b330e3", name="Voidform",              icon="spell_priest_voidform.jpg")  # tooltip: 228264
+PRIEST_SHADOW.add_spell(       spell_id=391109, cooldown=60,  duration=20, color="#308fbf", name="Dark Ascension",        icon="ability_priest_darkarchangel.jpg")
 PRIEST_SHADOW.add_spell(       spell_id=263165, cooldown=30,  duration=3,                   name="Void Torrent",          icon="spell_priest_voidsear.jpg",       show=False)
 PRIEST_SHADOW.add_spell(       spell_id=47585,  cooldown=120, duration=6,                   name="Dispersion",            icon="spell_shadow_dispersion.jpg",    show=False)
-PRIEST_SHADOW.add_spell(       spell_id=391109, cooldown=60,  duration=20, color="#308fbf", name="Dark Ascension",        icon="ability_priest_darkarchangel.jpg",    show=False)
 PRIEST_SHADOW.add_spell(       spell_id=15286,  cooldown=120, duration=15, color="#446fc7", name="Vampiric Embrace",        icon="spell_shadow_unsummonbuilding.jpg",    show=False, tags=[SpellTag.RAID_CD])
 
 
