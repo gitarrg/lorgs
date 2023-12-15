@@ -50,3 +50,4 @@ WARRIOR_PROTECTION.add_spell(  spell_id=385954, cooldown=45,               color
 WARRIOR_PROTECTION.add_spell(  spell_id=12975,  cooldown=180, duration=15, color="#ffbf29", name="Last Stand",          icon="spell_holy_ashestoashes.jpg")
 WARRIOR_PROTECTION.add_spell(  spell_id=871,    cooldown=120, duration=8,  color="#039dfc", name="Shield Wall",         icon="ability_warrior_shieldwall.jpg")  # CD reduced by Talent per Rage spend
 WARRIOR_PROTECTION.add_spell(  spell_id=1160,   cooldown=45,  duration=8,  color="#36b336", name="Demoralizing Shout",  icon="ability_warrior_warcry.jpg", show=False)
+WARRIOR_PROTECTION.add_spell(  spell_id=392966, cooldown=90,  duration=30, color="#d1793b", name="Spell Block",         icon="ability_warrior_shieldbreak.jpg", show=False)
