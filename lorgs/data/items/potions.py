@@ -34,6 +34,7 @@ WowPotion(
     item=191380,
     variations=[
         415569,  # Dreamwalker's Healing Potion
+        423414,  # Potion of Withering Dreams
     ],
 )
 
