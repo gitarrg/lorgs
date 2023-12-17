@@ -41,7 +41,7 @@ EVOKER.add_spell(spell_id=374348, name="Renewing Blaze",     cooldown=150, durat
 EVOKER.add_spell(spell_id=370553, name="Tip the Scales",     cooldown=120,              color=COLOR_BRONZE, icon="ability_evoker_tipthescales.jpg", show=False)
 EVOKER.add_spell(spell_id=374227, name="Zephyr",             cooldown=120, duration=8,  color="#d6b969",    icon="ability_evoker_hoverblack.jpg", tags=[SpellTag.RAID_CD], show=False)
 EVOKER.add_spell(spell_id=374968, name="Time Spiral",        cooldown=120, duration=10, color="#c4d669",    icon="ability_evoker_timespiral.jpg", tags=[SpellTag.RAID_CD], show=False)
-EVOKER.add_spell(spell_id=370553, name="Rescue",             cooldown=60,               color="#8bc1ff",  icon="ability_evoker_flywithme.jpg", show=False)
+EVOKER.add_spell(spell_id=370665, name="Rescue",             cooldown=60,               color="#8bc1ff",  icon="ability_evoker_flywithme.jpg", show=False)
 
 
 # DPS
