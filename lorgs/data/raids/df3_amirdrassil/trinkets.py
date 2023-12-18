@@ -65,3 +65,16 @@ WowTrinket(
     item=207170,
     ilvl=483,
 )
+
+
+WowTrinket(
+    *INT_SPECS,
+    spell_id=427113,
+    color="#27b1c9",
+    duration=2,
+    cooldown=120,
+    name="Dreambinder, Loom of the Great Cycle",
+    icon="inv_treepet.jpg",
+    item=208616,
+    ilvl=489,
+)
