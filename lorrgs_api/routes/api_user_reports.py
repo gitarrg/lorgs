@@ -62,6 +62,8 @@ async def get_fights(report_id: str, fight: str, player: str = ""):
 @router.get("/{report_id}/load_overview")
 async def load_user_report_overview(response: fastapi.Response, report_id: str, refresh: bool = False):
     """Load a Report's Overview/Masterdata."""
+    response.headers["Cache-Control"] = "max-age=60"
+
     user_report = UserReport.get_or_create(report_id=report_id)
 
     needs_to_load = refresh or not user_report.is_loaded
@@ -75,7 +77,6 @@ async def load_user_report_overview(response: fastapi.Response, report_id: str, 
         else:
             user_report.save()
 
-    response.headers["Cache-Control"] = "no-cache"
     return user_report.dict(exclude_unset=True)
 
 
