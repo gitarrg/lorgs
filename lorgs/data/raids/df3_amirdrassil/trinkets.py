@@ -78,3 +78,16 @@ WowTrinket(
     item=208616,
     ilvl=489,
 )
+
+
+WowTrinket(
+    *INT_SPECS,
+    spell_id=417131,
+    color="#ff8000",
+    duration=3,
+    cooldown=120,
+    name="Rage of Fyr'alath",
+    icon="inv_axe_2h_fyrakk_d_01_shadowflame.jpg",
+    item=206448,
+    ilvl=496,
+)
