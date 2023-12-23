@@ -95,4 +95,5 @@ WowTrinket(
     icon="inv_axe_2h_fyrakk_d_01_shadowflame.jpg",
     item=206448,
     ilvl=496,
+    bonus_ids=[],
 )

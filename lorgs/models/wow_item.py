@@ -22,6 +22,10 @@ class WowItem(wow_spell.WowSpell):
     ilvl: int = 0
     """Item Level to display in the tooltip."""
 
+    bonus_ids: list[str] = [
+        "6646",  # Mythic
+    ]
+
     def __init__(self, *specs: WowSpec, **kwargs: Any):
         for spec in specs:
             spec.add_spells(self)
@@ -34,8 +38,10 @@ class WowItem(wow_spell.WowSpell):
         if self.item:
             parts.append(f"item={self.item}")
         if self.ilvl > 0:
-            parts.append(BONUS_ID_MYTHIC)
             parts.append(f"ilvl={self.ilvl}")
+        if self.bonus_ids:
+            bonus_ids = ":".join(self.bonus_ids)
+            parts.append(bonus_ids)
 
         return "&".join(parts)
 
