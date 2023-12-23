@@ -47,7 +47,8 @@ ROGUE_SUBTLETY.add_spell(      spell_id=121471, cooldown=180, duration=20, color
 ROGUE_SUBTLETY.add_spell(      spell_id=280719, cooldown=60,               color="#3638d6", name="Secret Technique",    icon="ability_rogue_sinistercalling.jpg",        show=False)
 ROGUE_SUBTLETY.add_spell(      spell_id=384631, cooldown=90, duration=12,  color=COL_VENTR, name="Flagellation",        icon="ability_revendreth_rogue.jpg")
 ROGUE_SUBTLETY.add_spell(      spell_id=212283, cooldown=25,  duration=10,                  name="Symbols of Death",    icon="spell_shadow_rune.jpg",                    show=False)
-ROGUE_SUBTLETY.add_spell(      spell_id=277925, cooldown=60,  duration=5,  color="#ffee00"  name="Shuriken Tornado",    icon="ability_rogue_throwingspecialization.jpg")
+ROGUE_SUBTLETY.add_spell(      spell_id=277925, cooldown=60,  duration=5,  color="#ffee00", name="Shuriken Tornado",    icon="ability_rogue_throwingspecialization.jpg")
+ROGUE_SUBTLETY.add_spell(      spell_id=382245, cooldown=45,               color="#4cc2d4", name="Cold Blood",    icon="spell_ice_lament.jpg", show=False)
 
 
 ROGUE_OUTLAW.add_spell(        spell_id=13750,  cooldown=0,   duration=20,                  name="Adrenaline Rush",     icon="spell_shadow_shadowworddominate.jpg")
