@@ -81,7 +81,12 @@ WowTrinket(
 
 
 WowTrinket(
-    *INT_SPECS,
+    DEATHKNIGHT_BLOOD,
+    DEATHKNIGHT_FROST,
+    DEATHKNIGHT_UNHOLY,
+    PALADIN_RETRIBUTION,
+    WARRIOR_ARMS,
+    WARRIOR_FURY,
     spell_id=417131,
     color="#ff8000",
     duration=3,
