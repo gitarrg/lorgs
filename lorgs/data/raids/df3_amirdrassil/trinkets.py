@@ -74,7 +74,7 @@ WowTrinket(
     duration=2,
     cooldown=120,
     name="Dreambinder, Loom of the Great Cycle",
-    icon="inv_treepet.jpg",
+    icon="inv_staff_2h_dreamweaver_d_01.jpg",
     item=208616,
     ilvl=489,
 )
