@@ -91,3 +91,15 @@ WowTrinket(
     item=207581,
     ilvl=483,
 )
+
+
+WowTrinket(
+    *INT_SPECS,
+    spell_id=419278,
+    color="#e7c21f",
+    cooldown=180,
+    name="Iridal, the Earth's Master",
+    icon="inv_staff_2h_dracthyr_c_01.jpg",
+    item=208321,
+    ilvl=483,
+)
