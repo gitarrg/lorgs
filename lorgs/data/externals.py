@@ -45,7 +45,7 @@ for s in ALL_SPECS:
 INNERVATE          = OTHER_BUFFS.add_buff(color="#3b97ed", spell_id=29166,  cooldown=180, duration=8, name="Innervate",           icon="spell_nature_lightning.jpg")
 SPATIAL_PARADOX    = OTHER_BUFFS.add_buff(color=EVOKER.color, spell_id=406789, cooldown=120, duration=10, name="Spatial Paradox", icon="ability_evoker_stretchtime.jpg")
 for s in HEAL.specs:
-    s.add_spells(INNERVATE, SPATIAL_PARADOX)
+    s.add_buffs(INNERVATE, SPATIAL_PARADOX)
 
 
 ################################################################################
