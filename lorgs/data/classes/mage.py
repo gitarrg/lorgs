@@ -60,5 +60,6 @@ MAGE_ARCANE.add_spell( spell_id=376103, cooldown=30,  duration=10, color=COL_KYR
 
 MAGE_FROST.add_spell(  spell_id=12472,  cooldown=60,  duration=20,                  name="Icy Veins",          icon="spell_frost_coldhearted.jpg")
 MAGE_FROST.add_spell(  spell_id=84714,  cooldown=60,                                name="Frozen Orb",         icon="spell_frost_frozenorb.jpg")
-MAGE_FROST.add_spell(  spell_id=205021, cooldown=60, duration=5,                    name="Ray of Frost",         icon="ability_mage_rayoffrost.jpg")
-MAGE_FROST.add_spell(  spell_id=120,    cooldown=45,             color="#8dd1d9", name="Cone of Cold",         icon="spell_frost_glacier.jpg", show=False)
+MAGE_FROST.add_spell(  spell_id=205021, cooldown=60, duration=5,                    name="Ray of Frost",       icon="ability_mage_rayoffrost.jpg")
+MAGE_FROST.add_spell(  spell_id=120,    cooldown=45,             color="#8dd1d9", name="Cone of Cold",       icon="spell_frost_glacier.jpg", show=False)
+MAGE_FROST.add_spell(  spell_id=153595, cooldown=30,             color="#486ce0", name="Comet Storm",        icon="spell_mage_cometstorm2.jpg", show=False)
