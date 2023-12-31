@@ -28,12 +28,10 @@ PRIEST_SHADOW     = WowSpec(role=RDPS, wow_class=PRIEST, name="Shadow")
 ################################################################################
 # Class
 #
-PRIEST.add_spell(              spell_id=325013, cooldown=180, duration=10, color=COL_KYR,   name="Boon of the Ascended",  icon="ability_bastion_priest.jpg")
-PRIEST.add_spell(              spell_id=324724, cooldown=60,               color=COL_NECRO, name="Unholy Nova",           icon="ability_maldraxxus_priest.jpg")
-PRIEST.add_spell(              spell_id=323673, cooldown=45,  duration=5,  color=COL_VENTR, name="Mindgames",             icon="ability_revendreth_priest.jpg")
-
-# Tracked as External Buff
-# PRIEST.add_spell(              spell_id=327661, cooldown=90,  duration=20, color=COL_NF,    name="Fae Guardians",         icon="ability_ardenweald_priest.jpg")
+# PRIEST.add_spell(              spell_id=325013, cooldown=180, duration=10, color=COL_KYR,   name="Boon of the Ascended",  icon="ability_bastion_priest.jpg")
+# PRIEST.add_spell(              spell_id=324724, cooldown=60,               color=COL_NECRO, name="Unholy Nova",           icon="ability_maldraxxus_priest.jpg")
+# PRIEST.add_spell(              spell_id=323673, cooldown=45,  duration=5,  color=COL_VENTR, name="Mindgames",             icon="ability_revendreth_priest.jpg")
+PRIEST.add_spell(              spell_id=32375,  cooldown=120,              color="#5f55f1", name="Mass Dispel",        icon="spell_arcane_massdispel.jpg")
 
 # Defensive
 PRIEST.add_spell(              spell_id=19236, cooldown=90,  duration=10,     name="Desperate Prayer",         icon="spell_holy_testoffaith.jpg", show=False)
@@ -42,7 +40,7 @@ PRIEST.add_spell(              spell_id=586,   cooldown=30,  duration=5,      na
 # Offensive
 PRIEST_DISCIPLINE.add_spell(   spell_id=62618,  cooldown=180, duration=10, color="#b3ad91", name="Power Word: Barrier",   icon="spell_holy_powerwordbarrier.jpg", tags=[SpellTag.RAID_CD])
 PRIEST_DISCIPLINE.add_spell(   spell_id=271466, cooldown=180, duration=10, color="#b3ad91", name="Luminous Barrier",      icon="spell_priest_burningwill.jpg", tags=[SpellTag.RAID_CD])
-PRIEST_DISCIPLINE.add_spell(   spell_id=109964, cooldown=60,  duration=10, color="#d7abdb", name="Spirit Shell",          icon="ability_shaman_astralshift.jpg", tags=[SpellTag.RAID_CD])
+# PRIEST_DISCIPLINE.add_spell(   spell_id=109964, cooldown=60,  duration=10, color="#d7abdb", name="Spirit Shell",          icon="ability_shaman_astralshift.jpg", tags=[SpellTag.RAID_CD])
 PRIEST_DISCIPLINE.add_spell(   spell_id=47536,  cooldown=90,  duration=8,                   name="Rapture",               icon="spell_holy_rapture.jpg",          show=False, tags=[SpellTag.RAID_CD])
 PRIEST_DISCIPLINE.add_spell(   spell_id=246287, cooldown=90,                                name="Evangelism",            icon="spell_holy_divineillumination.jpg", tags=[SpellTag.RAID_CD])
 PRIEST_DISCIPLINE.add_spell(   spell_id=194509, cooldown=20,               color="#edbb2f", name="Power Word: Radiance",  icon="spell_priest_power-word.jpg",     show=False)
