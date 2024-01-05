@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from __future__ import annotations
+
 # IMPORT THIRD PARTY LIBRARIES
 import boto3
 import requests
