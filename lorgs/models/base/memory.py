@@ -7,7 +7,7 @@ proving us with database-like access to the objects.
 from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
-from typing import ClassVar, TypeVar, Type
+from typing import ClassVar, Optional, TypeVar, Type
 from weakref import WeakSet
 from collections import defaultdict
 
@@ -31,7 +31,7 @@ class MemoryModel(base.BaseModel):
         self.__instances__[type(self)].add(self)
 
     @classmethod
-    def get(cls: Type[T], **kwargs) -> T | None:
+    def get(cls: Type[T], **kwargs) -> Optional[T]:
         instances = cls.__instances__[cls]
         return utils.get(instances, **kwargs)
 

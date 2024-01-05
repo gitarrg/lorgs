@@ -35,13 +35,13 @@ class Report(BaseModel):
     visibility: typing.Literal["public", "private", "unlisted"] = "public"
     """The visibility level of the report."""
 
-    summary: ReportSummary | None = None
+    summary: typing.Optional[ReportSummary] = None
     """Summary Overview (queried via `table(..., dataType: Summary)`."""
 
     events: list[ReportEvent] = []
     """A set of report events, filterable via arguments like type, source, target, ability, etc."""
 
-    masterData: ReportMasterData | None = None
+    masterData: typing.Optional[ReportMasterData] = None
 
     fights: list[ReportFight] = []
 
@@ -50,7 +50,7 @@ class Report(BaseModel):
     owner: User = User(id=0, name="")
     """The user that uploaded the report."""
 
-    guild: Guild | None = None
+    guild: typing.Optional[Guild] = None
     """The guild that the report belongs to. If this is null, then the report was uploaded to the user's personal logs."""
 
     @validator("events", pre=True)

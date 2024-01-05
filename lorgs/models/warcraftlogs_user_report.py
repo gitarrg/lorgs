@@ -1,8 +1,6 @@
 """Classes/Functions to manage Reports injected through user interaction."""
 from __future__ import annotations
 
-from __future__ import annotations
-
 # IMPORT STANDARD LIBRARIES
 import typing
 import datetime

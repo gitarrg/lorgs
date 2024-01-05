@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 # IMPORT THIRD PARTY LIBRARIES
 import pydantic
@@ -25,7 +25,7 @@ class Cast(base.BaseModel):
     timestamp: int = pydantic.Field(alias="ts")
     """time the spell was cast, in milliseconds relative to the start of the fight."""
 
-    duration: int | None = pydantic.Field(default=None, alias="d")
+    duration: Optional[int] = pydantic.Field(default=None, alias="d")
     """time the spell/buff was active in milliseconds."""
 
     event_type: str = pydantic.Field(default="cast", exclude=True)
@@ -48,7 +48,7 @@ class Cast(base.BaseModel):
         return f"Cast(id={self.spell_id}, ts={time_fmt})"
 
     @property
-    def spell(self) -> WowSpell | None:
+    def spell(self) -> Optional[WowSpell]:
         return WowSpell.get(spell_id=self.spell_id)
 
     def get_duration(self) -> int:
