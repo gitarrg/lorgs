@@ -25,7 +25,6 @@ if typing.TYPE_CHECKING:
 
 
 class Fight(warcraftlogs_base.BaseModel):
-
     fight_id: int
 
     start_time: datetime.datetime
@@ -56,7 +55,6 @@ class Fight(warcraftlogs_base.BaseModel):
         return f"{self.__class__.__name__}(id={self.fight_id}, players={len(self.players)})"
 
     def summary(self) -> dict[str, typing.Any]:
-
         raid_boss_name = self.boss and self.boss.raid_boss and self.boss.raid_boss.full_name_slug
 
         return {
@@ -71,7 +69,6 @@ class Fight(warcraftlogs_base.BaseModel):
         }
 
     def as_dict(self, player_ids: list[int] = []) -> dict:
-
         # Get players
         players = self.players
         if player_ids:
@@ -154,12 +151,10 @@ class Fight(warcraftlogs_base.BaseModel):
         )
 
     def process_players(self, summary_data: "wcl.ReportSummary"):
-
         total_damage = summary_data.damageDone
         total_healing = summary_data.healingDone
 
         for composition_data in summary_data.composition:
-
             # Get Class and Spec
             if not composition_data.specs:
                 logger.warning("Player has no spec: %s", composition_data.name)
@@ -212,7 +207,6 @@ class Fight(warcraftlogs_base.BaseModel):
     #   Load Player:
     #
     async def load_players(self, player_ids: typing.Optional[list[int]] = None):
-
         player_ids = player_ids or []
 
         if not self.players:

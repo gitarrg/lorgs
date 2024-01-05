@@ -28,7 +28,6 @@ DIFFICULTY_IDS = {
 
 
 class SpecRanking(S3Model, warcraftlogs_base.wclclient_mixin):
-
     # Fields
     spec_slug: str
     boss_slug: str
