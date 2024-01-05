@@ -3,8 +3,6 @@ from lorgs.models.wow_trinket import WowTrinket
 
 
 WowTrinket(
-    *AGI_SPECS,
-    *STR_SPECS,
     spell_id=383781,
     color="#b34747",
     cooldown=180,
@@ -14,11 +12,13 @@ WowTrinket(
     item=193701,
     ilvl=372,
     query=False,
+).add_specs(
+    *AGI_SPECS,
+    *STR_SPECS,
 )
 
 
 WowTrinket(
-    *INT_SPECS,
     spell_id=385884,
     color="#cca633",
     cooldown=150,
@@ -28,11 +28,10 @@ WowTrinket(
     item=193791,
     ilvl=447,
     query=False,
-)
+).add_specs(*INT_SPECS)
 
 
 WowTrinket(
-    *ALL_SPECS,
     spell_id=383941,
     color="#ab9671",
     cooldown=180,
@@ -42,17 +41,11 @@ WowTrinket(
     item=193743,
     ilvl=447,
     query=False,
-)
+).add_specs(*ALL_SPECS)
 
 
 # tracked for all INT-DPS-Specs
 WowTrinket(
-    *MAGE.specs,
-    *WARLOCK.specs,
-    PRIEST_SHADOW,
-    SHAMAN_ELEMENTAL,
-    DRUID_BALANCE,
-    EVOKER_DEVASTATION,
     spell_id=381768,
     color="#5dcdde",
     cooldown=120,
@@ -62,13 +55,12 @@ WowTrinket(
     item=193773,
     ilvl=447,
     query=False,
-)
+).add_specs(*INT_DPS_SPECS)
 
 
 ############################### 10.1 Megadungeon ###############################
 
 WowTrinket(
-    *HEAL.specs,
     spell_id=417939,
     color="#ff8a1d",
     cooldown=120,
@@ -76,12 +68,10 @@ WowTrinket(
     icon="ability_paladin_lightofthemartyr.jpg",
     item=207552,
     ilvl=483,
-)
+).add_specs(*HEAL.specs)
 
 
 WowTrinket(
-    *RDPS.specs,
-    *MDPS.specs,
     spell_id=418527,
     color="#40d1be",
     duration=20,
@@ -90,11 +80,10 @@ WowTrinket(
     icon="achievement_dungeon_ulduarraid_misc_06.jpg",
     item=207581,
     ilvl=483,
-)
+).add_specs(*DPS_SPECS)
 
 
 WowTrinket(
-    *INT_SPECS,
     spell_id=419278,
     color="#e7c21f",
     cooldown=180,
@@ -102,4 +91,4 @@ WowTrinket(
     icon="inv_staff_2h_dracthyr_c_01.jpg",
     item=208321,
     ilvl=483,
-)
+).add_specs(*INT_SPECS)

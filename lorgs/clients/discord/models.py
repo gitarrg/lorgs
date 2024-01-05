@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import typing
+import typing_extensions
 
 from pydantic import BaseModel
 
@@ -29,7 +30,7 @@ class DiscordGuildMember(BaseModel):
     """
 
     user: DiscordUser
-    nick: typing.Optional[str] = ""
+    nick: str = ""
 
     roles: list[str]
     """Role IDs.
@@ -40,10 +41,10 @@ class DiscordGuildMember(BaseModel):
 
     joined_at: str = ""  # ISO8601 timestamp
 
-    avatar: typing.Optional[str] = ""
+    avatar: str = ""
 
 
-class DiscordAccessTokenResponse(typing.TypedDict):
+class DiscordAccessTokenResponse(typing_extensions.TypedDict):
     """
     Ref:
         https://discord.com/developers/docs/topics/oauth2#authorization-code-grant-access-token-exchange-example
@@ -65,6 +66,6 @@ class DiscordAccessTokenResponse(typing.TypedDict):
     scope: typing.Optional[str]  # eg.: "identify"
 
 
-class DiscordErrorResponse(typing.TypedDict):
+class DiscordErrorResponse(typing_extensions.TypedDict):
     error: str
     error_description: str

@@ -28,6 +28,9 @@ class WowSpec(WowActor):
         self.parents.append(self.wow_class)
         return super().post_init()
 
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({self.name})"
+
     @property
     def name_slug(self) -> str:
         """Slugified Version of the Name. eg.: "beastmastery"."""

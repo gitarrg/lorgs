@@ -7,8 +7,8 @@ proving us with database-like access to the objects.
 from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
-import typing
-import weakref
+from typing import ClassVar, TypeVar, Type
+from weakref import WeakSet
 from collections import defaultdict
 
 # IMPORT LOCAL LIBRARIES
@@ -16,27 +16,27 @@ from lorgs import utils
 from lorgs.models.base import base
 
 
-T = typing.TypeVar("T", bound="MemoryModel")
+T = TypeVar("T", bound="MemoryModel")
 
 
 class MemoryModel(base.BaseModel):
     """Model which keeps track of all created instances in memory."""
 
-    __slots__ = ["__weakref__"]
+    # dict to track created instances.
+    # keys = ModelClass / Values = Set of Instances
+    __instances__: ClassVar[defaultdict] = defaultdict(WeakSet)
 
-    __instances__: typing.ClassVar[defaultdict] = defaultdict(weakref.WeakSet)
-
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+    def post_init(self) -> None:
+        super().post_init()
         self.__instances__[type(self)].add(self)
 
     @classmethod
-    def get(cls: typing.Type[T], **kwargs) -> typing.Optional[T]:
+    def get(cls: Type[T], **kwargs) -> T | None:
         instances = cls.__instances__[cls]
         return utils.get(instances, **kwargs)
 
     @classmethod
-    def list(cls: typing.Type[T]) -> list[T]:
+    def list(cls: Type[T]) -> list[T]:
         return list(cls.__instances__[cls])
 
     def __hash__(self) -> int:

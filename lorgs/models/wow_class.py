@@ -56,10 +56,10 @@ class WowClass(WowActor):
         }
 
     @property
-    def specs(self) -> list["WowSpec"]:
+    def specs(self) -> set["WowSpec"]:
         from lorgs.models.wow_spec import WowSpec
 
-        return [spec for spec in WowSpec.list() if spec.wow_class == self]
+        return {spec for spec in WowSpec.list() if spec.wow_class == self}
 
     ##########################
     # Methods

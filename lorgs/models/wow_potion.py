@@ -6,6 +6,6 @@ from lorgs.models.wow_spell import SpellType
 class WowPotion(wow_item.WowItem):
     """Potion or other Consumables with an OnUse-Effect."""
 
-    spell_type = SpellType.POTION
+    spell_type: str = SpellType.POTION
 
-    cooldown = 300  # default cooldown for all potions
+    cooldown: int = 300  # default cooldown for all potions

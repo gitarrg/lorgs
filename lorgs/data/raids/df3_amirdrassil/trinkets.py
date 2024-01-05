@@ -3,7 +3,6 @@ from lorgs.models.wow_trinket import WowTrinket
 
 
 WowTrinket(
-    *ALL_SPECS,
     spell_id=423611,
     color="#eb3838",
     duration=20,
@@ -12,11 +11,10 @@ WowTrinket(
     icon="sha_spell_fire_felfire_nightmare.jpg",
     item=207167,
     ilvl=483,
-)
+).add_specs(*ALL_SPECS)
 
 
 WowTrinket(
-    *AGI_SPECS,
     spell_id=422303,
     color="#eb3838",
     duration=3,
@@ -25,11 +23,10 @@ WowTrinket(
     icon="inv_cape_special_knifebandolier_c_01.jpg",
     item=207165,
     ilvl=483,
-)
+).add_specs(*AGI_SPECS)
 
 
 WowTrinket(
-    *INT_SPECS,
     spell_id=422146,
     color="#eb8938",
     duration=12,
@@ -38,11 +35,10 @@ WowTrinket(
     icon="inv_wand_1h_firelandsraid_d_01.jpg",
     item=207172,
     ilvl=483,
-)
+).add_specs(*INT_SPECS)
 
 
 WowTrinket(
-    *INT_SPECS,
     spell_id=422956,
     color="#9c67f1",
     duration=18,
@@ -51,11 +47,10 @@ WowTrinket(
     icon="inv_cloth_outdooremeralddream_d_01_buckle.jpg",
     item=208615,
     ilvl=483,
-)
+).add_specs(*INT_SPECS)
 
 
 WowTrinket(
-    *HEAL.specs,
     spell_id=422083,
     color="#5ac927",
     duration=12 + 12,  # 12sec Seed + 12sec Mastery
@@ -64,11 +59,10 @@ WowTrinket(
     icon="inv_treepet.jpg",
     item=207170,
     ilvl=483,
-)
+).add_specs(*HEAL.specs)
 
 
 WowTrinket(
-    *INT_SPECS,
     spell_id=427113,
     color="#27b1c9",
     duration=2,
@@ -77,16 +71,10 @@ WowTrinket(
     icon="inv_staff_2h_dreamweaver_d_01.jpg",
     item=208616,
     ilvl=489,
-)
+).add_specs(*INT_SPECS)
 
 
 WowTrinket(
-    DEATHKNIGHT_BLOOD,
-    DEATHKNIGHT_FROST,
-    DEATHKNIGHT_UNHOLY,
-    PALADIN_RETRIBUTION,
-    WARRIOR_ARMS,
-    WARRIOR_FURY,
     spell_id=417131,
     color="#ff8000",
     duration=3,
@@ -95,5 +83,5 @@ WowTrinket(
     icon="inv_axe_2h_fyrakk_d_01_shadowflame.jpg",
     item=206448,
     ilvl=496,
-    bonus_ids=[],
-)
+    bonus_ids=[],  # need to clear out default "mythic/epic" bonus IDs
+).add_specs(*STR_DPS_SPECS)

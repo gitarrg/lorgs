@@ -111,7 +111,7 @@ async def load_user_report(response: fastapi.Response, report_id: str, fight: st
     task = Task(task_id=message_id, status=Task.STATUS.WAITING)
 
     # Add subitems to track the status more granual
-    for (f, p) in itertools.product(fight_ids, player_ids):
+    for f, p in itertools.product(fight_ids, player_ids):
         task.items[f"{f}_{p}"] = {"fight": f, "player": p, "status": task.status}
 
     task.save()

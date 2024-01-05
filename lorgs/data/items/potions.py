@@ -14,18 +14,16 @@ from lorgs.models.wow_potion import WowPotion
 
 # generic pots for all specs
 WowPotion(
-    *ALL_SPECS,
     spell_id=6262,
     cooldown=0,  # no cooldown per se. One per fight use.
     color="#63cf48",
     name="Healthstone",
     icon="warlock_-healthstone.jpg",
     item=5512,
-)
+).add_specs(*ALL_SPECS)
 
 
 WowPotion(
-    *ALL_SPECS,
     spell_id=370511,
     cooldown=300,
     color="#e35f5f",
@@ -36,7 +34,7 @@ WowPotion(
         415569,  # Dreamwalker's Healing Potion
         423414,  # Potion of Withering Dreams
     ],
-)
+).add_specs(*ALL_SPECS)
 
 
 ################################################################################
@@ -44,7 +42,6 @@ WowPotion(
 #
 
 WowPotion(
-    *ALL_SPECS,
     spell_id=371028,
     duration=30,
     color="#297acc",
@@ -55,7 +52,7 @@ WowPotion(
         191389,  # Elemental Potion of Power
         371028,
     ],
-)
+).add_specs(*ALL_SPECS)
 
 
 # Intellect users
@@ -76,30 +73,27 @@ WowPotion(
 #
 
 WowPotion(
-    *HEAL.specs,
     spell_id=370607,
     color=COL_MANA,
     name="Aerated Mana Potion",
     icon="inv_10_alchemy_bottle_shape1_blue.jpg",
     item=191386,
-)
+).add_specs(*HEAL.specs)
 
 WowPotion(
-    *HEAL.specs,
     spell_id=371152,
     duration=10,
     color=COL_MANA,
     name="Potion of Spiritual Clarity",
     icon="inv_10_alchemy_bottle_shape4_green.jpg",
     item=191367,
-)
+).add_specs(*HEAL.specs)
 
 WowPotion(
-    *HEAL.specs,
     spell_id=371033,
     duration=10,
     color=COL_MANA,
     name="Potion of Frozen Focus",
     icon="inv_10_alchemy_bottle_shape4_blue.jpg",
     item=191363,
-)
+).add_specs(*HEAL.specs)
