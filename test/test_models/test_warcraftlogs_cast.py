@@ -113,7 +113,6 @@ class Test_Cast(unittest.TestCase):
     #
 
     def test_process_until_events(self) -> None:
-
         # Arrange some test abilities
         until_event = WowSpell(spell_id=200)
         spell = WowSpell(spell_id=100, until=until_event)
@@ -132,7 +131,6 @@ class Test_Cast(unittest.TestCase):
         assert cast.duration == 1250
 
     def test_process_until_events_multipleA(self) -> None:
-
         # Arrange some test abilities
         until_event = WowSpell(spell_id=200)
         _ = WowSpell(spell_id=100, until=until_event)
@@ -156,7 +154,6 @@ class Test_Cast(unittest.TestCase):
         assert result == expected
 
     def test_process_until_events_multipleB(self) -> None:
-
         # Arrange some test abilities
         until_event = WowSpell(spell_id=200)
         _ = WowSpell(spell_id=100, until=until_event)

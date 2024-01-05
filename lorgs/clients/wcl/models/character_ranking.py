@@ -1,9 +1,11 @@
 """Models represeting the Data we recive from WCL under the worldData.encounter.charaterRankings."""
 from __future__ import annotations
 
+# IMPORT STANDARD LIBRARIES
 import datetime
 
-from pydantic import BaseModel
+# IMPORT THIRD PARTY LIBRARIES
+from pydantic import BaseModel, Field
 
 
 class CharacterRankingReportFightData(BaseModel):
@@ -28,7 +30,7 @@ class CharacterRanking(BaseModel):
     name: str
     """The Charaters Name (no Realm)."""
 
-    class_: str
+    class_: str = Field(alias="class")
     """Name of the Class in CamelCase. (eg.: "DeathKnight")."""
 
     spec: str
@@ -47,12 +49,8 @@ class CharacterRanking(BaseModel):
 
     hidden: bool = False
 
-    class Config:  # pylint: disable=missing-class-docstring,too-few-public-methods
-        fields = {"class_": "class"}
-
 
 class CharacterRankings(BaseModel):
-
     page: int = 1
     hasMorePages: bool = False
     count: int = 0

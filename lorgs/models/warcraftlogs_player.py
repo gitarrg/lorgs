@@ -163,7 +163,6 @@ class Player(BaseActor):
         self.resurrects.append(data)
 
     def process_event(self, event: "wcl.ReportEvent") -> wcl.ReportEvent:
-
         # Ankh doesn't shows as a regular spell
         spell_id = event.abilityGameID
         if spell_id in (21169,):  # Ankh

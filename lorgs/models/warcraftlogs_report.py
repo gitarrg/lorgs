@@ -111,7 +111,6 @@ class Report(warcraftlogs_base.BaseModel):
         return [f for f in fights if f]
 
     def add_player(self, actor_data: wcl.ReportActor):
-
         if actor_data.type != "Player":
             return
 
@@ -224,7 +223,6 @@ class Report(warcraftlogs_base.BaseModel):
         await fight.load_players(player_ids=player_ids)
 
     async def load_fights(self, fight_ids: list[int], player_ids: list[int]) -> None:
-
         if not self.fights:
             await self.load()
 

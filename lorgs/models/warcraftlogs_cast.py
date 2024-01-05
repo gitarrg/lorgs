@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING
 
 # IMPORT THIRD PARTY LIBRARIES
 import pydantic
@@ -16,31 +16,21 @@ if TYPE_CHECKING:
     from lorgs.clients import wcl
 
 
-json_aliases = {
-    "spell_id": "id",
-    "timestamp": "ts",
-    "duration": "d",
-}
-
-
 class Cast(base.BaseModel):
     """An Instance of a Cast of a specific Spell in a Fight."""
 
-    spell_id: int  #  = pydantic.Field(json_alias="id")
+    spell_id: int = pydantic.Field(alias="id")
     """ID of the spell/aura."""
 
-    timestamp: int
+    timestamp: int = pydantic.Field(alias="ts")
     """time the spell was cast, in milliseconds relative to the start of the fight."""
 
-    duration: Optional[int] = None
+    duration: int | None = pydantic.Field(default=None, alias="d")
     """time the spell/buff was active in milliseconds."""
 
     event_type: str = pydantic.Field(default="cast", exclude=True)
 
-    @classmethod
-    def construct(cls, _fields_set=None, *, __recursive__=True, **values) -> "Cast":
-        values = utils.rename_dict_keys(values, json_aliases, reverse=True)
-        return cls(**values)
+    model_config = pydantic.ConfigDict(populate_by_name=True)
 
     #############################
 
@@ -57,12 +47,8 @@ class Cast(base.BaseModel):
         time_fmt = utils.format_time(self.timestamp)
         return f"Cast(id={self.spell_id}, ts={time_fmt})"
 
-    def dict(self, **kwargs: Any):
-        data = super().dict(**kwargs)
-        return utils.rename_dict_keys(data, json_aliases)
-
     @property
-    def spell(self) -> Optional[WowSpell]:
+    def spell(self) -> WowSpell | None:
         return WowSpell.get(spell_id=self.spell_id)
 
     def get_duration(self) -> int:

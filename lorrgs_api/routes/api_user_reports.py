@@ -20,15 +20,15 @@ router = fastapi.APIRouter()
 SQS_USER_QUEUE_URL = os.getenv("SQS_USER_QUEUE_URL") or ""
 
 
-@router.get("/{report_id}")
-async def get_user_report(report_id: str):
+@router.get("/{report_id}", response_model_exclude_unset=True)
+async def get_user_report(report_id: str) -> UserReport:
     """Returns the overview about a user report."""
     user_report = UserReport.get(report_id=report_id, create=False)
     if not user_report:
         return {"message": "not found"}
 
     # TODO: expclude nested casts/fights etc
-    return user_report.dict(exclude_unset=True)
+    return user_report
 
 
 @router.get("/{report_id}/fights")
@@ -53,14 +53,14 @@ async def get_fights(report_id: str, fight: str, player: str = ""):
     for f in fights:
         f.players = f.get_players(*player_ids)
 
-    return {"fights": [fight.dict(exclude_unset=True) for fight in fights]}
+    return {"fights": [fight.model_dump(exclude_unset=True, by_alias=True) for fight in fights]}
 
 
 ################################################################################
 
 
-@router.get("/{report_id}/load_overview")
-async def load_user_report_overview(response: fastapi.Response, report_id: str, refresh: bool = False):
+@router.get("/{report_id}/load_overview", response_model_exclude_unset=True)
+async def load_user_report_overview(response: fastapi.Response, report_id: str, refresh: bool = False) -> UserReport:
     """Load a Report's Overview/Masterdata."""
     response.headers["Cache-Control"] = "max-age=60"
 
@@ -77,7 +77,7 @@ async def load_user_report_overview(response: fastapi.Response, report_id: str, 
         else:
             user_report.save()
 
-    return user_report.dict(exclude_unset=True)
+    return user_report
 
 
 @router.get("/{report_id}/load")

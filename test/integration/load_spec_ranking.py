@@ -12,12 +12,11 @@ TEMP_FILE = "/mnt/d/tmp.json"
 
 
 async def test__load_rankings():
-
     spec_ranking = SpecRanking.get_or_create(
-        spec_slug="deathknight-unholy",
-        boss_slug="terros",
+        spec_slug="evoker-augmentation",
+        boss_slug="kazzara-the-hellforged",
         difficulty="heroic",
-        metric="hps",
+        metric="dps",
     )
 
     for player in spec_ranking.players:
@@ -45,12 +44,11 @@ async def test__load_rankings():
     #     "metric": metric,
     # }
     with open(TEMP_FILE, "w") as f:
-        f.write(spec_ranking.json(exclude_unset=True, indent=4))
+        f.write(spec_ranking.model_dump_json(exclude_unset=True, indent=4))
         # json.dump(, f, indent=4)
 
 
 async def test__load_from_disk():
-
     spec_ranking = SpecRanking.parse_file(TEMP_FILE)
     spec_ranking.post_init()
 
@@ -67,7 +65,6 @@ async def test__load_from_disk():
 
 
 async def test__load_from_db():
-
     spec_ranking = SpecRanking.get_or_create(
         spec_slug="druid-restoration",
         boss_slug="lords-of-dread",
@@ -84,7 +81,6 @@ async def test__load_from_db():
 
 
 async def main():
-
     # pass
     await test__load_rankings()
     # await test__load_from_disk()

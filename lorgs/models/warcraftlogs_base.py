@@ -44,7 +44,6 @@ def query_args_to_mongo(*query_args: str, prefix="") -> dict[str, str]:
     mongo_kwargs = {}
 
     for arg in query_args:
-
         m = re.match(QUERY_ARG_RE, arg)
         if not m:
             print("invalid query arg", arg)
@@ -129,7 +128,7 @@ class wclclient_mixin:
 
         if not result:
             return
-        
+
         try:
             self.process_query_result(**result)
         except pydantic.ValidationError as e:
