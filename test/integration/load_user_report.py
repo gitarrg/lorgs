@@ -94,7 +94,7 @@ def info_from_url(url: str) -> tuple[str, int, int]:
 
 
 async def test_load() -> None:
-    url = "https://www.warcraftlogs.com/reports/tbyNhJqMmGzYKHnk#fight=17&player=4"
+    url = "https://www.warcraftlogs.com/reports/tbyNhJqMmGzYKHnk#fight=17&source=5"
     REPORT_ID, fight_id, player_id = info_from_url(url)
     fight_ids = [fight_id]
     player_ids = [player_id]
