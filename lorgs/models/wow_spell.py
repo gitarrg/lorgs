@@ -3,7 +3,7 @@ from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
 import typing
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Optional
 
 
 from lorgs import utils
@@ -78,7 +78,7 @@ class WowSpell(base.MemoryModel):
     wowhead_data: str = ""
     """Info used for the wowhead tooltips."""
 
-    until: WowSpell | None = None
+    until: Optional[WowSpell] = None
     """Custom End-Event."""
 
     extra_filter: str = ""

@@ -8,7 +8,7 @@ import textwrap
 import typing
 from collections import defaultdict
 import datetime
-from typing import Any, Callable, ClassVar
+from typing import Any, Callable, ClassVar, Optional
 import typing_extensions
 
 # IMPORT THIRD PARTY LIBRARIES
@@ -91,7 +91,7 @@ def get_composition(players: typing.Iterable[Player]) -> FightComposition:
 class CompRankingFight(Fight):
     """A single Fight showing in the Comp Rankings."""
 
-    composition: FightComposition | None = None
+    composition: Optional[FightComposition] = None
 
     damage_taken: int = 0
     deaths: int = 0
@@ -135,7 +135,7 @@ class CompRanking(base.S3Model, warcraftlogs_base.wclclient_mixin):
     key: typing.ClassVar[str] = "{boss_slug}"
 
     @property
-    def boss(self) -> RaidBoss | None:
+    def boss(self) -> Optional[RaidBoss]:
         return RaidBoss.get(full_name_slug=self.boss_slug)
 
     ############################################################################

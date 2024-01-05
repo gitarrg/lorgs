@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
-from typing import Any
+from typing import Any, Optional
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import utils
@@ -56,7 +56,7 @@ class WowActor(base.MemoryModel):
     ##########################
     # Methods
     #
-    def add_spell(self, spell: WowSpell | None = None, **kwargs: Any) -> WowSpell:
+    def add_spell(self, spell: Optional[WowSpell] = None, **kwargs: Any) -> WowSpell:
         """Add a spell to the actor."""
         if not spell:
             kwargs.setdefault("event_type", "cast")
@@ -70,7 +70,7 @@ class WowActor(base.MemoryModel):
         """Add multiple spells to the actor."""
         self.spells.extend(spells)
 
-    def add_buff(self, spell: WowSpell | None = None, **kwargs) -> WowSpell:
+    def add_buff(self, spell: Optional[WowSpell] = None, **kwargs) -> WowSpell:
         """Add a buff to the actor."""
         if not spell:
             kwargs.setdefault("event_type", "applybuff")
@@ -84,7 +84,7 @@ class WowActor(base.MemoryModel):
         """Add multiple buffs to the actor."""
         self.buffs.extend(spells)
 
-    def add_debuff(self, spell: WowSpell | None = None, **kwargs) -> WowSpell:
+    def add_debuff(self, spell: Optional[WowSpell] = None, **kwargs) -> WowSpell:
         """Add a debuff to the actor."""
         if not spell:
             kwargs.setdefault("event_type", "applydebuff")
@@ -98,7 +98,7 @@ class WowActor(base.MemoryModel):
         """Add multiple debuffs to the actor."""
         self.debuffs.extend(spells)
 
-    def add_event(self, event: WowSpell | None = None, **kwargs: Any) -> WowSpell:
+    def add_event(self, event: Optional[WowSpell] = None, **kwargs: Any) -> WowSpell:
         """Add a custom event to the actor."""
         if not event:
             kwargs.setdefault("spell_type", self.full_name_slug)

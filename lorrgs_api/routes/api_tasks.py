@@ -12,7 +12,7 @@ from lorgs.models.task import Task
 router = fastapi.APIRouter(tags=["tasks"], prefix="/tasks")
 
 
-def _get_task_info(task_id: str) -> None | dict:
+def _get_task_info(task_id: str) -> dict:
     task = Task.get(task_id=task_id)
     if not task:
         raise KeyError("Task not found")
