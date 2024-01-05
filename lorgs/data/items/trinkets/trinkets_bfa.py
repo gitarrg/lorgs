@@ -3,7 +3,6 @@ from lorgs.models.wow_trinket import WowTrinket
 
 
 WowTrinket(
-    *AGI_SPECS,
     spell_id=265954,
     color="#d3d01a",
     cooldown=90,
@@ -11,11 +10,10 @@ WowTrinket(
     icon="inv_offhand_draenei_a_02.jpg",
     item=158319,
     ilvl=483,
-)
+).add_specs(*AGI_SPECS)
 
 
 WowTrinket(
-    *INT_SPECS,
     spell_id=268998,
     event_type="applybuff",
     color="#8434df",
@@ -25,11 +23,10 @@ WowTrinket(
     show=False,
     item=159630,
     ilvl=483,
-)
+).add_specs(*INT_SPECS)
 
 
 WowTrinket(
-    *STR_SPECS,
     spell_id=268836,
     event_type="applybuff",
     color="#ba5bb5",
@@ -40,4 +37,4 @@ WowTrinket(
     item=159625,
     ilvl=372,
     query=False,
-)
+).add_specs(*STR_SPECS)

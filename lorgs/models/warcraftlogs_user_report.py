@@ -3,7 +3,7 @@ from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
 import typing
-from datetime import datetime
+import datetime
 
 # IMPORT LOCAL LIBRARIES
 from lorgs.models import base
@@ -20,7 +20,7 @@ class UserReport(Report, base.DynamoDBModel):
     """
 
     # datetime: timetamp of last update
-    updated: datetime = datetime.min
+    updated: datetime.datetime = datetime.datetime.min
 
     # Config
     pkey: typing.ClassVar[str] = "{report_id}"

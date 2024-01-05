@@ -21,3 +21,7 @@ Please make sure to update tests as appropriate.
 - Dates/Timestamps: ISO 8601
 - Durations: Integers representing Milliseconds (spells store their duration in seconds)
 
+
+## Info:
+
+- 27/10/2023: updated `WCL_AUTH_TOKEN` in `.env` and lambda functions. Not sure what the expiration date is.

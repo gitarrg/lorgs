@@ -8,17 +8,16 @@ from lorgs.models.wow_spec import WowSpec
 ################################################################################
 # Role
 #
-ITEM_ROLE     = WowRole(id=1001, code="item", name="Items")
+ITEM_ROLE = WowRole(id=1001, code="item", name="Items")
 
 ################################################################################
 # Class
 #
-OTHER         = WowClass(id=1001, name="Other", color="#cccccc")
+OTHER = WowClass(id=1001, name="Other", color="#cccccc")
 
 ################################################################################
 # "Specs"
 #
-OTHER_POTION  = WowSpec(role=ITEM_ROLE, wow_class=OTHER, name="Potions")
+OTHER_POTION = WowSpec(role=ITEM_ROLE, wow_class=OTHER, name="Potions")
+OTHER_EXTERNALS = WowSpec(role=ITEM_ROLE, wow_class=OTHER, name="Externals")
 OTHER_TRINKET = WowSpec(role=ITEM_ROLE, wow_class=OTHER, name="Trinkets")
-OTHER_BUFFS = WowSpec(role=ITEM_ROLE, wow_class=OTHER, name="Buffs")
-OTHER_RAID = WowSpec(role=ITEM_ROLE, wow_class=OTHER, name="Raid")

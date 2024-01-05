@@ -3,11 +3,17 @@ from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
 import typing
+from typing import Any, ClassVar
+
 
 from lorgs import utils
+from lorgs.models import base
 
 # IMPORT LOCAL LIBRARIES
-from lorgs.models import base
+# from lorgs.models import base
+
+if typing.TYPE_CHECKING:
+    from lorgs.models.wow_spec import WowSpec
 
 
 class SpellType:
@@ -43,14 +49,14 @@ class SpellTag:
 class WowSpell(base.MemoryModel):
     """Container to define a spell."""
 
-    spell_variations: typing.ClassVar[dict[int, int]] = {}
+    spell_variations: ClassVar[dict[int, int]] = {}
     """Map to track spell variations and their "master"-spells.
         `[key: id of the variation] = id of the "master"-spell`
     """
 
     spell_id: int
     cooldown: int = 0
-    duration: int = 0
+    duration: float = 0.0
     icon: str = ""
     name: str = ""
     color: str = ""
@@ -72,7 +78,7 @@ class WowSpell(base.MemoryModel):
     wowhead_data: str = ""
     """Info used for the wowhead tooltips."""
 
-    until: typing.Optional["WowSpell"] = None
+    until: WowSpell | None = None
     """Custom End-Event."""
 
     extra_filter: str = ""
@@ -90,7 +96,7 @@ class WowSpell(base.MemoryModel):
         return super().post_init()
 
     @staticmethod
-    def spell_ids(spells: typing.List["WowSpell"]) -> typing.List[int]:
+    def spell_ids(spells: list["WowSpell"]) -> list[int]:
         """Converts a list of Spells to their spell_ids."""
         ids = []  # [spell.spell_id for spell in spells]
         for spell in spells:
@@ -99,7 +105,7 @@ class WowSpell(base.MemoryModel):
         return ids
 
     @classmethod
-    def spell_ids_str(cls, spells: typing.List["WowSpell"]) -> str:
+    def spell_ids_str(cls, spells: list["WowSpell"]) -> str:
         """Converts a list of Spells into a string of spell ids.
 
         Used to construct queries
@@ -122,7 +128,7 @@ class WowSpell(base.MemoryModel):
     ##########################
     # Methods
     #
-    def as_dict(self) -> dict[str, typing.Any]:
+    def as_dict(self) -> dict[str, Any]:
         return {
             "spell_id": self.spell_id,
             "duration": self.duration,
@@ -168,6 +174,11 @@ class WowSpell(base.MemoryModel):
             return [self, end]
 
         return [self]
+
+    def add_specs(self, *specs: "WowSpec") -> None:
+        """Add the Spell to all the given Specs,"""
+        for spec in specs:
+            spec.add_spells(self)
 
 
 def build_spell_query(spells: list[WowSpell]) -> str:

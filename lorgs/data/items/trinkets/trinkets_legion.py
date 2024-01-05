@@ -22,7 +22,6 @@ from lorgs.models.wow_trinket import WowTrinket
 #
 
 WowTrinket(
-    *ALL_SPECS,
     spell_id=215956,
     color="#6b6bb3",
     cooldown=120,
@@ -32,4 +31,4 @@ WowTrinket(
     item=133642,
     ilvl=372,
     query=False,
-)
+).add_specs(*ALL_SPECS)

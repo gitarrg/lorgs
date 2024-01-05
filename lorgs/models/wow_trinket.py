@@ -6,4 +6,4 @@ from lorgs.models.wow_spell import SpellType
 class WowTrinket(wow_item.WowItem):
     """OnUse Trinkets."""
 
-    spell_type = SpellType.TRINKET
+    spell_type: str = SpellType.TRINKET

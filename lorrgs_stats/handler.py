@@ -1,6 +1,6 @@
 import asyncio
 import os
-from datetime import datetime
+import datetime
 
 import aiohttp
 
@@ -28,7 +28,7 @@ async def send_metric(prefix: str, **values: int) -> None:
             "name": f"{prefix}.{name}",
             "value": value,
             "interval": 10000,
-            "time": int(datetime.now().timestamp()),
+            "time": int(datetime.datetime.now().timestamp()),
         }
         for name, value in values.items()
     ]

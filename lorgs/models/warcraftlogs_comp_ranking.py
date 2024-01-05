@@ -7,8 +7,9 @@ import re
 import textwrap
 import typing
 from collections import defaultdict
-from datetime import datetime
-from typing import Any, Callable, ClassVar, Optional, TypedDict
+import datetime
+from typing import Any, Callable, ClassVar
+import typing_extensions
 
 # IMPORT THIRD PARTY LIBRARIES
 import pydantic
@@ -60,7 +61,7 @@ class FilterExpression(pydantic.BaseModel):
         return op(values.get(self.attr, 0), self.value)
 
 
-class FightComposition(TypedDict):
+class FightComposition(typing_extensions.TypedDict):
     roles: dict[str, int]
     specs: dict[str, int]
     classes: dict[str, int]
@@ -90,7 +91,7 @@ def get_composition(players: typing.Iterable[Player]) -> FightComposition:
 class CompRankingFight(Fight):
     """A single Fight showing in the Comp Rankings."""
 
-    composition: Optional[FightComposition] = None
+    composition: FightComposition | None = None
 
     damage_taken: int = 0
     deaths: int = 0
@@ -125,7 +126,7 @@ class CompRanking(base.S3Model, warcraftlogs_base.wclclient_mixin):
     # the nameslug of the boss
 
     # datetime: timetamp of last update
-    updated: datetime = datetime.min
+    updated: datetime.datetime = datetime.datetime.min
 
     reports: list[CompRankingReport] = []
     """all reports for this boss."""
