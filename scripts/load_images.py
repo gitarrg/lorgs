@@ -51,7 +51,7 @@ for spell in spells:
     icon = spell.icon
 
     if not icon:
-        print(f"spell: {spell.name} has no icon.")
+        print(f"spell: {spell} has no icon.")
         continue
 
     if icon in images:

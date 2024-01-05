@@ -91,11 +91,12 @@ KELTHUZAD.add_buff(spell_id=362494, color="#c7eaff", name="Howling Blizzard",  i
 KELTHUZAD.add_event(event_type="applydebuff", spell_id=346530, duration=10, color="#ff4538", name="Spike",  icon="ability_mage_coldasice.jpg", extra_filter="target.role='tank'")
 
 # for the KT intermission, there is no easy way to track its duration..
-KELTHUZAD.add_event(
-    color="#933ac9", name="Intermisson", icon="spell_warlock_darkregeneration.jpg",
-    event_type="begincast", spell_id=352293, # start = begincast of the 45sec channel
-    until={"event_type": "applybuffstack", "spell_id": 352051} # end = gaining a stack of the Necrotic Surge
-)
+# 05.01.2024: Disabled to avoid "Spell has no Icon"-Error Messages
+# KELTHUZAD.add_event(
+#     color="#933ac9", name="Intermisson", icon="spell_warlock_darkregeneration.jpg",
+#     event_type="begincast", spell_id=352293, # start = begincast of the 45sec channel
+#     until={"event_type": "applybuffstack", "spell_id": 352051} # end = gaining a stack of the Necrotic Surge
+# )
 
 
 ################################################################################
