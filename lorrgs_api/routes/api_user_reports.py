@@ -1,4 +1,6 @@
 """Routes related to UserReports."""
+from __future__ import annotations
+
 # IMPORT STANDARD LIBRARIES
 import itertools
 import os

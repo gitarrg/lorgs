@@ -1,4 +1,6 @@
 """Get Information about Tasks."""
+from __future__ import annotations
+
 # IMPORT THIRD PARTY LIBRARIES
 import asyncio
 import fastapi

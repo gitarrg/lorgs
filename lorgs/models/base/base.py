@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
-from typing import Any, Callable, ClassVar, Optional, Type, TypeVar
+from typing import Any, ClassVar, Optional, Type, TypeVar
 
 # IMPORT THIRD PARTY LIBRARIES
 import pydantic
@@ -12,19 +12,6 @@ from lorgs import utils
 
 
 T = TypeVar("T", bound="BaseModel")
-
-
-"""
-CONVERTERS: dict[type, Callable] = {
-    str: str,
-    float: float,
-    int: int,
-    # datetime: parse_datetime,
-    # date: parse_datetime,
-    # time: parse_time,
-    # timedelta: parse_duration,
-}
-"""
 
 
 class BaseModel(pydantic.BaseModel):
@@ -39,49 +26,6 @@ class BaseModel(pydantic.BaseModel):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.post_init()
-
-    """
-    # No longer required as of pydantic 2.0, which supports recursive models by default.
-    @classmethod
-    def construct(cls: Type[T], _fields_set=None, *, __recursive__=True, **values) -> T:
-        # based on https://github.com/pydantic/pydantic/issues/1168
-        if not __recursive__:
-            return super().model_construct(_fields_set, **values)
-
-        m = cls.__new__(cls)
-
-        fields_values: dict[str, Any] = {}
-        for name, field in cls.model_fields.items():
-            if name in values:
-                value = values[name]
-
-                # Field is a nested Model
-                if issubclass(field.type_, BaseModel):
-                    if field.shape == 2:  # SHAPE_LIST
-                        fields_values[name] = [field.type_.construct(**v, __recursive__=True) for v in value]
-                    else:
-                        fields_values[name] = field.outer_type_.construct(**value, __recursive__=True)
-                else:
-                    converter = CONVERTERS.get(field.type_)
-                    if converter:
-                        if field.shape == 2:  # SHAPE_LIST
-                            fields_values[name] = [converter(v) for v in value]
-                        else:
-                            fields_values[name] = converter(value)
-                    else:
-                        fields_values[name] = value
-
-            elif not field.required:
-                fields_values[name] = field.get_default()
-
-        object.__setattr__(m, "__dict__", fields_values)
-        if _fields_set is None:
-            _fields_set = set(values.keys())
-        object.__setattr__(m, "__fields_set__", _fields_set)
-        m._init_private_attributes()
-        m.post_init()
-        return m
-        """
 
     @classmethod
     def get_table_name(cls) -> str:
