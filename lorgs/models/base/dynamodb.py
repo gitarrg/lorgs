@@ -26,7 +26,6 @@ TBaseModel = typing.TypeVar("TBaseModel", bound="DynamoDBModel")
 
 
 class DynamoDBModel(base.BaseModel):
-
     pkey_name: typing.ClassVar[str] = "pk"
     skey_name: typing.ClassVar[str] = "sk"
     pkey: typing.ClassVar[str] = "{id}"
@@ -49,7 +48,6 @@ class DynamoDBModel(base.BaseModel):
 
     @classmethod
     def get(cls: typing.Type[TBaseModel], **kwargs: typing.Any) -> typing.Optional[TBaseModel]:
-
         table = cls.get_table()
         keys = cls.get_keys(**kwargs)
 
@@ -61,7 +59,7 @@ class DynamoDBModel(base.BaseModel):
             return None
 
         with Timer(f"PARSE: {kwargs}"):
-            return cls.construct(**item)
+            return cls(**item)
 
     @classmethod
     def first(cls: typing.Type[TBaseModel], **kwargs: typing.Any) -> typing.Optional[TBaseModel]:
@@ -86,7 +84,7 @@ class DynamoDBModel(base.BaseModel):
             return None
 
         item = items[0]
-        return cls.parse_obj(item)
+        return cls(**item)
 
     ############################################################################
     # Save to DB
@@ -98,12 +96,11 @@ class DynamoDBModel(base.BaseModel):
         # are converted into json compatible formats.
         # There is some work done to simplify this: https://github.com/pydantic/pydantic/discussions/4456
         return json.loads(  # type: ignore
-            self.json(exclude_unset=exclude_unset),
+            self.model_dump_json(exclude_unset=exclude_unset, by_alias=True),
             parse_float=decimal.Decimal,  # dynamodb wants floats as decimals
         )
 
     def save(self, exclude_unset: bool = True) -> None:
-
         data = self.json_dict(exclude_unset=exclude_unset)
 
         # insert the keys

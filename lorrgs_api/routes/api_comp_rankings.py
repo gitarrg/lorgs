@@ -12,7 +12,7 @@ from lorgs.models.warcraftlogs_comp_ranking import CompRanking, CompRankingFight
 router = fastapi.APIRouter(tags=["comp_ranking"])
 
 
-@router.get("/comp_ranking/{boss_slug}")
+@router.get("/comp_ranking/{boss_slug}", response_model_exclude_unset=True)
 async def get_comp_ranking(
     response: fastapi.Response,
     boss_slug: str,
@@ -22,7 +22,7 @@ async def get_comp_ranking(
     specs: list[str] = fastapi.Query([], alias="spec"),
     killtime_min: int = 0,
     killtime_max: int = 0,
-):
+) -> CompRanking:
     """Fetch comp rankings for a given boss encounter.
 
     Args:
@@ -64,8 +64,7 @@ async def get_comp_ranking(
 
     comp_ranking.reports = [r for r in comp_ranking.reports if r.fights]
     comp_ranking.reports = comp_ranking.reports[:limit]
-
-    return comp_ranking.dict(exclude_unset=True)
+    return comp_ranking
 
 
 ################################################################################

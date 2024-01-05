@@ -23,7 +23,6 @@ s3client = boto3.client("s3")
 
 
 class S3Model(base.BaseModel):
-
     bucket: ClassVar[str] = os.getenv("DATA_BUCKET") or "lorrgs"
 
     @classmethod
@@ -54,13 +53,22 @@ class S3Model(base.BaseModel):
             content = cls.get_json(**kwargs)
         except KeyError:
             return None
-        return cls.construct(**content)
+
+        # TODO: arrg, 04.01.2023
+        # We'd pref to use `model_construct` here as its a lot faster than `__init__`
+        # Unfortunetly however we need to recurisvely construct child models,
+        # which is not supported with `model_construct` as of right now.
+        # We could solve this by implementing our own: `model_construct` that
+        # somehow handles the creation of child models.
+        return cls(**content)
 
     def save(self, exclude_unset=True, **kwargs: Any) -> None:
-
-        key = self.get_key(**self.dict())
-        data = self.json(exclude_unset=exclude_unset, **kwargs)
-        print("saving to S3", self.bucket, key)
+        key = self.get_key(**dict(self))
+        data = self.model_dump_json(
+            exclude_unset=exclude_unset,
+            by_alias=True,
+            **kwargs,
+        )
         s3client.put_object(
             Bucket=self.bucket,
             Key=key,

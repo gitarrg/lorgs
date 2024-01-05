@@ -1,6 +1,4 @@
 """Enpoints dealing with Rankings per Spec."""
-# IMPORT STANDARD LIBRARIES
-import typing
 
 # IMPORT THIRD PARTY LIBRARIES
 import fastapi
@@ -22,7 +20,7 @@ async def get_spec_ranking(
     boss_slug: str,
     difficulty: str = "mythic",
     metric: str = "",
-) -> typing.Any:
+):
     """Get the Rankings for a given Spec and Boss."""
     if not metric:
         spec = WowSpec.get(full_name_slug=spec_slug)
@@ -34,6 +32,8 @@ async def get_spec_ranking(
     response.headers["Cache-Control"] = "max-age=300"
 
     try:
+        # Fetch the json directly for performance reasons.
+        # this avoids parsing the json into a model just to dump it back to json right away
         return warcraftlogs_ranking.SpecRanking.get_json(
             boss_slug=boss_slug,
             spec_slug=spec_slug,
