@@ -105,7 +105,6 @@ class LambdaLayer:
         return response.get("LayerVersions") or []
 
     def get_latest_version_arn(self) -> str:
-
         if not self.latest_version:
             versions = self.get_versions(max=1)
             if not versions:
@@ -122,7 +121,6 @@ class LambdaLayer:
                 print(f"deleting {self.full_name}.{version}")
 
     def deploy_version(self, path: str) -> "PublishLayerVersionResponseTypeDef":
-
         zip_file = shutil.make_archive(base_name=path, format="zip", root_dir=path)
         S3_CLIENT.upload_file(zip_file, DEPLOY_BUCKET, f"{self.full_name}.zip")
         self.latest_version = LAMBDA_CLIENT.publish_layer_version(
@@ -156,7 +154,17 @@ class RequirementsLayer(LambdaLayer):
 
         path = f"{DEPLOY_DIR}/{self.full_name}"
 
-        subprocess.call(["pip", "install", "-r", "requirements.txt", f"--target={path}/python"])
+        subprocess.call(
+            [
+                "pip",
+                "install",
+                "--platform=manylinux2014_aarch64",  # make sure to install arm64 builds
+                "--only-binary=:all:",
+                "-r",
+                "requirements.txt",
+                f"--target={path}/python",
+            ]
+        )
         self.delete_layer_versions()
         self.deploy_version(path)
 
