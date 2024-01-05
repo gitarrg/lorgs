@@ -1,3 +1,4 @@
+from pprint import pprint
 import re
 import dotenv
 
@@ -93,12 +94,7 @@ def info_from_url(url: str) -> tuple[str, int, int]:
 
 
 async def test_load() -> None:
-    # Inputs
-    # REPORT_ID = "L9fV1XwaRTNzkjA4"
-    # fight_ids = [2]
-    # player_ids = [3]
-
-    url = "https://www.warcraftlogs.com/reports/63WTgawLkf2FzP9A#fight=29&type=summary&source=19"
+    url = "https://www.warcraftlogs.com/reports/tbyNhJqMmGzYKHnk#fight=17&player=4"
     REPORT_ID, fight_id, player_id = info_from_url(url)
     fight_ids = [fight_id]
     player_ids = [player_id]
