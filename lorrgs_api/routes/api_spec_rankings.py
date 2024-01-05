@@ -1,4 +1,5 @@
 """Enpoints dealing with Rankings per Spec."""
+from __future__ import annotations
 
 # IMPORT THIRD PARTY LIBRARIES
 import fastapi

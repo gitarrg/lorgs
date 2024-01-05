@@ -1,4 +1,5 @@
 """Endpoints related to the Backend/API."""
+from __future__ import annotations
 
 # IMPORT THIRD PARTY LIBRARIES
 import fastapi
