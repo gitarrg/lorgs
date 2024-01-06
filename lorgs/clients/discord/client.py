@@ -105,7 +105,7 @@ async def get_user_profile(access_token: str) -> DiscordUser:
     if "Unauthorized" in message:
         raise PermissionError(message)
 
-    return DiscordUser.parse_obj(response)
+    return DiscordUser.model_validate(response)
 
 
 async def get_user_info(user_id: str) -> DiscordUser:
@@ -123,7 +123,7 @@ async def get_user_info(user_id: str) -> DiscordUser:
     """
     url = f"users/{user_id}"
     response = await bot_request(url)
-    return DiscordUser.parse_obj(response)
+    return DiscordUser.model_validate(response)
 
 
 ################################################################################
@@ -142,7 +142,7 @@ async def get_member_info(server_id: str, user_id: str) -> DiscordGuildMember:
         user_id (int): ID of the User
 
     Example (omitted some fields):
-        >>> await get_member_info(248163264)
+        >>> await get_member_info("8856386786", "248163264")
         {
             "user": {
                 id: "248163264",
@@ -164,4 +164,4 @@ async def get_member_info(server_id: str, user_id: str) -> DiscordGuildMember:
     if message:
         raise ValueError(message)
 
-    return DiscordGuildMember.parse_obj(response)
+    return DiscordGuildMember.model_validate(response)

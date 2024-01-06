@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import typing
 import typing_extensions
 
@@ -15,7 +13,7 @@ class DiscordUser(BaseModel):
     username: str
     discriminator: str
 
-    avatar: typing.Optional[str] = ""
+    avatar: str | None = ""
     """the user's avatar hash."""
 
     @property
@@ -30,7 +28,7 @@ class DiscordGuildMember(BaseModel):
     """
 
     user: DiscordUser
-    nick: str = ""
+    nick: str | None = ""
 
     roles: list[str]
     """Role IDs.
@@ -41,7 +39,7 @@ class DiscordGuildMember(BaseModel):
 
     joined_at: str = ""  # ISO8601 timestamp
 
-    avatar: str = ""
+    avatar: str | None = ""
 
 
 class DiscordAccessTokenResponse(typing_extensions.TypedDict):
