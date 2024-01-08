@@ -57,6 +57,7 @@ MAGE_ARCANE.add_spell( spell_id=321507, cooldown=45,  duration=8,               
 MAGE_ARCANE.add_spell( spell_id=365350, cooldown=90,  duration=12,                  name="Arcane Surge",       icon="ability_mage_arcanesurge.jpg")
 MAGE_ARCANE.add_spell( spell_id=12051,  cooldown=90,  duration=6,                   name="Evocation",          icon="spell_nature_purge.jpg")
 MAGE_ARCANE.add_spell( spell_id=376103, cooldown=30,  duration=10, color=COL_KYR,   name="Radiant Spark",      icon="ability_bastion_mage.jpg",                  show=False)
+MAGE_ARCANE.add_spell( spell_id=5405,   cooldown=90,               color=COL_MANA,  name="Replenish Mana",      icon="inv_misc_gem_sapphire_02.jpg",             show=False)
 
 MAGE_FROST.add_spell(  spell_id=12472,  cooldown=60,  duration=20,                  name="Icy Veins",          icon="spell_frost_coldhearted.jpg")
 MAGE_FROST.add_spell(  spell_id=84714,  cooldown=60,                                name="Frozen Orb",         icon="spell_frost_frozenorb.jpg")
