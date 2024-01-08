@@ -85,3 +85,15 @@ WowTrinket(
     ilvl=496,
     bonus_ids=[],  # need to clear out default "mythic/epic" bonus IDs
 ).add_specs(*STR_DPS_SPECS)
+
+
+WowTrinket(
+    spell_id=422441,
+    color="#9b632a",
+    # duration=5,  // "next 3 meelee attacks"... could track the buff.. but w/e
+    cooldown=150,
+    name="Branch of the Tormented Ancient",
+    icon="inv_misc_herb_fireweedbranch.jpg",
+    item=207169,
+    ilvl=496,
+).add_specs(*STR_DPS_SPECS)
