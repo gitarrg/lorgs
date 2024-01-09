@@ -84,7 +84,10 @@ WowTrinket(
     item=206448,
     ilvl=496,
     bonus_ids=[],  # need to clear out default "mythic/epic" bonus IDs
-).add_specs(*STR_DPS_SPECS)
+).add_specs(
+    *STR_DPS_SPECS,
+    DEATHKNIGHT_BLOOD,
+)
 
 
 WowTrinket(
