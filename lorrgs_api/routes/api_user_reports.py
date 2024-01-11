@@ -73,9 +73,9 @@ async def load_user_report_overview(response: fastapi.Response, report_id: str, 
         try:
             await user_report.load(raise_errors=True)
         except InvalidReport:
-            return {"error": "Invalid URL."}
+            raise fastapi.HTTPException(status_code=404, detail="Report not found.")
         except PermissionError:
-            return {"error": "No permission to view this report."}
+            raise fastapi.HTTPException(status_code=401, detail="No permission to view this report.")
         else:
             user_report.save()
 
