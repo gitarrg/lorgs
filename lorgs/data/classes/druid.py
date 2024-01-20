@@ -67,6 +67,7 @@ DRUID_FERAL.add_spell(       spell_id=106951, cooldown=120, duration=15,        
 DRUID_FERAL.add_spell(       spell_id=58984,  cooldown=120,              color="#999999", name="Shadowmeld ",                    icon="ability_ambush.jpg",                        show=False)
 DRUID_FERAL.add_spell(       spell_id=108291, cooldown=300, duration=45, color="#fcdf03", name="Hearth of the Wild ",            icon="spell_holy_blessingofagility.jpg")
 DRUID_FERAL.add_buff(        spell_id=197625,                            color="#11cff5", name="Moonkin Form ",                  icon="spell_nature_forceofnature.jpg")
+DRUID_FERAL.add_buff(        spell_id=274837, cooldown=45,  duration=6,  color="#c43333", name="Feral Frenzy ",                  icon="ability_druid_rake.jpg", show=False)
 
 
 DRUID_GUARDIAN.add_spell(    spell_id=108292, cooldown=300, duration=45, color="#fcdf03", name="Heart of the Wild",              icon="spell_holy_blessingofagility.jpg",          show=False)
