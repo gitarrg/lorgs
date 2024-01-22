@@ -24,6 +24,7 @@ OTHER_EXTERNALS.add_buff(color=PRIEST.color,  spell_id=33206,  cooldown=180, dur
 OTHER_EXTERNALS.add_buff(color=PRIEST.color,  spell_id=47788,  cooldown=180,              name="Guardian Spirit",         icon="spell_holy_guardianspirit.jpg")
 OTHER_EXTERNALS.add_buff(color=PALADIN.color, spell_id=1022,   cooldown=300, duration=10, name="Blessing of Protection",  icon="spell_holy_sealofprotection.jpg")
 OTHER_EXTERNALS.add_buff(color=PALADIN.color, spell_id=6940,   cooldown=120,              name="Blessing of Sacrifice",   icon="spell_holy_sealofsacrifice.jpg")
+OTHER_EXTERNALS.add_buff(color=PALADIN.color, spell_id=204018, cooldown=300, duration=10, name="Blessing of Spellwarding",icon="spell_holy_blessingofprotection.jpg")
 OTHER_EXTERNALS.add_buff(color=MONK.color,    spell_id=116849, cooldown=120,              name="Life Cocoon",             icon="ability_monk_chicocoon.jpg")
 OTHER_EXTERNALS.add_buff(color=EVOKER.color,  spell_id=357170, cooldown=60,  duration=8,  name="Time Dilation",           icon="ability_evoker_timedilation.jpg")
 
