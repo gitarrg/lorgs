@@ -22,6 +22,16 @@ boss.add_cast(
 
 
 boss.add_cast(
+    spell_id=421398,
+    name="Fire Beam",
+    duration=2,
+    color="hsl(45, 75%, 50%)",
+    icon="ability_mage_firestarter.jpg",
+    show=False,
+)
+
+
+boss.add_cast(
     spell_id=424495,
     name="Mass Entanglement",
     duration=5,  # duration not fixed.
