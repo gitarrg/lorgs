@@ -32,7 +32,7 @@ WARRIOR.add_spell(             spell_id=376079, cooldown=90,  duration=4,  color
 WARRIOR.add_spell(             spell_id=384318, cooldown=90,  duration=8,  color="#d13b59", name="Thunderous Roar",     icon="ability_warrior_dragonroar.jpg",            show=False)
 WARRIOR.add_spell(             spell_id=97462,  cooldown=180, duration=10,                  name="Rallying Cry",        icon="ability_warrior_rallyingcry.jpg",           show=False, tags=[SpellTag.RAID_CD])
 WARRIOR.add_spell(             spell_id=23920,  cooldown=10,  duration=5,                   name="Spell Reflection",    icon="ability_warrior_shieldreflection.jpg",      show=False)
-WARRIOR.add_spell(             spell_id=107574, cooldown=90,  duration=20,                  name="Avatar",              icon="warrior_talent_icon_avatar.jpg",            show=False)
+WARRIOR.add_spell(             spell_id=107574, cooldown=90,  duration=20,                  name="Avatar",              icon="warrior_talent_icon_avatar.jpg",            show=False, variations=[401150])  # Prot uses a different Spell ID
 WARRIOR.add_spell(             spell_id=228920, cooldown=90,  duration=12, color="#d1793b", name="Ravager",             icon="warrior_talent_icon_ravager.jpg")
 
 WARRIOR_ARMS.add_spell(        spell_id=389774, cooldown=90,  duration=6,                   name="Bladestorm",          icon="ability_warrior_bladestorm.jpg")
