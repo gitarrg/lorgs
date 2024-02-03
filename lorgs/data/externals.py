@@ -34,6 +34,7 @@ OTHER_EXTERNALS.add_buff(color=EVOKER.color,  spell_id=357170, cooldown=60,  dur
 #
 POWER_INFUSION    = OTHER_EXTERNALS.add_buff(color="#f7c625", spell_id=10060,  cooldown=120, duration=20, name="Power Infusion",      icon="spell_holy_powerinfusion.jpg")
 BLESSING_OF_AUTUMN = OTHER_EXTERNALS.add_buff(color=PALADIN.color, spell_id=388010, cooldown=45, duration=30, name="Blessing of Autumn", icon="ability_ardenweald_paladin_autumn.jpg")
+BLESSING_OF_SUMMER = OTHER_EXTERNALS.add_buff(color=PALADIN.color, spell_id=388007, cooldown=45, duration=30, name="Blessing of Summer", icon="ability_ardenweald_paladin_summer.jpg")
 
 for s in ALL_SPECS:
     s.add_spells(*OTHER_EXTERNALS.spells)
