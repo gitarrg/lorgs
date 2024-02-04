@@ -163,9 +163,11 @@ class WowSpell(base.MemoryModel):
         if self.until:
             return [self, self.until]
 
-        # we have fixed duration --> we are fine
-        if self.duration:
-            return [self]
+        # (04/02/2024): even with fixed duration, we need to include
+        # both event types, to catch pre-pull casts.
+        # # we have fixed duration --> we are fine
+        # if self.duration:
+        #     return [self]
 
         # automatic mirror_events for buffs/debuffs
         if self.event_type in ("applybuff", "applydebuff"):
