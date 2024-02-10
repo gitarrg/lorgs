@@ -20,7 +20,7 @@ S3 = boto3.resource("s3")
 
 BUCKET_NAME = os.getenv("BUCKET_NAME", "lorrgs-assets")
 BUCKET = S3.Bucket(BUCKET_NAME)
-BUCKET = S3.Bucket("assets2.lorrgs.io")
+
 
 FOLDER = "images/spells/"
 
