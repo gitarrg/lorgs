@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 from __future__ import annotations
 
+# IMPORT STANDARD LIBRARIES
+import os
+
 # IMPORT THIRD PARTY LIBRARIES
 import boto3
 import requests
@@ -15,7 +18,9 @@ from lorgs.models.wow_trinket import WowTrinket
 S3 = boto3.resource("s3")
 
 
-BUCKET = S3.Bucket("lorrgs-assets")
+BUCKET_NAME = os.getenv("BUCKET_NAME", "lorrgs-assets")
+BUCKET = S3.Bucket(BUCKET_NAME)
+BUCKET = S3.Bucket("assets2.lorrgs.io")
 
 FOLDER = "images/spells/"
 
