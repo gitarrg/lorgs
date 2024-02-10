@@ -10,6 +10,7 @@ import requests
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import data
+from lorgs.models.wow_potion import WowPotion
 from lorgs.models.wow_spell import WowSpell
 from lorgs.models.wow_trinket import WowTrinket
 
@@ -52,7 +53,20 @@ def upload(filname: str) -> None:
 
 images = get_images(FOLDER)
 
-spells = WowSpell.list() + WowTrinket.list()
+
+# list of all the "types" of Spells
+# TODO: find a way to create this dynamically?
+spell_types: set[type[WowSpell]] = {
+    WowSpell,
+    WowTrinket,
+    WowPotion,
+}
+
+
+spells = []
+for spell_type in spell_types:
+    spells += spell_type.list()
+
 
 for spell in spells:
     icon = spell.icon
