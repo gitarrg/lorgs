@@ -1,4 +1,5 @@
 """A Spell/Ability in the Game."""
+
 from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES

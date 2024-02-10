@@ -1,4 +1,5 @@
 """Define the Monk Class and all its Specs and Spells."""
+
 # pylint: disable=line-too-long
 # pylint: disable=bad-whitespace
 # pylint: disable=wildcard-import
