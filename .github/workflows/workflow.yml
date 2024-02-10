@@ -30,10 +30,17 @@ jobs:
       # install Deploy Dependencies
       - run: pip install boto3 requests
 
-      # Update Images
+      # Update Images (old bucket)
       - run: python scripts/load_images.py
         env:
           PYTHONPATH: "."
+          BUCKET_NAME: "lorrgs-assets"
+
+        # Update Images (new bucket)
+      - run: python scripts/load_images.py
+        env:
+          PYTHONPATH: "."
+          BUCKET_NAME: "assets2.lorrgs.io"
 
       # Deploy Main
       - run: python scripts/deploy.py
