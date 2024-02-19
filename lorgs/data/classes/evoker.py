@@ -1,4 +1,5 @@
 """Define the Evoker Class and all its Specs and Spells."""
+
 # pylint: disable=line-too-long
 # pylint: disable=bad-whitespace
 # pylint: disable=wildcard-import
@@ -36,17 +37,17 @@ EVOKER_AUGMENTATION = WowSpec(role=RDPS, wow_class=EVOKER, name="Augmentation")
 #
 
 # Defensives
-EVOKER.add_spell(spell_id=363916, name="Obsidian Scales",    cooldown=150, duration=12, color=COLOR_BLACK,  icon="inv_artifact_dragonscales.jpg", show=False)
-EVOKER.add_spell(spell_id=374348, name="Renewing Blaze",     cooldown=150, duration=8,  color=COLOR_RED,    icon="ability_evoker_masterylifebinder_red.jpg", show=False)
+EVOKER.add_spell(spell_id=363916, name="Obsidian Scales",    cooldown=150, duration=12, color=COLOR_BLACK,  icon="inv_artifact_dragonscales.jpg", tags=[SpellTag.DEFENSIVE], show=False)
+EVOKER.add_spell(spell_id=374348, name="Renewing Blaze",     cooldown=150, duration=8,  color=COLOR_RED,    icon="ability_evoker_masterylifebinder_red.jpg", tags=[SpellTag.DEFENSIVE], show=False)
 EVOKER.add_spell(spell_id=370553, name="Tip the Scales",     cooldown=120,              color=COLOR_BRONZE, icon="ability_evoker_tipthescales.jpg", show=False)
 EVOKER.add_spell(spell_id=374227, name="Zephyr",             cooldown=120, duration=8,  color="#d6b969",    icon="ability_evoker_hoverblack.jpg", tags=[SpellTag.RAID_CD], show=False)
-EVOKER.add_spell(spell_id=374968, name="Time Spiral",        cooldown=120, duration=10, color="#c4d669",    icon="ability_evoker_timespiral.jpg", tags=[SpellTag.RAID_CD], show=False)
-EVOKER.add_spell(spell_id=370665, name="Rescue",             cooldown=60,               color="#8bc1ff",  icon="ability_evoker_flywithme.jpg", show=False)
+EVOKER.add_spell(spell_id=374968, name="Time Spiral",        cooldown=120, duration=10, color="#c4d669",    icon="ability_evoker_timespiral.jpg", tags=[SpellTag.RAID_CD, SpellTag.MOVE], show=False)
+EVOKER.add_spell(spell_id=370665, name="Rescue",             cooldown=60,               color="#8bc1ff",  icon="ability_evoker_flywithme.jpg", show=False, tags=[SpellTag.MOVE])
 
 
 # DPS
-EVOKER_DEVASTATION.add_spell(spell_id=368847, name="Firestorm",  cooldown=20,  duration=12, color=COLOR_RED, icon="ability_evoker_firestorm.jpg")
-EVOKER_DEVASTATION.add_spell(spell_id=375087, name="Dragonrage", cooldown=120, duration=14, color=COLOR_RED, icon="ability_evoker_dragonrage.jpg")
+EVOKER_DEVASTATION.add_spell(spell_id=368847, name="Firestorm",  cooldown=20,  duration=12, color=COLOR_RED, icon="ability_evoker_firestorm.jpg", tags=[SpellTag.DAMAGE])
+EVOKER_DEVASTATION.add_spell(spell_id=375087, name="Dragonrage", cooldown=120, duration=14, color=COLOR_RED, icon="ability_evoker_dragonrage.jpg", tags=[SpellTag.DAMAGE])
 
 
 _filter_tip_the_scales = "IN RANGE FROM type = 'applybuff' AND ability.name = 'Tip the Scales' TO type = 'removebuff' AND ability.name = 'Tip the Scales' END"
@@ -64,6 +65,6 @@ EVOKER_PRESERVATION.add_buff( spell_id=370562, name="Stasis",             cooldo
 
 # Augmentation
 EVOKER_AUGMENTATION.add_buff( spell_id=395296, name="Ebon Might Buff",                            color="#bf8330", icon="spell_sarkareth.jpg", show=False)
-EVOKER_AUGMENTATION.add_spell(spell_id=403631, name="Breath of Eons",  cooldown=120, duration=12, color="#e4e267", icon="ability_evoker_breathofeons.jpg")
+EVOKER_AUGMENTATION.add_spell(spell_id=403631, name="Breath of Eons",  cooldown=120, duration=12, color="#e4e267", icon="ability_evoker_breathofeons.jpg", tags=[SpellTag.DAMAGE])
 EVOKER_AUGMENTATION.add_spell(spell_id=404977, name="Time Skip",       cooldown=180,              color="#e8bf46", icon="ability_evoker_timeskip.jpg")
-EVOKER_AUGMENTATION.add_spell(spell_id=406732, name="Spatial Paradox", cooldown=120, duration=10,                    icon="ability_evoker_stretchtime.jpg", show=False)
+EVOKER_AUGMENTATION.add_spell(spell_id=406732, name="Spatial Paradox", cooldown=120, duration=10,                    icon="ability_evoker_stretchtime.jpg", show=False, tags=[SpellTag.MOVE])

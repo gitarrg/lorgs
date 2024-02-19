@@ -45,6 +45,19 @@ class SpellTag:
     """Hint for spells whichs cooldown is reduced dynamically. eg.: Salvation"""
 
     RAID_CD = "raid_cd"
+    """Tag for Healing- aka Raid-Cooldowns. eg.: Tranq, Barrier, Rally Cry."""
+
+    DAMAGE = "dps"
+    """Tag for (larger) Damage Cooldowns. 2min/3min's."""
+
+    DEFENSIVE = "defensive"
+    """Tag for Prsonals/Defensives."""
+
+    TANK = "tank"
+    """Tag for Tank Mitigation Cooldowns."""
+
+    MOVE = "move"
+    """Tag for Movement Cooldowns. Roar, Windrush, Time Spiral, etc"""
 
 
 class WowSpell(base.MemoryModel):
