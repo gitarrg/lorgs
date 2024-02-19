@@ -1,4 +1,5 @@
 """Special Utility Role/Class/Spec for things such as trinkets and potions."""
+
 # pylint: disable=bad-whitespace
 from lorgs.models.wow_class import WowClass
 from lorgs.models.wow_role import WowRole
@@ -9,6 +10,7 @@ from lorgs.models.wow_spec import WowSpec
 # Role
 #
 ITEM_ROLE = WowRole(id=1001, code="item", name="Items")
+UTIL_ROLE = WowRole(id=1002, code="util", name="Utility")
 
 ################################################################################
 # Class

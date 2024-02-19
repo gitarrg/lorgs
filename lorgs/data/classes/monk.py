@@ -35,9 +35,9 @@ MONK.add_spell(           spell_id=327104, cooldown=30,  duration=30, color=COL_
 
 
 # Defensive
-MONK.add_spell(spell_id=122278, cooldown=120, duration=10, color="#fcba03", name="Dampen Harm",                     icon="ability_monk_dampenharm.jpg", show=False)
-MONK.add_spell(spell_id=122783, cooldown=90,  duration=6,  color="#f5d142", name="Diffuse Magic", icon="spell_monk_diffusemagic.jpg", show=False)
-MONK.add_spell(spell_id=115203, cooldown=180, duration=15, color="#ffb145", name="Fortifying Brew", icon="ability_monk_fortifyingale_new.jpg", show=False)
+MONK.add_spell(spell_id=122278, cooldown=120, duration=10, color="#fcba03", name="Dampen Harm",                     icon="ability_monk_dampenharm.jpg", show=False, tags=[SpellTag.DEFENSIVE])
+MONK.add_spell(spell_id=122783, cooldown=90,  duration=6,  color="#f5d142", name="Diffuse Magic", icon="spell_monk_diffusemagic.jpg", show=False, tags=[SpellTag.DEFENSIVE])
+MONK.add_spell(spell_id=115203, cooldown=180, duration=15, color="#ffb145", name="Fortifying Brew", icon="ability_monk_fortifyingale_new.jpg", show=False, tags=[SpellTag.DEFENSIVE])
 
 # Offensive
 MONK.add_spell(           spell_id=322109, cooldown=180,              color="#c72649", name="Touch of Death",                  icon="ability_monk_touchofdeath.jpg")
@@ -49,14 +49,14 @@ MONK_MISTWEAVER.add_spell(spell_id=325197, cooldown=180, duration=25, color="#e0
 MONK_MISTWEAVER.add_spell(spell_id=116680, cooldown=30,               color="#22a5e6", name="Thunder Focus Tea",               icon="ability_monk_thunderfocustea.jpg", show=False)
 MONK_MISTWEAVER.add_spell(spell_id=399491,               duration=2,  color="#36b394", name="Sheilun's Gift",                  icon="inv_staff_2h_artifactshaohao_d_01.jpg", show=False)
 
-MONK_WINDWALKER.add_spell(spell_id=123904, cooldown=120, duration=24, color="#8cdbbc", name="Invoke Xuen, the White Tiger",    icon="ability_monk_summontigerstatue.jpg")
+MONK_WINDWALKER.add_spell(spell_id=123904, cooldown=120, duration=24, color="#8cdbbc", name="Invoke Xuen, the White Tiger",    icon="ability_monk_summontigerstatue.jpg", tags=[SpellTag.DAMAGE])
 MONK_WINDWALKER.add_spell(spell_id=137639, cooldown=90,  duration=15, color="#be53db", name="Storm, Earth, and Fire",          icon="spell_nature_giftofthewild.jpg")
 MONK_WINDWALKER.add_spell(spell_id=122470, cooldown=90,  duration=10, color="#8afbff", name="Touch of Karma",                  icon="ability_monk_touchofkarma.jpg", show=False)
 MONK_WINDWALKER.add_spell(spell_id=152173, cooldown=90,  duration=12,                  name="Serenity"      ,                  icon="ability_monk_serenity.jpg", show=False)
 
 
 MONK_BREWMASTER.add_spell(spell_id=322507, cooldown=60,  duration=0,  color="#45f9ff", name="Celestial Brew",                  icon="ability_monk_ironskinbrew.jpg",        show=False)
-MONK_BREWMASTER.add_spell(spell_id=132578, cooldown=180, duration=25,                  name="Invoke Niuzao the Black Ox",      icon="spell_monk_brewmaster_spec.jpg")
-MONK_BREWMASTER.add_spell(spell_id=115176, cooldown=300, duration=8,                   name="Zen Meditation",                  icon="ability_monk_zenmeditation.jpg")
-MONK_BREWMASTER.add_spell(spell_id=115203, cooldown=360, duration=15, color="#ffb145", name="Fortifying Brew",                 icon="ability_monk_fortifyingale_new.jpg")
+MONK_BREWMASTER.add_spell(spell_id=132578, cooldown=180, duration=25,                  name="Invoke Niuzao the Black Ox",      icon="spell_monk_brewmaster_spec.jpg", tags=[SpellTag.TANK])
+MONK_BREWMASTER.add_spell(spell_id=115176, cooldown=300, duration=8,                   name="Zen Meditation",                  icon="ability_monk_zenmeditation.jpg", tags=[SpellTag.TANK])
+MONK_BREWMASTER.add_spell(spell_id=115203, cooldown=360, duration=15, color="#ffb145", name="Fortifying Brew",                 icon="ability_monk_fortifyingale_new.jpg", tags=[SpellTag.DEFENSIVE])
 MONK_BREWMASTER.add_spell(spell_id=325153, cooldown=60,  duration=3,  color="#cc5a89", name="Exploding Keg",                 icon="archaeology_5_0_emptykegofbrewfatherxinwoyin.jpg")

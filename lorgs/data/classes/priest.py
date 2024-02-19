@@ -1,4 +1,5 @@
 """Define the Priest Class and all its Specs and Spells."""
+
 # pylint: disable=line-too-long
 # pylint: disable=bad-whitespace
 # pylint: disable=wildcard-import
@@ -32,11 +33,11 @@ PRIEST_SHADOW     = WowSpec(role=RDPS, wow_class=PRIEST, name="Shadow")
 # PRIEST.add_spell(              spell_id=324724, cooldown=60,               color=COL_NECRO, name="Unholy Nova",           icon="ability_maldraxxus_priest.jpg")
 # PRIEST.add_spell(              spell_id=323673, cooldown=45,  duration=5,  color=COL_VENTR, name="Mindgames",             icon="ability_revendreth_priest.jpg")
 PRIEST.add_spell(              spell_id=32375,  cooldown=120,              color="#5f55f1", name="Mass Dispel",        icon="spell_arcane_massdispel.jpg", show=False)
-PRIEST.add_spell(              spell_id=73325,  cooldown=90,               color="#55daf1", name="Leap of Faith",        icon="priest_spell_leapoffaith_a.jpg", show=False)
+PRIEST.add_spell(              spell_id=73325,  cooldown=90,               color="#55daf1", name="Leap of Faith",        icon="priest_spell_leapoffaith_a.jpg", show=False, tags=[SpellTag.MOVE])
 
 # Defensive
-PRIEST.add_spell(              spell_id=19236, cooldown=90,  duration=10,     name="Desperate Prayer",         icon="spell_holy_testoffaith.jpg", show=False)
-PRIEST.add_spell(              spell_id=586,   cooldown=30,  duration=5,      name="Fade",                     icon="spell_magic_lesserinvisibilty.jpg", show=False)
+PRIEST.add_spell(              spell_id=19236, cooldown=90,  duration=10,     name="Desperate Prayer",         icon="spell_holy_testoffaith.jpg", show=False, tags=[SpellTag.DEFENSIVE])
+PRIEST.add_spell(              spell_id=586,   cooldown=30,  duration=5,      name="Fade",                     icon="spell_magic_lesserinvisibilty.jpg", show=False, tags=[SpellTag.DEFENSIVE])
 
 # Offensive
 PRIEST_DISCIPLINE.add_spell(   spell_id=62618,  cooldown=180, duration=10, color="#b3ad91", name="Power Word: Barrier",   icon="spell_holy_powerwordbarrier.jpg", tags=[SpellTag.RAID_CD])
@@ -55,8 +56,8 @@ PRIEST_HOLY.add_spell(         spell_id=200183, cooldown=120, duration=20,      
 PRIEST_HOLY.add_buff(          spell_id=27827,                             color="#82eeff", name="Spirit of Redemption",  icon="inv_enchant_essenceeternallarge.jpg",    show=True)
 PRIEST_HOLY.add_spell(         spell_id=64901, cooldown=300, duration=5,   color="#4dd196", name="Symbol of Hope",        icon="spell_holy_symbolofhope.jpg",    show=False, tags=[SpellTag.RAID_CD])
 
-PRIEST_SHADOW.add_spell(       spell_id=228260, cooldown=120, duration=15, color="#b330e3", name="Voidform",              icon="spell_priest_voidform.jpg")  # tooltip: 228264
-PRIEST_SHADOW.add_spell(       spell_id=391109, cooldown=60,  duration=20, color="#308fbf", name="Dark Ascension",        icon="ability_priest_darkarchangel.jpg")
+PRIEST_SHADOW.add_spell(       spell_id=228260, cooldown=120, duration=15, color="#b330e3", name="Voidform",              icon="spell_priest_voidform.jpg", tags=[SpellTag.DAMAGE])  # tooltip: 228264
+PRIEST_SHADOW.add_spell(       spell_id=391109, cooldown=60,  duration=20, color="#308fbf", name="Dark Ascension",        icon="ability_priest_darkarchangel.jpg", tags=[SpellTag.DAMAGE])
 PRIEST_SHADOW.add_spell(       spell_id=263165, cooldown=30,  duration=3,                   name="Void Torrent",          icon="spell_priest_voidsear.jpg",       show=False)
 PRIEST_SHADOW.add_spell(       spell_id=47585,  cooldown=120, duration=6,                   name="Dispersion",            icon="spell_shadow_dispersion.jpg",    show=False)
 PRIEST_SHADOW.add_spell(       spell_id=15286,  cooldown=120, duration=15, color="#446fc7", name="Vampiric Embrace",        icon="spell_shadow_unsummonbuilding.jpg",    show=False, tags=[SpellTag.RAID_CD])
