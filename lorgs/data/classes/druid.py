@@ -77,6 +77,7 @@ DRUID_GUARDIAN.add_spell(    spell_id=61336,  cooldown=180, duration=6,         
 DRUID_GUARDIAN.add_spell(    spell_id=102558, cooldown=180, duration=30,                  name="Incarnation: Guardian of Ursoc", icon="spell_druid_incarnation.jpg", variations=[50334], tags=[SpellTag.TANK])
 DRUID_GUARDIAN.add_spell(    spell_id=22812,  cooldown=60,  duration=8,                   name="Barkskin",                       icon="spell_nature_stoneclawtotem.jpg",           show=False, tags=[SpellTag.DEFENSIVE])
 DRUID_GUARDIAN.add_spell(    spell_id=22842,  cooldown=36,  duration=3,                   name="Frenzied Regeneration",          icon="ability_bullrush.jpg",           show=False)
+DRUID_GUARDIAN.add_spell(    spell_id=200851, cooldown=60,  duration=10,                  name="Rage of the Sleeper",            icon="inv_hand_1h_artifactursoc_d_01.jpg",           show=False)
 
 
 DRUID_RESTORATION.add_spell( spell_id=197721, cooldown=60,  duration=6,  color="#7ec44d", name="Flourish",                       icon="spell_druid_wildburst.jpg",                 show=False, tags=[SpellTag.RAID_CD])
