@@ -90,8 +90,10 @@ def process_auras(events: list[Cast]) -> list[Cast]:
         if event.event_type in ("applybuff", "applydebuff"):
             # Buffs with predefined/fixed duration need to custom logic.
             # we can simply pass over them here
-            if event.get_duration() > 0:
-                continue
+
+            # (2024/03/04): due to the recent prepull buff change, we always track apply and remove events.
+            # if event.get_duration() > 0:
+            #     continue
 
             if event.spell_id in active_buffs:  # this is already tracked
                 event.spell_id = -1
