@@ -42,6 +42,8 @@ WARRIOR_ARMS.add_spell(        spell_id=772,    cooldown=15,                    
 WARRIOR_ARMS.add_spell(        spell_id=167105, cooldown=45,  duration=10, color="#ffbf29", name="Colossus Smash",      icon="ability_warrior_colossussmash.jpg",         show=False)
 WARRIOR_ARMS.add_spell(        spell_id=118038, cooldown=120, duration=8,                   name="Die by the Sword",    icon="ability_warrior_challange.jpg",             show=False, tags=[SpellTag.DEFENSIVE])
 WARRIOR_ARMS.add_buff(         spell_id=197690, cooldown=6,                                 name="Defensive Stance",    icon="ability_warrior_defensivestance.jpg",       show=False, tags=[SpellTag.DEFENSIVE])
+WARRIOR_ARMS.add_spell(        spell_id=260708, cooldown=30, duration=15, color="#ffbf29", name="Sweeping Strikes",    icon="ability_rogue_slicedice.jpg",       show=False)
+
 
 WARRIOR_FURY.add_spell(        spell_id=1719,   cooldown=60,  duration=10,                  name="Recklessness",        icon="warrior_talent_icon_innerrage.jpg", tags=[SpellTag.DAMAGE])
 WARRIOR_FURY.add_spell(        spell_id=184364, cooldown=180, duration=8,                   name="Enraged Regeneration",icon="ability_warrior_focusedrage.jpg",           show=False)
