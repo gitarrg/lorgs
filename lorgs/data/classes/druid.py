@@ -83,7 +83,7 @@ DRUID_GUARDIAN.add_spell(    spell_id=200851, cooldown=60,  duration=10,        
 DRUID_RESTORATION.add_spell( spell_id=197721, cooldown=60,  duration=6,  color="#7ec44d", name="Flourish",                       icon="spell_druid_wildburst.jpg",                 show=False, tags=[SpellTag.RAID_CD])
 DRUID_RESTORATION.add_spell( spell_id=740,    cooldown=150, duration=6,  color="#6cbfd9", name="Tranquility",                    icon="spell_nature_tranquility.jpg", tags=[SpellTag.RAID_CD])
 DRUID_RESTORATION.add_buff(  spell_id=33891,  cooldown=0,                         name="Incarnation: Tree of Life",      icon="ability_druid_improvedtreeform.jpg", wowhead_data="spell=33891", tags=[SpellTag.RAID_CD])
-DRUID_RESTORATION.add_spell( spell_id=392356, cooldown=0,   duration=9,  color="#339944", name="Reforestation",                  icon="inv_herbalism_70_yserallineseed.jpg", query=False)
+DRUID_RESTORATION.add_spell( spell_id=392356, cooldown=0,   duration=9,  color="#339944", name="Reforestation",                  icon="inv_herbalism_70_yserallineseed.jpg", query=False, show=False)
 
 
 # Additional Spells (not tracked)
