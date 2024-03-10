@@ -82,7 +82,8 @@ DRUID_GUARDIAN.add_spell(    spell_id=200851, cooldown=60,  duration=10,        
 
 DRUID_RESTORATION.add_spell( spell_id=197721, cooldown=60,  duration=6,  color="#7ec44d", name="Flourish",                       icon="spell_druid_wildburst.jpg",                 show=False, tags=[SpellTag.RAID_CD])
 DRUID_RESTORATION.add_spell( spell_id=740,    cooldown=150, duration=6,  color="#6cbfd9", name="Tranquility",                    icon="spell_nature_tranquility.jpg", tags=[SpellTag.RAID_CD])
-DRUID_RESTORATION.add_buff(  spell_id=33891,  cooldown=0,   duration=0,                   name="Incarnation: Tree of Life",      icon="ability_druid_improvedtreeform.jpg", wowhead_data="spell=33891", tags=[SpellTag.RAID_CD])
+DRUID_RESTORATION.add_buff(  spell_id=33891,  cooldown=0,                         name="Incarnation: Tree of Life",      icon="ability_druid_improvedtreeform.jpg", wowhead_data="spell=33891", tags=[SpellTag.RAID_CD])
+DRUID_RESTORATION.add_spell( spell_id=392356, cooldown=0,   duration=9,  color="#339944", name="Reforestation",                  icon="inv_herbalism_70_yserallineseed.jpg", query=False)
 
 
 # Additional Spells (not tracked)
@@ -100,3 +101,24 @@ def split_pulsar_procs(actor: warcraftlogs_actor.BaseActor, status: str):
             cast.spell_id = 393960
 
 warcraftlogs_actor.BaseActor.event_actor_load.connect(split_pulsar_procs)
+
+
+def split_reforestation(actor: warcraftlogs_actor.BaseActor, status: str):
+    if status != "success":
+        return
+    if not actor:
+        return
+    
+    for cast in actor.casts:
+        if cast.spell_id == 33891:
+
+            if cast.duration:
+                is_proc = cast.duration < 15_000  # ToL = 30sec / Reforestation = 9sec
+            else:
+                cast.timestamp -= 9000  # procs used prepull are assumed to be Reforestation
+                is_proc = True
+
+            if is_proc:
+                cast.spell_id = 392356
+
+warcraftlogs_actor.BaseActor.event_actor_load.connect(split_reforestation)
