@@ -68,7 +68,7 @@ RACIALS.add_buff(spell_type=SPELL_TYPE, spell_id=273104, cooldown=120, duration=
 #
 
 # Orc
-RACIALS.add_spell(spell_type=SPELL_TYPE, spell_id=20572, cooldown=120, duration=15, color="#97bf52", name="Blood Fury", icon="racial_orc_berserkerstrength.jpg", variation=[33697])
+RACIALS.add_spell(spell_type=SPELL_TYPE, spell_id=20572, cooldown=120, duration=15, color="#97bf52", name="Blood Fury", icon="racial_orc_berserkerstrength.jpg", variation=[33697, 33702])
 
 # Undead
 # https://www.wowhead.com/spell=20577/cannibalize
