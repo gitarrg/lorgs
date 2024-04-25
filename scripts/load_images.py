@@ -19,7 +19,7 @@ from lorgs.models.wow_trinket import WowTrinket
 S3 = boto3.resource("s3")
 
 
-BUCKET_NAME = os.getenv("BUCKET_NAME", "lorrgs-assets")
+BUCKET_NAME = os.getenv("BUCKET_NAME", "assets2.lorrgs.io")
 BUCKET = S3.Bucket(BUCKET_NAME)
 
 

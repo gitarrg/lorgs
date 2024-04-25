@@ -2,6 +2,7 @@
 
 Ref: https://www.wowhead.com/spells/racial-traits
 """
+
 # pylint: disable=line-too-long
 # pylint: disable=wildcard-import
 # pylint: disable=unused-wildcard-import
