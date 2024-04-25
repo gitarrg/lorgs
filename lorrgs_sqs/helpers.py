@@ -3,6 +3,7 @@ from typing import Any, Callable
 
 from lorgs.data.classes import ALL_SPECS
 from lorgs.data.raids import CURRENT_ZONE
+from lorgs.data.raids import VAULT_OF_THE_INCARNATES, ABERRUS, AMIRDRASSIL
 from lorgs.models.wow_role import WowRole
 from lorgs.models.wow_spec import WowSpec
 
