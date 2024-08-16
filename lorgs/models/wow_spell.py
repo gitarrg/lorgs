@@ -69,7 +69,7 @@ class WowSpell(base.MemoryModel):
     """
 
     spell_id: int
-    cooldown: int = 0
+    cooldown: float = 0
     duration: float = 0.0
     icon: str = ""
     name: str = ""
