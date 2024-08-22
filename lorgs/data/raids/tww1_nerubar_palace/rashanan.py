@@ -88,3 +88,29 @@ boss.add_cast(
     icon="ability_faultline.jpg",
     show=False,
 )
+
+"""
+
+## Erosive Spray = big AoE
+  - every 30sec or so
+    Debuff `440193` = raid wide dot after AoE
+
+## Web Reave
+- Grp Soak + Grip danach (mehr spieler = weniger grip)
+
+## Spinneret's Strands
+    - `439783` = Grey Circle on some players
+    - `456170` = debuff nach dem ablegen / solange man mit der Flaeche verbunden ist
+    --> small Raid Wide AoE wenn connection gebrochen wird
+
+## Rolling Acid:
+`439790` = Debuff auf Playern die die Waves haben
+`439785` = Debuff wenn man von der Welle gehitted wird
+
+## Infested Spawn
+- Green Circles auf paar Spielern --> initial dmg + spawns adds mit random fixate
+`455287` = Debuff wenn man von adds gefressen wird
+
+
+
+"""

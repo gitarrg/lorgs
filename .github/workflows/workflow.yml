@@ -31,10 +31,10 @@ jobs:
       - run: pip install boto3 requests
 
       # Update Images (old bucket)
-      - run: python scripts/load_images.py
-        env:
-          PYTHONPATH: "."
-          BUCKET_NAME: "lorrgs-assets"
+      # - run: python scripts/load_images.py
+      #   env:
+      #     PYTHONPATH: "."
+      #     BUCKET_NAME: "lorrgs-assets"
 
         # Update Images (new bucket)
       - run: python scripts/load_images.py
