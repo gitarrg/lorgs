@@ -20,6 +20,7 @@ async def test_exchange_code():
     code = ""
     creds = await discord.exchange_code(code, redirect_uri="http://localhost:9001/login")
     print(creds)
+    return creds
 
 
 async def test_get_user_profile():
@@ -85,13 +86,29 @@ async def test_get_member_permissions():
 
 
 async def main() -> None:
-    await test_exchange_code()
+    # x = await test_exchange_code()
     # await test_get_user_profile()
     # await test_get_user_info()
     # await test_get_member_info()
     # await test_get_member_roles()
     # await test_get_member_info_user_who_is_not_in_lorrgs()
     # await test_get_member_info_with_invalid_id()
+
+    # member_info = await discord.get_member_info(server_id, user_id)
+    # print(member_info)
+    # discord.api_request
+    # /users/@me/guilds
+    headers = {
+        "Authorization": f"Bearer ...",
+    }
+
+    response = await discord.api_request(endpoint="users/@me/guilds", headers=headers)
+    print(response)
+
+    import json
+
+    with open("/mnt/d/tmp.json", "w") as f:
+        json.dump(response, f, indent=4)
 
 
 if __name__ == "__main__":

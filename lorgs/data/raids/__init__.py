@@ -5,6 +5,7 @@ from lorgs.data.raids.sl3_sepulcher_of_the_first_ones import *
 from lorgs.data.raids.df1_vault_of_the_incarnates import *
 from lorgs.data.raids.df2_aberrus import *
 from lorgs.data.raids.df3_amirdrassil import *
+from lorgs.data.raids.tww1_nerubar_palace import *
 
 
 CURRENT_ZONE = AMIRDRASSIL
