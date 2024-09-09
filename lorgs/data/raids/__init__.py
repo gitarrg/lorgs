@@ -1,4 +1,5 @@
 """Defintions for all supported Raid-Tiers."""
+
 from lorgs.data.raids.sl1_castle_nathria import *
 from lorgs.data.raids.sl2_sanctum_of_domination import *
 from lorgs.data.raids.sl3_sepulcher_of_the_first_ones import *
@@ -8,4 +9,4 @@ from lorgs.data.raids.df3_amirdrassil import *
 from lorgs.data.raids.tww1_nerubar_palace import *
 
 
-CURRENT_ZONE = AMIRDRASSIL
+CURRENT_ZONE = NERUBAR_PALACE
