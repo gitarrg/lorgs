@@ -16,11 +16,7 @@ def expand_metric(payload: dict) -> list[str]:
     return role and role.metrics or []
 
 
-ALL_BOSSES = [
-    *VAULT_OF_THE_INCARNATES.bosses,
-    *ABERRUS.bosses,
-    *AMIRDRASSIL.bosses,
-]
+ALL_BOSSES = CURRENT_ZONE.bosses
 
 
 PAYLOAD_EXPANDERS: dict[str, list[str] | Callable[[Any], list[str]]] = {
