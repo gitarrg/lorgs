@@ -36,6 +36,20 @@ PRIEST.add_spell(              spell_id=32375,  cooldown=120,              color
 PRIEST.add_spell(              spell_id=73325,  cooldown=90,               color="#55daf1", name="Leap of Faith",        icon="priest_spell_leapoffaith_a.jpg", show=False, tags=[SpellTag.MOVE])
 PRIEST.add_spell(              spell_id=120517, cooldown=60,                                  name="Halo",                   icon="ability_priest_halo.jpg", show=False)
 
+PRIEST.add_spell(
+    spell_id=428924, cooldown=60,
+    name="Premonition", icon="inv_ability_oraclepriest_premonitioninsight.jpg",
+    show=False,
+    variations=[
+        428933,  # Premonition of Insight
+        428930,  # Premonition of Piety
+        428934,  # Premonition of Solace
+        440725,  # Premonition of Clairvoyance
+    ]
+)
+
+
+
 # Defensive
 PRIEST.add_spell(              spell_id=19236, cooldown=90,  duration=10,     name="Desperate Prayer",         icon="spell_holy_testoffaith.jpg", show=False, tags=[SpellTag.DEFENSIVE])
 PRIEST.add_spell(              spell_id=586,   cooldown=30,  duration=5,      name="Fade",                     icon="spell_magic_lesserinvisibilty.jpg", show=False, tags=[SpellTag.DEFENSIVE])
