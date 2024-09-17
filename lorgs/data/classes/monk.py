@@ -48,6 +48,8 @@ MONK_MISTWEAVER.add_spell(spell_id=115310, cooldown=180,              color="#00
 MONK_MISTWEAVER.add_spell(spell_id=325197, cooldown=180, duration=25, color="#e0bb36", name="Invoke Chi-Ji, the Red Crane",    icon="inv_pet_cranegod.jpg", tags=[SpellTag.RAID_CD])
 MONK_MISTWEAVER.add_spell(spell_id=116680, cooldown=30,               color="#22a5e6", name="Thunder Focus Tea",               icon="ability_monk_thunderfocustea.jpg", show=False)
 MONK_MISTWEAVER.add_spell(spell_id=399491,               duration=2,  color="#36b394", name="Sheilun's Gift",                  icon="inv_staff_2h_artifactshaohao_d_01.jpg", show=False)
+MONK_MISTWEAVER.add_spell(spell_id=443028, cooldown=90,  duration=4,  color="#72d81e", name="Celestial Conduit",               icon="inv_ability_conduitofthecelestialsmonk_celestialconduit.jpg", show=False)
+
 
 MONK_WINDWALKER.add_spell(spell_id=123904, cooldown=120, duration=24, color="#8cdbbc", name="Invoke Xuen, the White Tiger",    icon="ability_monk_summontigerstatue.jpg", tags=[SpellTag.DAMAGE])
 MONK_WINDWALKER.add_spell(spell_id=137639, cooldown=90,  duration=15, color="#be53db", name="Storm, Earth, and Fire",          icon="spell_nature_giftofthewild.jpg")
