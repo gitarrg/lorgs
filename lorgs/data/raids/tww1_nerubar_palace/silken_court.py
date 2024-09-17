@@ -6,39 +6,85 @@ from lorgs.models.raid_boss import RaidBoss
 SILKEN_COURT = RaidBoss(id=2921, name="The Silken Court", nick="Silken Court")
 boss = SILKEN_COURT
 
-################################################################################
-# Phase 1
-
-# Green Circles / just spread --> no dmg?
-
-# Frontal
-# Adds
-
-# Boss Spawn Webs
-# Boss Charge --> stop with webs
-
 
 ################################################################################
-# Intermission 1
+# Anub'arash
 
-# Break Shield
-# Side Step Frontals (in alte rein sobald weg)
+boss.add_cast(
+    spell_id=441791,
+    name="Burrowed Eruption",
+    duration=1.8,
+    cooldown=12,  # dot
+    color="hsl(40, 60%, 50%)",
+    icon="pvp_burrow.jpg",
+)
+
+boss.add_cast(
+    spell_id=442994,
+    name="Unleashed Swarm",
+    duration=9,
+    color="#bf4040",
+    icon="spell_nature_insectswarm.jpg",
+)
+
+boss.add_cast(
+    spell_id=438677,
+    name="Stinging Swarm",
+    duration=2,
+    color="hsl(170, 60%, 50%)",
+    icon="spell_nature_insect_swarm2.jpg",
+    show=False,
+)
+
+boss.add_buff(
+    spell_id=440179,
+    name="Entangled",
+    duration=12,
+    color="hsl(300, 60%, 60%)",
+    icon="inv_ability_web_buff.jpg",
+)
+
+boss.add_buff(
+    spell_id=451277,
+    name="Spike Storm",
+    color="hsl(110, 60%, 50%)",
+    icon="ability_hunter_barbedshot.jpg",
+)
 
 
 ################################################################################
-# Phase 2
+# Takazj
 
 
-# Grip, Everyone webbed
+boss.add_cast(
+    spell_id=438343,
+    name="Venomous Rain",
+    duration=1.5,
+    cooldown=10,
+    color="#6fbf40",
+    icon="ability_creature_disease_03.jpg",
+)
 
-# Debuffs
-# Jumps to closest player (like The Nine)
-# all 3 on boss --> stun + short dmg amp
+boss.add_cast(
+    spell_id=441626,
+    name="Web Vortex",
+    duration=2,
+    cooldown=16,
+    color="#6fbf40",
+    icon="inv_ability_web_groundstate.jpg",
+)
 
+boss.add_debuff(
+    spell_id=456245,
+    name="Stinging Delirium",
+    duration=12,
+    color="hsl(300, 60%, 60%)",
+    icon="ability_creature_disease_02.jpg",
+)
 
-################################################################################
-# Intermission 2
-
-
-################################################################################
-# Phase 3
+boss.add_debuff(
+    spell_id=450980,
+    name="Shatter Existence",
+    color="hsl(110, 60%, 50%)",
+    icon="inv_cosmicvoid_wave.jpg",
+)
