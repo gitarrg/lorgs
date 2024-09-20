@@ -35,8 +35,8 @@ WARRIOR.add_spell(             spell_id=97462,  cooldown=180, duration=10,      
 WARRIOR.add_spell(             spell_id=23920,  cooldown=10,  duration=5,                   name="Spell Reflection",    icon="ability_warrior_shieldreflection.jpg",      show=False, tags=[SpellTag.DEFENSIVE])
 WARRIOR.add_spell(             spell_id=107574, cooldown=90,  duration=20,                  name="Avatar",              icon="warrior_talent_icon_avatar.jpg",            show=False, variations=[401150])  # Prot uses a different Spell ID
 WARRIOR.add_spell(             spell_id=228920, cooldown=90,  duration=12, color="#d1793b", name="Ravager",             icon="warrior_talent_icon_ravager.jpg")
+WARRIOR.add_spell(             spell_id=446035, cooldown=90,  duration=6,                   name="Bladestorm",          icon="ability_warrior_bladestorm.jpg", tags=[SpellTag.DAMAGE])
 
-WARRIOR_ARMS.add_spell(        spell_id=446035, cooldown=90,  duration=6,                   name="Bladestorm",          icon="ability_warrior_bladestorm.jpg", tags=[SpellTag.DAMAGE])
 WARRIOR_ARMS.add_spell(        spell_id=262161, cooldown=45,  duration=10,                  name="Warbreaker",          icon="inv_warbreaker.jpg",                        show=False)
 WARRIOR_ARMS.add_spell(        spell_id=772,    cooldown=15,                                name="Rend",                icon="ability_gouge.jpg",                         show=False)
 WARRIOR_ARMS.add_spell(        spell_id=167105, cooldown=45,  duration=10, color="#ffbf29", name="Colossus Smash",      icon="ability_warrior_colossussmash.jpg",         show=False)
