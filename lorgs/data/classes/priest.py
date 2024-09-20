@@ -34,7 +34,7 @@ PRIEST_SHADOW     = WowSpec(role=RDPS, wow_class=PRIEST, name="Shadow")
 # PRIEST.add_spell(              spell_id=323673, cooldown=45,  duration=5,  color=COL_VENTR, name="Mindgames",             icon="ability_revendreth_priest.jpg")
 PRIEST.add_spell(              spell_id=32375,  cooldown=120,              color="#5f55f1", name="Mass Dispel",        icon="spell_arcane_massdispel.jpg", show=False)
 PRIEST.add_spell(              spell_id=73325,  cooldown=90,               color="#55daf1", name="Leap of Faith",        icon="priest_spell_leapoffaith_a.jpg", show=False, tags=[SpellTag.MOVE])
-PRIEST.add_spell(              spell_id=120517, cooldown=60,                                  name="Halo",                   icon="ability_priest_halo.jpg", show=False)
+PRIEST.add_spell(              spell_id=120517, cooldown=60,                                  name="Halo",                   icon="ability_priest_halo.jpg", show=False, variations=[120644])
 
 PRIEST.add_spell(
     spell_id=428924, cooldown=60,
