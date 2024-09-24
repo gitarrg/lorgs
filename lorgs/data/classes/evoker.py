@@ -48,6 +48,7 @@ EVOKER.add_spell(spell_id=370665, name="Rescue",             cooldown=60,       
 # DPS
 EVOKER_DEVASTATION.add_spell(spell_id=368847, name="Firestorm",  cooldown=20,  duration=12, color=COLOR_RED, icon="ability_evoker_firestorm.jpg", tags=[SpellTag.DAMAGE])
 EVOKER_DEVASTATION.add_spell(spell_id=375087, name="Dragonrage", cooldown=120, duration=14, color=COLOR_RED, icon="ability_evoker_dragonrage.jpg", tags=[SpellTag.DAMAGE])
+EVOKER_DEVASTATION.add_spell(spell_id=433874, name="Deep Breath", cooldown=120,             color=COLOR_BRONZE, icon="ability_evoker_deepbreath.jpg", tags=[SpellTag.DAMAGE])
 
 
 _filter_tip_the_scales = "IN RANGE FROM type = 'applybuff' AND ability.name = 'Tip the Scales' TO type = 'removebuff' AND ability.name = 'Tip the Scales' END"
