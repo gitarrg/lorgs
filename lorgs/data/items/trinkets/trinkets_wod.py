@@ -14,4 +14,5 @@ WowTrinket(
     icon="inv_misc_branch_01.jpg",
     item=109999,
     ilvl=483,
+    query=False,
 ).add_specs(*AGI_SPECS)
