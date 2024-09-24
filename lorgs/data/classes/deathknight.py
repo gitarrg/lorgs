@@ -43,6 +43,9 @@ DEATHKNIGHT.add_spell(         spell_id=48707,  cooldown=60,  duration=5,  color
 DEATHKNIGHT.add_spell(         spell_id=48792,  cooldown=180, duration=8,  color="#53aaed", name="Icebound Fortitude",    icon="spell_deathknight_iceboundfortitude.jpg", tags=[SpellTag.DEFENSIVE])
 DEATHKNIGHT.add_spell(         spell_id=49039,  cooldown=120, duration=10, color="#999999", name="Lichborne",             icon="spell_shadow_raisedead.jpg")
 
+# Hero Talents
+DEATHKNIGHT.add_spell(         spell_id=439843, cooldown=45,  duration=12, color="#1ce6d5", name="Reaper's Mark",         icon="inv_ability_deathbringerdeathknight_reapersmark.jpg", show=False)
+
 
 # Offensive
 DEATHKNIGHT_BLOOD.add_spell(   spell_id=49028,  cooldown=120, duration=8,  color="#ffbd24", name="Dancing Rune Weapon",   icon="inv_sword_07.jpg", tags=[SpellTag.TANK])
