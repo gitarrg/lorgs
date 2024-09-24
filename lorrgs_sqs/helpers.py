@@ -64,7 +64,7 @@ def expand_keywords(payload, cap=10) -> list[dict]:
     return payloads
 
 
-def queue_arn_to_url(arn: str):
+def queue_arn_to_url(arn: str = ""):
     """Converts an SQS Queue ARN into the URL Version.
 
     >>> queue_arn_to_url("arn:aws:sqs:eu-west-1:12345678:my_queue.fifo")
