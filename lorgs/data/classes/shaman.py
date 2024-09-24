@@ -42,6 +42,7 @@ SHAMAN.add_spell(              spell_id=192077, cooldown=120, duration=15,      
 SHAMAN.add_spell(              spell_id=21169,                                              name="Reincarnation",              icon="spell_shaman_improvedreincarnation.jpg",    show=False, tags=[SpellTag.DEFENSIVE])
 SHAMAN.add_spell(              spell_id=108271, cooldown=90,  duration=12,                  name="Astral Shift",               icon="ability_shaman_astralshift.jpg",            show=False, tags=[SpellTag.DEFENSIVE])
 SHAMAN.add_buff(               spell_id=381755, cooldown=300,              color="#e0a757", name="Earth Elemental",          icon="spell_nature_earthelemental_totem.jpg",     show=False, tags=[SpellTag.DEFENSIVE])  # Buff = HP Increase from Earth Ele
+SHAMAN.add_spell(              spell_id=108270, cooldown=180, duration=30, color="#e27739", name="Stone Bulwark Totem",      icon="ability_shaman_stonebulwark.jpg",           show=False, tags=[SpellTag.DEFENSIVE])
 
 
 # Offensive
