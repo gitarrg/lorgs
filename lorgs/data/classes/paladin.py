@@ -46,6 +46,7 @@ PALADIN_HOLY.add_spell(        spell_id=216331, cooldown=45,  duration=12, color
 PALADIN_HOLY.add_spell(        spell_id=114158, cooldown=60,  duration=14, color="#fcea74", name="Light's Hammer",                  icon="spell_paladin_lightshammer.jpg", show=False)
 PALADIN_HOLY.add_spell(        spell_id=414170, cooldown=60,               color="#fcea74", name="Daybreak",                        icon="spell_holy_aspiration.jpg", show=False)
 PALADIN_HOLY.add_spell(        spell_id=200652, cooldown=90,  duration=14, color="#addbd8", name="Tyr's Deliverance",               icon="inv_mace_2h_artifactsilverhand_d_01.jpg", show=True)
+PALADIN_HOLY.add_spell(        spell_id=114165, cooldown=30,               color="#51df70", name="Holy Prism",                      icon="spell_paladin_holyprism.jpg", show=False)
 
 
 PALADIN_PROTECTION.add_buff(   spell_id=31850,  cooldown=120, duration=8,  color="#fcea74", name="Ardent Defender",                 icon="spell_holy_ardentdefender.jpg", tags=[SpellTag.TANK])
