@@ -51,7 +51,8 @@ class FightRankingsFight(BaseModel):
     melee: int = 0
     ranged: int = 0
 
-    bracketData: int = 0
+    bracketData: float = 0
+    """A specific bracket (e.g., item level range) to use instead of overall rankings. For WoW, brackets are item levels or keystones. For FF, brackets are patches."""
 
 
 class FightRankings(BaseModel):
