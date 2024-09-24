@@ -10,6 +10,7 @@ WowTrinket(
     icon="inv_offhand_draenei_a_02.jpg",
     item=158319,
     ilvl=483,
+    query=False,
 ).add_specs(*AGI_SPECS)
 
 
@@ -23,6 +24,7 @@ WowTrinket(
     show=False,
     item=159630,
     ilvl=483,
+    query=False,
 ).add_specs(*INT_SPECS)
 
 

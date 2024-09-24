@@ -68,6 +68,7 @@ WowTrinket(
     icon="ability_paladin_lightofthemartyr.jpg",
     item=207552,
     ilvl=483,
+    query=False,
 ).add_specs(*HEAL.specs)
 
 
@@ -80,6 +81,7 @@ WowTrinket(
     icon="achievement_dungeon_ulduarraid_misc_06.jpg",
     item=207581,
     ilvl=483,
+    query=False,
 ).add_specs(*DPS_SPECS)
 
 
@@ -91,4 +93,5 @@ WowTrinket(
     icon="inv_staff_2h_dracthyr_c_01.jpg",
     item=208321,
     ilvl=483,
+    query=False,
 ).add_specs(*INT_SPECS)
