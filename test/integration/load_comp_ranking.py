@@ -5,11 +5,25 @@ dotenv.load_dotenv()  # pylint: disable=wrong-import-position
 import asyncio
 
 from lorgs import data  # pylint: disable=unused-import
-from lorgs.models.warcraftlogs_comp_ranking import CompRanking
+from lorgs.models import warcraftlogs_comp_ranking
 
 
-async def test__load_rankings() -> None:
-    comp_ranking = CompRanking.get_or_create(boss_slug="kazzara-the-hellforged")
+async def test__load_rankings(boss_slug: str, page=1, clear=False) -> None:
+    ################################
+    # get comp ranking object
+    ranking = warcraftlogs_comp_ranking.CompRanking.get_or_create(boss_slug=boss_slug)
+    if not ranking.boss:
+        return False, "invalid boss"
+
+    ################################
+    # load and save
+    await ranking.load(page=page, clear_old=clear)
+    ranking.save()
+    return True, "done"
+
+
+async def test__print_rankings(boss_slug: str) -> None:
+    comp_ranking = warcraftlogs_comp_ranking.CompRanking.get_or_create(boss_slug=boss_slug)
     comp_ranking.sort_reports()
 
     for report in comp_ranking.reports:
@@ -20,7 +34,8 @@ async def test__load_rankings() -> None:
 
 
 async def main() -> None:
-    await test__load_rankings()
+    boss_slug = "sikran-captain-of-the-sureki"
+    await test__load_rankings(boss_slug)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 """Models represeting the Data we recive from WCL under the worldData.encounter.fightRankings."""
+
 from __future__ import annotations
 
 import datetime
