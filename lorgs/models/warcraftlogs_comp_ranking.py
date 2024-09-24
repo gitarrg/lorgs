@@ -1,4 +1,5 @@
 """Models to store our list of full reports.."""
+
 from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
@@ -238,7 +239,7 @@ class CompRanking(base.S3Model, warcraftlogs_base.wclclient_mixin):
         await self.load_many(fights_to_load, raise_errors=False)  # type: ignore
 
         self.sort_reports()
-        self.updated = datetime.utcnow()
+        self.updated = datetime.datetime.utcnow()
 
     def sort_reports(self) -> None:
         self.reports = sort_reports(self.reports)
