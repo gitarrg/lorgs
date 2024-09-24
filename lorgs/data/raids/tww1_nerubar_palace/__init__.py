@@ -10,6 +10,7 @@ from lorgs.data.raids.tww1_nerubar_palace.ovinax import OVINAX
 from lorgs.data.raids.tww1_nerubar_palace.kyveza import KYVEZA
 from lorgs.data.raids.tww1_nerubar_palace.silken_court import SILKEN_COURT
 from lorgs.data.raids.tww1_nerubar_palace.ansurek import ANSUREK
+from lorgs.data.raids.tww1_nerubar_palace.trinkets import *
 
 
 ################################################################################
