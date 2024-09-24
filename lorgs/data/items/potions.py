@@ -1,4 +1,5 @@
 """Define Consumeables/Potions players can use."""
+
 # pylint: disable=line-too-long
 # pylint: disable=wildcard-import
 # pylint: disable=unused-wildcard-import
@@ -24,16 +25,13 @@ WowPotion(
 
 
 WowPotion(
-    spell_id=370511,
+    spell_id=431416,  # Algari Healing Potion
     cooldown=300,
     color="#e35f5f",
-    name="Refreshing Healing Potion",
-    icon="inv_10_alchemy_bottle_shape4_red.jpg",
-    item=191380,
-    variations=[
-        415569,  # Dreamwalker's Healing Potion
-        423414,  # Potion of Withering Dreams
-    ],
+    name="Health Pot",
+    icon="inv_flask_red.jpg",
+    item=211880,
+    variations=[],
 ).add_specs(*ALL_SPECS)
 
 
@@ -42,16 +40,13 @@ WowPotion(
 #
 
 WowPotion(
-    spell_id=371028,
+    spell_id=431932,  # Tempered Potion
     duration=30,
-    color="#297acc",
-    name="Elemental Potion of Ultimate Power",
-    icon="trade_alchemy_dpotion_b20.jpg",
-    item=191383,
-    variations=[
-        191389,  # Elemental Potion of Power
-        371028,
-    ],
+    color="#ffe714",
+    name="Tempered Potion",
+    icon="trade_alchemy_potiona4.jpg",
+    item=212265,
+    variations=[],
 ).add_specs(*ALL_SPECS)
 
 
@@ -73,27 +68,28 @@ WowPotion(
 #
 
 WowPotion(
-    spell_id=370607,
+    spell_id=431418,
     color=COL_MANA,
-    name="Aerated Mana Potion",
-    icon="inv_10_alchemy_bottle_shape1_blue.jpg",
-    item=191386,
+    name="Algari Mana Potion",
+    icon="inv_flask_blue.jpg",
+    item=212241,
 ).add_specs(*HEAL.specs)
 
-WowPotion(
-    spell_id=371152,
-    duration=10,
-    color=COL_MANA,
-    name="Potion of Spiritual Clarity",
-    icon="inv_10_alchemy_bottle_shape4_green.jpg",
-    item=191367,
-).add_specs(*HEAL.specs)
-
-WowPotion(
-    spell_id=371033,
-    duration=10,
-    color=COL_MANA,
-    name="Potion of Frozen Focus",
-    icon="inv_10_alchemy_bottle_shape4_blue.jpg",
-    item=191363,
-).add_specs(*HEAL.specs)
+# WowPotion(
+#     spell_id=371152,
+#     duration=10,
+#     color=COL_MANA,
+#     name="Potion of Spiritual Clarity",
+#     icon="inv_10_alchemy_bottle_shape4_green.jpg",
+#     item=191367,
+# ).add_specs(*HEAL.specs)
+#
+# WowPotion(
+#     spell_id=371033,
+#     duration=10,
+#     color=COL_MANA,
+#     name="Potion of Frozen Focus",
+#     icon="inv_10_alchemy_bottle_shape4_blue.jpg",
+#     item=191363,
+# ).add_specs(*HEAL.specs)
+#
