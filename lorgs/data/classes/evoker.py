@@ -63,6 +63,7 @@ EVOKER_PRESERVATION.add_spell(spell_id=363534, name="Rewind",             cooldo
 EVOKER_PRESERVATION.add_spell(spell_id=359816, name="Dreamflight",        cooldown=120, duration=15, color="#33a36d",    icon="ability_evoker_dreamflight.jpg", tags=[SpellTag.RAID_CD])
 EVOKER_PRESERVATION.add_buff( spell_id=370562, name="Stasis",             cooldown=90,               color=COLOR_BRONZE, icon="ability_evoker_stasis.jpg", tags=[SpellTag.RAID_CD])
 EVOKER_PRESERVATION.add_spell(spell_id=443328, name="Engulf",             cooldown=30,               color="#dd405a",  icon="inv_ability_flameshaperevoker_engulf.jpg", show=False)
+EVOKER_PRESERVATION.add_spell(spell_id=355936, name="Dream Breath",       cooldown=30,               color="#59ebb3",  icon="ability_evoker_dreambreath.jpg", show=False)
 
 
 # Augmentation
