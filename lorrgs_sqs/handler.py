@@ -63,7 +63,7 @@ async def process_message(message):
     payloads = helpers.expand_keywords(payload)
     # print("process_message.payloads", payloads)
     if len(payloads) > 1:
-        queue_url = helpers.queue_arn_to_url(message.get("eventSourceARN"))
+        queue_url = helpers.queue_arn_to_url(message.get("eventSourceARN", ""))
 
         messages = [{"MessageBody": json.dumps(payload), "MessageGroupId": str(uuid.uuid4())} for payload in payloads]
 
