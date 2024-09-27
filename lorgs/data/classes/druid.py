@@ -59,10 +59,9 @@ DRUID_GUARDIAN.add_spell(SURVIVAL_INSTINCTS)
 
 # Offensive
 DRUID_BALANCE.add_spell(     spell_id=194223, cooldown=180, duration=20,                  name="Celestial Alignment",            icon="spell_nature_natureguardian.jpg", tags=[SpellTag.DAMAGE])
-DRUID_BALANCE.add_buff(      spell_id=102560, cooldown=180,                               name="Incarnation: Chosen of Elune",   icon="spell_druid_incarnation.jpg", variations=[383410], tags=[SpellTag.DAMAGE])
+DRUID_BALANCE.add_spell(     spell_id=102560, cooldown=180, duration=15,                  name="Incarnation: Chosen of Elune",   icon="spell_druid_incarnation.jpg", variations=[383410], tags=[SpellTag.DAMAGE])
 DRUID_BALANCE.add_spell(     spell_id=205636, cooldown=60,  duration=10,                  name="Force of Nature",                icon="ability_druid_forceofnature.jpg",           show=False)
 DRUID_BALANCE.add_spell(     spell_id=202770, cooldown=60,  duration=8,  color="#749cdb", name="Fury of Elune",                  icon="ability_druid_dreamstate.jpg",              show=False)
-DRUID_BALANCE.add_buff(      spell_id=393960,                            color="#bb74db", name="Arcanic Pulsar",                 icon="spell_arcane_arcane03.jpg", show=False, query=False)
 
 
 DRUID_FERAL.add_spell(       spell_id=106951, cooldown=120, duration=15,                  name="Berserk",                        icon="ability_druid_berserk.jpg", variations=[102543], tags=[SpellTag.DAMAGE])
@@ -88,19 +87,6 @@ DRUID_RESTORATION.add_spell( spell_id=392356, cooldown=0,   duration=9,  color="
 
 # Additional Spells (not tracked)
 REBIRTH = WowSpell(spell_id=20484, name="Rebirth", icon="spell_nature_reincarnation.jpg")
-
-
-def split_pulsar_procs(actor: warcraftlogs_actor.BaseActor, status: str):
-    if status != "success":
-        return
-    if not actor:
-        return
-    
-    for cast in actor.casts:
-        if cast.spell_id in (102560, 383410) and cast.duration and cast.duration < 20_000:
-            cast.spell_id = 393960
-
-warcraftlogs_actor.BaseActor.event_actor_load.connect(split_pulsar_procs)
 
 
 def split_reforestation(actor: warcraftlogs_actor.BaseActor, status: str):
