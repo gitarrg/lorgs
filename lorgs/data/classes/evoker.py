@@ -68,6 +68,6 @@ EVOKER_PRESERVATION.add_spell(spell_id=355936, name="Dream Breath",       cooldo
 
 # Augmentation
 EVOKER_AUGMENTATION.add_buff( spell_id=395296, name="Ebon Might Buff",                            color="#bf8330", icon="spell_sarkareth.jpg", show=False)
-EVOKER_AUGMENTATION.add_spell(spell_id=403631, name="Breath of Eons",  cooldown=120, duration=12, color="#e4e267", icon="ability_evoker_breathofeons.jpg", tags=[SpellTag.DAMAGE])
+EVOKER_AUGMENTATION.add_spell(spell_id=403631, name="Breath of Eons",  cooldown=120, duration=12, color="#e4e267", icon="ability_evoker_breathofeons.jpg", tags=[SpellTag.DAMAGE], variations=[442204])
 EVOKER_AUGMENTATION.add_spell(spell_id=404977, name="Time Skip",       cooldown=180,              color="#e8bf46", icon="ability_evoker_timeskip.jpg")
 EVOKER_AUGMENTATION.add_spell(spell_id=406732, name="Spatial Paradox", cooldown=120, duration=10,                    icon="ability_evoker_stretchtime.jpg", show=False, tags=[SpellTag.MOVE])
