@@ -7,3 +7,5 @@ class WowTrinket(wow_item.WowItem):
     """OnUse Trinkets."""
 
     spell_type: str = SpellType.TRINKET
+
+    color = "#a335ee"  # Epic Items
