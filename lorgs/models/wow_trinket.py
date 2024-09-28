@@ -8,4 +8,4 @@ class WowTrinket(wow_item.WowItem):
 
     spell_type: str = SpellType.TRINKET
 
-    color = "#a335ee"  # Epic Items
+    color: str = "#a335ee"  # Epic Items
