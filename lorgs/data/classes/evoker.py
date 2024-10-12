@@ -71,3 +71,46 @@ EVOKER_AUGMENTATION.add_buff( spell_id=395296, name="Ebon Might Buff",          
 EVOKER_AUGMENTATION.add_spell(spell_id=403631, name="Breath of Eons",  cooldown=120, duration=12, color="#e4e267", icon="ability_evoker_breathofeons.jpg", tags=[SpellTag.DAMAGE], variations=[442204])
 EVOKER_AUGMENTATION.add_spell(spell_id=404977, name="Time Skip",       cooldown=180,              color="#e8bf46", icon="ability_evoker_timeskip.jpg")
 EVOKER_AUGMENTATION.add_spell(spell_id=406732, name="Spatial Paradox", cooldown=120, duration=10,                    icon="ability_evoker_stretchtime.jpg", show=False, tags=[SpellTag.MOVE])
+
+
+
+# list[int]: Spells that are able to be stores in Stasis
+STATIS_SPELLS = [
+    443328, # Engulf
+    355936, # Dream Breath
+]
+
+
+def filter_stasis_spells(actor: warcraftlogs_actor.BaseActor, status: str):
+    """Remove Spells cast by stasis.
+    
+    Those are no manual casts, and thus can be confusing if they show up in the timeline
+
+    """
+    if status != "success":
+        return
+    if not actor:
+        return
+    
+    last_stasis_end = -99999
+    threashold = 1000  # 1sec. I takes around 1sec for Stasis to release.
+
+    for cast in actor.casts:
+
+        # Update Stasis Release Time
+        if cast.spell_id == 370562:
+            last_stasis_end = cast.timestamp + cast.duration
+            continue
+
+        # Filter out Spells within 1sec of Stasis Release,
+        # assuming they arn't real casts
+        in_stasis_threashold = (cast.timestamp - last_stasis_end) < threashold
+        statis_spell_id = cast.spell_id in STATIS_SPELLS
+        print("in_stasis_threashold", in_stasis_threashold, "statis_spell_id", statis_spell_id)
+        if in_stasis_threashold and statis_spell_id:
+            cast.spell_id = -1
+
+    actor.casts = [cast for cast in actor.casts if cast.spell_id > 0]
+
+
+warcraftlogs_actor.BaseActor.event_actor_load.connect(filter_stasis_spells)
