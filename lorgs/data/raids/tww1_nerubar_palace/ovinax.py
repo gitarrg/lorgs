@@ -11,7 +11,7 @@ boss = OVINAX
 boss.add_cast(
     spell_id=442432,
     name="Ingest Black Blood",
-    duration=1 + 5,
+    duration=1 + 15,
     color="#bf4040",
     icon="inv_achievement_raidnerubian_swarmmother.jpg",
 )
@@ -40,5 +40,12 @@ boss.add_cast(
 # 446351 = too close to dispel target = get rooted
 
 
-# 441368 = Tank Dot
-# 441362 = Tank Dot #2
+# Tank Debuff
+boss.add_cast(
+    spell_id=443003,
+    name="Volatile Concoction",
+    duration=1.5 + 8,
+    color="#478fb3",
+    icon="spell_shadow_unstableaffliction_2.jpg",
+    show=False,
+)
