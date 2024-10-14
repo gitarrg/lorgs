@@ -9,13 +9,16 @@ from lorgs.data.classes.other import OTHER_EXTERNALS
 from lorgs.data.constants import *
 
 
-BLOODLUST = OTHER_EXTERNALS.add_buff(color="#5465ff", spell_id=2825, duration=40, name="Bloodlust", icon="spell_nature_bloodlust.jpg")
-BLOODLUST.add_variation(32182)  # Heroism
-BLOODLUST.add_variation(80353)  # Time Warp
-BLOODLUST.add_variation(264667) # Primal Rage
-BLOODLUST.add_variation(272678) # Primal Rage
-BLOODLUST.add_variation(272678) # Primal Rage
-BLOODLUST.add_variation(390386) # Fury of the Aspects
+# To avoid issues with different Talents that can proc Bloodlust like Effects,
+# we track the "Sated-Debuff" instead
+# we use the Bloodlust Buffs Spell ID to get a cleaner tooltip and ease the migration from Buff -> Debuff
+BLOODLUST = OTHER_EXTERNALS.add_debuff(color="#5465ff", spell_id=2825, duration=40, name="Bloodlust", icon="spell_nature_bloodlust.jpg")
+BLOODLUST.add_variation(57723) # Exhaustion
+BLOODLUST.add_variation(390435) # Exhaustion v2
+BLOODLUST.add_variation(57724) # Sated
+BLOODLUST.add_variation(80354) # Temporal Displacement
+BLOODLUST.add_variation(264689) # Fatigued
+
 
 ################################################################################
 # External Defensive
@@ -40,6 +43,7 @@ BLESSING_OF_SUMMER = OTHER_EXTERNALS.add_buff(color=PALADIN.color, spell_id=3880
 for s in ALL_SPECS:
     s.add_spells(*OTHER_EXTERNALS.spells)
     s.add_buffs(*OTHER_EXTERNALS.buffs)
+    s.add_debuffs(*OTHER_EXTERNALS.debuffs)
 
 
 ################################################################################
@@ -53,5 +57,5 @@ for s in HEAL.specs:
 
 ################################################################################
 
-for spell in (OTHER_EXTERNALS.spells + OTHER_EXTERNALS.buffs):
+for spell in (OTHER_EXTERNALS.spells + OTHER_EXTERNALS.buffs + OTHER_EXTERNALS.debuffs):
     spell.show = False
