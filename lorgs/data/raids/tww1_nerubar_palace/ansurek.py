@@ -65,6 +65,9 @@ boss.add_cast(
     duration=6,
     color="hsl(130, 55%, 40%)",
     icon="misc_legionfall_warlock.jpg",
+    variations=[
+        450191,  # Mythic P2
+    ],
 )
 
 boss.add_buff(
