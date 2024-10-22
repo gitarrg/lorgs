@@ -68,7 +68,7 @@ CelestialConduit = WowSpell(
     cooldown=90, duration=4, color="#72d81e",
     icon="inv_ability_conduitofthecelestialsmonk_celestialconduit.jpg",
     show=False,
-    color=MONK.color, spell_type=MONK.name_slug,
+    spell_type=MONK.name_slug,
 )
 MONK_MISTWEAVER.add_spell(CelestialConduit)
 MONK_WINDWALKER.add_spell(CelestialConduit)
