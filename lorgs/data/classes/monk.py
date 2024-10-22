@@ -47,7 +47,6 @@ MONK_MISTWEAVER.add_spell(spell_id=322118, cooldown=180, duration=4.5 ,         
 MONK_MISTWEAVER.add_spell(spell_id=115310, cooldown=180,              color="#00FF98", name="Revival",                         icon="spell_monk_revival.jpg", tags=[SpellTag.RAID_CD], variations=[388615])
 MONK_MISTWEAVER.add_spell(spell_id=325197, cooldown=180, duration=25, color="#e0bb36", name="Invoke Chi-Ji, the Red Crane",    icon="inv_pet_cranegod.jpg", tags=[SpellTag.RAID_CD])
 MONK_MISTWEAVER.add_spell(spell_id=116680, cooldown=30,               color="#22a5e6", name="Thunder Focus Tea",               icon="ability_monk_thunderfocustea.jpg", show=False)
-MONK_MISTWEAVER.add_spell(spell_id=443028, cooldown=90,  duration=4,  color="#72d81e", name="Celestial Conduit",               icon="inv_ability_conduitofthecelestialsmonk_celestialconduit.jpg", show=False)
 
 
 MONK_WINDWALKER.add_spell(spell_id=123904, cooldown=120, duration=24, color="#8cdbbc", name="Invoke Xuen, the White Tiger",    icon="ability_monk_summontigerstatue.jpg", tags=[SpellTag.DAMAGE])
@@ -61,3 +60,15 @@ MONK_BREWMASTER.add_spell(spell_id=132578, cooldown=180, duration=25,           
 MONK_BREWMASTER.add_spell(spell_id=115176, cooldown=300, duration=8,                   name="Zen Meditation",                  icon="ability_monk_zenmeditation.jpg", tags=[SpellTag.TANK])
 MONK_BREWMASTER.add_spell(spell_id=115203, cooldown=360, duration=15, color="#ffb145", name="Fortifying Brew",                 icon="ability_monk_fortifyingale_new.jpg", tags=[SpellTag.DEFENSIVE])
 MONK_BREWMASTER.add_spell(spell_id=325153, cooldown=60,  duration=3,  color="#cc5a89", name="Exploding Keg",                 icon="archaeology_5_0_emptykegofbrewfatherxinwoyin.jpg")
+
+
+# Hero Talents
+CelestialConduit = WowSpell(
+    spell_id=443028, name="Celestial Conduit",
+    cooldown=90, duration=4, color="#72d81e",
+    icon="inv_ability_conduitofthecelestialsmonk_celestialconduit.jpg",
+    show=False,
+    color=MONK.color, spell_type=MONK.name_slug,
+)
+MONK_MISTWEAVER.add_spell(CelestialConduit)
+MONK_WINDWALKER.add_spell(CelestialConduit)
