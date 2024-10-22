@@ -69,7 +69,7 @@ PRIEST_HOLY.add_spell(         spell_id=64843,  cooldown=180, duration=8, color=
 PRIEST_HOLY.add_spell(         spell_id=265202, cooldown=240,                               name="Holy Word: Salvation",  icon="ability_priest_archangel.jpg",    tags=[SpellTag.DYNAMIC_CD, SpellTag.RAID_CD])
 PRIEST_HOLY.add_spell(         spell_id=200183, cooldown=120, duration=20,                  name="Apotheosis",            icon="ability_priest_ascension.jpg",    show=False)
 PRIEST_HOLY.add_buff(          spell_id=27827,                             color="#82eeff", name="Spirit of Redemption",  icon="inv_enchant_essenceeternallarge.jpg",    show=True)
-PRIEST_HOLY.add_spell(         spell_id=64901, cooldown=300, duration=5,   color="#4dd196", name="Symbol of Hope",        icon="spell_holy_symbolofhope.jpg",    show=False, tags=[SpellTag.RAID_CD])
+PRIEST_HOLY.add_spell(         spell_id=64901, cooldown=180, duration=5,   color="#4dd196", name="Symbol of Hope",        icon="spell_holy_symbolofhope.jpg",    show=False, tags=[SpellTag.RAID_CD])
 PRIEST_HOLY.add_spell(         spell_id=372835, cooldown=120,              color="#edbb2f", name="Lightwell",             icon="spell_holy_summonlightwell.jpg",    show=False, tags=[SpellTag.RAID_CD])
 
 PRIEST_SHADOW.add_spell(       spell_id=228260, cooldown=120, duration=15, color="#b330e3", name="Voidform",              icon="spell_priest_voidform.jpg", tags=[SpellTag.DAMAGE])  # tooltip: 228264
