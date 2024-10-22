@@ -43,6 +43,8 @@ WARLOCK_DEMONOLOGY.add_spell(  spell_id=264119, cooldown=45,  duration=15, color
 WARLOCK_DEMONOLOGY.add_spell(  spell_id=267217, cooldown=180, duration=15,                    name="Nether Portal",          icon="inv_netherportal.jpg")
 WARLOCK_DEMONOLOGY.add_spell(  spell_id=267171, cooldown=60,               color="#d9a336", name="Demonic Strength",       icon="ability_warlock_demonicempowerment.jpg", show=False)
 WARLOCK_DEMONOLOGY.add_spell(  spell_id=386833, cooldown=45,               color="#43964a", name="Guillotine",             icon="inv_axe_2h_felfireraid_d_01.jpg", show=False)
+WARLOCK_DEMONOLOGY.add_spell(  spell_id=267211, cooldown=30, duration=8,   color="#d14bbb", name="Bilescourge Bombers",    icon="ability_hunter_pet_bat.jpg", show=False)
+
 
 WARLOCK_DESTRUCTION.add_spell( spell_id=1122,   cooldown=180, duration=30, color="#91c45a", name="Summon Infernal",        icon="spell_shadow_summoninfernal.jpg", tags=[SpellTag.DAMAGE])
 WARLOCK_DESTRUCTION.add_spell( spell_id=80240,  cooldown=30,  duration=12, color="#cc5252", name="Havoc",                  icon="ability_warlock_baneofhavoc.jpg", show=False)
