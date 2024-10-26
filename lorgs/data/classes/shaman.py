@@ -66,6 +66,7 @@ SHAMAN_RESTORATION.add_spell(  spell_id=16191,  cooldown=180, duration=8,  color
 SHAMAN_RESTORATION.add_spell(  spell_id=207399, cooldown=300, duration=30, color="#d15a5a", name="Ancestral Protection Totem", icon="spell_nature_reincarnation.jpg", tags=[SpellTag.RAID_CD])
 SHAMAN_RESTORATION.add_spell(  spell_id=198838, cooldown=60,  duration=15, color="#a47ea6", name="Earthen Wall Totem",         icon="spell_nature_stoneskintotem.jpg",           show=False)
 SHAMAN_RESTORATION.add_spell(  spell_id=157153, cooldown=30,  duration=15, color="#96d0eb", name="Cloudburst Totem",           icon="ability_shaman_condensationtotem.jpg",      show=False)
+SHAMAN_RESTORATION.add_spell(  spell_id=5394,   cooldown=30,  duration=15, color="#96d0eb", name="Healing Stream Totem",       icon="inv_spear_04.jpg",      show=False)
 
 
 SHAMAN_RESTORATION.add_buff(   spell_id=114052, cooldown=180,                  color="#ffcb6b", name="Ascendance",                 icon="spell_fire_elementaldevastation.jpg", tags=[SpellTag.RAID_CD])
