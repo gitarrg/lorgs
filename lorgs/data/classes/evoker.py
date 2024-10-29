@@ -107,7 +107,6 @@ def filter_stasis_spells(actor: warcraftlogs_actor.BaseActor, status: str):
         # assuming they arn't real casts
         in_stasis_threashold = (cast.timestamp - last_stasis_end) < threashold
         statis_spell_id = cast.spell_id in STATIS_SPELLS
-        print("in_stasis_threashold", in_stasis_threashold, "statis_spell_id", statis_spell_id)
         if in_stasis_threashold and statis_spell_id:
             cast.spell_id = -1
 
