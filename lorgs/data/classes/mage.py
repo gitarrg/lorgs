@@ -34,7 +34,7 @@ MAGE.add_buff(        spell_id=382440, cooldown=60,  duration=4,  color=COL_NF, 
 
 # Defensives
 MAGE.add_buff(         spell_id=45438,  cooldown=240,                               name="Ice Block",          icon="spell_frost_frost.jpg",                     show=False, tags=[SpellTag.DEFENSIVE])
-MAGE.add_buff(         spell_id=55342,  cooldown=120,                               name="Mirror Image",       icon="spell_magic_lesserinvisibilty.jpg",         show=False, tags=[SpellTag.DEFENSIVE])
+MAGE.add_buff(         spell_id=55342,  cooldown=120, duration=40,                  name="Mirror Image",       icon="spell_magic_lesserinvisibilty.jpg",         show=False, tags=[SpellTag.DEFENSIVE])
 MAGE.add_buff(         spell_id=342246, cooldown=60,                                name="Alter Time",         icon="spell_mage_altertime.jpg",                  show=False, tags=[SpellTag.DEFENSIVE], variations=[342246])
 MAGE.add_spell(        spell_id=414660, cooldown=180,                               name="Mass Barrier",       icon="ability_racial_magicalresistance.jpg",      show=False, tags=[SpellTag.DEFENSIVE])
 MAGE.add_spell(        spell_id=414658, cooldown=240, duration=6,                   name="Ice Cold",           icon="spell_fire_bluefire.jpg",                   show=False, tags=[SpellTag.DEFENSIVE])
