@@ -100,7 +100,7 @@ def filter_stasis_spells(actor: warcraftlogs_actor.BaseActor, status: str):
 
         # Update Stasis Release Time
         if cast.spell_id == 370562:
-            last_stasis_end = cast.timestamp + cast.duration
+            last_stasis_end = cast.timestamp + cast.get_duration()
             continue
 
         # Filter out Spells within 1sec of Stasis Release,
