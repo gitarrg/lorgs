@@ -56,6 +56,7 @@ class Report(BaseModel):
     @validator("events", pre=True)
     def unwrap_event_data(cls, v):
         """Events come in wraped in an ReportEventPaginator. Lets skip that step."""
+        v = v or {}
         try:
             return v["data"]
         except KeyError:
