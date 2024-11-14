@@ -37,6 +37,7 @@ SHAMAN.add_spell(              spell_id=375982, cooldown=45,               color
 # Utils
 SHAMAN.add_spell(              spell_id=108281, cooldown=120, duration=10,                  name="Ancestral Guidance",         icon="ability_shaman_ancestralguidance.jpg",      show=False, tags=[SpellTag.RAID_CD])
 SHAMAN.add_spell(              spell_id=192077, cooldown=120, duration=15,                  name="Windrush Totem",             icon="ability_shaman_windwalktotem.jpg",          show=False, tags=[SpellTag.MOVE])
+SHAMAN.add_spell(              spell_id=108285, cooldown=180,                               name="Totemic Recall",             icon="ability_shaman_multitotemactivation.jpg",   show=False)
 
 # Defensives
 SHAMAN.add_spell(              spell_id=21169,                                              name="Reincarnation",              icon="spell_shaman_improvedreincarnation.jpg",    show=False, tags=[SpellTag.DEFENSIVE])
