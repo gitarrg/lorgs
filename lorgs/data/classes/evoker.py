@@ -62,10 +62,10 @@ EVOKER_DEVASTATION.add_spell(spell_id=382411, name="Eternity Surge", cooldown=30
 EVOKER_PRESERVATION.add_spell(spell_id=370960, name="Emerald Communion",  cooldown=180, duration=5,                      icon="ability_evoker_green_01.jpg", tags=[SpellTag.RAID_CD])
 EVOKER_PRESERVATION.add_spell(spell_id=363534, name="Rewind",             cooldown=180,              color=COLOR_BRONZE, icon="ability_evoker_rewind.jpg", tags=[SpellTag.RAID_CD])
 EVOKER_PRESERVATION.add_spell(spell_id=359816, name="Dreamflight",        cooldown=120, duration=15, color="#33a36d",    icon="ability_evoker_dreamflight.jpg", tags=[SpellTag.RAID_CD])
-EVOKER_PRESERVATION.add_buff( spell_id=370562, name="Stasis",             cooldown=90,               color=COLOR_BRONZE, icon="ability_evoker_stasis.jpg", tags=[SpellTag.RAID_CD])
 EVOKER_PRESERVATION.add_spell(spell_id=443328, name="Engulf",             cooldown=30,               color="#dd405a",  icon="inv_ability_flameshaperevoker_engulf.jpg", show=False)
 EVOKER_PRESERVATION.add_spell(spell_id=355936, name="Dream Breath",       cooldown=30,               color="#59ebb3",  icon="ability_evoker_dreambreath.jpg", show=False)
-
+STASIS_CHARGE = EVOKER_PRESERVATION.add_spell(spell_id=370537, name="Stasis", cooldown=90, color=COLOR_BRONZE, icon="ability_evoker_stasis.jpg", tags=[SpellTag.RAID_CD])
+STASIS_RELEASE = EVOKER_PRESERVATION.add_spell(spell_id=370564)
 
 # Augmentation
 EVOKER_AUGMENTATION.add_buff( spell_id=395296, name="Ebon Might Buff",                            color="#bf8330", icon="spell_sarkareth.jpg", show=False)
@@ -75,6 +75,40 @@ EVOKER_AUGMENTATION.add_spell(spell_id=406732, name="Spatial Paradox", cooldown=
 
 
 
+def calculate_stasis_duration(actor: warcraftlogs_actor.BaseActor, status: str) -> None:
+    """Calculates the duration between charging and releasing the stasis."""
+    if status != "success":
+        return
+    if not actor:
+        return
+
+
+    charge_event = None
+
+    for cast in actor.casts:
+
+        if cast.spell == STASIS_CHARGE:
+            charge_event = cast
+            continue
+
+        if cast.spell == STASIS_RELEASE:
+
+            if charge_event:
+                charge_event.duration = cast.timestamp - charge_event.timestamp
+                cast.spell_id = -1  # we no longer need this.
+
+            else: # stasis was charged pre pull
+                cast.spell_id = STASIS_CHARGE.spell_id
+                cast.duration = cast.timestamp # create a charge event at 0:00
+                cast.timestamp = 0
+
+
+    actor.casts = [cast for cast in actor.casts if cast.spell_id > 0]
+
+
+warcraftlogs_actor.BaseActor.event_actor_load.connect(calculate_stasis_duration)
+
+
 # list[int]: Spells that are able to be stores in Stasis
 STATIS_SPELLS = [
     443328, # Engulf
@@ -82,7 +116,7 @@ STATIS_SPELLS = [
 ]
 
 
-def filter_stasis_spells(actor: warcraftlogs_actor.BaseActor, status: str):
+def filter_stasis_spells(actor: warcraftlogs_actor.BaseActor, status: str) -> None:
     """Remove Spells cast by stasis.
     
     Those are no manual casts, and thus can be confusing if they show up in the timeline
