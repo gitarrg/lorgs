@@ -15,7 +15,7 @@ __pycache__/
 # Code Editors
 *.sublime-workspace
 .vscode
-
+.idea
 
 ################
 # Local Dev/Build Files

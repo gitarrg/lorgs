@@ -24,7 +24,7 @@ boss.add_cast(
     name="Decimate",
     duration=2,
     color="hsl(90, 60%, 55%)",
-    icon="inv_sword_48.jpg",
+    icon="inv_polearm_2h_nerubianraid_d_01.jpg",
 )
 
 
