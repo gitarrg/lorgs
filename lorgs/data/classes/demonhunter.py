@@ -39,6 +39,7 @@ DEMONHUNTER_HAVOC.add_spell(   spell_id=200166, cooldown=120,  duration=20, colo
 DEMONHUNTER_HAVOC.add_spell(   spell_id=258925, cooldown=90,   duration=8,  color="#1dd3ab", name="Fel Barrage",     icon="inv_felbarrage.jpg")
 DEMONHUNTER_HAVOC.add_spell(   spell_id=196555, cooldown=180,               color="#c531ff", name="Netherwalk",      icon="spell_warlock_demonsoul.jpg", show=False, tags=[SpellTag.DEFENSIVE])
 DEMONHUNTER_HAVOC.add_spell(   spell_id=198013, cooldown=40,   duration=2,  color="#c531ff", name="Eye Beam",        icon="ability_demonhunter_eyebeam.jpg", show=False)
+DEMONHUNTER_HAVOC.add_spell(   spell_id=452497, cooldown=40,   duration=2,  color="#c531ff", name="Abyssal Gaze",    icon="spell_shadow_demonicfortitude.jpg", show=False)
 
 
 DEMONHUNTER_VENGEANCE.add_spell(spell_id=204021, cooldown=60,  duration=10,  color="#7aeb34", name="Fiery Brand",     icon="ability_demonhunter_fierybrand.jpg", tags=[SpellTag.TANK])
