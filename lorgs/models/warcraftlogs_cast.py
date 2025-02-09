@@ -56,7 +56,7 @@ class Cast(base.BaseModel):
             return self.duration
 
         if self.spell:
-            return self.spell.duration * 1000
+            return int(self.spell.duration * 1000)
 
         return 0
 
