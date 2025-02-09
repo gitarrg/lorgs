@@ -1,4 +1,5 @@
 """Routes related to UserReports."""
+
 from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
@@ -28,8 +29,9 @@ async def get_user_report(report_id: str) -> UserReport:
     user_report = UserReport.get(report_id=report_id, create=False)
     if not user_report:
         return {"message": "not found"}
+        # TODO:  raise fastapi.HTTPException(status_code=404, detail="Report not found.")
 
-    # TODO: expclude nested casts/fights etc
+    # TODO: exclude nested casts/fights etc
     return user_report
 
 
@@ -39,8 +41,8 @@ async def get_fights(report_id: str, fight: str, player: str = ""):
 
     Args:
         report_id: id of the report to load (code/id from the warcraftlogs url)
-        fight (str): dot separeted list of fight ids (eg.: 2.4.15)
-        player (str): dot separeted list of player ids (eg.: 1.5.20)
+        fight (str): dot separated list of fight ids (eg.: 2.4.15)
+        player (str): dot separated list of player ids (eg.: 1.5.20)
 
     """
     user_report = UserReport.get(report_id=report_id, create=False)
@@ -88,8 +90,8 @@ async def load_user_report(response: fastapi.Response, report_id: str, fight: st
 
     Args:
         report_id(str): the report to load
-        fight (str): dot separeted list of fight ids (eg.: 2.4.15)
-        player (str): dot separeted list of player ids (eg.: 1.5.20)
+        fight (str): dot separated list of fight ids (eg.: 2.4.15)
+        player (str): dot separated list of player ids (eg.: 1.5.20)
         user_id (int, optional): user id to identify logged in users
 
     """
@@ -112,7 +114,7 @@ async def load_user_report(response: fastapi.Response, report_id: str, fight: st
     # task object to help track the progress
     task = Task(task_id=message_id, status=Task.STATUS.WAITING)
 
-    # Add subitems to track the status more granual
+    # Add subitems to track the status more granular
     for f, p in itertools.product(fight_ids, player_ids):
         task.items[f"{f}_{p}"] = {"fight": f, "player": p, "status": task.status}
 

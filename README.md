@@ -25,3 +25,9 @@ Please make sure to update tests as appropriate.
 ## Info:
 
 - 27/10/2023: updated `WCL_AUTH_TOKEN` in `.env` and lambda functions. Not sure what the expiration date is.
+
+#### Show logs:
+
+```
+aws logs tail /aws/lambda/lorrgs-api --follow --since 10m
+```

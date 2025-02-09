@@ -35,8 +35,8 @@ This is required when lambda reuses the same instance for subsequent runs
 """
 
 
-def submit_messages(queue_url, messages, chunk_size=10):
-    """"""
+def submit_messages(queue_url: str, messages: list[dict], chunk_size: int = 10) -> None:
+    """Submit messages to the queue in chunks."""
     print("submit_messages", messages)
 
     # Inject IDs
@@ -46,12 +46,13 @@ def submit_messages(queue_url, messages, chunk_size=10):
         print("entries", entries)
         response = SQS_CLIENT.send_message_batch(
             QueueUrl=queue_url,
-            Entries=entries,
+            Entries=entries,  # type: ignore
         )
         print("response", response)
 
 
-async def process_message(message):
+async def process_message(message: dict) -> None:
+    """Process a single message."""
 
     payload = json.loads(message.get("body") or "")
     task = payload.get("task") or "unknown"

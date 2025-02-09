@@ -1,4 +1,5 @@
 """Client to store Objects in DynamoDB."""
+
 from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
@@ -68,7 +69,7 @@ class DynamoDBModel(base.BaseModel):
         table = cls.get_table()
 
         if not kwargs:
-            raise ValueError("Need to provide some seach arguments.")
+            raise ValueError("Need to provide some search arguments.")
 
         expr = None
         for name, value in kwargs.items():

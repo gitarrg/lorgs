@@ -1,4 +1,5 @@
 """Model to describe a User of Lorrgs."""
+
 from __future__ import annotations
 
 # IMPORT THIRD PARTY LIBRARIES
@@ -100,3 +101,9 @@ class User(base.DynamoDBModel):
         self.discord_avatar = member_info.avatar or user_info.avatar or ""
         self.discord_roles = member_info.roles or []
         self.updated = datetime.utcnow()
+
+    def add_extra_role(self, role: str) -> None:
+        """Add an extra role to the user."""
+        if role not in self.extra_roles:
+            self.extra_roles = list(self.extra_roles)  # force a new list instance, to avoid it being considered "unset"
+            self.extra_roles.append(role)
