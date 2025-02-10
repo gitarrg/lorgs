@@ -3,7 +3,12 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-RASZAGETH = RaidBoss(id=2607, name="Raszageth the Storm-Eater", nick="Raszageth")
+RASZAGETH = RaidBoss(
+    id=2607,
+    name="Raszageth the Storm-Eater",
+    nick="Raszageth",
+    icon="achievement_raidprimalist_raszageth.jpg",
+)
 
 
 ########################### Phase 1: Winds of Change ###########################
