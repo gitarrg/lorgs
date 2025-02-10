@@ -3,7 +3,11 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-RASHANAN = RaidBoss(id=2918, name="Rasha'nan")
+RASHANAN = RaidBoss(
+    id=2918,
+    name="Rasha'nan",
+    icon="inv_achievement_raidnerubian_flyingnerubianevolved.jpg",
+)
 boss = RASHANAN
 
 

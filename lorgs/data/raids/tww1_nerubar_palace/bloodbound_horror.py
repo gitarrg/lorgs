@@ -3,7 +3,12 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-BLOODBOUND_HORROR = RaidBoss(id=2917, name="The Bloodbound Horror", nick="Bloodbound Horror")
+BLOODBOUND_HORROR = RaidBoss(
+    id=2917,
+    name="The Bloodbound Horror",
+    nick="Bloodbound Horror",
+    icon="inv_achievement_raidnerubian_blackblood.jpg",
+)
 boss = BLOODBOUND_HORROR
 
 

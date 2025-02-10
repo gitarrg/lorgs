@@ -3,7 +3,12 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-OVINAX = RaidBoss(id=2919, name="Broodtwister Ovi'nax", nick="Ovi'nax")
+OVINAX = RaidBoss(
+    id=2919,
+    name="Broodtwister Ovi'nax",
+    nick="Ovi'nax",
+    icon="inv_achievement_raidnerubian_swarmmother.jpg",
+)
 boss = OVINAX
 
 

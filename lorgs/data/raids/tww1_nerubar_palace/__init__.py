@@ -21,6 +21,7 @@ from lorgs.data.raids.tww1_nerubar_palace.trinkets import *
 NERUBAR_PALACE = RaidZone(
     id=38,
     name="Nerub-ar Palace",
+    icon="achievement_zone_azjkahet.jpg",
     bosses=[
         ULGRAX,
         BLOODBOUND_HORROR,
