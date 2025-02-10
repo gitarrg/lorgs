@@ -3,7 +3,12 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-ANSUREK = RaidBoss(id=2922, name="Queen Ansurek", nick="Ansurek")
+ANSUREK = RaidBoss(
+    id=2922,
+    name="Queen Ansurek",
+    nick="Ansurek",
+    icon="inv_achievement_raidnerubian_queenansurek.jpg",
+)
 boss = ANSUREK
 
 

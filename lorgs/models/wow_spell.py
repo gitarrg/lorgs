@@ -52,7 +52,7 @@ class SpellTag:
     """Tag for (larger) Damage Cooldowns. 2min/3min's."""
 
     DEFENSIVE = "defensive"
-    """Tag for Prsonals/Defensives."""
+    """Tag for Personals/Defensives."""
 
     TANK = "tank"
     """Tag for Tank Mitigation Cooldowns."""
@@ -172,8 +172,8 @@ class WowSpell(base.MemoryModel):
         """Add an additional spell ids for the "same" spell.
 
         eg.: glyphed versions of the spell
-        or sometimes boss abiltieis use different spells in
-        differnet phases for the same mechanic
+        or sometimes boss abilities use different spells in
+        different phases for the same mechanic
         """
         self.variations.append(spell_id)
         self.spell_variations[spell_id] = self.spell_id

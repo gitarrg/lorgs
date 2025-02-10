@@ -3,7 +3,12 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-SILKEN_COURT = RaidBoss(id=2921, name="The Silken Court", nick="Silken Court")
+SILKEN_COURT = RaidBoss(
+    id=2921,
+    name="The Silken Court",
+    nick="Silken Court",
+    icon="inv_achievement_raidnerubian_council.jpg",
+)
 boss = SILKEN_COURT
 
 

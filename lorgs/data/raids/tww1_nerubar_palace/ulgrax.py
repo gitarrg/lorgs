@@ -3,7 +3,12 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-ULGRAX = RaidBoss(id=2902, name="Ulgrax the Devourer", nick="Ulgrax")
+ULGRAX = RaidBoss(
+    id=2902,
+    name="Ulgrax the Devourer",
+    nick="Ulgrax",
+    icon="inv_achievement_raidnerubian_nerubianhulk.jpg",
+)
 boss = ULGRAX
 
 

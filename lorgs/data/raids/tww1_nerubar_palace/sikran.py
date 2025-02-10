@@ -3,7 +3,12 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-SIKRAN = RaidBoss(id=2898, name="Sikran, Captain of the Sureki", nick="Sikran")
+SIKRAN = RaidBoss(
+    id=2898,
+    name="Sikran, Captain of the Sureki",
+    nick="Sikran",
+    icon="inv_achievement_raidnerubian_nerubianevolved.jpg",
+)
 boss = SIKRAN
 
 
