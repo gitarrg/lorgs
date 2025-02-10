@@ -206,7 +206,7 @@ class Lambda:
             return
 
         arns = [layer.get_latest_version_arn() for layer in layers]
-        print("Updting Layers for", self.name, arns)
+        print("Updating Layers for", self.name, arns)
         LAMBDA_CLIENT.update_function_configuration(FunctionName=self.full_name, Layers=arns)
 
 

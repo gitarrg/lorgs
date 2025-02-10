@@ -22,7 +22,10 @@ class RaidBoss(WowActor):
     """Full Name of the Boss (eg.: "Halondrus the Reclaimer")."""
 
     nick: str = ""
-    """Short commonlty used Nickname. eg.: "Halondrus"."""
+    """Short commonly used Nickname. eg.: "Halondrus"."""
+
+    icon: str = ""
+    """Name of the Icon file. eg.: ``"inv_achievement_raid_progenitorraid_progenium_keeper.jpg"``"""
 
     def __repr__(self):
         return f"<RaidBoss(id={self.id} name={self.name})>"
@@ -46,6 +49,7 @@ class RaidBoss(WowActor):
             "id": self.id,
             # renames to match the "Actor"-Interface
             "name": self.nick or self.name,
+            "icon": self.icon,
             "full_name": self.name,
             "full_name_slug": self.name_slug,
         }

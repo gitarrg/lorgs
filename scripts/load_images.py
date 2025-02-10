@@ -10,6 +10,8 @@ import requests
 
 # IMPORT LOCAL LIBRARIES
 from lorgs import data
+from lorgs.models.raid_boss import RaidBoss
+from lorgs.models.raid_zone import RaidZone
 from lorgs.models.wow_potion import WowPotion
 from lorgs.models.wow_spell import WowSpell
 from lorgs.models.wow_trinket import WowTrinket
@@ -56,10 +58,13 @@ images = get_images(FOLDER)
 
 # list of all the "types" of Spells
 # TODO: find a way to create this dynamically?
-spell_types: set[type[WowSpell]] = {
+spell_types: set[type[WowSpell | RaidBoss | RaidZone]] = {
     WowSpell,
     WowTrinket,
     WowPotion,
+    # not actual "Spell" subclasses... but lets go with this for now
+    RaidBoss,
+    RaidZone,
 }
 
 
@@ -72,7 +77,7 @@ for spell in spells:
     icon = spell.icon
 
     if not icon:
-        print(f"spell: {spell} has no icon.")
+        print(f"spell: {spell.name} has no icon.")
         continue
 
     if icon in images:
