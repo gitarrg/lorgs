@@ -3,7 +3,12 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-TINDRAL = RaidBoss(id=2786, name="Tindral Sageswift, Seer of the Flame", nick="Tindral")
+TINDRAL = RaidBoss(
+    id=2786,
+    name="Tindral Sageswift, Seer of the Flame",
+    nick="Tindral",
+    icon="inv_achievement_raidemeralddream_druidoftheflame.jpg",
+)
 boss = TINDRAL
 
 

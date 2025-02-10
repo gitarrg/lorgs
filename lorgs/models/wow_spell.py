@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
-import typing
+from collections import defaultdict
 from typing import Any, ClassVar, Optional
+import typing
 
 
 from lorgs import utils
@@ -51,7 +52,7 @@ class SpellTag:
     """Tag for (larger) Damage Cooldowns. 2min/3min's."""
 
     DEFENSIVE = "defensive"
-    """Tag for Prsonals/Defensives."""
+    """Tag for Personals/Defensives."""
 
     TANK = "tank"
     """Tag for Tank Mitigation Cooldowns."""
@@ -87,7 +88,11 @@ class WowSpell(base.MemoryModel):
     """tags to indicate special properties. eg.: dynamic cooldown."""
 
     event_type: str = "cast"
-    """type of event (eg.: "cast", "buff", debuff)."""
+    """type of event (eg.: "cast", "applybuff", "applydebuffstack").
+    
+    Can be a comma separated list to define multiple events, eg.:
+    >>> "applybuff, applybuffstack"
+    """
 
     wowhead_data: str = ""
     """Info used for the wowhead tooltips."""
@@ -139,6 +144,11 @@ class WowSpell(base.MemoryModel):
     def __str__(self) -> str:
         return f"<Spell({self.spell_id}, name={self.name})>"
 
+    @property
+    def event_types(self) -> list[str]:
+        """Returns a list of all event types."""
+        return self.event_type.replace(",", " ").split()
+
     ##########################
     # Methods
     #
@@ -162,8 +172,8 @@ class WowSpell(base.MemoryModel):
         """Add an additional spell ids for the "same" spell.
 
         eg.: glyphed versions of the spell
-        or sometimes boss abiltieis use different spells in
-        differnet phases for the same mechanic
+        or sometimes boss abilities use different spells in
+        different phases for the same mechanic
         """
         self.variations.append(spell_id)
         self.spell_variations[spell_id] = self.spell_id
@@ -176,12 +186,6 @@ class WowSpell(base.MemoryModel):
         # dedicated "until-event"
         if self.until:
             return [self, self.until]
-
-        # (04/02/2024): even with fixed duration, we need to include
-        # both event types, to catch pre-pull casts.
-        # # we have fixed duration --> we are fine
-        # if self.duration:
-        #     return [self]
 
         # automatic mirror_events for buffs/debuffs
         if self.event_type in ("applybuff", "applydebuff"):
@@ -212,11 +216,17 @@ def build_spell_query(spells: list[WowSpell]) -> str:
     spells = [spell for spell in spells if not spell.extra_filter]
 
     for spell in spells_with_extra_filter:
-        event_query = f"type='{spell.event_type}' and ability.id = {spell.spell_id} and {spell.extra_filter}"
-        event_query = f"({event_query})"
-        queries.append(event_query)
+        for event_type in spell.event_types:
+            event_query = f"type='{spell.event_type}' and ability.id = {spell.spell_id} and {spell.extra_filter}"
+            event_query = f"({event_query})"
+            queries.append(event_query)
 
-    spells_by_type = utils.group_by(*spells, keyfunc=lambda spell: spell.event_type)
+    # Combine spells by event type to simplify the query
+    spells_by_type = defaultdict(list)
+    for spell in spells:
+        for event_type in spell.event_types:
+            spells_by_type[event_type].append(spell)
+
     for event_type, event_spells in spells_by_type.items():
         spell_ids = WowSpell.spell_ids_str(event_spells)
         event_query = f"type='{event_type}' and ability.id in ({spell_ids})"

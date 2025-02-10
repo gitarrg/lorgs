@@ -21,6 +21,7 @@ from .terros import TERROS
 VAULT_OF_THE_INCARNATES = RaidZone(
     id=31,
     name="Vault of the Incarnates",
+    icon="achievement_raidprimalist_raid.jpg",
     bosses=[
         ERANOG,
         TERROS,

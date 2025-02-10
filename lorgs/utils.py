@@ -1,4 +1,5 @@
 """A Collection of very generic Helper Functions."""
+
 # pylint: disable=invalid-name
 from __future__ import annotations
 
@@ -22,18 +23,6 @@ def chunks(lst: list[T], n: int) -> typing.Generator[list[T], None, None]:
 
     for i in range(0, len(lst), n):
         yield lst[i : i + n]
-
-
-def group_by(*items: T, keyfunc: typing.Callable[[T], U]) -> dict[U, list[T]]:
-    """Group items using keyfunc."""
-    d: dict[U, list[T]] = {}
-    for item in items:
-        key = keyfunc(item)
-        if key not in d:
-            d[key] = []
-        d[key].append(item)
-
-    return d
 
 
 def format_time(timestamp: int) -> str:

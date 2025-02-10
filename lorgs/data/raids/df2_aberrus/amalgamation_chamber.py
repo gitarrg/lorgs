@@ -3,7 +3,11 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-AMALGAMATION_CHAMBER = RaidBoss(id=2687, name="The Amalgamation Chamber")
+AMALGAMATION_CHAMBER = RaidBoss(
+    id=2687,
+    name="The Amalgamation Chamber",
+    icon="inv_achievement_raiddragon_amalgamationchamber.jpg",
+)
 boss = AMALGAMATION_CHAMBER
 
 

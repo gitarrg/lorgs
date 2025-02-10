@@ -1,4 +1,5 @@
 """Defines a Raid in the Game."""
+
 from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
@@ -25,6 +26,9 @@ class RaidZone(base.MemoryModel):
     bosses: list[RaidBoss] = []
     """All Bosses, in order, in this Zone."""
 
+    icon: str = ""
+    """The name of the Icon for this RaidZone."""
+
     @property
     def name_slug(self) -> str:
         return utils.slug(self.name, space="-")
@@ -37,6 +41,7 @@ class RaidZone(base.MemoryModel):
             "id": self.id,
             "name": self.name,
             "name_slug": self.name_slug,
+            "icon": self.icon,
             "bosses": [boss.as_dict() for boss in self.bosses],
         }
 

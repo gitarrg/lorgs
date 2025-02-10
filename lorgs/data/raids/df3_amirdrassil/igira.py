@@ -4,7 +4,12 @@ from lorgs.data import constants as C
 from lorgs.models.raid_boss import RaidBoss
 
 
-IGIRA = RaidBoss(id=2709, name="Igira the Cruel", nick="Igira")
+IGIRA = RaidBoss(
+    id=2709,
+    name="Igira the Cruel",
+    nick="Igira",
+    icon="inv_achievement_raidemeralddream_igira-the-cruel.jpg",
+)
 boss = IGIRA
 
 

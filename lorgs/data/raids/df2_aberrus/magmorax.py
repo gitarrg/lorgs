@@ -3,7 +3,11 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-MAGMORAX = RaidBoss(id=2683, name="Magmorax")
+MAGMORAX = RaidBoss(
+    id=2683,
+    name="Magmorax",
+    icon="inv_achievement_raiddragon_magmorax.jpg",
+)
 boss = MAGMORAX
 
 

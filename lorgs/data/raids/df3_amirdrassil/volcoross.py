@@ -3,7 +3,11 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-VOLCOROSS = RaidBoss(id=2737, name="Volcoross")
+VOLCOROSS = RaidBoss(
+    id=2737,
+    name="Volcoross",
+    icon="inv_achievement_raidemeralddream_lavaserpent.jpg",
+)
 boss = VOLCOROSS
 
 

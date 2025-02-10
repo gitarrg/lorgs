@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-# IMPORT STANRD LIBRARIES
+# IMPORT STANDARD LIBRARIES
 import abc
 import textwrap
 import typing

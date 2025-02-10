@@ -3,7 +3,12 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-NELTHARION = RaidBoss(id=2684, name="Echo of Neltharion", nick="Neltharion")
+NELTHARION = RaidBoss(
+    id=2684,
+    name="Echo of Neltharion",
+    nick="Neltharion",
+    icon="inv_achievement_raiddragon_neltharion.jpg",
+)
 boss = NELTHARION
 
 ################################################################################

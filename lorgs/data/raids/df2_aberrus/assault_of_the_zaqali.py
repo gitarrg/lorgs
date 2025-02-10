@@ -3,7 +3,11 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-ASSAULT_OF_THE_ZAQALI = RaidBoss(id=2682, name="Assault of the Zaqali")
+ASSAULT_OF_THE_ZAQALI = RaidBoss(
+    id=2682,
+    name="Assault of the Zaqali",
+    icon="inv_achievement_raiddragon_zaqaliassault.jpg",
+)
 boss = ASSAULT_OF_THE_ZAQALI
 
 # Ignara's Flame (411230) = p0 -> p1 ?

@@ -3,7 +3,12 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-FYRAKK = RaidBoss(id=2677, name="Fyrakk the Blazing", nick="Fyrakk")
+FYRAKK = RaidBoss(
+    id=2677,
+    name="Fyrakk the Blazing",
+    nick="Fyrakk",
+    icon="inv_achievement_raidemeralddream_fyrakk.jpg",
+)
 boss = FYRAKK
 
 

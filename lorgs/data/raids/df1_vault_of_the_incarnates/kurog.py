@@ -1,10 +1,11 @@
 """06: Kurog Grimtotem."""
+
 # fmt: off
 
 from lorgs.models.raid_boss import RaidBoss
 
 
-KUROG = RaidBoss(id=2605, name="Kurog Grimtotem", nick="Kurog")
+KUROG = RaidBoss(id=2605, name="Kurog Grimtotem", nick="Kurog", icon="achievement_raidprimalist_kurog.jpg")
 
 # Intermission
 KUROG.add_buff(spell_id=374779, name="Primal Barrier", color="#30bf30", icon="inv_10_elementalcombinedfoozles_primordial.jpg")

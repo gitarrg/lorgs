@@ -3,7 +3,11 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-PRIMAL_COUNCIL = RaidBoss(id=2590, name="The Primal Council")
+PRIMAL_COUNCIL = RaidBoss(
+    id=2590,
+    name="The Primal Council",
+    icon="achievement_raidprimalist_council.jpg",
+)
 
 
 # Kadros Icewrath:

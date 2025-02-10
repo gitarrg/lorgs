@@ -2,7 +2,7 @@ from lorgs.data.classes import *
 from lorgs.models.wow_trinket import WowTrinket
 
 
-ELEMENTIUM_POCKET_ANVIL = WowTrinket(
+WowTrinket(
     spell_id=401306,
     color="#66ad96",
     cooldown=60,
@@ -14,7 +14,7 @@ ELEMENTIUM_POCKET_ANVIL = WowTrinket(
 ).add_specs(*AGI_SPECS, *STR_SPECS)
 
 
-BEACON_TO_THE_BEYOND = WowTrinket(
+WowTrinket(
     spell_id=402583,
     color="#6e38eb",
     cooldown=150,
