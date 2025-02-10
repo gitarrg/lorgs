@@ -3,7 +3,12 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-DIURNA = RaidBoss(id=2614, name="Broodkeeper Diurna", nick="Diurna")
+DIURNA = RaidBoss(
+    id=2614,
+    name="Broodkeeper Diurna",
+    nick="Diurna",
+    icon="achievement_raidprimalist_diurna.jpg",
+)
 
 
 DIURNA.add_cast(

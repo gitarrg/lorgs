@@ -3,7 +3,12 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-DATHEA = RaidBoss(id=2635, name="Dathea, Ascended", nick="Dathea")
+DATHEA = RaidBoss(
+    id=2635,
+    name="Dathea, Ascended",
+    nick="Dathea",
+    icon="achievement_raidprimalist_windelemental.jpg",
+)
 
 # Debuffs
 DATHEA.add_cast(
