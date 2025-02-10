@@ -3,7 +3,12 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-LARODAR = RaidBoss(id=2731, name="Larodar, Keeper of the Flame", nick="Larodar")
+LARODAR = RaidBoss(
+    id=2731,
+    name="Larodar, Keeper of the Flame",
+    nick="Larodar",
+    icon="inv_achievement_raidemeralddream_keeperoftheflames.jpg",
+)
 boss = LARODAR
 
 
