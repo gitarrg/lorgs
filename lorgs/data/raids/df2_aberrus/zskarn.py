@@ -3,7 +3,12 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-ZSKARN = RaidBoss(id=2689, name="The Vigilant Steward, Zskarn", nick="Zskarn")
+ZSKARN = RaidBoss(
+    id=2689,
+    name="The Vigilant Steward, Zskarn",
+    nick="Zskarn",
+    icon="inv_achievement_raiddragon_zskarn.jpg",
+)
 boss = ZSKARN
 
 

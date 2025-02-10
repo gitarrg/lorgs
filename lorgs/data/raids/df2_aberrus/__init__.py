@@ -22,6 +22,7 @@ from lorgs.data.raids.df2_aberrus.trinkets import *
 ABERRUS = RaidZone(
     id=33,
     name="Aberrus, the Shadowed Crucible",
+    icon="inv_achievement_raiddragon_raid.jpg",
     bosses=[
         KAZZARA,
         AMALGAMATION_CHAMBER,
