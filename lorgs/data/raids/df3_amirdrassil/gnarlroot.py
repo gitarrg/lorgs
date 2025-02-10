@@ -3,7 +3,11 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-GNARLROOT = RaidBoss(id=2820, name="Gnarlroot")
+GNARLROOT = RaidBoss(
+    id=2820,
+    name="Gnarlroot",
+    icon="inv_achievement_raidemeralddream_fieryancient.jpg",
+)
 boss = GNARLROOT
 
 

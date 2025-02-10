@@ -3,7 +3,12 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-NYMUE = RaidBoss(id=2708, name="Nymue, Weaver of the Cycle", nick="Nymue")
+NYMUE = RaidBoss(
+    id=2708,
+    name="Nymue, Weaver of the Cycle",
+    nick="Nymue",
+    icon="inv_achievement_raidemeralddream_dreamweaver.jpg",
+)
 boss = NYMUE
 
 

@@ -3,7 +3,11 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-COUNCIL_OF_DREAMS = RaidBoss(id=2728, name="Council of Dreams")
+COUNCIL_OF_DREAMS = RaidBoss(
+    id=2728,
+    name="Council of Dreams",
+    icon="inv_achievement_raidemeralddream_dreamcouncil.jpg",
+)
 boss = COUNCIL_OF_DREAMS
 
 

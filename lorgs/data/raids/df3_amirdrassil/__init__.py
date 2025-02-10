@@ -22,6 +22,7 @@ from lorgs.data.raids.df3_amirdrassil.trinkets import *
 AMIRDRASSIL = RaidZone(
     id=35,
     name="Amirdrassil, the Dream's Hope",
+    icon="inv_achievement_raidemeralddream_raid.jpg",
     bosses=[
         GNARLROOT,
         IGIRA,

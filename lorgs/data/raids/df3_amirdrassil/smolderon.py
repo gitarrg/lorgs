@@ -3,7 +3,11 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-SMOLDERON = RaidBoss(id=2824, name="Smolderon")
+SMOLDERON = RaidBoss(
+    id=2824,
+    name="Smolderon",
+    icon="inv_achievement_raidemeralddream_smolderon.jpg",
+)
 boss = SMOLDERON
 
 
