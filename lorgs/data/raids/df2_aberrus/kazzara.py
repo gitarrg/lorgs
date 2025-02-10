@@ -3,7 +3,12 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-KAZZARA = RaidBoss(id=2688, name="Kazzara, the Hellforged", nick="Kazzara")
+KAZZARA = RaidBoss(
+    id=2688,
+    name="Kazzara, the Hellforged",
+    nick="Kazzara",
+    icon="inv_achievement_raiddragon_kazzara.jpg",
+)
 boss = KAZZARA
 
 

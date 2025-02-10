@@ -3,7 +3,11 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-FORGOTTEN_EXPERIMENTS = RaidBoss(id=2693, name="The Forgotten Experiments")
+FORGOTTEN_EXPERIMENTS = RaidBoss(
+    id=2693,
+    name="The Forgotten Experiments",
+    icon="inv_achievement_raiddragon_forgottenexperiments.jpg",
+)
 boss = FORGOTTEN_EXPERIMENTS
 
 ################################################################################

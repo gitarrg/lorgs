@@ -3,7 +3,12 @@
 from lorgs.models.raid_boss import RaidBoss
 
 
-RASHOK = RaidBoss(id=2680, name="Rashok, the Elder", nick="Rashok")
+RASHOK = RaidBoss(
+    id=2680,
+    name="Rashok, the Elder",
+    nick="Rashok",
+    icon="inv_achievement_raiddragon_rashok.jpg",
+)
 boss = RASHOK
 
 # Shadowlava Blast (406333) = Big Frontal
