@@ -9,10 +9,13 @@ from lorgs.clients import sqs
 from lorgs.data.classes import *
 from lorgs.data.raids import *
 
+from lorgs.models.wow_spec import WowSpec
+from lorgs.models.raid_boss import RaidBoss
 
-def load(
-    spec_slug: str = "all",
-    boss_slug: str = "all",
+
+def load_remote(
+    spec: WowSpec,
+    boss: RaidBoss,
     difficulty="all",
     metric="all",
     limit=50,
@@ -20,8 +23,8 @@ def load(
 ):
     payload = {
         "task": "load_spec_rankings",
-        "spec_slug": spec_slug,
-        "boss_slug": boss_slug,
+        "spec_slug": spec.full_name_slug,
+        "boss_slug": boss.full_name_slug,
         "difficulty": difficulty,
         "metric": metric,
         "limit": limit,
@@ -35,48 +38,93 @@ def load(
     return sqs.send_message(payload=payload)
 
 
-def main() -> None:
+def load_local(
+    spec: WowSpec,
+    boss: RaidBoss,
+    difficulty: str = "mythic",
+    metric: str = "dps",
+    limit=50,
+    clear: bool = False,
+):
+    import asyncio
+    from lorgs.models.warcraftlogs_ranking import SpecRanking
+
+    spec_ranking = SpecRanking.get_or_create(
+        spec_slug=spec.full_name_slug,
+        boss_slug=boss.full_name_slug,
+        difficulty=difficulty,
+        metric=metric,
+    )
+
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(spec_ranking.load(limit=limit, clear_old=clear))
+
+    spec_ranking.save()
+
+
+def load_spec_rankings() -> None:
     bosses = [
-        # GNARLROOT,
-        # # IGIRA,
-        # VOLCOROSS,
-        # COUNCIL_OF_DREAMS,
-        # # LARODAR,
-        # NYMUE,
-        # SMOLDERON,
-        # TINDRAL,
-        # FYRAKK,
+        # BLOODBOUND_HORROR
+        # ANSUREK,
+        # OVINAX,
+        ULGRAX,
     ]
-    bosses = AMIRDRASSIL.bosses
+    bosses = NERUBAR_PALACE.bosses
 
     specs = [
-        # *ALL_SPECS,
-        # *TANK.specs
-        # *HEAL.specs
-        # ROGUE_SUBTLETY,
-        # *INT_SPECS,
-        # MAGE_FROST,
-        # DEATHKNIGHT_BLOOD,
-        # DEMONHUNTER_HAVOC,
-        # SHAMAN_ELEMENTAL,
+        # DRUID_BALANCE,
         # SHAMAN_ENHANCEMENT,
         # SHAMAN_RESTORATION,
-        PRIEST_DISCIPLINE,
-        PRIEST_HOLY,
-        PRIEST_SHADOW,
+        # MONK_MISTWEAVER,
+        # WARLOCK_DESTRUCTION,
+        # WARLOCK_AFFLICTION,
+        # WARLOCK_DEMONOLOGY,
+        HUNTER_BEASTMASTERY,
+        HUNTER_MARKSMANSHIP,
+        HUNTER_SURVIVAL,
+        # MAGE_ARCANE,
+        # MAGE_FIRE,
+        # MAGE_FROST,
+        # EVOKER_AUGMENTATION,
+        # EVOKER_PRESERVATION,
+        # DEMONHUNTER_HAVOC,
+        # PRIEST_SHADOW,
+        # SHAMAN_RESTORATION,
+        # SHAMAN_ELEMENTAL,
+        # SHAMAN_ENHANCEMENT
+        # PRIEST_HOLY
+        # MAGE_ARCANE,
+        # PALADIN_HOLY,
+        # MONK_WINDWALKER,
     ]
+    # specs = ALL_SPECS
+
+    load = load_local
+    load = load_remote
 
     for spec in specs:
         print(spec.full_name_slug)
         for boss in bosses:
             print("\t", boss.full_name_slug)
+
             load(
-                spec.full_name_slug,
-                boss_slug=boss.full_name_slug,
-                limit=50,
+                spec,
+                boss,
                 clear=True,
+                # difficulty="heroic",
+                # metric="dps",
             )
 
 
+def load_comp_ranking(boss_slug: str = "all"):
+    payload = {
+        "task": "load_comp_rankings",
+        "boss_slug": boss_slug,
+    }
+    print("q", payload)
+    return sqs.send_message(payload=payload)
+
+
 if __name__ == "__main__":
-    main()
+    load_spec_rankings()
+    # load_comp_ranking()
