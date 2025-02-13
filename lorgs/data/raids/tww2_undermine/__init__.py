@@ -3,6 +3,18 @@
 Bosses:
     https://wago.tools/db2/DungeonEncounter?filter[MapID]=exact%3A2769&page=1
 
+Logs:
+    All Reports:
+    https://www.warcraftlogs.com/zone/reports?zone=42
+
+    Rankings:
+    https://www.warcraftlogs.com/zone/rankings/42
+
+
+    PTR Normal Full Clear
+    https://www.warcraftlogs.com/reports/nBPbgV9Gafzm8qrN?&fight=1&fight=8&fight=14&fight=26&fight=28&fight=35&fight=52
+    >>> scripts/load_report.py --report nBPbgV9Gafzm8qrN --fight 1 8 14 26 28 35 52
+
 """
 
 # IMPORT LOCAL LIBRARIES
@@ -38,3 +50,9 @@ LIBERATION_OF_UNDERMINE = RaidZone(
         GALLYWIX,
     ],
 )
+
+
+# overwrite the domain for tooltips
+for boss in LIBERATION_OF_UNDERMINE.bosses:
+    for spell in (*boss.spells, *boss.buffs, *boss.debuffs):
+        spell.wowhead_data += "&domain=ptr2"
