@@ -12,6 +12,8 @@ from lorgs.models.wow_trinket import WowTrinket
 class Season(base.MemoryModel):
     """A Season in the Game."""
 
+    name: str
+
     ilvl: int
     """Max Item Level of the Season."""
 

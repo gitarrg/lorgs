@@ -12,7 +12,8 @@ from lorgs.data.raids.tww1_nerubar_palace import NERUBAR_PALACE
 from lorgs.models.season import Season
 
 
-TWW_SEASON2 = Season(
+TWW_SEASON1 = Season(
+    name="tww_s1",
     ilvl=639,
     raids=[
         NERUBAR_PALACE,
