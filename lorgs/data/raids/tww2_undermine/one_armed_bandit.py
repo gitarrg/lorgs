@@ -5,6 +5,7 @@ PTR Logs:
     https://www.warcraftlogs.com/reports/YxpKjwFbkrC4VGv3?fight=71&type=casts&hostility=1
 """
 
+from lorgs.data.classes import *
 from lorgs.models.raid_boss import RaidBoss
 
 
@@ -15,6 +16,52 @@ ONE_ARMED_BANDIT = RaidBoss(
     icon="inv_111_raid_achievement_onearmedbandit.jpg",
 )
 boss = ONE_ARMED_BANDIT
+
+
+################################################################################
+# Trinkets
+
+GALLAGIO_BOTTLE_SERVICE = boss.add_trinket(
+    spell_id=471214,
+    duration=4,
+    cooldown=90,
+    name="Gallagio Bottle Service",
+    icon="inv_111_underminegangsterdisguise.jpg",
+    item=230188,
+)
+"""On-Use Healing (channel)
+
+> Use: Become the pinnacle of Gallagio service excellence and dole out
+> Kaja'Cola Mega-Lite to injured allies 10 times over 4 sec, healing them for
+> 376075 and increasing their Speed by 1407 for 5 sec.
+> The number of servings is increased by your Haste. (1 Min, 30 Sec Cooldown)
+
+"""
+GALLAGIO_BOTTLE_SERVICE.add_specs(*HEAL.specs)
+
+
+HOUSE_OF_CARDS = boss.add_trinket(
+    spell_id=466681,
+    duration=15,
+    cooldown=90,
+    name="House of Cards",
+    icon="inv_111_gallyjack_gallywix.jpg",
+    item=23002,
+)
+"""On-Use mastery
+
+Buffs:
+- 466681 Mastery Buff
+- 1219158 Stacked Deck
+
+> Use: Deal yourself in, granting you 6604.2 to 8071.8 Mastery for 15 sec and
+> stacking the deck. Stacking the deck increases the minimum Mastery on future
+> hands by 244.6 until you leave combat, up to 3 times. (1 Min, 30 Sec Cooldown)
+"""
+HOUSE_OF_CARDS.add_specs(*ALL_SPECS)
+
+
+################################################################################
 
 
 # Pay-line

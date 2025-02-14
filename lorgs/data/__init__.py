@@ -6,6 +6,7 @@ This could be stored in a Database instead..
 but at the end of the day, this was the most straight forward way and the easiest to manage.
 
 """
+
 # Roles and Classes
 from lorgs.data.roles import *
 from lorgs.data.classes import *
@@ -18,3 +19,7 @@ from lorgs.data.items import *
 
 # Raids
 from lorgs.data.raids import *
+
+
+# Current Season
+from lorgs.data.current_season import *

@@ -19,6 +19,50 @@ LOCKENSTOCK = RaidBoss(
 boss = LOCKENSTOCK
 
 
+################################################################################
+# Trinkets
+
+MISTER_LOCK_N_STALK = boss.add_trinket(
+    spell_id=0,
+    cooldown=20,
+    name="Mister Lock-N-Stalk",
+    icon="inv_111_healraydrone_gallywix.jpg",
+    item=230193,
+)
+"""Random DMG Proc. Can swap between AoE or ST.
+
+Precision Blasting
+> Your spells and abilities have a high chance to lase your target for Precision Blasting,
+> calling in Mister Lock-N-Stalk to deal 3555 Physical damage to your target.
+> https://www.wowhead.com/ptr-2/spell=467492/precision-blasting
+
+Mass Destruction
+> Your spells and abilities have a high chance to lase enemies for Mass Destruction,
+> calling in Mister Lock-N-Stalk to deal 2074 Fire damage split between your target and nearby enemies.
+> https://www.wowhead.com/ptr-2/spell=467497/mass-destruction
+
+"""
+# MISTER_LOCK_N_STALK.add_specs(*DPS_SPECS)
+
+
+MISTER_PICK_ME_UP = boss.add_trinket(
+    spell_id=0,
+    name="Mister Pick-Me-Up",
+    icon="inv_111_healraydrone_bilgewater.jpg",
+    item=230186,
+)
+"""random healing proc
+
+> Your healing spells and abilities have a chance to summon Mister Pick-Me-Up for 6 sec,
+> firing a healing beam every 2 sec that jumps between 5 injured allies to restore 72074 health each.
+>
+> Overhealing from this effect irradiates allies to deal Nature damage to nearby
+> enemies over 1.5 sec, increased by additional overhealing.
+"""
+
+
+################################################################################
+
 # raid wide AoE
 boss.add_cast(
     spell_id=465232,

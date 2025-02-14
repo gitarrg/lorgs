@@ -59,7 +59,4 @@ RINGING_RITUAL_MUD = WowTrinket(
 
 ################################################################################
 
-OPERATION_FLOODGATE = Dungeon(
-    name="Operation: Floodgate",
-    trinkets=[],
-)
+OPERATION_FLOODGATE = Dungeon(name="Operation: Floodgate")

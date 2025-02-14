@@ -7,11 +7,6 @@ from lorgs.models.wow_trinket import WowTrinket
 ################################################################################
 # Trinkets
 
-# [Azerokk's Resonating Heart]
-# [Razdunk's Big Red Button]
-
-
 ################################################################################
 
-
-THE_MOTHERLODE = Dungeon(name="The MOTHERLODE!!")
+MISTS_OF_TIRNA_SCITHE = Dungeon(name="Mists of Tirna Scithe")

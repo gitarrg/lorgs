@@ -1,18 +1,16 @@
+# IMPORT LOCAL LIBRARIES
 from lorgs.data.classes import *
+from lorgs.models.dungeon import Dungeon
 from lorgs.models.wow_trinket import WowTrinket
 
 
 ################################################################################
-# AraKara
-# no on use trinkets
+# Trinkets
+
+# [Siphoning Phylactery Shard]
+# [Spare Meat Hook]
 
 
 ################################################################################
-# City of Threads
 
-# [Oppressive Orator's Larynx] = bad
-
-################################################################################
-# The Dawnbreaker
-
-# [Mereldar's Toll]
+NECROTIC_WAKE = Dungeon(name="The Necrotic Wake")

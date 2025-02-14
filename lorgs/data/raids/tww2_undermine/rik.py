@@ -18,6 +18,22 @@ RIK = RaidBoss(
 boss = RIK
 
 ################################################################################
+
+REVERB_RADIO = RIK.add_trinket(
+    spell_id=0,
+    duration=15,
+    name="Reverb Radio",
+    icon="inv_111_statsoundwaveemitter_blackwater.jpg",
+    item=230194,
+)
+"""Stacking Buff + Bigger VBuff at 5 Stacks
+
+> Your spells and abilities have a high chance to Hype you up, granting 314 Haste up to 5 times.
+> Upon reaching maximum Hype, amp it up by 100% for 15 sec before starting again.
+"""
+# REVERB_RADIO.add_specs(*ALL_SPECS)
+
+################################################################################
 # Phase 1
 
 # Amplification

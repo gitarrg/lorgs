@@ -52,7 +52,4 @@ REMNANT_OF_DARKNESS = "[Remnant of Darkness]"
 
 ################################################################################
 
-DARKFLAME_CLEFT = Dungeon(
-    name="Darkflame Cleft",
-    trinkets=[],
-)
+DARKFLAME_CLEFT = Dungeon(name="Darkflame Cleft")

@@ -42,7 +42,4 @@ SIGIL_OF_ALGARI_CONCORDANCE = "[Sigil of Algari Concordance]"
 ################################################################################
 
 
-THE_ROOKERY = Dungeon(
-    name="The Rookery",
-    trinkets=[],
-)
+THE_ROOKERY = Dungeon(name="The Rookery")

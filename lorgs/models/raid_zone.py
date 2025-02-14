@@ -9,6 +9,7 @@ import typing
 from lorgs import utils
 from lorgs.models import base
 from lorgs.models.raid_boss import RaidBoss
+from lorgs.models.wow_trinket import WowTrinket
 
 
 # pylint: disable=too-few-public-methods
@@ -28,6 +29,8 @@ class RaidZone(base.MemoryModel):
 
     icon: str = ""
     """The name of the Icon for this RaidZone."""
+
+    trinkets: list[WowTrinket] = []
 
     @property
     def name_slug(self) -> str:

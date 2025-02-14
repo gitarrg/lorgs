@@ -7,6 +7,7 @@ PTR Logs:
 
 """
 
+from lorgs.data.classes import *
 from lorgs.models.raid_boss import RaidBoss
 
 
@@ -18,7 +19,54 @@ STIX = RaidBoss(
 )
 boss = STIX
 
+################################################################################
+# Trinkets
 
+JUNKMAESTROS_MEGA_MAGNET = boss.add_trinket(
+    spell_id=471212,
+    duration=6,
+    cooldown=20,
+    name="Junkmaestro's Mega Magnet",
+    icon="inv_111_magnet_gallywix.jpg",
+    item=230189,
+)
+"""Collect stacks -> consume them for on-use dmg
+
+Buff: 1219661
+
+> Equip: Your damaging abilities have a very high chance to charge the magnet, up to 30 times.
+> Use: Reverse the magnet's polarity to violently recycle buried garbage,
+> dealing 59774 Plague damage to your target per charge.
+> Lingering virulence deals 10% of the damage dealt to 5 nearby enemies over 6 sec. (20 Sec Cooldown)
+"""
+JUNKMAESTROS_MEGA_MAGNET.add_specs(*AGI_SPECS)
+
+
+SCRAPFIELD_9001 = boss.add_trinket(
+    spell_id=466673,
+    cooldown=30,
+    name="Scrapfield 9001",
+    icon="inv_111_forcefieldmodule_steamwheedle.jpg",
+    item=230026,
+    event_type="buff",
+)
+"""Shield Proc when below 60% HP. (Tank only)
+
+- Buff: 466673
+- Debuff: 472170
+
+> Equip: Falling below 60% health surrounds you with a protective vortex of junk,
+> reducing damage taken by 50% for 15 sec or until 996802 damage is prevented.
+> This effect may only occur every 30 sec.
+> 
+> After 20 sec without activating while in combat, the Scrapfield overloads
+> to energize you with 2651 Haste for 12 sec.
+
+"""
+# SCRAPFIELD_9001.add_specs(*TANK.specs)
+
+
+################################################################################
 #### Phase 1:
 
 # Electromagnetic Sorting =

@@ -27,7 +27,6 @@ from lorgs.data.raids.tww2_undermine.one_armed_bandit import ONE_ARMED_BANDIT
 from lorgs.data.raids.tww2_undermine.rik import RIK
 from lorgs.data.raids.tww2_undermine.stix import STIX
 from lorgs.data.raids.tww2_undermine.vexie import VEXIE
-from lorgs.data.raids.tww2_undermine.trinkets import *
 
 
 ################################################################################
@@ -50,9 +49,3 @@ LIBERATION_OF_UNDERMINE = RaidZone(
         GALLYWIX,
     ],
 )
-
-
-# overwrite the domain for tooltips
-for boss in LIBERATION_OF_UNDERMINE.bosses:
-    for spell in (*boss.spells, *boss.buffs, *boss.debuffs):
-        spell.wowhead_data += "&domain=ptr2"

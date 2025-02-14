@@ -60,7 +60,4 @@ Buff: 299869
 ################################################################################
 
 
-MECHAGON_WORKSHOP = Dungeon(
-    name="Operation: Mechagon: Workshop",
-    trinkets=[],
-)
+MECHAGON_WORKSHOP = Dungeon(name="Operation: Mechagon: Workshop")

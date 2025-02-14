@@ -17,7 +17,6 @@ SKARMORAK_SHARD = WowTrinket(
     name="Skarmorak Shard",
     icon="inv_arathordungeon_fragment_color2.jpg",
     item=219300,
-    ilvl=619,
 )
 SKARMORAK_SHARD.add_specs(*STR_SPECS)
 
@@ -26,5 +25,7 @@ SKARMORAK_SHARD.add_specs(*STR_SPECS)
 
 STONEVAULT = Dungeon(
     name="Stonevault",
-    trinkets=[SKARMORAK_SHARD],
+    trinkets=[
+        SKARMORAK_SHARD,
+    ],
 )

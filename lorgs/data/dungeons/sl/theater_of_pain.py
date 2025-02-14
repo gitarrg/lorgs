@@ -69,5 +69,7 @@ https://www.wowhead.com/item=178808/viscera-of-coalesced-hatred
 
 THEATER_OF_PAIN = Dungeon(
     name="Theater of Pain",
-    trinkets=[SOULLETTING_RUBY],
+    trinkets=[
+        SOULLETTING_RUBY,
+    ],
 )

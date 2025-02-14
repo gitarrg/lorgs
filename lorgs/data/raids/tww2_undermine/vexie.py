@@ -5,6 +5,8 @@ Example Fight:
 
 """
 
+# IMPORT LOCAL LIBRARIES
+from lorgs.data.classes import *
 from lorgs.models.raid_boss import RaidBoss
 
 
@@ -15,6 +17,46 @@ VEXIE = RaidBoss(
     icon="inv_111_raid_achievement_vexieandthegeargrinders.jpg",
 )
 boss = VEXIE
+
+
+################################################################################
+# Trinkets
+
+
+GEARGRINDERS_SPARE_KEYS = boss.add_trinket(
+    spell_id=0,  # TODO: on PTR the trinket's cast did not show up in logs
+    cooldown=120,
+    name="Geargrinder's Spare Keys",
+    icon="inv_111_goblintrikekeychain_gallywix.jpg",
+    item=230197,
+)
+"""On-Use DMG
+
+> Use: Launch a Geargrinder trike to its final blaze of glory, exploding upon impacting
+> the first enemy in its path to deal 1320420 Fire damage split between all nearby enemies. (2 Min Cooldown)
+"""
+GEARGRINDERS_SPARE_KEYS.add_specs(*ALL_SPECS)
+
+
+VEXIES_PIT_WHISTLE = boss.add_trinket(
+    spell_id=466652,
+    duration=5,
+    cooldown=90,
+    name="Vexie's Pit Whistle",
+    icon="inv_111_sapper_bilgewater.jpg",
+    item=230019,
+)
+"""Summon Pet which explodes after 5sec
+
+> Use: Summon Pitbot Geardo to assist you for 5 sec, coating nearby enemies
+> with rancid motor oil for additional threat. Geardo ensures you take the blame.
+>
+> Geardo departs explosively to deal 582636 Fire damage split between nearby enemies,
+> increased by 15% if recently oiled. (500ms cooldown) (1 Min, 30 Sec Cooldown)
+
+"""
+VEXIES_PIT_WHISTLE.add_specs(*STR_SPECS)
+VEXIES_PIT_WHISTLE.add_specs(*AGI_SPECS)
 
 
 ################################################################################

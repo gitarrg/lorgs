@@ -13,7 +13,8 @@ from lorgs.models.season import Season
 
 
 TWW_SEASON2 = Season(
-    ilvl=678,
+    ilvl=678,  # 6/6 Myth Track
+    domain="ptr2",
     raids=[
         LIBERATION_OF_UNDERMINE,
     ],

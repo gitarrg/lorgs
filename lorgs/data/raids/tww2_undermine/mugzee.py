@@ -28,6 +28,37 @@ boss = MUGZEE
 
 
 ################################################################################
+# Trinkets
+
+MUGS_MOXIE_JUG = MUGZEE.add_trinket(
+    spell_id=0,
+    name="Mug's Moxie Jug",
+    icon="inv_111_blackbloodfueledcontainer.jpg",
+    item=230192,
+)
+"""int main + crit proc
+
+> Equip: Your spells have a chance to send you into a frenzy, granting you
+> 742 Critical Strike for 15 sec. While frenzied, each spell cast grants an
+> additional 742 Critical Strike but does not refresh the duration.
+> This effect may only occur every 1 sec.
+"""
+
+
+ZEES_THUG_HOTLINE = MUGZEE.add_trinket(
+    spell_id=0,
+    name="Zee's Thug Hotline",
+    icon="inv_111_remotecontrol_gallywix.jpg",
+    item=230199,
+)
+"""agi/str main + dmg proc
+
+> Equip: Your abilities have a chance to call a member of the Goon Squad to
+> attack your target for 10 sec. Gaining Bloodlust or a similar effect summons the whole crew.
+"""
+
+
+################################################################################
 
 # Side Swaps
 # Casts
