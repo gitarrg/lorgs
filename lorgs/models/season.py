@@ -1,6 +1,9 @@
 # IMPORT STANDARD LIBRARIES
 import typing
 
+# IMPORT THIRD PARTY LIBRARIES
+import pydantic
+
 # IMPORT LOCAL LIBRARIES
 from lorgs.models.dungeon import Dungeon
 from lorgs.models.raid_zone import RaidZone
@@ -8,12 +11,12 @@ from lorgs.models.wow_spell import WowSpell
 from lorgs.models.wow_trinket import WowTrinket
 
 
-class Season(SeasonMetadata):
+class Season(pydantic.BaseModel):
     """A Season in the Game."""
 
-    name: str
-
     slug: str = ""
+
+    name: str
 
     ilvl: int
     """Max Item Level of the Season."""
@@ -45,7 +48,6 @@ class Season(SeasonMetadata):
                 yield from boss.debuffs
 
     def activate(self) -> None:
-        print("activate")
 
         for trinket in self.trinkets:
             trinket.ilvl = self.ilvl
