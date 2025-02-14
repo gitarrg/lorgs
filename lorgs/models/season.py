@@ -2,17 +2,18 @@
 import typing
 
 # IMPORT LOCAL LIBRARIES
-from lorgs.models import base
 from lorgs.models.dungeon import Dungeon
 from lorgs.models.raid_zone import RaidZone
 from lorgs.models.wow_spell import WowSpell
 from lorgs.models.wow_trinket import WowTrinket
 
 
-class Season(base.MemoryModel):
+class Season(SeasonMetadata):
     """A Season in the Game."""
 
     name: str
+
+    slug: str = ""
 
     ilvl: int
     """Max Item Level of the Season."""

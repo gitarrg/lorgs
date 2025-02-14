@@ -6,17 +6,24 @@ from __future__ import annotations
 import fastapi
 
 # IMPORT LOCAL LIBRARIES
-from lorgs.data.seasons import ALL_SEASONS, CURRENT_SEASON
+from lorgs.data.seasons import CURRENT_SEASON
+from lorgs.models.season import Season
 
 
 router = fastapi.APIRouter(tags=["seasons"], prefix="/seasons")
 
 
-@router.get("/")
-async def get_all_seasons() -> dict[str, list[str]]:
-    return {"seasons": [season.name for season in ALL_SEASONS]}
+@router.get("/{season_slug}")
+async def get_season(season_slug: str) -> dict:
+    if season_slug.lower() == "current":
+        season = CURRENT_SEASON
+    else:
+        season = Season.get(slug=season_slug)
+        if not season:
+            raise fastapi.HTTPException(status_code=404, detail="Invalid Season.")
 
-
-@router.get("/current")
-async def get_current_seasons() -> str:
-    return CURRENT_SEASON.name
+    return {
+        "name": season.name,
+        "slug": season.slug,
+        "raids": [raid.id for raid in season.raids],
+    }

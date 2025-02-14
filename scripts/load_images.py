@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+"""Fetches spell icons from wowhead and uploads them to our S3 bucket."""
 from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
@@ -29,6 +30,14 @@ FOLDER = "images/spells/"
 
 
 def get_images(folder: str) -> list[str]:
+    """Retrieve a list of images from the S3 bucket
+
+    Args:
+        folder (str): The folder path in the S3 bucket.
+
+    Returns:
+        list[str]: List of image filenames.
+    """
     images = [obj.key for obj in BUCKET.objects.filter(Prefix=folder)]
     images = [img for img in images if not img.endswith(".webp")]
     images = [img[len(folder) :] for img in images]
@@ -36,6 +45,11 @@ def get_images(folder: str) -> list[str]:
 
 
 def upload(filname: str) -> None:
+    """Download an image from wowhead and upload it to S3.
+
+    Args:
+        filename (str): The filename of the image to upload.
+    """
     # Download the file from the HTTP URL
     url = f"https://wow.zamimg.com/images/wow/icons/large/{filname}"
     response = requests.get(url)
@@ -53,8 +67,9 @@ def upload(filname: str) -> None:
 
 ################################################################################
 
-images = get_images(FOLDER)
 
+# Get existing images in the S3 bucket
+images = get_images(FOLDER)
 
 # list of all the "types" of Spells
 # TODO: find a way to create this dynamically?
@@ -68,7 +83,8 @@ spell_types: set[type[WowSpell | RaidBoss | RaidZone]] = {
 }
 
 
-spells = []
+# Retrieve all spells
+spells: list[WowSpell] = []
 for spell_type in spell_types:
     spells += spell_type.list()
 
@@ -77,9 +93,10 @@ for spell in spells:
     icon = spell.icon
 
     if not icon:
-        print(f"spell: {spell.name} has no icon.")
+        print(f"spell: {spell} has no icon.")
         continue
 
+    # check if already uploaded
     if icon in images:
         continue
 

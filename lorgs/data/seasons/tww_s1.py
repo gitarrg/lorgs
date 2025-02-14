@@ -13,7 +13,8 @@ from lorgs.models.season import Season
 
 
 TWW_SEASON1 = Season(
-    name="tww_s1",
+    name="TWW Season 1",
+    slug="tww_s1",
     ilvl=639,
     raids=[
         NERUBAR_PALACE,

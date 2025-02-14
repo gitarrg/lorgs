@@ -2,6 +2,7 @@
 
 eg.: spells, classes, specs
 """
+
 from __future__ import annotations
 
 # IMPORT THIRD PARTY LIBRARIES
@@ -14,6 +15,7 @@ from lorgs.models.wow_class import WowClass
 from lorgs.models.wow_role import WowRole
 from lorgs.models.wow_spec import WowSpec
 from lorgs.models.wow_spell import WowSpell
+from lorgs.models.wow_trinket import WowTrinket
 
 
 router = fastapi.APIRouter()
@@ -52,22 +54,22 @@ async def get_classes():
 
 
 @router.get("/specs", tags=["specs"])
-async def get_specs_all():
+async def get_specs_all() -> dict[str, list[dict]]:
     all_specs = sorted(WowSpec.list())
-    all_specs = [spec.as_dict() for spec in all_specs]  # type: ignore
-    return {"specs": all_specs}
+    # using `as_dict()` here to prevent including the Spells/Class
+    return {"specs": [spec.as_dict() for spec in all_specs]}
 
 
 @router.get("/specs/{spec_slug}", tags=["specs"])
-async def get_spec(spec_slug: str):
+async def get_spec(spec_slug: str) -> WowSpec:
     spec = WowSpec.get(full_name_slug=spec_slug)
     if not spec:
-        return "Invalid Spec.", 404
-    return spec.as_dict()
+        raise fastapi.HTTPException(status_code=404, detail="Invalid Spec.")
+    return spec
 
 
 @router.get("/specs/{spec_slug}/spells", tags=["specs"])
-async def get_spec_spells(spec_slug: str):
+async def get_spec_spells(spec_slug: str) -> dict[int, WowSpell]:
     """Get all spells for a given spec.
 
     Args:
@@ -76,10 +78,10 @@ async def get_spec_spells(spec_slug: str):
     """
     spec = WowSpec.get(full_name_slug=spec_slug)
     if not spec:
-        return "Invalid Spec.", 404
+        raise fastapi.HTTPException(status_code=404, detail="Invalid Spec.")
 
     abilities = spec.all_spells + spec.all_buffs + spec.all_debuffs + spec.all_events
-    return {spell.spell_id: spell.as_dict() for spell in abilities}
+    return {spell.spell_id: spell for spell in abilities}
 
 
 ###############################################################################
@@ -90,19 +92,24 @@ async def get_spec_spells(spec_slug: str):
 
 
 @router.get("/spells/{spell_id}", tags=["spells"])
-async def spells_one(spell_id: int):
+async def spells_one(spell_id: int) -> WowSpell:
     """Get a single Spell by spell_id."""
     spell = WowSpell.get(spell_id=spell_id)
     if not spell:
-        return "Spell not found", 400
-    return spell.as_dict()
+        raise fastapi.HTTPException(status_code=404, detail="Spell not found.")
+    return spell
 
 
 @router.get("/spells", tags=["spells"])
-async def spells_all():
+async def spells_all() -> dict[int, WowSpell]:
     """Get all Spells."""
-    spells = WowSpell.list()
-    return {spell.spell_id: spell.as_dict() for spell in spells}
+    return {spell.spell_id: spell for spell in WowSpell.list()}
+
+
+@router.get("/trinkets", tags=["spells"])
+async def trinkets_all() -> dict[int, WowTrinket]:
+    """Get all Trinkets."""
+    return {trinket.spell_id: trinket for trinket in WowTrinket.list()}
 
 
 ###############################################################################

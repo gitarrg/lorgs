@@ -22,4 +22,4 @@ from lorgs.data.raids import *
 
 
 # Current Season
-from lorgs.data.current_season import *
+from lorgs.data.seasons import *
