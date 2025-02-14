@@ -1,18 +1,20 @@
+# IMPORT LOCAL LIBRARIES
 from lorgs.data.classes import *
+from lorgs.models.dungeon import Dungeon
 from lorgs.models.wow_trinket import WowTrinket
 
 
 ################################################################################
-# AraKara
-# no on use trinkets
+# Trinkets
+
+# [Azerokk's Resonating Heart]
+# [Razdunk's Big Red Button]
 
 
 ################################################################################
-# City of Threads
 
-# [Oppressive Orator's Larynx] = bad
 
-################################################################################
-# The Dawnbreaker
-
-# [Mereldar's Toll]
+THE_MOTHERLODE = Dungeon(
+    name="The MOTHERLODE!!",
+    trinkets=[],
+)
