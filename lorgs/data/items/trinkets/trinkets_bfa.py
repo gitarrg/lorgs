@@ -13,8 +13,7 @@ WowTrinket(
     icon="inv_offhand_draenei_a_02.jpg",
     item=158319,
     ilvl=483,
-    query=False,
-).add_specs(*AGI_SPECS)
+)
 
 
 ################################################################################
@@ -24,9 +23,22 @@ WowTrinket(
 ################################################################################
 # Operation: Mechagon: Workshop
 
-# [Ingenious Mana Battery]
+INGENIOUS_MANA_BATTERY = WowTrinket(
+    spell_id=0,
+    name="Ingenious Mana Battery",
+    icon="inv_engineering_reavesbattery.jpg",
+    item=169344,
+)
+"""Store Mana and release later
 
-KUJ0S_FLAME_VENTS = WowTrinket(
+> Use: Channel to store 1224 mana in the Ingenious Mana Battery, up to a max of 4895. (1 Min Cooldown)
+> Equip: While your mana is above 50%, gain 3 Versatility, increased by up to 100%
+> by the mana stored in the battery. While your mana is under 50%, siphon 50429 mana
+> every 5 sec from the Ingenious Mana Battery into your mana pool.
+"""
+
+
+WowTrinket(
     spell_id=0,
     color="#d3d01a",
     cooldown=120,
@@ -34,7 +46,6 @@ KUJ0S_FLAME_VENTS = WowTrinket(
     icon="achievement_cooking_masterofthegrill.jpg",
     item=232546,
     ilvl=636,
-    query=False,  # Need to find spell ID first
 )
 """On-Use AoE DMG 
 
@@ -46,7 +57,20 @@ KUJ0S_FLAME_VENTS = WowTrinket(
 # KUJ0S_FLAME_VENTS.add_specs(*STR_SPECS)
 
 
-# [Modular Platinum Plating]
+MODULAR_PLATINUM_PLATING = WowTrinket(
+    spell_id=299869,
+    cooldown=120,
+    name="Modular Platinum Plating",
+    icon="inv_shield_68.jpg",
+    item=232546,
+)
+"""On-Use Amor.
+
+Buff: 299869
+
+> Use: Gain 4 stacks of Platinum Plating for 30 sec, increasing your Armor by 7.
+> Receiving more than 10% of your health from a Physical damage effect will remove one stack of Platinum Plating. (2 Min Cooldown)
+"""
 
 
 ################################################################################

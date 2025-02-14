@@ -5,9 +5,9 @@ from lorgs.models.wow_trinket import WowTrinket
 class UndermineTrinket(WowTrinket):
     """Trinket which drops in the 11.1 Raid: Liberation of Undermine."""
 
-    ilvl = 662
-    query = True
-    color = "#a335ee"
+    ilvl: int = 662
+    query: bool = True
+    color: str = "#a335ee"
 
 
 ################################################################################
