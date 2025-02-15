@@ -7,7 +7,7 @@ BONUS_ID_MYTHIC = "bonus=6646"
 
 
 class WowItem(wow_spell.WowSpell):
-    """BaseClass for (useable) items such as Trinkets, Potions or anythign else worth tracking."""
+    """BaseClass for (useable) items such as Trinkets, Potions or anything else worth tracking."""
 
     spell_type: str = SpellType.ITEM
     show: bool = False

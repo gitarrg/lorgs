@@ -9,3 +9,9 @@ class WowTrinket(wow_item.WowItem):
     spell_type: str = SpellType.TRINKET
 
     color: str = "#a335ee"  # Epic Items
+
+    query: bool = False
+    """Whether to query for the spell or not.
+    
+    Default is False for Trinkets.
+    """

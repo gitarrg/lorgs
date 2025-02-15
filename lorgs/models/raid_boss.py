@@ -10,6 +10,7 @@ from typing import Any
 from lorgs import utils
 from lorgs.models.wow_actor import WowActor
 from lorgs.models.wow_spell import WowSpell
+from lorgs.models.wow_trinket import WowTrinket
 
 
 class RaidBoss(WowActor):
@@ -27,12 +28,20 @@ class RaidBoss(WowActor):
     icon: str = ""
     """Name of the Icon file. eg.: ``"inv_achievement_raid_progenitorraid_progenium_keeper.jpg"``"""
 
+    trinkets: list[WowTrinket] = []
+    """Trinkets which can drop from this Boss."""
+
     def __repr__(self):
         return f"<RaidBoss(id={self.id} name={self.name})>"
 
     # alias
     def add_cast(self, *args: Any, **kwargs: Any) -> WowSpell:
         return self.add_spell(*args, **kwargs)
+
+    def add_trinket(self, **kwargs: Any) -> WowTrinket:
+        trinket = WowTrinket(**kwargs)
+        self.trinkets.append(trinket)
+        return trinket
 
     @property
     def name_slug(self) -> str:
