@@ -25,7 +25,3 @@ from lorgs.data.expansions import battle_for_azeroth
 from lorgs.data.expansions import shadowlands
 from lorgs.data.expansions import dragonflight
 from lorgs.data.expansions import the_war_within
-
-
-# Current Season
-from lorgs.data.seasons import *
