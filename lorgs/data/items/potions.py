@@ -24,30 +24,9 @@ WowPotion(
 ).add_specs(*ALL_SPECS)
 
 
-WowPotion(
-    spell_id=431416,  # Algari Healing Potion
-    cooldown=300,
-    color="#e35f5f",
-    name="Health Pot",
-    icon="inv_flask_red.jpg",
-    item=211880,
-    variations=[],
-).add_specs(*ALL_SPECS)
-
-
 ################################################################################
 # DPS Potions
 #
-
-WowPotion(
-    spell_id=431932,  # Tempered Potion
-    duration=30,
-    color="#ffe714",
-    name="Tempered Potion",
-    icon="trade_alchemy_potiona4.jpg",
-    item=212265,
-    variations=[],
-).add_specs(*ALL_SPECS)
 
 
 # Intellect users
@@ -67,13 +46,6 @@ WowPotion(
 # Mana Potions
 #
 
-WowPotion(
-    spell_id=431418,
-    color=COL_MANA,
-    name="Algari Mana Potion",
-    icon="inv_flask_blue.jpg",
-    item=212241,
-).add_specs(*HEAL.specs)
 
 # WowPotion(
 #     spell_id=371152,

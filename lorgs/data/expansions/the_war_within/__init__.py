@@ -17,6 +17,8 @@ from .raids import LIBERATION_OF_UNDERMINE
 from .seasons import TWW_SEASON1
 from .seasons import TWW_SEASON2
 
+from .consumables import TWW_CONSUMABLES
+
 
 __all__ = [
     "ARA_KARA",
@@ -30,6 +32,7 @@ __all__ = [
     "THE_ROOKERY",
     "NERUBAR_PALACE",
     "LIBERATION_OF_UNDERMINE",
+    "TWW_CONSUMABLES",
     "TWW_SEASON1",
     "TWW_SEASON2",
 ]

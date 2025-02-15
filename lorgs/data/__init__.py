@@ -17,8 +17,14 @@ from lorgs.data.externals import *
 # Consumables, Gear and similar
 from lorgs.data.items import *
 
-# Raids
-from lorgs.data.raids import *
+
+from lorgs.data.expansions import cataclysm
+from lorgs.data.expansions import warlords_of_draenor
+from lorgs.data.expansions import legion
+from lorgs.data.expansions import battle_for_azeroth
+from lorgs.data.expansions import shadowlands
+from lorgs.data.expansions import dragonflight
+from lorgs.data.expansions import the_war_within
 
 
 # Current Season

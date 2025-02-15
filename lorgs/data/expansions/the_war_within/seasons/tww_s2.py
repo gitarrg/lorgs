@@ -1,15 +1,20 @@
 """War Within Season 2."""
 
-from lorgs.data.expansions.battle_for_azeroth.dungeons.mechagon_workshop import MECHAGON_WORKSHOP
-from lorgs.data.expansions.battle_for_azeroth.dungeons.motherlode import THE_MOTHERLODE
-from lorgs.data.expansions.shadowlands.dungeons.theater_of_pain import THEATER_OF_PAIN
-from lorgs.data.expansions.the_war_within.dungeons.cinderbrew_meadery import CINDERBREW_MEADERY
-from lorgs.data.expansions.the_war_within.dungeons.darkflame_cleft import DARKFLAME_CLEFT
-from lorgs.data.expansions.the_war_within.dungeons.operation_floodgate import OPERATION_FLOODGATE
-from lorgs.data.expansions.the_war_within.dungeons.priory_of_the_sacred_flame import PRIORY_OF_THE_SACRED_FLAME
-from lorgs.data.expansions.the_war_within.dungeons.the_rookery import THE_ROOKERY
-from lorgs.data.expansions.the_war_within.raids.undermine import LIBERATION_OF_UNDERMINE
+# IMPORT LOCAL LIBRARIES
 from lorgs.models.season import Season
+
+# Dungeons
+from lorgs.data.expansions.battle_for_azeroth import MECHAGON_WORKSHOP
+from lorgs.data.expansions.battle_for_azeroth import THE_MOTHERLODE
+from lorgs.data.expansions.shadowlands import THEATER_OF_PAIN
+from lorgs.data.expansions.the_war_within import CINDERBREW_MEADERY
+from lorgs.data.expansions.the_war_within import DARKFLAME_CLEFT
+from lorgs.data.expansions.the_war_within import OPERATION_FLOODGATE
+from lorgs.data.expansions.the_war_within import PRIORY_OF_THE_SACRED_FLAME
+from lorgs.data.expansions.the_war_within import THE_ROOKERY
+
+# Raids
+from lorgs.data.expansions.the_war_within import LIBERATION_OF_UNDERMINE
 
 
 TWW_SEASON2 = Season(
