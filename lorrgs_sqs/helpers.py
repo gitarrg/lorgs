@@ -15,7 +15,9 @@ def expand_metric(payload: dict) -> list[str]:
     return role and role.metrics or []
 
 
-ALL_BOSSES = CURRENT_ZONE.bosses
+ALL_BOSSES = []
+for raid in CURRENT_SEASON.raids:
+    ALL_BOSSES.extend(raid.bosses)
 
 
 PAYLOAD_EXPANDERS: dict[str, list[str] | Callable[[Any], list[str]]] = {
