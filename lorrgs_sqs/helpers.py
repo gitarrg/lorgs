@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Any, Callable
 
 from lorgs.data.classes import ALL_SPECS
-from lorgs.data.raids import CURRENT_ZONE
+from lorgs.data.season import CURRENT_SEASON
 from lorgs.models.wow_role import WowRole
 from lorgs.models.wow_spec import WowSpec
 
