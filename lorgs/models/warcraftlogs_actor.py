@@ -15,7 +15,7 @@ from lorgs import utils
 from lorgs.clients import wcl
 from lorgs.logger import logger
 from lorgs.models import warcraftlogs_base
-from lorgs.models.warcraftlogs_cast import Cast, process_auras, process_until_events
+from lorgs.models.warcraftlogs_cast import Cast, process_auras, process_until_events, add_cast_counters
 from lorgs.models.wow_spell import SpellType, WowSpell, build_spell_query
 
 
@@ -207,3 +207,6 @@ class BaseActor(warcraftlogs_base.BaseModel):
         # make sure casts are sorted correctly
         # avoids weird UI overlaps, and just feels cleaner
         self.casts = sorted(self.casts, key=lambda cast: cast.timestamp)
+
+        # we do this at the very end after all the filtering has been done.
+        self.casts = add_cast_counters(self.casts)
