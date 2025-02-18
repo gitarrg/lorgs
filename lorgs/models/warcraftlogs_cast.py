@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 # IMPORT STANDARD LIBRARIES
+from collections import defaultdict
 from typing import TYPE_CHECKING, Optional
 
 # IMPORT THIRD PARTY LIBRARIES
@@ -27,6 +28,9 @@ class Cast(base.BaseModel):
 
     duration: Optional[int] = pydantic.Field(default=None, alias="d")
     """time the spell/buff was active in milliseconds."""
+
+    counter: int = pydantic.Field(default=0, alias="c")
+    """Counter which instance of this type of event/spell_id has occurred in the current fight."""
 
     event_type: str = pydantic.Field(default="cast", exclude=True)
 
@@ -135,3 +139,25 @@ def process_until_events(casts: list[Cast]) -> list[Cast]:
         cast.duration = end_event.timestamp - cast.timestamp
 
     return [c for c in casts if c.spell_id > 0]
+
+
+def add_cast_counters(events: list[Cast]) -> list[Cast]:
+    """Adds a counter to each event, tracking how many times
+    each (event_type, spell_id) pair has occurred.
+
+    Args:
+        casts (list[Cast]): A list of cast events.
+
+    Returns:
+        list[Cast]: The same list with an added 'counter' attribute for each cast.
+
+    """
+    counters: dict[tuple[str, int], int] = defaultdict(int)
+
+    for cast in events:
+        key = (cast.event_type, cast.spell_id)
+
+        counters[key] += 1
+        cast.counter = counters[key]
+
+    return events
